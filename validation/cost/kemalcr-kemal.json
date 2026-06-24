@@ -1,0 +1,518 @@
+{
+  "_note": "FIRST REAL  cost ledger ( Track-2 cost/usage). Full DeepInit pipeline (Detect -> Extract x4 components -> Review[aggressive] -> Filter/Redact/Verify -> Emit -> Horizontal) executed over the real kemalcr/kemal Crystal source @b73de3d as a 12-subagent background workflow (engine_proxy=full_pipeline; analysis_scope=whole-repo). PRIMARY (12-subagent, conservative UPPER bound): total = workflow subagent_tokens = 1,002,841 (token_source=session_usage); output = budget.spent() delta = 161,646; input = total - output = 841,195; est_usd = 841195/1e6*5 + 161646/1e6*25 = $8.25 (Opus-4.8 list $5/$25 per Mtok, NO [1m] long-context premium; /claude-api catalog 2026-06-04). model_runtime_tier [1m] is the runtime CONTEXT-WINDOW tier, NOT a premium pricing SKU (no_long_context_premium=true). CACHE-REALISTIC LOWER bound (MEASURED, Run-19 follow-up; cost.single_engine): a SINGLE-engine pass -- 1 agent, the whole pipeline in one context, specs loaded ONCE (prompt-cached across its own loop) -- over the SAME repo measured 171,160 tokens (150,169 in / 20,991 out) = est_usd $1.28. So the 12-subagent proxy's per-stage spec reloads inflated cost a MEASURED 5.9x (1,002,841 / 171,160). The single-engine pass was also SHALLOWER (10 named suppressions vs the 42 verified in the 12-subagent run), so $1.28 is a lower bound on BOTH cost AND thoroughness; a real thorough production run sits BETWEEN $1.28 and $8.25 (realistically nearer the low end, with caching). cost.est_usd_range carries both. FORECAST-vs-ACTUAL: forecast_total_tokens = base(11,949 = 5532x1.2x1.8x1.0) + issue_pass(27,901) = 39,850. The PRIMARY (12-subagent) actual_vs_base_tokens_ratio is 83.9x -- that large gap is the proxy artifact. The SINGLE-ENGINE actual/base is only 14.3x (171,160 / 11,949), right in line with the visdom example's ~19x -- confirming a real cached run under-states the bare formula ~14x (NOT 84x), and est_usd MUST come from a measured run. forecast_vs_actual_ratio (25.2x) is computed vs the full forecast (39,850) for the primary; a separate actual_vs_base_tokens_ratio carries the base-only diagnostic. HONESTY -> publishable=indicative, NOT a published headline: token_source=session_usage (the input/output split is from two instruments -- subagent-token total + budget.spent() OUTPUT delta -- not a clean per-call api_usage split; budget.spent() is session-shared so output may include some concurrent main-loop output during the run window -- unquantified but bounded, the conservative direction). A PUBLISHED cost figure needs a clean token_source=api_usage single-engine run across S/M/L (schema Open Question 1). extraction_ladder counts the 75 Crystal SOURCE files (graphify=0 -- Crystal has no AST/Graphify tooling, the moat); the 14 non-source files (Markdown/YAML/HTML/License, 675 LOC) are docs/config, not extracted (no R8 skips). Identity: loc/file_count are scc whole-repo totals; primary language Crystal 5,532 LOC / 75 files (89.1%). Census (kemalcr STALE) carried from . 0 issues raised; 91 structural near-candidates suppressed by named guards (42 verified, listed). Run journals:  (12-subagent),  (single-engine); adversarial 3-lens review .",
+  "schema": "deepinit-instrumentation/run-record/v1",
+  "run": {
+    "fixture": null,
+    "repo": "kemalcr/kemal",
+    "run_kind": "full_skill_run",
+    "commit": "b73de3d8e6de97541866b6ecdc8c6ee1ef3eb747",
+    "model": "claude-opus-4-8",
+    "depth": "deep",
+    "review": "aggressive",
+    "issues_flag": "on",
+    "issues_families": null,
+    "date": "2026-06-12",
+    "engine_proxy": "full_pipeline",
+    "analysis_scope": "whole-repo"
+  },
+  "identity": {
+    "loc": 6207,
+    "file_count": 89,
+    "languages": [
+      {
+        "lang": "Crystal",
+        "loc": 5532,
+        "pct": 89.1
+      },
+      {
+        "lang": "Markdown",
+        "loc": 570,
+        "pct": 9.2
+      },
+      {
+        "lang": "YAML",
+        "loc": 69,
+        "pct": 1.1
+      },
+      {
+        "lang": "Plain Text",
+        "loc": 9,
+        "pct": 0.1
+      },
+      {
+        "lang": "HTML",
+        "loc": 11,
+        "pct": 0.2
+      },
+      {
+        "lang": "License",
+        "loc": 16,
+        "pct": 0.3
+      }
+    ],
+    "component_count": 4,
+    "avg_component_loc": 1551.8,
+    "size_tier": "S",
+    "size_source": "scc",
+    "primary_language": {
+      "lang": "Crystal",
+      "loc": 5532,
+      "file_count": 75,
+      "pct": 89.1
+    },
+    "metamorphic_child_sha": null
+  },
+  "cost": {
+    "wall_time_sec": 1031.7,
+    "input_tokens": 841195,
+    "output_tokens": 161646,
+    "cache_read_tokens": null,
+    "base_tokens": 11949,
+    "issue_pass_tokens": 27901,
+    "llm_passes": 12,
+    "subagents": 12,
+    "effort_multiplier": 1.8,
+    "graphify_discount": 1.0,
+    "est_usd": 8.25,
+    "price_as_of_date": "2026-06-04",
+    "price_input_per_mtok": 5.0,
+    "price_output_per_mtok": 25.0,
+    "cost_basis": "estimate_list_price",
+    "token_source": "session_usage",
+    "model_runtime_tier": "claude-opus-4-8[1m]",
+    "model_family": "opus-4.x",
+    "no_long_context_premium": true,
+    "forecast_total_tokens": 39850,
+    "forecast_vs_actual_ratio": 25.2,
+    "actual_vs_base_tokens_ratio": 83.9,
+    "single_engine": {
+      "total_tokens": 171160,
+      "input_tokens": 150169,
+      "output_tokens": 20991,
+      "est_usd": 1.28,
+      "llm_passes": 1,
+      "subagents": 1,
+      "wall_time_sec": 268.6,
+      "components": 4,
+      "issues": 0,
+      "suppressed": 10,
+      "actual_vs_base_tokens_ratio": 14.3,
+      "engine_proxy": "single_subagent_pass",
+      "note": "cache-realistic LOWER bound -- 1 agent, whole pipeline in one context, specs loaded once (prompt-cached across its own loop); shallower than the 12-subagent run (10 named suppressions vs 42 verified), so a lower bound on BOTH cost and thoroughness. journal ."
+    },
+    "est_usd_range": [
+      1.28,
+      8.25
+    ],
+    "proxy_inflation_ratio": 5.9
+  },
+  "coverage": {
+    "detectors": [
+      {
+        "family": "IF-1",
+        "status": "full",
+        "degrade_reason": null,
+        "fires": 0
+      },
+      {
+        "family": "IF-2",
+        "status": "not_applicable",
+        "degrade_reason": "no-DB-IF-2-static-only",
+        "fires": 0
+      },
+      {
+        "family": "IF-3a",
+        "status": "not_applicable",
+        "degrade_reason": "no-cross-module-imports-IF-3a-not-applicable",
+        "fires": 0
+      },
+      {
+        "family": "IF-3b",
+        "status": "degraded",
+        "degrade_reason": "external-shard-exporter-surface-unenumerable",
+        "fires": 0
+      },
+      {
+        "family": "IF-4",
+        "status": "degraded",
+        "degrade_reason": "no-ADRs-IF-4-thin",
+        "fires": 0
+      },
+      {
+        "family": "IF-5",
+        "status": "degraded",
+        "degrade_reason": "shallow-clone-IF-5-low-certainty",
+        "fires": 0
+      },
+      {
+        "family": "IF-6",
+        "status": "full",
+        "degrade_reason": null,
+        "fires": 0
+      },
+      {
+        "family": "IF-7",
+        "status": "full",
+        "degrade_reason": null,
+        "fires": 0
+      },
+      {
+        "family": "IF-8",
+        "status": "not_applicable",
+        "degrade_reason": "no-import-cycle-IF-8-not-applicable",
+        "fires": 0
+      },
+      {
+        "family": "IF-10",
+        "status": "full",
+        "degrade_reason": null,
+        "fires": 0
+      }
+    ],
+    "extraction_ladder": {
+      "graphify": 0,
+      "ctags": 0,
+      "grep": 75,
+      "llm_only": 0,
+      "skipped": 0
+    },
+    "skipped_files": [],
+    "db_status": "none",
+    "adr_corpus_present": false,
+    "census_overlay": [
+      {
+        "host_iss_id": null,
+        "host_family": "IF-4",
+        "rule_class": "all handlers must inherit from `Kemal::Handler` (CHANGELOG.md:509)",
+        "N": 12,
+        "k": 0,
+        "deviants": 12,
+        "signal": "STALE",
+        "degrade_reason": null,
+        "naive_fp_avoided": 12
+      }
+    ]
+  },
+  "findings": {
+    "by_family": {
+      "IF-1": {
+        "raised": 0,
+        "verified": 0,
+        "unverified": 0
+      },
+      "IF-2": {
+        "raised": 0,
+        "verified": 0,
+        "unverified": 0
+      },
+      "IF-3a": {
+        "raised": 0,
+        "verified": 0,
+        "unverified": 0
+      },
+      "IF-3b": {
+        "raised": 0,
+        "verified": 0,
+        "unverified": 0
+      },
+      "IF-4": {
+        "raised": 0,
+        "verified": 0,
+        "unverified": 0
+      },
+      "IF-5": {
+        "raised": 0,
+        "verified": 0,
+        "unverified": 0
+      },
+      "IF-6": {
+        "raised": 0,
+        "verified": 0,
+        "unverified": 0
+      },
+      "IF-7": {
+        "raised": 0,
+        "verified": 0,
+        "unverified": 0
+      },
+      "IF-8": {
+        "raised": 0,
+        "verified": 0,
+        "unverified": 0
+      },
+      "IF-10": {
+        "raised": 0,
+        "verified": 0,
+        "unverified": 0
+      }
+    },
+    "recall": null,
+    "metamorphic_fp": null,
+    "naive_vs_guarded": {
+      "naive_fp": 12,
+      "guarded_fp": 0,
+      "fp_avoided": 12
+    }
+  },
+  "issues": [],
+  "suppressed": [
+    {
+      "family": "IF-4",
+      "file": "src/kemal/helpers/helpers.cr",
+      "line": 213,
+      "reason": "multipart() ranges.empty? branch serves full content 200 with inline comment '# Range not satisfiable' — a genuine RFC-7233 naive-reading mismatch (conflates no-Range-header with unsatisfiable-Range; RFC wants 416), BUT fails the IF-4 dual-citation predicate: no documented Kemal-internal invariant to anchor as the contradicted rule (RFC 7233 is an external spec, not a code-stated rule; grep for range/416/satisfiable finds only this one inline comment). The comment is itself the suspect element, not an independent stated rule the code violates. Extract+Review self-rated LOW; precision-first demote. Flips to a real IF-4 fire only if a future Kemal doc/ADR states the 416 contract."
+    },
+    {
+      "family": "IF-7",
+      "file": "src/kemal/param_parser.cr",
+      "line": 120,
+      "reason": "unescape_url_param bare rescue returns original value on URI.decode failure — deliberate error-as-value fallback (non-empty body), and the method is private/non-exported. IF-7(c) predicate FALSE on both the non-empty-handler guard and the cross-component-consumption moat."
+    },
+    {
+      "family": "IF-7",
+      "file": "src/kemal/file_upload.cr",
+      "line": 17,
+      "reason": "rescue ex; cleanup; raise ex — error PROPAGATES after cleanup, not swallowed. IF-7(c) predicate FALSE on the re-raise guard."
+    },
+    {
+      "family": "IF-3a",
+      "file": "src/kemal/config.cr",
+      "line": 11,
+      "reason": "Config::INSTANCE + class-const mutable handler arrays are the framework's single documented public config surface (config.cr:4-9 'singleton, access via Kemal.config'); explicit property accessors + documented websocket_allowed_origins invariant. Deliberate public singleton wiring, not silent shared coupling. AF-1 shared-resource-with-no-interface predicate FALSE."
+    },
+    {
+      "family": "IF-3a",
+      "file": "src/kemal/route_handler.cr",
+      "line": 106,
+      "reason": "RouteHandler INSTANCE = new (and OverrideMethodHandler INSTANCE) are deliberate public singleton wiring with explicit add_route/before/after/use interfaces — documented shared infrastructure, not an undocumented hidden resource. IF-3a predicate FALSE."
+    },
+    {
+      "family": "IF-10",
+      "file": "src/kemal/ext/response.cr",
+      "line": 3,
+      "reason": "{{ skip_file if compare_versions(Crystal::VERSION, \"1.3.0\") >= 0 }} is a compile-time compiler-version macro, not a module-level NAME=<literal> const used as the whole test of a runtime if. Outside the §25/§29 const-gated-dead-branch IF-10 predicate."
+    },
+    {
+      "family": "IF-10",
+      "file": "src/kemal/static_file_handler.cr",
+      "line": 3,
+      "reason": "{% if compare_versions(Crystal::VERSION, \"1.17.0\") >= 0 %} selects between two compile-time implementations; the unselected arm is version-dead, not statically-dead-under-a-named-literal-const. IF-10 requires a module-level literal-const flag as the conditional's whole test."
+    },
+    {
+      "family": "IF-10",
+      "file": "src/kemal/helpers/macros.cr",
+      "line": 110,
+      "reason": "halt(env, status_code = 200, ...) default arg is a macro default PARAMETER literal, not a module-level const used as the whole test of a conditional. No const-gated dead branch. Predicate-FALSE."
+    },
+    {
+      "family": "IF-10",
+      "file": "src/kemal/helpers/helpers.cr",
+      "line": 157,
+      "reason": "{% if flag?(:without_zlib) %} is a Crystal compile-time build flag (macro conditional), the feature-flag exclusion analog — not a module-level NAME=<literal> const-fold. Out of §25/§29/§30 slice scope."
+    },
+    {
+      "family": "IF-6",
+      "file": "src/kemal/log_handler.cr",
+      "line": 22,
+      "reason": "private elapsed_text has IDENTICAL bodies in log_handler.cr:22-27 and request_log_handler.cr:13-18 — same-value duplication of a private METHOD (clone-detector territory), the polarity-OPPOSITE of an IF-6 divergence, and not a named value-SET. IF-6 predicate FALSE."
+    },
+    {
+      "family": "IF-6",
+      "file": "src/kemal/dsl.cr",
+      "line": 12,
+      "reason": "HTTP_METHODS/FILTER_METHODS (route verbs, lowercase) vs ALLOWED_METHODS=[PUT,PATCH,DELETE] (override-allowed verbs, uppercase) live under DISTINCT canonical names, different casing, different value domains/purposes. IF-6 requires the SAME canonical name in >=2 components; no name collision."
+    },
+    {
+      "family": "IF-6",
+      "file": "src/kemal/helpers/utils.cr",
+      "line": 3,
+      "reason": "ZIP_TYPES is a named frozen value-set but defined exactly ONCE in one component (Kemal::Utils). IF-6 §24/§28 requires the same canonical name in >=2 components with conflicting membership; single-definition guard, no symmetric-difference candidate."
+    },
+    {
+      "family": "IF-1",
+      "file": "src/kemal/websocket_handler.cr",
+      "line": 46,
+      "reason": "websocket_origin_allowed? 'return true if allowed.empty?' is allow-all, BUT it is a documented deliberate opt-in default (config.cr:32-36 documents the non-empty-allowlist contract). No guarded SIBLING path to the same entity+operation to contrast against (AF-1 (i)/(iii) FALSE)."
+    },
+    {
+      "family": "IF-1",
+      "file": "src/kemal/helpers/helpers.cr",
+      "line": 262,
+      "reason": "BR-helpers:003 range-bounds check (startb<endb && endb<file_size) is enforced on the only path reaching the multipart effect; no guarded sibling path to the same (entity,operation) to contrast. AF-1: the concrete contrast IS the evidence; none present, do not raise."
+    },
+    {
+      "family": "IF-1",
+      "file": "src/kemal/helpers/helpers.cr",
+      "line": 276,
+      "reason": "File.basename(filename) filename-strip in Content-Disposition is security-adjacent but there is a single send_file/attachment write path with no inconsistent sibling missing the strip. No entity+operation contrast."
+    },
+    {
+      "family": "IF-8",
+      "file": "src/kemal/config.cr",
+      "line": 1,
+      "reason": "shard.yml names a single shard 'kemal'; src/ is one package (kemal-core with ext/ and helpers/ subdirs). config<->handlers<->router mutual references are INTRA-component. IF-8 requires an SCC of size>=2 in the CROSS-component import graph; intra-component coupling is not cross-component cycle territory."
+    },
+    {
+      "family": "IF-2",
+      "file": "src/kemal/config.cr",
+      "line": 1,
+      "reason": "No database, no ORM, no live schema in core scope (HTTP web framework). Per R7, IF-2 live-drift checks suppressed entirely, never speculated."
+    },
+    {
+      "family": "IF-7",
+      "file": "spec/spec_helper.cr",
+      "line": 54,
+      "reason": "'begin handler.call context rescue IO::Error' rescues a SPECIFIC expected class with an explanatory comment ('Raises because the IO::Memory is empty') — not a bare swallow; the helper is private to spec/ with no cross-component consumer. IF-7(c) function-scope + cross-consumption moats both FALSE. Only rescue in the spec component."
+    },
+    {
+      "family": "IF-7",
+      "file": "spec/handler_spec.cr",
+      "line": 33,
+      "reason": "OnlyHandler/ExcludeHandler#call deliberately return call_next early per the documented only/exclude chain-stop pattern — test doubles with no cross-component consumption, not an error-swallow. Predicate-FALSE."
+    },
+    {
+      "family": "IF-7",
+      "file": "spec/exception_handler_spec.cr",
+      "line": 223,
+      "reason": "'does not do anything on a closed io' test (halt -> 404) ASSERTS Kemal's documented closed-IO safety, confirming the rule rather than contradicting it. No dual-citation of rule-vs-contradiction. Predicate-FALSE."
+    },
+    {
+      "family": "IF-1",
+      "file": "spec/static_file_handler_spec.cr",
+      "line": 163,
+      "reason": "Path-traversal tests assert StaticFileHandler's 302-redirect defense for ../ / URL-encoded / mixed sequences. These assert the defense; no in-component rule and no guarded-vs-unguarded sibling contrast on the same entity+operation (AF-1 i/iii FALSE)."
+    },
+    {
+      "family": "IF-1",
+      "file": "spec/websocket_handler_spec.cr",
+      "line": 80,
+      "reason": "websocket_allowed_origins describe block asserts 403 origin-rejection and successful allowlisted upgrade. No in-component rule, no unguarded sibling to contrast; AF-1 contrast-is-the-evidence absent."
+    },
+    {
+      "family": "IF-3a",
+      "file": "spec/spec_helper.cr",
+      "line": 94,
+      "reason": "INSTANCE singletons live in ../src/* (out of scope, R2); the cross-file coupling is deliberately reconciled by the documented Spec.after_each reset block (spec_helper.cr:92-98) — an explicit contract, not silent coupling. Predicate-FALSE."
+    },
+    {
+      "family": "IF-6",
+      "file": "spec/exception_handler_spec.cr",
+      "line": 9,
+      "reason": "Repeated io/response/context request boilerplate is identical SAME-component test scaffolding, not a NAMED literal value-set with conflicting membership across >=2 components. Same-value + same-component guards both fire."
+    },
+    {
+      "family": "IF-8",
+      "file": "spec/all_spec.cr",
+      "line": 1,
+      "reason": "Full require-graph read: all_spec 'require ./*' is a glob, every spec file requires only ./spec_helper (a back-edge-free hub), and the lone helpers_spec -> handler_spec edge is acyclic. No SCC of size>=2."
+    },
+    {
+      "family": "IF-3b",
+      "file": "spec/spec_helper.cr",
+      "line": 2,
+      "reason": "'require ../src/*' resolves imported Kemal symbols to ../src/* which is OUT of scope (R2); the exporter surface can't be enumerated from within spec/. AF-2 degrade-don't-false-flag -> skip."
+    },
+    {
+      "family": "IF-2",
+      "file": "spec/spec_helper.cr",
+      "line": 1,
+      "reason": "Grep of the spec component finds no database/ORM/connect substrate (only HTTP Connection: Upgrade websocket headers). R7 gate + no drift substrate. N/A."
+    },
+    {
+      "family": "IF-10",
+      "file": "spec/cli_spec.cr",
+      "line": 3,
+      "reason": "cli_spec {% if !flag?(:without_openssl) %}, spec_helper compare_versions guard, run_spec {% if flag?(:windows) %} are all compile-time macro guards ({% ... %} form), not module-level literal const if-tests. Outside the §25/§29 const-fold predicate."
+    },
+    {
+      "family": "IF-4",
+      "file": "spec/view_spec.cr",
+      "line": 41,
+      "reason": "# ameba:disable Lint/UselessAssign on var1/var2 looks like a name-lie but the vars ARE load-bearing — consumed by the ECR render (test asserts body contains 'serdar'/'kemal'). Suppression correct; no documented decision contradicted, dual-citation absent. Predicate-FALSE."
+    },
+    {
+      "family": "IF-6",
+      "file": "examples/postgresql-db/app.cr",
+      "line": 10,
+      "reason": "class User (id/name/email) is byte-identical to mysql-db/app.cr:10 — same-value clone (polarity-opposite of IF-6 divergence), and a class shape not a named literal value-SET. Outside §24/§28 scope."
+    },
+    {
+      "family": "IF-6",
+      "file": "examples/json-mapping/app.cr",
+      "line": 5,
+      "reason": "class User(username,password) differs from the DB User(id,name,email) but neither side is a named literal allowed-value SET (enum/union/frozenset). IF-6's §24/§28 slice keys strictly on named value-set membership, not class shape."
+    },
+    {
+      "family": "IF-8",
+      "file": "examples/http-basic-auth/custom-handler.cr",
+      "line": 1,
+      "reason": "Grep confirms ZERO in-tree relative requires anywhere in examples/; every import targets an external shard (kemal, kemal-basic-auth, db, mysql, pg, redis, json). IF-8 needs an SCC of size>=2 across distinct in-tree components; none exists. External shards out of registry (R2)."
+    },
+    {
+      "family": "IF-3b",
+      "file": "examples/http-basic-auth/custom-handler.cr",
+      "line": 4,
+      "reason": "Kemal::BasicAuth::Handler + only/only_match?/call_next are surfaces of the external kemal-basic-auth shard (out of scope, R2), not symbols an in-tree sibling component fails to export. IF-3b fires only on a named import absent from a sibling in-tree component's public surface; degrade-don't-false-flag on external surfaces."
+    },
+    {
+      "family": "IF-1",
+      "file": "examples/json-api/app.cr",
+      "line": 30,
+      "reason": "POST /users (PUT/DELETE) perform no ownership/auth check, but the only auth in the whole tree is http-basic-auth/ (route-level basic_auth on /dashboard,/admin) — a different concept, NOT a sibling guard on the USERS entity. No guarded sibling path to the same (entity,operation); single in-memory demo array, Peripheral. AF-1 do-not-raise."
+    },
+    {
+      "family": "IF-1",
+      "file": "examples/redis/app.cr",
+      "line": 8,
+      "reason": "POST /store/:key writes/deletes keys unauthenticated, but no guarded sibling path to the same key-space operation exists to form the IF-1(a)/(d) contrast (only in-tree auth is http-basic-auth/, unrelated). Illustrative KV demo, no Core entity, no documented ownership rule."
+    },
+    {
+      "family": "IF-4",
+      "file": "examples/json-mapping/app.cr",
+      "line": 28,
+      "reason": "Line 28 returns user.password in the response, but grep shows NO ADR/BR/invariant forbidding it (the :13/:27 comments merely describe the field, no failure-scoped deontic). IF-4(a)/(b) require dual-citation; a one-sided record is incomplete. No name-lie / load-bearing-temporary marker. Drop (R1/AF-1)."
+    },
+    {
+      "family": "IF-7",
+      "file": "examples/websocket-chat/app.cr",
+      "line": 24,
+      "reason": "socket.on_close does real work (sockets.delete + puts log), not a bare empty/comment-only swallow (IF-7(c) keys on an EMPTY body). It is a closure inside a ws route block, not an exported function consumed by another component — cross-boundary moat fails."
+    },
+    {
+      "family": "IF-7",
+      "file": "examples/json-api/app.cr",
+      "line": 23,
+      "reason": "Line 23 is the else of 'if id < USERS.size' (404 not-found), normal control flow — not a catch/rescue, and no failure-scoped deontic to contradict. IF-7(a) requires a contradiction lexically inside an error handler AND a documented hard rule; neither holds. 404-on-not-found is correct."
+    },
+    {
+      "family": "IF-2",
+      "file": "examples/mysql-db/app.cr",
+      "line": 25,
+      "reason": "Line 25 'SELECT * FROM users' references a table, but IF-2 suppresses ALL live-drift checks without an R7-approved DB read (none performed/approved). URL is localhost dev (not a prod host) but absent a real connection no drift row exists."
+    },
+    {
+      "family": "IF-10",
+      "file": "examples/sse/app.cr",
+      "line": 4,
+      "reason": "Line 4 '3.times do |i|' is a runtime loop, not a conditional. Across the component every conditional (if id<USERS.size, if value=REDIS.get, if result.rows_affected>0) is runtime-valued, not a module-level literal-const fold used as the whole test. Nothing matches §25/§29/§30 by construction."
+    },
+    {
+      "family": "IF-5",
+      "file": "examples/mysql-db/app.cr",
+      "line": 1,
+      "reason": "Import-graph confirms ZERO structural edges between example dirs; independent demos with no shared resource. IF-5 hidden-coupling needs a change-coupling pair (>=3 shared commits, no structural edge); no pair, nothing to rank (zero issues). Census overlay silent (no host IF-4/IF-6/IF-7(a) fire to enrich)."
+    },
+    {
+      "family": "IF-3a",
+      "file": "src/kemal/helpers/macros.cr",
+      "line": 1,
+      "reason": "CONTENT_FOR_BLOCKS is a module-global written/read at request time (shared-resource candidate), but proving >=2 distinct components read/write it with no interface needs the cross-component graph outside the helpers scope (R2). Cannot ground a second writer from within helpers — suppressed pending horizontal data, not fabricated."
+    }
+  ],
+  "provenance": {
+    "training_contamination_caveat": false,
+    "key_held_out": false,
+    "harness_section": "sec33",
+    "publishable": "indicative"
+  }
+}

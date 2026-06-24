@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# >>> oss-kit managed >>>
+npx --no -- commitlint --edit "$1"
+# <<< oss-kit managed <<<

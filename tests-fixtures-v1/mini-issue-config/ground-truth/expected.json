@@ -1,0 +1,50 @@
+{
+  "_doc": "Oracle for spec §7 issue config (harness §46). A config exercises all three controls — an FP-suppression list (path+rule), per-language toggles, and a per-issue baseline-accept — over candidate issues with the expected fire/suppress decision and the suppressing rule.",
+
+  "config": {
+    "issues-suppress": [
+      { "path": "vendor/**", "family": "*" },
+      { "path": "**/generated_*.py", "family": "*" },
+      { "path": "src/legacy/**", "family": "IF-7c" }
+    ],
+    "issues-language-toggles": {
+      "go": { "IF-8": false },
+      "ruby": { "IF-7c": false }
+    },
+    "issues-baseline-accept": [
+      "IF-3a:src/cache.rb:redis_key"
+    ]
+  },
+
+  "cases": [
+    { "_n": "real fire — first-party src, family on, not accepted",
+      "issue": { "family": "IF-1", "file": "src/auth/login.rb", "match_key": "IF-1:src/auth/login.rb:owner" }, "language": "ruby", "expect_fire": true },
+
+    { "_n": "suppressed — vendored path (family *)",
+      "issue": { "family": "IF-8", "file": "vendor/lib/dep.go", "match_key": "IF-8:vendor/lib/dep.go" }, "language": "go", "expect_fire": false },
+
+    { "_n": "suppressed — generated file glob",
+      "issue": { "family": "IF-3a", "file": "src/api/generated_client.py", "match_key": "x" }, "language": "python", "expect_fire": false },
+
+    { "_n": "suppressed — path+rule (IF-7c under src/legacy only)",
+      "issue": { "family": "IF-7c", "file": "src/legacy/old.py", "match_key": "y" }, "language": "python", "expect_fire": false },
+
+    { "_n": "fires — different family at the same path-rule path (rule is IF-7c-scoped)",
+      "issue": { "family": "IF-1", "file": "src/legacy/old.py", "match_key": "z" }, "language": "python", "expect_fire": true },
+
+    { "_n": "suppressed — IF-8 toggled off for Go",
+      "issue": { "family": "IF-8", "file": "src/pkg/a.go", "match_key": "IF-8:src/pkg/a.go" }, "language": "go", "expect_fire": false },
+
+    { "_n": "fires — IF-8 in a non-Go language (toggle is Go-scoped)",
+      "issue": { "family": "IF-8", "file": "src/pkg/a.java", "match_key": "IF-8:src/pkg/a.java" }, "language": "java", "expect_fire": true },
+
+    { "_n": "suppressed — IF-7c toggled off for Ruby",
+      "issue": { "family": "IF-7c", "file": "src/svc.rb", "match_key": "IF-7c:src/svc.rb" }, "language": "ruby", "expect_fire": false },
+
+    { "_n": "suppressed — per-issue baseline accept (exact match-key)",
+      "issue": { "family": "IF-3a", "file": "src/cache.rb", "match_key": "IF-3a:src/cache.rb:redis_key" }, "language": "ruby", "expect_fire": false },
+
+    { "_n": "fires — same family/path but a DIFFERENT match-key (not the accepted one)",
+      "issue": { "family": "IF-3a", "file": "src/cache.rb", "match_key": "IF-3a:src/cache.rb:other_key" }, "language": "ruby", "expect_fire": true }
+  ]
+}

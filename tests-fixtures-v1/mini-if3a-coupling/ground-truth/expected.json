@@ -1,0 +1,22 @@
+{
+  "fixture": "mini-if3a-coupling",
+  "purpose": "IF-3a — two components (orders, inventory) read/write a shared Core DB table directly with no interface between them = silent cross-component coupling; a documented sanctioned-exception shared table must NOT fire.",
+  "expected_issues": [
+    {
+      "family": "IF-3a",
+      "file": "src/orders/orders.service.ts",
+      "line": 24,
+      "severity": "High",
+      "certainty": "MEDIUM",
+      "claim": "Possible silent cross-component coupling: the 'stock' table is written directly by both the orders and inventory components with no service/interface mediating between them — a change to stock semantics in one component may silently break the other.",
+      "evidence": "Same Core resource 'stock' is mutated directly by two components with no interface edge between them: orders writes it at src/orders/orders.service.ts:24 (and src/orders/orders.service.ts:53) while inventory writes it at src/inventory/inventory.service.ts:16 (and src/inventory/inventory.service.ts:33); neither imports the other. Blast radius = {orders, inventory}; orders.service.ts has no import of inventory.service.ts (src/orders/orders.service.ts:1-2 imports only shared/db and shared/audit-log)."
+    }
+  ],
+  "must_not_fire": [
+    {
+      "family": "IF-3a",
+      "file": "src/shared/audit-log.ts",
+      "reason": "The 'audit_log' table is also written by both orders (src/orders/orders.service.ts:33,63) and inventory (src/inventory/inventory.service.ts:23,38), so a naive shared-resource detector would flag it as cross-component coupling. It MUST be suppressed: it is a documented, sanctioned exception. ADR-014 (docs/adr/ADR-014-shared-audit-sink.md) and the contract comment in src/shared/audit-log.ts:3-18 declare it an append-only, write-only sink with a frozen additive schema and no read-back — so there is no shared mutable state for the two components to drift, and the directness is intentional. The spec's polarity flip (bias-to-suppress) plus the documented-exception FP-trap require this to NOT fire."
+    }
+  ]
+}

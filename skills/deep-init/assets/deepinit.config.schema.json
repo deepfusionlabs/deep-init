@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://deepfusionlabs.ai/schemas/deepinit.config.schema.json",
+  "title": "DeepInit project config (.ai/deepinit.config)",
+  "description": "Optional per-project settings for DeepInit. Keys are the long-flag names without the leading '--'. Precedence (later wins): built-in max-quality defaults -> this file -> inline flags/mode words. Every key is optional; omitted keys keep the max-quality default. Unknown keys are warned-and-ignored, never fatal (R8) — so additional keys are permitted here for forward/back compatibility.",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Path or URL to this schema so your editor autocompletes + validates the file. DeepInit drops a copy at .ai/deepinit.config.schema.json each run, so \"./deepinit.config.schema.json\" resolves offline."
+    },
+    "depth": {
+      "enum": ["fast", "thorough", "deep"],
+      "default": "deep",
+      "description": "File-read breadth. deep = deepest per-file (default); thorough = read all files; fast = grep-first heuristic."
+    },
+    "review": {
+      "enum": ["fast", "thorough"],
+      "default": "thorough",
+      "description": "Review cycles: fast = 0; thorough (default) = 2, with a 3rd added automatically only if the cycle-2 quality gate still fails (unresolved CRITICAL or below-target coverage). No knob to force or cap the count — the gate decides. Orthogonal to depth."
+    },
+    "components": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Limit analysis to these components (default: all)."
+    },
+    "skip-db": { "type": "boolean", "default": false, "description": "Skip database analysis even if a DB is detected." },
+    "skip-git": { "type": "boolean", "default": false, "description": "Skip git-history analysis." },
+    "profile": { "enum": ["code-only"], "description": "Shorthand profile. code-only = skip-db + skip-git." },
+    "max-lines": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "root": { "type": "integer", "minimum": 1, "description": "Lean root budget (soft; ~100 default)." },
+        "comp": { "type": "integer", "minimum": 1, "description": "Per-component lean budget (soft)." }
+      },
+      "description": "Lean-tier line budgets only — the deep tier is never capped."
+    },
+    "knowledge-log": { "enum": ["on", "off"], "default": "on", "description": "Include the Knowledge Log in the lean root." },
+    "include-mermaid": { "type": "boolean", "default": false, "description": "Add Mermaid diagrams to the output." },
+    "with-graphify": { "type": "boolean", "description": "Force Graphify install (default: auto-detect)." },
+    "no-graphify": { "type": "boolean", "description": "Skip Graphify; fall back to a grep-based import/symbol graph." },
+    "existing": {
+      "enum": ["skip", "extend", "replace", "side-file"],
+      "default": "extend",
+      "description": "How to handle an existing user-authored context file. extend = owned-region update (default); skip = leave it; replace = overwrite (a dated .bak is always archived first); side-file = write the proposal beside it as CLAUDE.deepinit.md with the original untouched (the 'Preview beside it' option). On a heavy human-authored front-door file with no resolved strategy, Emit asks one plain-language confirmation (recommended = the default)."
+    },
+    "emit-cursor": { "type": "boolean", "description": "Emit .cursor/rules/*.mdc (default: auto if .cursor/ exists)." },
+    "canonical": {
+      "enum": ["claude", "agents"],
+      "default": "claude",
+      "description": "Which file is the canonical content-bearing lean tier. claude = CLAUDE.md (default, Claude-Code-native; DeepInit owns the front door). agents = AGENTS.md canonical (advanced/AGENTS-first; CLAUDE.md becomes a thin @AGENTS.md import)."
+    },
+    "emit-agents": { "type": "boolean", "description": "Force the conditional cross-tool AGENTS.md export + projections even with no cross-tool consumer present." },
+    "gitignore-agents": { "enum": ["auto", "on", "off"], "default": "auto", "description": "Mirror the shared agent file's gitignore state onto the generated CLAUDE.md + cross-tool export." },
+    "notify-on-session-start": { "enum": ["on", "off"], "default": "on", "description": "The proactive SessionStart suggestion — when docs are stale, offers a one-click refresh via AskUserQuestion (plugin-shipped hook, 0 tokens, no install)." },
+    "notify-on-commit": { "enum": ["on", "off"], "default": "on", "description": "Post-commit prints a 0-token staleness nudge in the terminal (deepinit_status.py)." },
+    "check-on-session-start": { "enum": ["on", "off"], "default": "on", "description": "Back-compat alias for notify-on-session-start." },
+    "auto-update": { "enum": ["on", "off"], "default": "off", "description": "Opt-in: a detached headless `claude -p` runs --update after a source commit (spends tokens; never auto-commits)." },
+    "notify-cadence": { "enum": ["session", "window", "always"], "default": "session", "description": "How often the proactive SessionStart suggestion re-fires while docs stay stale. session (default) = once per NEW session (session-id dedup — proactive but never twice in one session); window = at most once per notify-window-hours (wall-clock back-off); always = every session start while stale." },
+    "notify-window-hours": { "type": "number", "minimum": 0, "default": 6, "description": "Back-off window in hours for notify-cadence=\"window\" (the SessionStart suggestion fires at most once per this many hours while stale). Ignored for session/always." },
+    "issues": { "enum": ["on", "off"], "default": "on", "description": "Detect issues (report-only; never enters the lean tier — R9)." },
+    "issues-families": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": ["IF-1", "IF-2", "IF-3a", "IF-3b", "IF-4", "IF-5", "IF-6", "IF-7", "IF-7a", "IF-7c", "IF-8", "IF-9", "IF-10"]
+      },
+      "description": "Narrow which issue detectors run (default: all shipped — IF-1..IF-5 + IF-8 / IF-3b / IF-7 / IF-6 / IF-10; IF-9 deferred). Zeroes the others' cost term."
+    },
+    "issues-min-severity": { "enum": ["low", "medium", "high"], "default": "low", "description": "Ledger/SARIF severity floor. The dashboard view defaults to medium+." },
+    "issues-baseline": { "enum": ["accept", "reset"], "description": "Baseline lifecycle: accept current open issues into .issue_baseline.json (write-once-per-id), or reset (clear)." },
+    "issues-suppress": {
+      "type": "array",
+      "description": "FP-suppression list (a suppressed issue is reported as a named suppression, never silently dropped — R8).",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "family"],
+        "properties": {
+          "path": { "type": "string", "description": "gitignore-style path glob, e.g. \"vendor/**\"." },
+          "family": {
+            "description": "Issue family to suppress under this path, or \"*\" for all.",
+            "enum": ["*", "IF-1", "IF-2", "IF-3a", "IF-3b", "IF-4", "IF-5", "IF-6", "IF-7", "IF-7a", "IF-7c", "IF-8", "IF-9", "IF-10"]
+          }
+        }
+      }
+    },
+    "issues-language-toggles": {
+      "type": "object",
+      "description": "Per-language family enable/disable, e.g. { \"go\": { \"IF-8\": false } }.",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": { "type": "boolean" }
+      }
+    },
+    "issues-baseline-accept": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Per-issue baseline match-keys to accept, e.g. \"IF-3a:src/cache.rb:redis_key\"."
+    },
+    "report": { "enum": ["on", "off"], "default": "on", "description": "Emit the unified self-contained .ai/report.html (Docs + Insights; supersedes dashboard + viewer — ADR-019)." },
+    "dashboard": { "enum": ["on", "off"], "default": "on", "description": "Emit the legacy self-contained .ai/dashboard.html (legacy until the report cutover)." },
+    "viewer": { "enum": ["on", "off"], "default": "on", "description": "Emit the legacy self-contained .ai/docs-viewer.html (legacy until the report cutover)." },
+    "sarif": { "enum": ["on", "off"], "default": "on", "description": "Emit .ai/deepinit.sarif (SARIF v2.1.0)." },
+    "translate": {
+      "description": "Also emit a translated report.<lang>.html (a post-generation overlay; English report.html stays the canonical analysis output). A shipped language code (es/he), an array of codes, or \"other:<language>\" for any other language (chrome falls back to English). See references/i18n.md.",
+      "oneOf": [
+        { "enum": ["es", "he"] },
+        { "type": "string", "pattern": "^other:.+" },
+        { "type": "array", "items": { "enum": ["es", "he"] } }
+      ]
+    },
+    "heal": { "enum": ["detect", "preview", "apply", "auto"], "default": "preview", "description": "Governed lifecycle/citation upkeep over --update/--lint. Report-only floor is hardcoded; never touches source." },
+    "heal-confidence": { "type": "number", "minimum": 0, "maximum": 1, "description": "Raise the confidence bar before `auto` heal acts (loop-stability)." },
+    "recheck": {
+      "type": "array",
+      "items": { "enum": ["adr", "rules", "issues"] },
+      "description": "Widen --update-adr recheck to BRs + open issues over the DP-1 blast radius (default: adr only)."
+    },
+    "max-cost": { "type": "number", "minimum": 0, "default": 25, "description": "Non-blocking preflight cost ceiling in USD. Proceeds under it; pauses to re-confirm only above it." },
+    "yes": { "type": "boolean", "default": false, "description": "Suppress every confirmation pause (incl. the over-ceiling cost re-confirm). Canonical form of --no-confirm." }
+  }
+}

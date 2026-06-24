@@ -1,0 +1,42 @@
+{
+  "schema": "deepinit-validation/coverage-split-manifest/v1",
+  "purpose": "Single source of truth for the Mirror-Test TUNE / HELD-OUT split ( §3 anti-overfit) AND the contamination stratum ( B2). The HELD-OUT pool is the REPORTED coverage/faithfulness number; the TUNE pool informs skill fixes only and is NEVER reported. The `contamination` stratum lets STATS report coverage split popular-vs-obscure so a reader sees the training-contamination delta directly. build_stats.py (harness §36) pools by this manifest; the gate asserts the manifest covers every validation/coverage/results/*.json record exactly once.",
+  "keyed_by": "the results/<key>.json basename (== repo short key)",
+  "splits": {
+    "eabe": "held-out",
+    "helix": "held-out",
+    "scrapy": "held-out",
+    "otelcol": "tune",
+    "excalidraw": "tune",
+    "kotlinx-schema": "held-out",
+    "commercetools-sync-java": "held-out",
+    "uniffi-rs": "held-out",
+    "kagent": "held-out",
+    "saluki": "held-out"
+  },
+  "contamination": {
+    "eabe": "obscure",
+    "helix": "popular",
+    "scrapy": "popular",
+    "otelcol": "popular",
+    "excalidraw": "popular",
+    "kotlinx-schema": "obscure",
+    "commercetools-sync-java": "obscure",
+    "uniffi-rs": "moderate",
+    "kagent": "moderate",
+    "saluki": "obscure"
+  },
+  "notes": {
+    "eabe": "evolutionary-architecture-by-example (.NET/C# DDD, numbered ADRs) — lead held-out, contamination-RESISTANT (low-popularity, decidable ADRs)",
+    "helix": "helix-editor/helix (Rust, ARCHITECTURE.md) — held-out, popular",
+    "scrapy": "scrapy/scrapy (Python, architecture.rst) — held-out, popular",
+    "otelcol": "open-telemetry/opentelemetry-collector (Go, internal architecture doc) — TUNE (gap-mining for , not reported)",
+    "excalidraw": "excalidraw/excalidraw (TypeScript monorepo, CLAUDE.md arch doc) — TUNE/demo: famous (~125k stars) → contamination-caveated, so NOT a held-out trust number ( §5 +  Track-B). Doc-type = AI-agent CLAUDE.md (new); stack = TS (new for Mirror); run on the REAL Graphify structural path ().",
+    "kotlinx-schema": "Kotlin/kotlinx-schema (Kotlin multiplatform, docs/architecture.md) — held-out, OBSCURE (126 stars). NEW JVM stack. Graphify path.  .",
+    "commercetools-sync-java": "commercetools/commercetools-sync-java (Java data-sync lib, docs/adr/) — held-out, OBSCURE (<500 stars). NEW Java stack + the 2nd obscure repo (contamination lever). Graphify path.  .",
+    "uniffi-rs": "mozilla/uniffi-rs (Rust FFI bindings, docs/adr/) — held-out, moderate (4.3k stars). ADR doc-type on a different Rust domain than helix. Graphify path.  .",
+    "kagent": "kagent-dev/kagent (Go, CNCF k8s agent controller, docs/architecture/ multi-doc) — held-out, MODERATE (~3k stars) but CONTAMINATION-RESISTANT (created 2025-01-21, recent+churned).  credibility lever: faithfulness 100% (13/13) on unfamiliar code, BUT coverage only 19.4% (7/36) — a VERY rich doc (36 RCs incl. 10 boundary-rule CEL + 5 key-invariant) where the single-pass blind PROXY under-reaches deep invariants; hard gate 0. Honest lower-bound. .",
+    "saluki": "DataDog/saluki (Rust, Datadog Agent Data Plane, docs/reference/architecture/index.md) — held-out, OBSCURE (37 stars, created 2024-04, internal-before). The cleanest contamination-resistance datapoint. faithfulness 100% (7/7), coverage 60% (9/15) on a consolidated doc; hard gate 0. ."
+  },
+  "contamination_note": "B2 target = 2-3 OBSCURE well-documented repos. Now 4 obscure (eabe + kotlinx-schema + commercetools-sync-java + saluki) + 2 moderate (uniffi-rs + kagent).  contamination-resistant lever (kagent/saluki): FAITHFULNESS does NOT degrade on unfamiliar code (100% on both) — answering the famous-repo-memorization caveat — while coverage is doc-richness + blind-proxy-depth dependent (kagent's 36-RC rich doc → 19.4%; saluki's consolidated doc → 60%). excalidraw stays TUNE (popular)."
+}

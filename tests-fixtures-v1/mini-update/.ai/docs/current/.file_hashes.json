@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "generated": "2026-05-01T10:00:00Z",
+  "run_id": "2026-05-01T10-00",
+  "files": {
+    "src/auth/login.ts": {
+      "sha256": "aaa111aaa111aaa111aaa111aaa111aaa111aaa111aaa111aaa111aaa111aaa1",
+      "component": "auth",
+      "last_analyzed": "2026-05-01T10:00:00Z"
+    },
+    "src/auth/register.ts": {
+      "sha256": "bbb222bbb222bbb222bbb222bbb222bbb222bbb222bbb222bbb222bbb222bbb2",
+      "component": "auth",
+      "last_analyzed": "2026-05-01T10:00:00Z"
+    },
+    "src/billing/invoice.ts": {
+      "sha256": "ccc333ccc333ccc333ccc333ccc333ccc333ccc333ccc333ccc333ccc333ccc3",
+      "component": "billing",
+      "last_analyzed": "2026-05-01T10:00:00Z"
+    },
+    "src/billing/payment.ts": {
+      "sha256": "ddd444ddd444ddd444ddd444ddd444ddd444ddd444ddd444ddd444ddd444ddd4",
+      "component": "billing",
+      "last_analyzed": "2026-05-01T10:00:00Z"
+    }
+  }
+}

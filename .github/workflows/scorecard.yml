@@ -1,0 +1,61 @@
+# OpenSSF Scorecard — supply-chain security posture scoring.
+#
+# SARIF upload to GitHub code scanning:
+#   - Public repositories: free, results show in the Security tab.
+#   - Private repositories: requires GitHub Advanced Security (GHAS). Without
+#     GHAS the upload step will fail; either disable the SARIF step on private
+#     repos or accept the failure until GHAS is enabled.
+# See: https://github.com/ossf/scorecard-action
+
+name: Scorecard supply-chain security
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  branch_protection_rule:
+  schedule:
+    - cron: '32 5 * * 1'   # Weekly: Mondays 05:32 UTC
+  push:
+    branches: [main]
+
+permissions: read-all
+
+jobs:
+  analysis:
+    name: Scorecard analysis
+    # Scorecard publishes results + uploads SARIF, which require a PUBLIC repo
+    # (or GHAS). Skip on private repos so it doesn't fail every push; it
+    # auto-activates on push once the repo is public.
+    if: ${{ github.event.repository.private == false }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      security-events: write
+      id-token: write
+      contents: read
+      actions: read
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10  # v6.0.3
+        with:
+          persist-credentials: false
+
+      - name: Run analysis
+        uses: ossf/scorecard-action@4eaacf0543bb3f2c246792bd56e8cdeffafb205a  # v2.4.3
+        with:
+          results_file: results.sarif
+          results_format: sarif
+          publish_results: true
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: SARIF file
+          path: results.sarif
+          retention-days: 5
+
+      - name: Upload to code scanning
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: results.sarif

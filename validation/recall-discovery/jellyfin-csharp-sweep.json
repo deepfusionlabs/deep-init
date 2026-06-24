@@ -1,0 +1,92 @@
+{
+  "schema": "deepinit-validation/discovery-record/v1",
+  "program": "DeepInit in the Wild",
+  "track": "3 — recall/discovery (the HYBRID IF-8 datapoint: .NET bans cross-PROJECT cycles at build but PERMITS cross-NAMESPACE cycles → IF-8 silent at the project level, FIRES at the namespace level; + an IF-3a static service-locator coupling)",
+  "shape": "A+B — IF-8 FIRED at the NAMESPACE level (two SCCs: 12 sub-namespaces in MediaBrowser.Model + 21 sub-namespaces in MediaBrowser.Controller) while the PROJECT-reference graph is a strict DAG (build-enforced, suppressed); + IF-3a FIRED (the BaseItem static service-locator slots); IF-6/IF-10/IF-7c silent. 3 genuine fires (all GATED) + 19 named suppressions / 0 false defects. C# is the corpus's HYBRID: the same language bans cycles at one granularity (projects, like Go/Rust) and permits-and-fires at another (namespaces, like Java).",
+  "recorded": "2026-06-13",
+  "engine_proxy": "deterministic-detector-sweep (5 read-only agents via the generalized cross-language sweep harness; NOT a full Detect→Emit pipeline; no cost ledger). Build chain:  (5 agents, ~308k tokens). MAIN-LOOP VERIFICATION: independently re-computed BOTH IF-8 levels — the project-reference DAG (24 projects / 0 SCCs, from each .csproj <ProjectReference>) and the namespace `using`-graph SCCs (21-SCC in Controller + 12-SCC in Model) — and agree with the agent. All 5 agents finalized.",
+  "repo": {
+    "name": "jellyfin/jellyfin", "url": "https://github.com/jellyfin/jellyfin", "branch": "master",
+    "pinned_sha": "dd42a121c43721c8984ba0026d6fbed4a526d01f",
+    "license": "GPL-2.0 (copyleft — DISCLOSED; read-only/local use; the upstream bar is EXTRA-hard for copyleft)",
+    "stack": "C#/.NET (the Jellyfin media server) — the TENTH instrumented stack and the FIRST C# datapoint",
+    "size": "219,730 C# code LOC / 2091 files; multi-project (MediaBrowser.*, Emby.*, Jellyfin.*)"
+  },
+  "analysis_scope": "IF-8 at BOTH levels: (a) the PROJECT-reference graph from all .csproj <ProjectReference> (24 projects); (b) the NAMESPACE `using`-graph within+across the core projects. IF-6/IF-10/IF-7c/IF-3a + the namespace IF-8 over the core projects MediaBrowser.Controller (40,994 LOC / 385 files / 51 namespaces) + MediaBrowser.Model (20,761 / 307) + MediaBrowser.Common (2,886 / 41).",
+  "result_headline": "Track-3 C# field sweep over jellyfin/jellyfin@dd42a121: IF-8 is the HYBRID datapoint — the PROJECT-reference graph is a strict DAG (24 projects, 0 SCCs, build-enforced like Go/Rust/Maven-modules → suppressed), but the NAMESPACE graph (where C# imposes no ban, like Java packages) FIRED TWO SCCs: a 21-sub-namespace cycle in MediaBrowser.Controller (High — Core domain/service contracts around BaseItem) and a 12-sub-namespace cycle in MediaBrowser.Model (Medium — pure DTO/contract assembly). IF-3a FIRED on the BaseItem static service-locator (13 mutable public static service slots). IF-6/IF-10/IF-7c stayed silent. 3 genuine fires (GATED) + 19 named suppressions / 0 false defects.",
+  "per_family": [
+    {
+      "family": "IF-8", "applicable": true, "fired": 2,
+      "fires": [
+        {
+          "title": "21-sub-namespace strongly-connected cycle inside MediaBrowser.Controller",
+          "severity": "High", "certainty": "HIGH", "fp_risk": "LOW", "scc_size": 21, "granularity": "C# sub-namespace",
+          "hub": "MediaBrowser.Controller.Entities (referenced by ~79 in-project files; participates in 11 of the minimal 2-cycles)",
+          "representative_verified_2cycles": [
+            "Controller.Entities ↔ Controller.Channels: Channels/Channel.cs:13 (using …Entities) ↔ Entities/BaseItem.cs:21 (using …Channels — uses IChannelManager, load-bearing)",
+            "Controller.Library ↔ Controller.Providers: Library/ILibraryManager.cs:13 ↔ Providers/ICustomMetadataProvider.cs:6",
+            "Controller.MediaEncoding ↔ Controller.Streaming: MediaEncoding/ITranscodeManager.cs:4 ↔ Streaming/ProgressiveFileStream.cs:6"
+          ],
+          "severity_rationale": "Core domain/service contracts (Library/Providers/Resolvers/Session/MediaEncoding managers around the central Entities.BaseItem aggregate) — a 21-namespace mutual-reference knot in the Core layer is a coupling hazard that impedes modular extraction/testing.",
+          "recorded_disposition": "GATED / reported, not filed. Genuine permitted-by-C# namespace cycle (verified bidirectional type-bearing `using` directives, every closing edge crossing a distinct sibling namespace — not intra-namespace recursion, not a granularity artifact)."
+        },
+        {
+          "title": "12-sub-namespace strongly-connected cycle inside MediaBrowser.Model",
+          "severity": "Medium", "certainty": "HIGH", "fp_risk": "LOW", "scc_size": 12, "granularity": "C# sub-namespace",
+          "representative_verified_2cycles": [
+            "Model.Dlna ↔ Model.Entities: Dlna/StreamBuilder.cs:8 ↔ Entities/MediaStream.cs:12 (both `using` verified by Read)",
+            "Model.Dlna ↔ Model.Session: Dlna/StreamBuilder.cs:11 ↔ Session/ClientCapabilities.cs:7",
+            "Model.Dlna ↔ Model.MediaInfo: Dlna/ConditionProcessor.cs:5 ↔ MediaInfo/LiveStreamRequest.cs:6"
+          ],
+          "severity_rationale": "MediaBrowser.Model is the pure DTO/shared-types contract assembly (no Core service logic in the cycle); intra-assembly type interconnection among DTOs/entities/Dlna profiles is an expected domain-model shape → Medium (informational, not a Core-logic hazard).",
+          "recorded_disposition": "GATED / reported, not filed."
+        }
+      ],
+      "suppressed_count": 4,
+      "suppressed": [
+        {"category": "the PROJECT-reference (assembly) graph — 24 projects / 67 <ProjectReference> edges", "predicate_false_clause": "acyclic — 0 SCCs>=2. .NET BANS circular <ProjectReference> at BUILD (like Go packages / Rust crates / Java Maven modules) → structurally a strict DAG. Independently confirmed by the main loop (Tarjan over every .csproj = 0 cycles)."},
+        {"category": "project-ROOT-namespace level", "predicate_false_clause": "also a DAG (the root namespaces  project-reference DAG)"},
+        {"category": "intra-namespace recursion / self-loops", "predicate_false_clause": "same-component — dropped at edge construction"},
+        {"category": "`using`-graph approximation caveat", "predicate_false_clause": "C# allows same-namespace refs without `using` + fully-qualified refs, so the `using`-graph is an approximation — every fire grounded to real `using` file:lines AND the reverse edge verified by Read (no name-keyed fire)"}
+      ],
+      "csharp_specific_note": "C#/.NET is the HYBRID datapoint. (1) PROJECT/ASSEMBLY level: a circular <ProjectReference> is a BUILD ERROR → the 24-project graph is a strict DAG, structurally enforced like Go/Rust/Maven-modules (suppressed). (2) NAMESPACE level: namespaces within/across assemblies CAN cycle — no ban, like Java packages → FIRED (21-SCC + 12-SCC). So the SAME language bans cycles at one granularity and permits-and-fires at another. C# has bool-only truthiness (like Java/Kotlin). The agent explicitly contrasted this with caddy's Run-20 suppressed component-SCC: there, collapsing too coarsely manufactured a spurious SCC; here the sub-namespaces are genuinely distinct file-sets with verified mutual type-bearing `using` directives in both directions. Double-verified (agent + main-loop, both levels).",
+      "naive_overfire_estimate": 7
+    },
+    {
+      "family": "IF-3a", "applicable": true, "fired": 1,
+      "fires": [{
+        "title": "BaseItem static service-locator: 13 mutable `public static` service slots shared cross-component (no compile-time contract)",
+        "severity": "High", "certainty": "HIGH", "fp_risk": "LOW",
+        "shared_resource": "BaseItem.LibraryManager + 12 sibling mutable public static service slots (Logger, ConfigurationManager, ProviderManager, LocalizationManager, ItemRepository, ItemCountService, ChapterManager, FileSystem, UserDataManager, ChannelManager, MediaSourceManager, MediaSegmentManager) in MediaBrowser.Controller.Entities; plus parallel slots on CollectionFolder/Folder",
+        "coupling": "a static service-locator: the slots are set once at server bootstrap (a different component) and read by entity operations across components, with NO compile-time contract — a mis-ordered or missing write produces a NullReferenceException across many entity operations.",
+        "recorded_disposition": "GATED / reported, not filed (High — the resource is the domain Core). A known jellyfin legacy static-service-locator pattern on the BaseItem aggregate."
+      }],
+      "suppressed_count": 7,
+      "suppressed": [{"category": "DI-injected services (constructor-injected via interfaces)", "predicate_false_clause": "reached through a typed interface — Jellyfin uses DI heavily; the injected interface IS the explicit interface (mediated, not silent)"}, {"category": "static readonly immutable constants/caches", "predicate_false_clause": "not mutable shared state"}],
+      "csharp_specific_note": "C# permits `public static` mutable fields (which Go/Rust ban structurally). Jellyfin uses DI heavily (constructor-injected services via interfaces → the typed-interface clause suppresses ~all candidates), but the legacy BaseItem static service-locator (13 mutable public static slots set at bootstrap, read cross-component, no compile-time contract) is the genuine exception → 1 High fire. 0 false defects.",
+      "naive_overfire_estimate": 9
+    },
+    {"family": "IF-6", "applicable": true, "fired": 0, "fires": [], "suppressed_count": 4,
+     "suppressed": [{"category": "enum / static readonly collections bucketed by canonical name across projects; same-named candidates are coincidental per-project Status/Type/Kind homonyms", "predicate_false_clause": "zero-overlap homonym / no entailment / same-component"}],
+     "csharp_specific_note": "C# value-sets = enum, static readonly arrays, const groups. No cross-project canonical name carried a conflicting membership with behavioral entailment → 0 fires / 4 named suppressions.", "naive_overfire_estimate": 45},
+    {"family": "IF-10", "applicable": true, "fired": 0, "fires": [], "suppressed_count": 4,
+     "suppressed": [{"category": "484 const/static-readonly near-candidates", "predicate_false_clause": "C# bans non-bool truthiness (a non-bool const can NEVER be a whole if-test); no `const bool FLAG=lit` used as a whole if-test as dead; config is IConfiguration/options-injected"}],
+     "csharp_specific_note": "C# bool-only truthiness (like Java) means the 484 string/int/enum const near-candidates can never be whole if-tests — only a `const bool` could, and none gates a dead branch (config is injected). The largest naive-overfire of the batch (484), all suppressed by the no-truthiness + injected-config rules → 0 fires / 4 named suppressions.", "naive_overfire_estimate": 484},
+    {"family": "IF-7c", "applicable": true, "fired": 0, "fires": [], "suppressed_count": 4,
+     "suppressed": [{"category": "empty/typed catch blocks", "predicate_false_clause": "catches-and-logs (non-empty) / `catch { throw; }` re-raises / `catch when (filter)` / private / not-cross-consumed"}],
+     "csharp_specific_note": "C# error model = exceptions. Jellyfin catches-and-logs (non-empty → suppress) or rethrows; no bare empty cross-consumed catch → 0 fires / 4 named suppressions.", "naive_overfire_estimate": 4}
+  ],
+  "key_csharp_findings": [
+    "IF-8 / the HYBRID: .NET bans cross-PROJECT cycles at build (24-project DAG, like Go/Rust) but PERMITS cross-NAMESPACE cycles (like Java) → IF-8 silent at the project level, FIRED at the namespace level (21-SCC High in Controller around BaseItem, 12-SCC Medium in Model). The same language at two granularities spans both ends of the spectrum — the richest single IF-8 datapoint. Double-verified at both levels.",
+    "IF-3a / static service-locator: the legacy BaseItem 13 mutable public static service slots are a genuine High cross-component coupling (no compile-time contract); DI-injected services are correctly suppressed (typed interface).",
+    "IF-10 / no truthiness → 484 naive-overfires, all suppressed: C# (like Java) forbids non-bool truthiness, so const value tables can never gate an if; the largest naive-overfire of the batch resolves to 0 fires."
+  ],
+  "honest_assessment": "The TENTH stack and first C# datapoint, and the corpus's richest single IF-8 result: C# is the HYBRID — the SAME language bans cross-project cycles at build (a strict 24-project DAG, like Go/Rust/Maven-modules) yet permits cross-namespace cycles (like Java packages), and DeepInit's IF-8 correctly suppresses the former (DAG) and fires the latter (a 21-SCC in the Core Controller layer + a 12-SCC in the Model DTO layer), each verified bidirectionally and double-computed by the main loop. The legacy BaseItem static service-locator is a genuine High IF-3a coupling, while DI-injected services suppress cleanly. IF-10's 484 const near-candidates all suppress on C#'s no-truthiness rule. 3 genuine GATED fires + 0 false defects + 19 named suppressions.",
+  "totals": {
+    "families": 5, "genuine_fires": 3,
+    "genuine_fire_disposition": "GATED (IF-8 21-ns Controller High + 12-ns Model Medium; IF-3a BaseItem static service-locator High) — reported, not filed",
+    "named_suppressions": 19, "per_family_suppressed": "IF-8 4 / IF-3a 7 / IF-6 4 / IF-10 4 / IF-7c 4",
+    "false_defects": 0,
+    "counts_note": "IF-8 double-verified at BOTH levels (project DAG + namespace SCCs) by agent + main loop. The two namespace SCCs are reported as 2 fires (distinct projects)."
+  }
+}

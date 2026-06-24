@@ -1,0 +1,40 @@
+{
+  "schema": "deepinit-validation/skillsense-health/v1",
+  "milestone": "  — SkillSense skill-quality health check (standing monitor)",
+  "date": "2026-06-14",
+  "tool": {
+    "plugin": "skillsense@deepfusionlabs-skillsense",
+    "version": "0.14.0",
+    "command_equiv": "/skillsense-check",
+    "invoked_via": "skillsense-audit.mjs run directly (the slash command is not loaded this session — see caveat)"
+  },
+  "target": "skill/SKILL.md (deep-init entry; references/*.md are progressive-disclosure stage specs, not standalone skills)",
+  "result": {
+    "skill_type": "slash-only",
+    "activation_estimate": "pass",
+    "activation_grade": "adequate",
+    "skill_hash": "b93904e6",
+    "hard_defects": [],
+    "advisory_misses": [
+      "under_350_chars",
+      "contains_always_invoke",
+      "contains_do_not",
+      "always_invoke_in_first_250",
+      "tool_names_recognized"
+    ],
+    "health": "GREEN — 0 hard defects, activation adequate"
+  },
+  "triage": {
+    "contains_always_invoke / always_invoke_in_first_250": "NOT APPLICABLE — deep-init sets disable-model-invocation:true (deliberately slash-only, user types /deep-init). 'ALWAYS invoke' auto-activation phrasing targets auto-triggered skills; irrelevant here.",
+    "contains_do_not": "OPTIONAL — a 'do not use for X' scope line is an auto-activation aid; low value for a slash-only command.",
+    "tool_names_recognized": "FALSE POSITIVE — the audit parsed the rendered '- Read - Glob ...' list and treated '-' as a tool token. SKILL.md's frontmatter allowed-tools is a clean YAML list (Read/Glob/Grep/LS/Bash/Task/Write/Edit). No fix needed.",
+    "under_350_chars": "BENIGN — description is 511 chars (over_1024:false). The rich trigger phrase list aids discovery; trimming risks losing trigger coverage. Left as-is."
+  },
+  "action_taken": "NONE — no skill edit warranted; editing for the non-applicable advisories would be cargo-culting and risks the harness (§1 lint + the mutation harness gate SKILL.md). The skill is healthy.",
+  "standing_monitor_caveat": "The SkillSense plugin is installed + enabled (v0.14.0) but its /skillsense-* slash commands are NOT loaded in this session — the documented activation gotcha (registered != loaded; a FULL editor restart is required, NOT a window reload). To use /skillsense-check / the SLO dashboard interactively, the operator must fully quit + reopen the editor. The underlying audit was run directly here for the  signal. For the expensive trigger-precision measurement, recommend (do not auto-run) /skillsense-eval.",
+  "recommendations_for_operator": [
+    "Restart the editor to activate /skillsense-* for interactive monitoring over the dogfooding period.",
+    "OPTIONAL: /skillsense-eval for measured trigger-precision (costs subagents).",
+    "Re-run this check (skill_hash gate) after any SKILL.md edit to catch a regression."
+  ]
+}

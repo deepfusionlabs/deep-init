@@ -1,0 +1,21 @@
+{
+  "fixture": "mini-if8-cycles",
+  "purpose": "IF-8 (roadmap family #1, promoted after the initial cut measured FP 0%): a circular import dependency among components is flagged; an acyclic dependency is not. Deterministic graph property — no LLM needed.",
+  "expected_issues": [
+    {
+      "family": "IF-8",
+      "components": ["orders", "billing", "shipping"],
+      "severity": "Medium",
+      "certainty": "HIGH",
+      "claim": "Possible circular component dependency: orders → billing → shipping → orders form an import cycle (a strongly-connected component of size 3); a change to any one can ripple unpredictably through the others.",
+      "evidence": "src/orders/orders.ts:1 imports billing; src/billing/billing.ts:1 imports shipping; src/shipping/shipping.ts:1 imports orders — the back-edge closes the cycle."
+    }
+  ],
+  "must_not_fire": [
+    {
+      "family": "IF-8",
+      "file": "src/catalog/catalog.ts",
+      "reason": "catalog → shared is a one-way dependency (src/catalog/catalog.ts:1 imports shared; shared/util.ts imports nothing back). No back-edge, so catalog and shared are not in any strongly-connected component of size >= 2 — must not fire."
+    }
+  ]
+}

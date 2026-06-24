@@ -1,0 +1,45 @@
+{
+  "schema": "deepinit-validation/precision-record/v1",
+  "program": "DeepInit in the Wild",
+  "track": "1 — precision (naive-vs-guarded FP + census-signal correctness)",
+  "recorded": "2026-06-10",
+  "test_plan_run": "",
+  "repo": {
+    "name": "evolutionary-architecture/evolutionary-architecture-by-example",
+    "scope": "Chapter-4-applying-tactical-domain-driven-design (.NET DDD, 'Fitnet')",
+    "url": "https://github.com/evolutionary-architecture/evolutionary-architecture-by-example",
+    "branch": "main",
+    "pinned_sha": "04c3f717d96f505d8355fac517c780904982d5bd",
+    "pinned_sha_date": "2026-04-23T20:34:23Z",
+    "sha_provenance": "default-branch (main) HEAD at or before the 2026-06-10 validation date, resolved via GitHub API 2026-06-11 (the validation clone was not retained; the file:line citations below are the durable anchors and are SHA-robust because they describe structural conformance to a slow-changing documented ADR).",
+    "license": "MIT",
+    "stack": ".NET / C# (Domain-Driven Design)"
+  },
+  "documented_rule": "ADR-0008 (0008-use-internal-sealed-as-default.adoc): 'When creating a new class, developers should use the internal sealed access level by default, unless there is a specific reason to allow inheritance or external access.' Lives in Chapter-4-applying-tactical-domain-driven-design/Docs/ArchitectureDecisionLog/0008-use-internal-sealed-as-default.adoc:16.",
+  "rule_hardness": "soft-or-informal",
+  "rule_location_kind": "formal-ADR",
+  "census": {
+    "class_selector": "C# named class declarations in production code under Fitnet/Src, Fitnet.Contracts/Src, Fitnet.Common (excluding *Tests*, Migrations, *.Designer.cs, GlobalUsings, obj/bin).",
+    "conformance_check": "declaration begins with the literal modifiers 'internal sealed class' (ADR-0008's prescribed default).",
+    "N": 95,
+    "conformers_k": 33,
+    "deviants_sample": [
+      "Fitnet.Contracts/Src/Fitnet.Contracts.Core/Contract.cs:10 (public sealed class Contract : Entity — domain entity, documented-exception 'external access')",
+      "Fitnet/Src/Passes/Fitnet.Passes.DataAccess/Database/PassesPersistence.cs:6 (public sealed class PassesPersistence : DbContext — EF/DI requires public)",
+      "Fitnet.Common/Fitnet.Common.Core/Entity.cs:7 (public abstract class Entity — deliberately inheritable base, documented-exception 'allow inheritance')",
+      "Fitnet/Src/Passes/Fitnet.Passes.Api/PassesModule.cs:12 (public static class PassesModule — DI registration module, static so cannot be sealed)",
+      "Fitnet.Common/Fitnet.Common.Api/ErrorHandling/ResourceNotFoundException.cs:3 (public sealed class ResourceNotFoundException : InvalidOperationException — exception type, public by design)"
+    ],
+    "signal": "DEGRADE",
+    "degrade_guard": ["soft-rule", "non-structural"],
+    "signal_is_correct": true,
+    "signal_reason": "ADR-0008 is SOFT ('developers should use internal sealed by default, unless there is a specific reason to allow inheritance or external access') — a should + an explicit open-ended exception clause, not a hard MUST. The detector spec mandates DEGRADE for any SOFT rule, so DEGRADE is correct on that ground alone. It is independently correct because the property is not a single unambiguous structural fact (static classes structurally CANNOT be sealed; the 'internal' half is overridden whenever cross-assembly/DDD access is needed) and because k=33 is not even a majority of N=95, so the CORROBORATE precondition (k>=ceil(2N/3)=64) fails. A literal-conformance reading would mislabel 62 legitimate non-conformers; DEGRADE correctly suppresses any per-site judgment."
+  },
+  "naive_vs_guarded": {
+    "naive_detector_false_positives": 62,
+    "guarded_detector_avoids_them": true,
+    "genuine_deviation_found": "none — clean repo. No hard, majority-followed, class-ranging deontic is violated. For the only structural sub-property that IS unambiguous and safety-relevant (sealing to prevent unintended inheritance), conformance is 100%: every one of the 48 non-static, non-abstract production classes is 'sealed' (verified: zero unsealed, non-abstract, non-static classes exist). The 2 unsealed classes (Entity.cs:7, ValueObject.cs:4) are abstract base classes — the exact 'specific reason to allow inheritance' the ADR carves out. The 15 public classes are all sealed and each fits a documented exception (DbContext persistence, domain entities, exceptions, MassTransit consumer, Program entry point). ADRs 0005/0011/0015 also independently confirmed conforming, not contradicted."
+  },
+  "honest_assessment": "IF-4 correctly finds 0 contradictions on this clean exemplar. I checked 4 checkable ADRs against the actual code: 0008 (internal-sealed) — every non-static/non-abstract class is sealed; deviations are all documented-exception cases, no contradiction. 0011 (static analysis) — verified ON in every Directory.Build.props (TreatWarningsAsErrors, EnforceCodeStyleInBuild, AnalysisLevel=latest), conforms. 0015 (CQS via MediatR) — command handlers present in the Contracts module, conforms. 0005 (vertical slices) — feature-named folders, zero Controllers/ technical folders, conforms. The witness question: NO hard, citable, class-ranging deontic was present. ADR-0008 — the most class-ranging rule here — is explicitly SOFT ('should ... by default, unless there is a specific reason'), which both DEGRADEs the census AND is precisely the kind of rule whose documented exception clause means IF-4 must NOT fire. This supports the project's scope-honesty claim that hard class-ranging witnesses are rare; even a 26-ADR DDD exemplar yields only soft/default-with-exception rules. Precision is strong: a naive ADR-vs-code detector reading 'internal sealed' as a literal MUST would emit 62 false positives (the 47 static/abstract classes that structurally cannot be 'internal sealed' + the 15 public-by-necessity classes), every one of which the guarded detector correctly suppresses via the SOFT-rule DEGRADE guard, the documented-exception guard, and the not-a-single-structural-fact guard.",
+  "verdict": "DEGRADE — clean repo; 62 naive false-positives avoided; 0 false defects emitted; census correctly degraded (soft rule + not-a-single-structural-fact)."
+}

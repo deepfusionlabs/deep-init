@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>DeepInit — acme-widget (synthetic e2e snapshot)</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; background: #070E1B; color: #e8eef7; }
+    h1 { color: #C4E934; }
+    .kpi { display: inline-block; margin-right: 2rem; }
+    .num { font-size: 1.6rem; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <h1>acme-widget</h1>
+  <p>Self-contained synthetic snapshot — no external resources (opens offline). §A3 fixture.</p>
+  <div class="kpi"><div class="num">1</div>Components</div>
+  <div class="kpi"><div class="num">0</div>Open issues</div>
+  <div class="kpi"><div class="num">1</div>Files cited</div>
+  <script>
+    // Inline-only, no CDN, no fetch, no network — the self-containment invariant (§A3 / S-8 / AC-7).
+    document.addEventListener("DOMContentLoaded", function () {
+      var n = document.querySelectorAll(".kpi").length;
+      console.log("DeepInit synthetic dashboard ready (" + n + " KPIs)");
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+{
+  "schema": "deepinit-validation/discovery-record/v1",
+  "program": "DeepInit in the Wild",
+  "track": "3 — recall/discovery (Shape-B: precision / silence on real off-mainstream code)",
+  "shape": "B (precision-silence — no defect; the value is the named suppressions on a clean repo)",
+  "recorded": "2026-06-11",
+  "engine_proxy": "deterministic-detector-sweep (NOT a full Detect→Emit pipeline; the deterministic IF-6/IF-7c/IF-8/IF-10 predicates applied directly to the real source — no cost ledger recorded because the sweep is not a representative full skill-run; cost stays )",
+  "analysis_scope": "src-only — the Kemal library module (src/, 33 files / 1923 code LOC / 1 component). The SAME repo@SHA is recorded WHOLE-REPO in validation/cost/kemalcr-kemal.json (89 files / 6207 all-language LOC / 4 components, incl. spec/ + examples/) — the ~3.2x LOC / 4x component difference is analysis SCOPE, not a contradiction. The whole-repo full-pipeline  cost ledger () now exists; this deterministic-detector sweep still records no cost of its own (not a representative full skill-run).",
+  "repo": {
+    "name": "kemalcr/kemal",
+    "url": "https://github.com/kemalcr/kemal",
+    "branch": "master",
+    "pinned_sha": "b73de3d8e6de97541866b6ecdc8c6ee1ef3eb747",
+    "license": "MIT",
+    "stack": "Crystal (web framework) — off-mainstream: near-zero const-fold / dead-code / cross-module tooling exists for it (the moat)",
+    "size": "33 files, 1923 code LOC (scc), 1 component (the `Kemal` library module)"
+  },
+  "result_headline": "DeepInit's deterministic detector suite raises ZERO issues on kemal — every structural near-candidate is suppressed by a NAMED guard. A clean Shape-B scope-honesty result on real Crystal (comprehension, not keyword-matching).",
+  "per_family": [
+    {
+      "family": "IF-10 (const-gated statically-dead branch)",
+      "near_candidates": [
+        "src/kemal/filter_handler.cr:68 — `if WILDCARD_PATHS.includes?(path)`",
+        "src/kemal/helpers/macros.cr:43 — `if CONTENT_FOR_BLOCKS.has_key?({{ key }})`"
+      ],
+      "fired": 0,
+      "suppression_reason": "Both conditions are RUNTIME method calls (`.includes?(path)` / `.has_key?(key)`) on a constant collection — NOT `if CONST` where the const folds to a compile-time literal boolean. The IF-10 predicate clause C4 (NAME is the whole test, foldable to a literal) is FALSE, so the detector correctly stays silent. A naive 'a constant appears in the condition → dead branch' detector would over-fire on both."
+    },
+    {
+      "family": "IF-7(c) (cross-boundary swallowed error)",
+      "near_candidates": [
+        "src/kemal/file_upload.cr:17 — `rescue ex`",
+        "src/kemal/param_parser.cr:120 — `rescue` (in `unescape_url_param`)"
+      ],
+      "fired": 0,
+      "suppression_reason": "file_upload's rescue does `cleanup; raise ex` — it RE-RAISES (not swallowed). param_parser's rescue returns the raw `value` — a DELIBERATE fallback for a malformed URL param, in a `private` method. Additionally, kemal is a SINGLE component (one library module), so the IF-7(c) moat gate (the empty handler must be consumed across a COMPONENT boundary where a caller can't see the failure) has no cross-component consumer to satisfy. Both near-candidates are suppressed (re-raise / deliberate-fallback + single-component moat). A naive `no-empty`/`rescue-without-reraise` linter would fire on param_parser."
+    },
+    {
+      "family": "IF-6 (divergent named allowed-value set)",
+      "near_candidates": [
+        "src/kemal/dsl.cr:12 — `HTTP_METHODS = %w[get post put patch delete options]` (6)",
+        "src/kemal/dsl.cr:13 — `FILTER_METHODS = %w[get post put patch delete options all]` (7, +`all`)",
+        "src/kemal/override_method_handler.cr:15 — `ALLOWED_METHODS = [\"PUT\", \"PATCH\", \"DELETE\"]` (3)"
+      ],
+      "fired": 0,
+      "suppression_reason": "The shipped IF-6 slice (§24) fires only on a set defined under the SAME name in ≥2 components with CONFLICTING membership. Here the three sets carry DIFFERENT names and serve different purposes: FILTER_METHODS is intentionally HTTP_METHODS + `all` (filters can target every method); ALLOWED_METHODS is the distinct '_method override' verb set (uppercase). Different-named sets with intentional membership differences are the fully-semantic same-logic-no-shared-name sub-case, which is DEFERRED (, no decidable join key). The detector correctly stays silent. A naive 'two method lists differ → divergence' set-diff would over-fire on HTTP_METHODS vs FILTER_METHODS."
+    },
+    {
+      "family": "IF-8 (circular dependency) + IF-3a (silent cross-component coupling)",
+      "near_candidates": ["single-component library (the `Kemal` module) — no cross-component import graph"],
+      "fired": 0,
+      "suppression_reason": "Not applicable: both families require ≥2 components. kemal is one library module, so there is no cross-component cycle or silent shared-resource coupling to detect (a correct N/A, recorded as a coverage degrade `no-cross-module-imports-IF-3a-not-applicable` / `no-import-cycle-IF-8-not-applicable`)."
+    },
+    {
+      "family": "IF-4 + class-conformance census (documented-rule contradiction)",
+      "near_candidates": ["CHANGELOG.md:509 — \"all handlers must inherit from `Kemal::Handler`\""],
+      "fired": 0,
+      "suppression_reason": "Measured in : the literal rule is followed by ZERO shipped handlers (every handler `include HTTP::Handler` instead) → the census returns STALE (a neutral rule-health flag for a human), not 12 auto-judgments. See validation/results/kemalcr-kemal.json."
+    }
+  ],
+  "naive_vs_guarded_illustrative": {
+    "note": "Illustrative (looser than the Run-16 class-census — these are detector-pattern near-misses, not a rigorously enumerated class). A naive structural detector keying on surface patterns would over-fire on ~4 sites (2 IF-10 runtime-calls + 1 IF-7c deliberate-fallback + 1 IF-6 different-named set-diff); the guarded suite raises 0, each suppression named.",
+    "naive_overfires_approx": 4,
+    "guarded_fires": 0,
+    "false_defects": 0
+  },
+  "honest_assessment": "kemal is a mature, clean single-component framework, so 0 raised issues is the correct precision outcome — there is nothing to recall here (this is a Shape-B scope-honesty datapoint, NOT a recall measurement). The value is twofold: (1) it exercises DeepInit's deterministic detector suite end-to-end on real CRYSTAL source — an off-mainstream language with near-zero const-fold/dead-code tooling (the moat) — and the suite runs cleanly, suppressing every near-candidate by a NAMED structural guard rather than over-firing; (2) it corroborates the 'reasons about your code, not just patterns' claim on real code (re-raise vs swallow, runtime-call vs const-fold, different-named-by-design vs same-name-divergent). No cost ledger is recorded because a direct detector sweep is not a representative full Detect→Emit skill-run; the  cost  needs a real full-pipeline run with measured telemetry."
+}

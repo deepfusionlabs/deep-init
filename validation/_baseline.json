@@ -1,0 +1,48 @@
+{
+  "schema": "deepinit-validation/frozen-baseline/v1",
+  "purpose": "WRITE-ONCE immutable reference snapshot ( ). The engine IS a version-pinned model; every future re-measurement compares against THIS original to catch slow model-version drift. DO NOT EDIT when numbers change — that defeats the purpose. To intentionally re-baseline (e.g. a deliberate model upgrade), archive this file with its date and write a NEW one, noting why.",
+  "frozen_date": "2026-06-13",
+  "model_runtime_tier": "claude-opus-4-8[1m]",
+  "model_family": "opus-4.x",
+  "headline_figures": {
+    "own_fixture_recall": "9/9",
+    "own_fixture_fp": 0,
+    "external_oracle_recall_n": 14,
+    "external_oracle_recall_d": 22,
+    "external_oracle_metamorphic_fp": 0,
+    "external_oracle_wilson95_lb": 0.4295,
+    "mirror_heldout_coverage_n": 71,
+    "mirror_heldout_coverage_d": 88,
+    "mirror_heldout_coverage_pct": 0.8068,
+    "mirror_heldout_faithfulness_n": 72,
+    "mirror_heldout_faithfulness_d": 75,
+    "mirror_heldout_deepinit_wrong_high": 0,
+    "precision_naive_fp_avoided": 90,
+    "precision_false_defects": 0,
+    "harness_checks": 162
+  },
+  "invariants_that_must_never_regress": {
+    "external_oracle_metamorphic_fp": "== 0 (the one hard FP gate)",
+    "mirror_heldout_deepinit_wrong_high": "== 0 (the one hard Mirror gate)",
+    "precision_false_defects": "== 0",
+    "own_fixture_fp": "== 0"
+  },
+  "drift_note": "A drop in recall/coverage or a rise in any *_fp / *_wrong_high vs these figures, on the SAME model tier, is a regression to investigate. A change of model tier invalidates the comparison — re-baseline deliberately.",
+  "coverage_floors": {
+    "_comment": "§C10 coverage non-regression floors. The gate (harness §88) checks the LIVE held-out scorecard's pooled + per-kind coverage >= floor - tolerance, on the SAME model tier — the 'a spec edit silently lowered coverage' detector. Frozen from the 2026-06-19 held-out scorecard (8 repos pooled); each FLOOR is that figure's Wilson95 lower bound (the statistically-honest minimum, robust to small-n run-to-run variance). Reported = the absolute %; GATED = a drop below floor - tolerance. Re-freeze DELIBERATELY (higher) when the curator lifts a weak kind (the key-invariant 22%->83% ratchet) — NEVER lower a floor to turn a red gate green.",
+    "model_family": "opus-4.x",
+    "frozen_date": "2026-06-19",
+    "tolerance": 0.05,
+    "pooled_held_out": { "pct": 0.6562, "floor": 0.5866, "n": 126, "d": 192, "runs": 8 },
+    "by_kind": {
+      "component-exists": 0.6804,
+      "component-role": 0.7003,
+      "dependency-edge": 0.4805,
+      "boundary-rule": 0.1793,
+      "key-invariant": 0.1525,
+      "entry-point": 0.5291,
+      "technology-choice": 0.5185,
+      "data-store": 0.3006
+    }
+  }
+}

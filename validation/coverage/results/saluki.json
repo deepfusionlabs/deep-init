@@ -1,0 +1,548 @@
+{
+  "schema": "deepinit-validation/coverage-record/v1",
+  "program": "The Mirror Test",
+  "milestone": "/ (blind engine pass + scored, §34-gated) — contamination-resistant held-out repo",
+  "test_plan_run": "",
+  "scored_date": "2026-06-14",
+  "repo": {
+    "name": "DataDog/saluki",
+    "url": "https://github.com/DataDog/saluki",
+    "pinned_sha": "e5fbc5a24d37b4dd5a659ab6771d8b33d58e5c97",
+    "license": "Apache-2.0",
+    "stack": "Rust (Datadog Agent Data Plane; 21-crate Cargo workspace under lib/)",
+    "contamination": "obscure"
+  },
+  "run": {
+    "run_kind": "coverage_validation",
+    "engine_proxy": "blind-workflow (curator≠blind≠scorer), doc-removed tree, Graphify structural path",
+    "model": "claude-opus-4-8",
+    "date": "2026-06-14"
+  },
+  "identity": {
+    "languages": [
+      "Rust"
+    ],
+    "components": null
+  },
+  "reference_doc": {
+    "kind": "ARCHITECTURE.md",
+    "source_url": "docs/reference/architecture/index.md",
+    "doc_sha_or_rev": "e5fbc5a24d37b4dd5a659ab6771d8b33d58e5c97",
+    "currency_score": 1,
+    "currency_bar": 0.85
+  },
+  "reference_key": {
+    "key_path": "validation/coverage/_reference_keys/saluki.json",
+    "key_sha256": "a8b29dfe57733b7ad73cf6d2da2dcb23da143ec3624ee0ce7c4a3d05edb912f1",
+    "held_out": true,
+    "rc_total_extracted": 15,
+    "rc_current": 15,
+    "rc_stale_dropped": 0,
+    "rc_unverifiable_dropped": 0
+  },
+  "reference_claims": [
+    {
+      "rc_id": "RC-001",
+      "kind": "key-invariant",
+      "claim": "In Saluki, users construct a topology: a collection of uniquely identified components connected in a directed, acyclic graph (DAG); there can be no cycles between components (e.g. A -> B -> A).",
+      "code_anchor": "lib/saluki-core/src/topology/graph.rs:472 (check_for_cycles) + :52 (GraphError::Cycle) + :445 (validate calls check_for_cycles)",
+      "currency": "CURRENT",
+      "currency_reason": "Graph::validate() runs check_for_cycles(), which does a DFS from each destination tracking the current stack and returns GraphError::Cycle on a back-edge; cycle-detection tests (detect_cycles, graph.rs:856) confirm enforcement. The directed-acyclic invariant is actively enforced in code."
+    },
+    {
+      "rc_id": "RC-002",
+      "kind": "key-invariant",
+      "claim": "A topology is required to have an input component and an output component (data must be able to enter and leave), so a topology needs at least two components; all components must be connected to at least one other component.",
+      "code_anchor": "lib/saluki-core/src/topology/graph.rs:520 (check_for_disconnected) + :54 (GraphError::DisconnectedComponents) + :423 (validate doc: 'All components must be connected to at least one other component')",
+      "currency": "CURRENT",
+      "currency_reason": "check_for_disconnected() collects all node IDs, removes any appearing on an edge endpoint, and errors with DisconnectedComponents if any remain. The disconnected_components test (graph.rs:897) confirms an unconnected component fails validation. This enforces that components must be wired into the graph (the structural form of the 'must have input + output' requirement)."
+    },
+    {
+      "rc_id": "RC-003",
+      "kind": "component-exists",
+      "claim": "Components are grouped into three categories: sources, transforms, and destinations.",
+      "code_anchor": "lib/saluki-core/src/components/mod.rs:17 (pub enum ComponentType { Source, Transform, Destination, ... }) + sources/mod.rs:17, transforms/mod.rs:20, destinations/mod.rs:17",
+      "currency": "CURRENT",
+      "currency_reason": "Source, Transform, and Destination all exist as first-class traits in their own modules and as variants of the ComponentType enum. (Code has grown to also include Relay/Decoder/Encoder/Forwarder, but the doc's three named categories all exist as claimed.)"
+    },
+    {
+      "rc_id": "RC-004",
+      "kind": "component-role",
+      "claim": "Sources are the group of components used to get data into a topology (the initial entrypoint where events are ingested from external systems or generated).",
+      "code_anchor": "lib/saluki-core/src/components/sources/mod.rs:12-29 (trait Source doc: 'Sources are the initial entrypoint to a topology, where events are ingested from external systems, or sometimes generated')",
+      "currency": "CURRENT",
+      "currency_reason": "The Source trait's own doc comment matches the architecture doc's role description verbatim in substance ('initial entrypoint', 'ingested from external systems, or sometimes generated')."
+    },
+    {
+      "rc_id": "RC-005",
+      "kind": "component-role",
+      "claim": "Transforms are the group of components used to process data within a topology; they sit in the 'middle' and do not generate data themselves (e.g. aggregation, enrichment, sampling, filtering).",
+      "code_anchor": "lib/saluki-core/src/components/transforms/mod.rs:14-33 (trait Transform doc: 'Transforms sit in the middle of a topology, where events can be manipulated (for example, sampled, filtered, enriched)') + graph.rs:117 (Node::Transform has both input_ty and outputs)",
+      "currency": "CURRENT",
+      "currency_reason": "The Transform trait doc states transforms 'sit in the middle of a topology' and manipulate events (sampling/filtering/enrichment), matching the doc. Structurally, Node::Transform carries both an input type and outputs (unlike Source which has no input, or Destination which has no output)."
+    },
+    {
+      "rc_id": "RC-006",
+      "kind": "component-role",
+      "claim": "Destinations are the group of components used to send data out of a topology (the final step, where events are sent to an external system or exposed for collection); they are terminal nodes.",
+      "code_anchor": "lib/saluki-core/src/components/destinations/mod.rs:12-29 (trait Destination doc: 'Destinations are the final step in a topology, where events are sent to an external system, or exposed for collection') + graph.rs:362-365 (Destinations/forwarders are terminal nodes, can't have outbound edges)",
+      "currency": "CURRENT",
+      "currency_reason": "The Destination trait doc matches the role ('final step', 'sent to an external system, or exposed for collection'). The graph's add_edge explicitly rejects outbound edges from Node::Destination ('Destinations and forwarders are terminal nodes, so they can't have outbound edges')."
+    },
+    {
+      "rc_id": "RC-007",
+      "kind": "boundary-rule",
+      "claim": "All components interact with each other over channels, which are the primary mechanism for sending data from one component to another.",
+      "code_anchor": "lib/saluki-core/src/topology/interconnect/consumer.rs:2,27,99 (tokio::sync::mpsc; inner: mpsc::Receiver<T>; mpsc::channel(channel_size)) + dispatcher.rs:6,61 (mpsc; senders: Vec<mpsc::Sender<T>>)",
+      "currency": "CURRENT",
+      "currency_reason": "The interconnect layer (Consumer/Dispatcher) is built on tokio::sync::mpsc channels: Consumer wraps an mpsc::Receiver and Dispatcher holds mpsc::Senders, with mpsc::channel(...) creating the connection. Components receive via the consumer's recv() (consumer.rs:47) and dispatch via senders. This is the channel-based interconnect the doc describes."
+    },
+    {
+      "rc_id": "RC-008",
+      "kind": "boundary-rule",
+      "claim": "Components implement specific traits to indicate their type, and these traits require describing input and/or output data types, which the topology graph uses to ensure components are connected correctly (connected components must have a compatible set of input/output data types).",
+      "code_anchor": "lib/saluki-core/src/topology/graph.rs:453 (check_event_types) + :459 (from_ty.intersects(to_ty)) + :46 (GraphError::DataTypeMismatch) + :381 get_input_type / :392 get_output_type from the typed Node",
+      "currency": "CURRENT",
+      "currency_reason": "Each Node stores typed input/output data types (built from the builder's declared input/output types in blueprint add_* calls); check_event_types() iterates edges and errors with DataTypeMismatch unless from_ty.intersects(to_ty). The datatype_disjoint_* tests (graph.rs:933+) confirm incompatible connections are rejected at validation."
+    },
+    {
+      "rc_id": "RC-009",
+      "kind": "data-store",
+      "claim": "Saluki uses a unified data model based on a single enum type, Event, representing all data types it can handle (metrics currently supported; logs and traces). Components do minimal runtime destructuring to unwrap Events and access the true event (e.g. the Metric container).",
+      "code_anchor": "lib/saluki-core/src/data_model/event/mod.rs:89-109 (pub enum Event { Metric(Metric), EventD(EventD), ServiceCheck(ServiceCheck), Log(Log), Trace(Trace), TraceStats(TraceStats) }) + :113 event_type()",
+      "currency": "CURRENT",
+      "currency_reason": "A single Event enum exists with variants Metric/EventD/ServiceCheck/Log/Trace/TraceStats, each wrapping its concrete container (Event::Metric(Metric)), confirming the 'unified data model / single enum' and the 'unwrap to access the true event' claims. (Code now also includes EventD/ServiceCheck/TraceStats beyond the three the doc names, but the claimed Metric/Log/Trace are all present.)"
+    },
+    {
+      "rc_id": "RC-010",
+      "kind": "boundary-rule",
+      "claim": "If two connected components have disjoint event types (e.g. A only emits metrics while B only accepts logs), the topology throws an error during validation.",
+      "code_anchor": "lib/saluki-core/src/topology/graph.rs:75 (DataType::intersects) + :453-470 (check_event_types returns DataTypeMismatch when !from_ty.intersects(to_ty)) + test datatype_disjoint_sets_event graph.rs:951",
+      "currency": "CURRENT",
+      "currency_reason": "DataType::intersects requires the same integral type AND an overlapping subtype; check_event_types errors with DataTypeMismatch otherwise. The datatype_disjoint_sets_event test wires an EventD source to a Metric destination and asserts validate() returns DataTypeMismatch, exactly the doc's example."
+    },
+    {
+      "rc_id": "RC-011",
+      "kind": "key-invariant",
+      "claim": "Source and transform components can emit data via a default output or named outputs; connecting to the default output uses just the component's unique identifier, while connecting to a named output uses a compound identifier (component id + output name).",
+      "code_anchor": "lib/saluki-core/src/topology/ids.rs:160-165 (pub enum OutputName { Default, Given(Cow<'static,str>) }) + graph.rs:347-354 (Source/Relay/Transform have outputs; add_edge resolves the named output) + ids.rs:368 (output id 'x.metrics' -> OutputName::Given('metrics'))",
+      "currency": "CURRENT",
+      "currency_reason": "OutputName enum has Default and Given(name) variants; graph nodes for Source/Relay/Transform carry a Vec of outputs and add_edge looks up the specific named output, while Decoder/Encoder only allow the default output. The compound-identifier parsing (component.output) is exercised in ids.rs tests and graph.rs (e.g. 'eventd_to_eventd.errors' at graph.rs:851)."
+    },
+    {
+      "rc_id": "RC-012",
+      "kind": "key-invariant",
+      "claim": "Topologies provide ordered shutdown: a signal is sent to all sources first; sources stop intake and drain, then signal completion. Transforms and destinations aren't signaled directly but rely on the implicit channel behavior (channel marked closed once drained and all senders shut down), so they complete when their receive channel closes.",
+      "code_anchor": "lib/saluki-core/src/topology/running.rs:60 shutdown_with_timeout + comment 'Trigger shutdown of sources, which will then cascade to the downstream components connected to those sources' (running.rs ~:69) + self.shutdown_coordinator.shutdown(); + consumer.rs:47 (self.inner.recv().await — completes when channel closes)",
+      "currency": "CURRENT",
+      "currency_reason": "RunningTopology::shutdown_with_timeout calls self.shutdown_coordinator.shutdown() with an in-code comment explicitly stating it triggers shutdown of sources which 'cascade to the downstream components.' Downstream components receive via the consumer's recv() on a tokio mpsc channel, which returns None (loop completes) once all senders drop and the channel drains — the implicit channel-close cascade the doc describes."
+    },
+    {
+      "rc_id": "RC-013",
+      "kind": "key-invariant",
+      "claim": "Constructing a topology is split into two phases — building and spawning — so each component can be validated as correctly configured and connected before the topology is spawned to begin accepting/processing/forwarding data.",
+      "code_anchor": "lib/saluki-core/src/topology/blueprint.rs:684 (async fn build: self.graph.validate() then build each component) returning BuiltTopology + built.rs:130 (pub(crate) async fn spawn_inner returning RunningTopology)",
+      "currency": "CURRENT",
+      "currency_reason": "TopologyBuildState::build() first calls self.graph.validate() (configured-and-connected validation) and constructs each component into a BuiltTopology; BuiltTopology::spawn_inner() then spawns the running tasks and returns a RunningTopology. The build->spawn two-phase split is exactly as the doc states."
+    },
+    {
+      "rc_id": "RC-014",
+      "kind": "technology-choice",
+      "claim": "When a topology is spawned it uses an asynchronous runtime where each component is treated as an individual task (and components can spawn their own tasks); Saluki uses Tokio as the underlying runtime, a high-performance work-stealing multi-threaded runtime.",
+      "code_anchor": "lib/saluki-core/src/topology/built.rs:112-117 (tokio::runtime::Builder::new_multi_thread().worker_threads(8).enable_all().build()) + built.rs:152 JoinSet::new() + built.rs:671 join_set.spawn_traced_named(...) + Cargo.toml:36 tokio dependency",
+      "currency": "CURRENT",
+      "currency_reason": "The default Dedicated worker pool builds a tokio multi-threaded runtime (new_multi_thread, 8 worker threads); each component is spawned as a task into a tokio JoinSet (spawn_traced_named). Tokio is a workspace dependency (Cargo.toml:36). This confirms the Tokio runtime, per-component task model, and multi-threaded work-stealing claim."
+    },
+    {
+      "rc_id": "RC-015",
+      "kind": "key-invariant",
+      "claim": "A component can send data to multiple downstream components, or receive data from multiple upstream components (fan-out and fan-in are supported).",
+      "code_anchor": "lib/saluki-core/src/topology/blueprint.rs:305-329 (connect_components supports one-to-many, many-to-one, many-to-many) + tests connect_component_one_to_many_fans_out (blueprint.rs:1047) / many_to_one_fans_in (:1066) + graph.rs:916 diamond_edge_formation test",
+      "currency": "CURRENT",
+      "currency_reason": "connect_components explicitly documents and implements many-to-one, one-to-many and many-to-many (mesh) connections, with dedicated passing tests for fan-out and fan-in, and the diamond_edge_formation graph test confirms a node receiving from multiple upstreams validates. Fan-out/fan-in are supported as claimed."
+    }
+  ],
+  "emitted_claims": [
+    {
+      "ec_id": "EC-01",
+      "kind": "entry-point",
+      "claim": "The process entry point is the `agent-data-plane` binary (ADP). Its async `main` (tokio runtime) loads a bootstrap configuration, runs `AppBootstrapper` to initialize logging/metrics/TLS/allocator telemetry, then dispatches the parsed CLI subcommand (Run/Debug/Config/Dogstatsd/Version) via `run_inner`.",
+      "code_anchor": "bin/agent-data-plane/src/main.rs:44-123"
+    },
+    {
+      "ec_id": "EC-02",
+      "kind": "key-invariant",
+      "claim": "Startup is two-phased: a static 'bootstrap' configuration (YAML on disk + environment via `PlatformSettings::get_env_var_prefix`) is loaded FIRST to initialize basic subsystems, before the actual subcommand executes; `Action::Version` short-circuits and exits before any config is required.",
+      "code_anchor": "bin/agent-data-plane/src/main.rs:56-95"
+    },
+    {
+      "ec_id": "EC-03",
+      "kind": "entry-point",
+      "claim": "The `Run` subcommand (`handle_run_command`) is the long-lived workflow: it constructs a `TopologyBlueprint` named \"primary\", wires sources/transforms/destinations into pipelines, and drives them under the bootstrap `Supervisor`. Other subcommands drop the supervisor on entry.",
+      "code_anchor": "bin/agent-data-plane/src/cli/run.rs:67-362"
+    },
+    {
+      "ec_id": "EC-04",
+      "kind": "component-role",
+      "claim": "`saluki-core` is the foundational engine crate: it defines the component model (ComponentType: Source/Relay/Decoder/Transform/Encoder/Forwarder/Destination), the topology subsystem (blueprint -> built -> running), the data model (events/payloads), the async runtime/Supervisor, object pooling, and health.",
+      "code_anchor": "lib/saluki-core/src/lib.rs:12-19"
+    },
+    {
+      "ec_id": "EC-05",
+      "kind": "component-role",
+      "claim": "`saluki-components` is the largest crate (124 files) and houses all concrete topology components: sources (dogstatsd, otlp, checks_ipc, heartbeat), transforms (aggregate, apm_stats, dogstatsd_mapper, host_enrichment, metric_router, trace_obfuscation, trace_sampler, etc.), destinations (prometheus, blackhole, dsd_stats, dsd_debug_log), encoders, decoders, relays, and forwarders (datadog, otlp).",
+      "code_anchor": "lib/saluki-components/src/lib.rs:1"
+    },
+    {
+      "ec_id": "EC-06",
+      "kind": "component-role",
+      "claim": "`saluki-app` provides the application bootstrap layer: `AppBootstrapper`/`bootstrap()` initialize the logging, metrics, and TLS subsystems and return a `Bootstrap` carrying a `Supervisor` plus a guard that must be held until exit to flush buffered logs.",
+      "code_anchor": "lib/saluki-app/src/bootstrap.rs:116-133"
+    },
+    {
+      "ec_id": "EC-07",
+      "kind": "component-role",
+      "claim": "`saluki-io` provides I/O primitives: networking (`net`: addr/listener/stream, client, server, dns, unix sockets), buffer management (`buf`), compression, and deserialization (`deser`). It exports `HttpsCapableConnectorBuilder` consumed by datadog-agent commons.",
+      "code_anchor": "lib/saluki-io/src/lib.rs:1"
+    },
+    {
+      "ec_id": "EC-08",
+      "kind": "component-role",
+      "claim": "`saluki-env` provides environment/workload introspection via a `EnvironmentProvider` trait abstraction with Host, Workload, and Autodiscovery sub-providers (e.g. `WorkloadProvider`, `CaptureEntityResolver`) used to enrich telemetry with host/container tags.",
+      "code_anchor": "lib/saluki-env/src/lib.rs:24-36"
+    },
+    {
+      "ec_id": "EC-09",
+      "kind": "component-role",
+      "claim": "`saluki-context` owns metric context resolution and interning: `Context`, `ContextResolver`/`ContextResolverBuilder`, `TagsResolver`, and tag-set types (frozen/owned/shared), backed by a string interner.",
+      "code_anchor": "lib/saluki-context/src/lib.rs:5-14"
+    },
+    {
+      "ec_id": "EC-10",
+      "kind": "component-role",
+      "claim": "`saluki-config` provides typed/untyped configuration loading built on the `figment` library, including a `ConfigurationLoader`, dynamic field-update watching (`FieldUpdateWatcher`), duration-string and space-separated parsing.",
+      "code_anchor": "lib/saluki-config/src/lib.rs:7-28"
+    },
+    {
+      "ec_id": "EC-11",
+      "kind": "component-role",
+      "claim": "`saluki-api` defines the HTTP/gRPC API surface (built on `axum`/`tonic`): the `APIHandler` trait (initial state + routes) and `EndpointType` distinguishing unprivileged (plain HTTP) vs privileged endpoints. Components expose API handlers (e.g. dsd_stats `api_handler`).",
+      "code_anchor": "lib/saluki-api/src/lib.rs:13-39"
+    },
+    {
+      "ec_id": "EC-12",
+      "kind": "component-role",
+      "claim": "`stringtheory` is a sharing-optimized string + interning library providing `MetaString` (owned/shared/interned/inline-tagged-union string) plus interner implementations (`FixedSizeInterner`, `GenericMapInterner`), used pervasively for low-allocation tag/name storage.",
+      "code_anchor": "lib/stringtheory/src/lib.rs:1-7"
+    },
+    {
+      "ec_id": "EC-13",
+      "kind": "component-role",
+      "claim": "`resource-accounting` provides process-level resource accounting with a four-pronged model: memory bounds (declared expected usage), allocation tracking (`TrackingAllocator`, the global allocator), memory limiting (`MemoryLimiter`), and per-component CPU tracking; it also provides the `ComponentRegistry`.",
+      "code_anchor": "lib/resource-accounting/src/lib.rs:1-14"
+    },
+    {
+      "ec_id": "EC-14",
+      "kind": "component-role",
+      "claim": "`ddsketch` is a DDSketch quantile-estimation library with two implementations: an `agent` variant (fixed compile-time config, wire-compatible with the Datadog Agent, exports `Dogsketch`) and a `canonical` variant mirroring sketches-go with runtime-configurable accuracy.",
+      "code_anchor": "lib/ddsketch/src/lib.rs:1-15"
+    },
+    {
+      "ec_id": "EC-15",
+      "kind": "component-exists",
+      "claim": "Supporting/peripheral crates exist: `saluki-error` (the shared `GenericError`/`ErrorContext` type), `saluki-common`, `saluki-metrics`, `saluki-tls`, `saluki-metadata`, `ottl` (an OTTL expression lexer/parser), `process-memory`, `prometheus-exposition`, the `datadog-agent` adapter crates (commons IPC + config + config-overlay-model), and `protos` (containerd/datadog/otlp generated protobufs).",
+      "code_anchor": "lib/saluki-error/Cargo.toml:2"
+    },
+    {
+      "ec_id": "EC-16",
+      "kind": "dependency-edge",
+      "claim": "The `agent-data-plane` binary depends on the entire saluki workspace (saluki-app, -core, -components, -config, -context, -io, -env, -api, -common, -metrics, -metadata, -error), all declared as `{ workspace = true }`.",
+      "code_anchor": "bin/agent-data-plane/Cargo.toml:39-50"
+    },
+    {
+      "ec_id": "EC-17",
+      "kind": "dependency-edge",
+      "claim": "`saluki-components` sits atop the full stack, depending on saluki-api, -common, -config, -context, -core, -env, -error, -io, -metadata, -metrics (and ddsketch). It is the integration layer where engine primitives + I/O + env are combined into concrete components.",
+      "code_anchor": "lib/saluki-components/Cargo.toml:55-64"
+    },
+    {
+      "ec_id": "EC-18",
+      "kind": "dependency-edge",
+      "claim": "`saluki-core` depends only on saluki-api, -common, -context, -error, -metrics (plus resource-accounting), keeping the engine layer below saluki-io and saluki-env. saluki-io depends on -common/-context/-core/-error/-metrics/-tls; saluki-env depends on -common/-config/-context/-core/-error/-metrics.",
+      "code_anchor": "lib/saluki-core/Cargo.toml:26-30"
+    },
+    {
+      "ec_id": "EC-19",
+      "kind": "boundary-rule",
+      "claim": "The crate dependency graph is a strict layered DAG enforced by Cargo: leaf utility crates (saluki-error, saluki-metrics, saluki-common, stringtheory, ddsketch) sit at the bottom; saluki-core in the middle; saluki-io/-env/-app/-components above; agent-data-plane at the top. No saluki crate depends back up the layers (e.g. saluki-core does not depend on saluki-io, -env, or -components).",
+      "code_anchor": "lib/saluki-config/Cargo.toml:13"
+    },
+    {
+      "ec_id": "EC-20",
+      "kind": "key-invariant",
+      "claim": "The runtime topology graph must be acyclic: `Graph::validate` runs `check_for_cycles` (a DFS tracking the current stack) and returns `GraphError::Cycle { path }` if any back-edge is found. Component pipelines therefore form a DAG, enforced at blueprint-build time, not just by the crate layering.",
+      "code_anchor": "lib/saluki-core/src/topology/graph.rs:472-511"
+    },
+    {
+      "ec_id": "EC-21",
+      "kind": "key-invariant",
+      "claim": "Memory safety/bounds: `resource-accounting` lets components declare expected memory usage (memory bounds) which are validated against a configured global limit; the `MemoryLimiter` makes cooperating tasks call `wait_for_capacity` so that once usage exceeds the threshold, intake is throttled to keep the process within externally-applied memory limits.",
+      "code_anchor": "lib/resource-accounting/src/limiter.rs:17-37"
+    },
+    {
+      "ec_id": "EC-22",
+      "kind": "key-invariant",
+      "claim": "Context-resolution interning invariant: when the string interner is full, the `allow_heap_allocations` flag (default true) decides whether the resolver falls back to heap allocation or refuses to resolve the context (returns `None`). Interner capacity (bytes) thus bounds the number of simultaneously-alive unique contexts (~5000 contexts per 1 MB).",
+      "code_anchor": "lib/saluki-context/src/resolver.rs:181-188"
+    },
+    {
+      "ec_id": "EC-23",
+      "kind": "key-invariant",
+      "claim": "The global allocator is overridden process-wide by `resource_accounting::TrackingAllocator`, wrapping jemalloc (tikv-jemallocator) on Linux and the system allocator elsewhere, so all allocations are accounted; selection is compile-time via `cfg(target_os)`/`system_allocator`.",
+      "code_anchor": "bin/agent-data-plane/src/main.rs:34-42"
+    },
+    {
+      "ec_id": "EC-24",
+      "kind": "boundary-rule",
+      "claim": "Components communicate only through the topology interconnect (typed `Consumer`/`Dispatcher` over a `FixedSizeEventBuffer`, default buffer capacity 1024, interconnect channel capacity 128). A component is wired by `connect_components`/`connect_components_in_order` against named output ports (e.g. `dsd_in.metrics`), never by direct cross-component calls.",
+      "code_anchor": "lib/saluki-core/src/topology/mod.rs:31-38"
+    },
+    {
+      "ec_id": "EC-25",
+      "kind": "key-invariant",
+      "claim": "Telemetry `EventType` is a bitmask (u8) so a component can declare the SET of event types it emits/handles (Metric, EventD, ServiceCheck, Log, Trace, TraceStats) as a combinable mask rather than a single enum value.",
+      "code_anchor": "lib/saluki-core/src/data_model/event/mod.rs:28-49"
+    },
+    {
+      "ec_id": "EC-26",
+      "kind": "entry-point",
+      "claim": "The primary data flow assembled in `Run` is the DogStatsD pipeline: a `dsd_in` DogStatsD source feeds an enrichment/mapper chain -> prefix filter -> tag filterlist -> aggregate -> post-aggregate filter -> metrics enrichment/encode -> the Datadog forwarder (`dd_out`), with parallel branches for service checks and events; trace/APM, OTLP, and checks-IPC pipelines are wired similarly.",
+      "code_anchor": "bin/agent-data-plane/src/cli/run.rs:675-694"
+    },
+    {
+      "ec_id": "EC-27",
+      "kind": "component-role",
+      "claim": "The terminal egress is the Datadog forwarder destination (`forwarders::datadog`, `DatadogConfiguration`): it forwards Datadog-specific payloads to the Datadog platform, handling additional-endpoint config, auth/identification HTTP headers, and a `TransactionForwarder` with compression size limits.",
+      "code_anchor": "lib/saluki-components/src/forwarders/datadog/mod.rs:25-30"
+    },
+    {
+      "ec_id": "EC-28",
+      "kind": "component-role",
+      "claim": "A `Source` is the topology entrypoint trait: `async fn run(self: Box<Self>, context: SourceContext)` runs indefinitely until shutdown is triggered, ingesting events from external systems (e.g. StatsD over UDS) and dispatching them downstream via the forwarder in its `SourceContext`.",
+      "code_anchor": "lib/saluki-core/src/components/sources/mod.rs:17-28"
+    },
+    {
+      "ec_id": "EC-29",
+      "kind": "technology-choice",
+      "claim": "Async runtime is Tokio (`#[tokio::main]`), with a custom `Supervisor`/dedicated-runtime layer in saluki-core for managing background workers and coordinated shutdown (`ShutdownCoordinator`/`ShutdownHandle`).",
+      "code_anchor": "lib/saluki-core/src/runtime/supervisor.rs:5-15"
+    },
+    {
+      "ec_id": "EC-30",
+      "kind": "technology-choice",
+      "claim": "The HTTP/gRPC API stack is axum + axum-extra + tonic (re-exported through saluki-api); configuration uses figment; CLI argument parsing uses argh; errors use snafu-derived enums wrapped in a shared GenericError.",
+      "code_anchor": "lib/saluki-api/src/lib.rs:1-6"
+    },
+    {
+      "ec_id": "EC-31",
+      "kind": "technology-choice",
+      "claim": "On Linux the production allocator is jemalloc via tikv-jemallocator, selected at compile time and wrapped by the accounting TrackingAllocator; non-Linux/`system_allocator` builds use std's System allocator.",
+      "code_anchor": "bin/agent-data-plane/src/main.rs:34-42"
+    },
+    {
+      "ec_id": "EC-32",
+      "kind": "boundary-rule",
+      "claim": "`#![deny(warnings)]` and `#![deny(missing_docs)]` are applied at the crate root of every library crate (saluki-core, saluki-context, saluki-io, saluki-config, saluki-env, stringtheory, etc.), so undocumented public items or any compiler warning fail the build — an enforced documentation/cleanliness boundary.",
+      "code_anchor": "lib/saluki-core/src/lib.rs:2-3"
+    }
+  ],
+  "adjudication": [
+    {
+      "rc_id": "RC-001",
+      "rc_kind": "key-invariant",
+      "bucket": "MATCH",
+      "ec_id": "EC-20",
+      "ec_kind": "key-invariant",
+      "note": "EC-20 states the runtime topology graph must be acyclic: Graph::validate runs check_for_cycles (DFS tracking stack) and returns GraphError::Cycle. Same DAG/no-cycles invariant, same code anchor (graph.rs check_for_cycles, confirmed at :472-517)."
+    },
+    {
+      "rc_id": "RC-002",
+      "rc_kind": "key-invariant",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "No EC states the disconnected-components invariant / input+output requirement ('all components must be connected to at least one other component', graph.rs:423 + check_for_disconnected :520). The blind run read graph.rs (cited for EC-20), so the referent was readable. EC-24 mentions connect_components but not this validation rule."
+    },
+    {
+      "rc_id": "RC-003",
+      "rc_kind": "component-exists",
+      "bucket": "MATCH",
+      "ec_id": "EC-04",
+      "ec_kind": "component-exists",
+      "note": "EC-04 enumerates ComponentType: Source/Relay/Decoder/Transform/Encoder/Forwarder/Destination — the three named categories (sources/transforms/destinations) all present, confirmed at components/mod.rs:17-38. component-role entails component-exists."
+    },
+    {
+      "rc_id": "RC-004",
+      "rc_kind": "component-role",
+      "bucket": "MATCH",
+      "ec_id": "EC-28",
+      "ec_kind": "component-role",
+      "note": "EC-28: 'A Source is the topology entrypoint trait ... ingesting events from external systems and dispatching downstream.' Matches RC-004 (initial entrypoint, ingested from external systems). Confirmed sources/mod.rs:12-29."
+    },
+    {
+      "rc_id": "RC-005",
+      "rc_kind": "component-role",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "No EC describes the Transform ROLE (sits in the middle, manipulates/processes events, doesn't generate). EC-05 lists transform components as a crate inventory but does not state the transform role. The Transform trait doc (transforms/mod.rs:14-33) was readable; the blind run read core component modules (EC-04/EC-28) so the referent was reachable."
+    },
+    {
+      "rc_id": "RC-006",
+      "rc_kind": "component-role",
+      "bucket": "MATCH",
+      "ec_id": "EC-27",
+      "ec_kind": "component-role",
+      "note": "EC-27 describes the terminal egress (Datadog forwarder destination) sending data out to the platform; destination = terminal node sending data out of the topology. Code confirms add_edge rejects outbound edges from Destination/Forwarder (graph.rs:362-365) and destinations/mod.rs:12-29 ('final step ... sent to an external system'). Fact captured."
+    },
+    {
+      "rc_id": "RC-007",
+      "rc_kind": "boundary-rule",
+      "bucket": "MATCH",
+      "ec_id": "EC-24",
+      "ec_kind": "boundary-rule",
+      "note": "EC-24: components communicate only through the typed Consumer/Dispatcher interconnect (never direct cross-component calls). Consumer wraps tokio mpsc::Receiver (consumer.rs:2,27), Dispatcher holds mpsc::Senders — the channel-based interconnect RC-007 describes. Same fact."
+    },
+    {
+      "rc_id": "RC-008",
+      "rc_kind": "boundary-rule",
+      "bucket": "MATCH",
+      "ec_id": "EC-25",
+      "ec_kind": "boundary-rule",
+      "note": "RC-008's core fact: components declare input/output event types (via traits) that the topology uses for correct connection. EC-25 captures the typed declaration — EventType bitmask lets a component declare the SET of event types it emits/handles (event/mod.rs:28-49). The typed-I/O-declaration referent the topology consumes is captured; code confirms get_input_type/get_output_type + check_event_types use these (graph.rs:381-470)."
+    },
+    {
+      "rc_id": "RC-009",
+      "rc_kind": "data-store",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "No EC describes the unified Event VALUE enum (Event::Metric(Metric)/EventD/ServiceCheck/Log/Trace/TraceStats, event/mod.rs:89-109) as the single unified data model that components unwrap. EC-25 covers the EventType BITMASK (the type tag), a different construct. The blind run read event/mod.rs (cited for EC-25) so the Event enum referent was readable."
+    },
+    {
+      "rc_id": "RC-010",
+      "rc_kind": "boundary-rule",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "No EC states that disjoint event types between connected components cause a validation error (DataTypeMismatch from check_event_types, graph.rs:453-470). EC-20 covers cycles only; EC-25 covers type declaration but not the connection-rejection rule. Referent (graph.rs validate / check_event_types) was read for EC-20, so readable."
+    },
+    {
+      "rc_id": "RC-011",
+      "rc_kind": "key-invariant",
+      "bucket": "MATCH",
+      "ec_id": "EC-24",
+      "ec_kind": "key-invariant",
+      "note": "EC-24 references named output ports with the compound identifier 'dsd_in.metrics' (component.output) as the wiring mechanism. RC-011's core fact — connecting to a named output uses a compound id (component id + output name) vs default by bare id — is captured. Code confirms OutputName::{Default,Given} (ids.rs:160-166) and add_edge resolving named outputs (graph.rs:347-354)."
+    },
+    {
+      "rc_id": "RC-012",
+      "rc_kind": "key-invariant",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "EC-29 names ShutdownCoordinator/ShutdownHandle but does NOT state the ordered-shutdown invariant (sources signaled first, then cascade to downstream via implicit channel-close). That distinctive fact (running.rs:60-71 comment + consumer recv() returning None on channel close) is not in any EC. The referent (running.rs / consumer.rs) was readable — consumer.rs cited for EC-24."
+    },
+    {
+      "rc_id": "RC-013",
+      "rc_kind": "key-invariant",
+      "bucket": "MATCH",
+      "ec_id": "EC-04",
+      "ec_kind": "key-invariant",
+      "note": "EC-04 describes the topology subsystem as 'blueprint -> built -> running' — the build (blueprint validate+construct) then spawn (built->running) two-phase split RC-013 describes. Code confirms blueprint.rs:684 build() calls graph.validate() then builds, and built.rs spawn_inner() returns RunningTopology."
+    },
+    {
+      "rc_id": "RC-014",
+      "rc_kind": "technology-choice",
+      "bucket": "MATCH",
+      "ec_id": "EC-29",
+      "ec_kind": "technology-choice",
+      "note": "EC-29: 'Async runtime is Tokio (#[tokio::main]), with a custom Supervisor/dedicated-runtime layer.' Confirms the Tokio runtime choice (RC-014's primary fact). Code: built.rs:113 tokio::runtime::Builder::new_multi_thread().worker_threads(8); each component spawned into a JoinSet. The per-component-task detail is partly in EC-04 ('async runtime/Supervisor'); the Tokio primary fact is captured."
+    },
+    {
+      "rc_id": "RC-015",
+      "rc_kind": "key-invariant",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "No EC states fan-out/fan-in (one-to-many / many-to-one / many-to-many) is supported. EC-24 names connect_components but does not state the multi-connection capability; EC-26 describes one concrete pipeline with 'parallel branches' but not the general invariant. blueprint.rs:305-329 (connect_components doc) was read (cited for EC-24/EC-26), so referent readable."
+    }
+  ],
+  "beyond_doc": {
+    "count": 25
+  },
+  "scores": {
+    "coverage_overall": {
+      "n": 9,
+      "d": 15,
+      "pct": 0.6,
+      "wilson95_lb": 0.3575
+    },
+    "coverage_by_kind": {
+      "key-invariant": {
+        "n": 3,
+        "d": 6,
+        "pct": 0.5
+      },
+      "component-exists": {
+        "n": 1,
+        "d": 1,
+        "pct": 1.0
+      },
+      "component-role": {
+        "n": 2,
+        "d": 3,
+        "pct": 0.6667
+      },
+      "boundary-rule": {
+        "n": 2,
+        "d": 3,
+        "pct": 0.6667
+      },
+      "data-store": {
+        "n": 0,
+        "d": 1,
+        "pct": 0.0
+      },
+      "technology-choice": {
+        "n": 1,
+        "d": 1,
+        "pct": 1.0
+      }
+    },
+    "faithfulness": {
+      "n": 7,
+      "d": 7,
+      "pct": 1.0,
+      "wilson95_lb": 0.6457
+    },
+    "beyond_doc_count": 25,
+    "deepinit_wrong_high": 0
+  },
+  "scoring_provenance": {
+    "method": " isolated-agent Mirror cycle (separation of duties): curator → blind engine (doc-blind, Graphify path) → independent scorer → adversarial refuter per deepinit_wrong.",
+    "orchestrator_caveat": "The orchestrating session launched the workflow; curator/blind/scorer/refuter were distinct agents with strict input firewalls.",
+    "graphify_path": true
+  },
+  "provenance": {
+    "doc_in_inputs": false,
+    "key_held_out": true,
+    "training_contamination_caveat": true,
+    "publishable": "indicative",
+    "publishable_value": "indicative",
+    "caveats": [
+      "INDICATIVE — small-n, fuzzy truth, below any ship-gate",
+      "attribution-adjudicated — divergences resolved to CODE, not auto-scored",
+      "doc-bounded — agreement with a good human doc, not absolute completeness",
+      "§18 (9/9, FP 0) stays the product headline",
+      "training-contamination — obscure (recent/obscure repo); the blind output is unlikely to be informed by pretraining, so the number is INDICATIVE."
+    ],
+    "tune_or_heldout": "held-out",
+    "harness_section": "§34"
+  },
+  "publishable": "indicative"
+}

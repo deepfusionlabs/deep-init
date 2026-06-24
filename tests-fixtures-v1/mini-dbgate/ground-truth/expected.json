@@ -1,0 +1,48 @@
+{
+  "_doc": "Oracle for the offline R7 DB-gate (harness §44). Pure string logic — no DB connection. Each host/query case names the expected decision; the masking cases prove no password is ever shown. The live-DB round-trip stays the environment-pending proof.",
+
+  "mask_cases": [
+    { "conn": "postgres://app:s3cr3t@localhost:5432/dev", "must_not_contain": "s3cr3t", "must_contain": "****" },
+    { "conn": "mysql://root:Hunter2@127.0.0.1:3306/shop", "must_not_contain": "Hunter2", "must_contain": "****" },
+    { "conn": "Host=localhost;Port=5432;Database=dev;Username=app;Password=topsecret", "must_not_contain": "topsecret", "must_contain": "****" },
+    { "conn": "mongodb://u:p%40ss@localhost:27017/app", "must_not_contain": "p%40ss", "must_contain": "****" }
+  ],
+
+  "host_cases": [
+    { "conn": "postgres://app:x@localhost:5432/dev", "expect": "allow", "_why": "local dev host" },
+    { "conn": "postgres://app:x@127.0.0.1:5432/myapp_dev", "expect": "allow", "_why": "loopback dev" },
+    { "conn": "postgres://app:x@db:5432/app", "expect": "allow", "_why": "docker-compose service host" },
+    { "conn": "postgres://app:x@prod-db.internal:5432/app", "expect": "refuse", "_why": "prod token" },
+    { "conn": "postgres://app:x@db.production.svc:5432/app", "expect": "refuse", "_why": "production token" },
+    { "conn": "postgres://app:x@10.0.0.5:5432/master", "expect": "refuse", "_why": "master db name" },
+    { "conn": "postgres://app:x@mydb.abc123.us-east-1.rds.amazonaws.com:5432/app", "expect": "refuse", "_why": "AWS RDS managed endpoint" },
+    { "conn": "mysql://app:x@srv.mysql.database.azure.com:3306/app", "expect": "refuse", "_why": "Azure managed endpoint" },
+    { "conn": "mongodb+srv://u:p@cluster0.ab12c.mongodb.net/app", "expect": "refuse", "_why": "MongoDB Atlas" },
+    { "conn": "postgres://app:x@project:region:instance.cloudsql/app", "expect": "refuse", "_why": "GCP Cloud SQL" }
+  ],
+
+  "query_cases": [
+    { "sql": "SELECT table_name, column_name FROM information_schema.columns WHERE table_schema='public'", "expect": true },
+    { "sql": "SELECT name FROM sqlite_master WHERE type='table'", "expect": true },
+    { "sql": "PRAGMA table_info(users)", "expect": true },
+    { "sql": "PRAGMA foreign_key_list(orders)", "expect": true },
+    { "sql": "EXPLAIN SELECT * FROM users", "expect": true },
+    { "sql": "SHOW TABLES", "expect": true },
+    { "sql": "WITH t AS (SELECT id FROM users) SELECT count(*) FROM t", "expect": true },
+    { "sql": "SELECT COUNT(*) FROM orders -- a comment with DELETE in it\n", "expect": true },
+
+    { "sql": "INSERT INTO users (name) VALUES ('x')", "expect": false },
+    { "sql": "UPDATE users SET name='x' WHERE id=1", "expect": false },
+    { "sql": "DELETE FROM users WHERE id=1", "expect": false },
+    { "sql": "DROP TABLE users", "expect": false },
+    { "sql": "ALTER TABLE users ADD COLUMN x int", "expect": false },
+    { "sql": "TRUNCATE users", "expect": false },
+    { "sql": "GRANT ALL ON users TO app", "expect": false },
+    { "sql": "SELECT * FROM users; DROP TABLE users", "expect": false, "_why": "multi-statement injection" },
+    { "sql": "SELECT * INTO archive FROM users", "expect": false, "_why": "SELECT…INTO writes a table" },
+    { "sql": "WITH x AS (DELETE FROM users RETURNING *) SELECT * FROM x", "expect": false, "_why": "CTE-wrapped DELETE" },
+    { "sql": "PRAGMA journal_mode = WAL", "expect": false, "_why": "PRAGMA setter writes config" },
+    { "sql": "VACUUM", "expect": false },
+    { "sql": "CALL do_something()", "expect": false }
+  ]
+}

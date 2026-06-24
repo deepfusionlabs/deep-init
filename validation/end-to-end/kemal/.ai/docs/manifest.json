@@ -1,0 +1,78 @@
+{
+  "schema_version": 3,
+  "deepinit_version": "2.0.0",
+  "run_id": "run-2026-06-13-kemal-e2e",
+  "generated": "2026-06-13T00:00:00Z",
+  "repo": {
+    "name": "kemalcr/kemal",
+    "pinned_sha": "b73de3d8e6de97541866b6ecdc8c6ee1ef3eb747",
+    "source_root": "validation/_clones/kemal"
+  },
+  "components": {
+    "core": {
+      "doc": ".ai/docs/components/core.md",
+      "files": ["src/kemal.cr", "src/kemal/dsl.cr", "src/kemal/config.cr", "src/kemal/cli.cr", "src/kemal/ssl.cr"],
+      "content_hash": "sha256:fafcf70b08e8c724944ec6909fa085a07fe716497d672a27e694cb303f6444e9",
+      "verified_at": "2026-06-13T00:00:00Z"
+    },
+    "handlers": {
+      "doc": ".ai/docs/components/handlers.md",
+      "files": ["src/kemal/handler.cr", "src/kemal/init_handler.cr", "src/kemal/exception_handler.cr", "src/kemal/head_request_handler.cr", "src/kemal/override_method_handler.cr", "src/kemal/path_handler.cr", "src/kemal/static_file_handler.cr", "src/kemal/filter_handler.cr", "src/kemal/file_upload.cr"],
+      "content_hash": "sha256:d6976ab275fb54d93e93ba82c834b31c4304e1b34b60d53d742737ce5efbcbaa",
+      "verified_at": "2026-06-13T00:00:00Z"
+    },
+    "router": {
+      "doc": ".ai/docs/components/router.md",
+      "files": ["src/kemal/route_handler.cr", "src/kemal/router.cr", "src/kemal/route.cr", "src/kemal/param_parser.cr"],
+      "content_hash": "sha256:598fdeb2fd132e92df01d2145a794cc8be49e8c1493b09d67aa4a27ee4fc2418",
+      "verified_at": "2026-06-13T00:00:00Z"
+    },
+    "websocket": {
+      "doc": ".ai/docs/components/websocket.md",
+      "files": ["src/kemal/websocket_handler.cr", "src/kemal/websocket.cr", "src/kemal/event_stream.cr"],
+      "content_hash": "sha256:d572f17ab7d39bc5ebefa0e772a7203727e7d35c2565d75747ddba16bb09e317",
+      "verified_at": "2026-06-13T00:00:00Z"
+    },
+    "helpers": {
+      "doc": ".ai/docs/components/helpers.md",
+      "files": ["src/kemal/helpers/helpers.cr", "src/kemal/helpers/macros.cr", "src/kemal/helpers/templates.cr", "src/kemal/helpers/exceptions.cr", "src/kemal/helpers/exception_page.cr", "src/kemal/helpers/utils.cr"],
+      "content_hash": "sha256:40f085f464b1ec035c238539859360d912dfe7f9968373e97eecb634bb3294fe",
+      "verified_at": "2026-06-13T00:00:00Z"
+    },
+    "logging": {
+      "doc": ".ai/docs/components/logging.md",
+      "files": ["src/kemal/base_log_handler.cr", "src/kemal/request_log_handler.cr", "src/kemal/log_handler.cr", "src/kemal/null_log_handler.cr"],
+      "content_hash": "sha256:958c0bae0344ee5e344950b1be6c2b51e9ddf1e5e6357d96a64f326b2c8a7290",
+      "verified_at": "2026-06-13T00:00:00Z"
+    },
+    "ext": {
+      "doc": ".ai/docs/components/ext.md",
+      "files": ["src/kemal/ext/context.cr", "src/kemal/ext/response.cr"],
+      "content_hash": "sha256:4807c0274f3c8e739ad0dbc7bda6c585f6199b66b5c21279164f325df4fa8644",
+      "verified_at": "2026-06-13T00:00:00Z"
+    }
+  },
+  "deep_docs": ["decisions.md", "issues.md"],
+  "issues": {
+    "ledger": ".ai/docs/issues.md",
+    "sarif": ".ai/deepinit.sarif",
+    "counts": {
+      "open": 0,
+      "resolved": 0,
+      "regressed": 0,
+      "suppressed": 9,
+      "by_severity": { "Critical": 0, "High": 0, "Medium": 0, "Low": 0 }
+    }
+  },
+  "dashboard": ".ai/dashboard.html",
+  "counts": {
+    "components": 7,
+    "lean_facts": 9,
+    "behavioral_facts": 12,
+    "verified_issues": 0,
+    "named_suppressions": 9,
+    "adrs": 4,
+    "knowledge_log_entries": 8
+  },
+  "lean_budget": { "root": 100 }
+}

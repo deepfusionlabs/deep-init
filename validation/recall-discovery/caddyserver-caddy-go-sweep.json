@@ -1,0 +1,289 @@
+{
+  "schema": "deepinit-validation/discovery-record/v1",
+  "program": "DeepInit in the Wild",
+  "track": "3 — recall/discovery (Shape-B precision-silence on a new stack: Go) + 1 LOW real coupling",
+  "shape": "B-with-one-LOW (precision-silence across 5 cross-module families + a single LOW IF-3a real coupling, recorded NOT filed — the value is the named-suppression precision story on a mature Go codebase)",
+  "recorded": "2026-06-12",
+  "engine_proxy": "deterministic-detector-sweep (5 read-only agents — IF-8 / IF-6 / IF-10 / IF-7c / IF-3a — applying the SHIPPED deterministic predicates (§21/§24+§28/§25+§29/§23/AF-1) directly to the real Go source; NOT a full Detect→Emit pipeline; no cost ledger recorded — cost is the Track-2 ledgers. Build chain:  (6 agents, ~318k tokens, 103 tool-uses).",
+  "repo": {
+    "name": "caddyserver/caddy",
+    "url": "https://github.com/caddyserver/caddy",
+    "branch": "master",
+    "pinned_sha": "fcba554d658b0c5fa36f715b77094bb9f02ce799",
+    "pinned_sha_note": "shallow-clone HEAD at 2026-06-12; the file:line citations are the durable anchors.",
+    "license": "Apache-2.0",
+    "stack": "Go (web server / reverse proxy) — the FIRST Go-stack datapoint in the discovery track (prior sweeps: Crystal/kemal, Python/pyccel, TypeScript/excalidraw)",
+    "size": "318 Go files, 71,557 Go code LOC (scc), M-tier; ~6 component buckets (caddyconfig, cmd, internal, modules, notify, root) over 46 real non-test packages / 195 import edges"
+  },
+  "analysis_scope": "whole-repo (all 318 Go files; IF-8 built the real 46-package / 195-edge import graph from non-test files)",
+  "result_headline": "Across five families on caddy@fcba554d (~318 Go files / ~71.5k LOC), the guarded sweep produced exactly 1 fire (a single LOW IF-3a — cmd re-assigns the root package's two exported mutable globals caddy.DefaultStorage / caddy.ConfigAutosavePath cross-component with no setter, duplicating storage.go's derivation) against 38 named suppressions (IF-8 4 / IF-6 4 / IF-10 6 / IF-7c 15 / IF-3a 9), a precision-first verdict in which every non-fire is mechanism-named as predicate-FALSE rather than missed — the expected mature-codebase outcome with honest scope at the language-enforced level.",
+  "per_family": [
+    {
+      "family": "IF-8",
+      "applicable": true,
+      "fired": 0,
+      "fires": [],
+      "suppressed_count": 4,
+      "suppressed": [
+        {
+          "file": "caddyconfig/httpcaddyfile/addresses.go",
+          "line": 31,
+          "reason": "NAMED SUPPRESSION (coarse-bucket-artifact, not a true import cycle). The component-bucket graph shows a mutual caddyconfig<->modules pair (caddyconfig/httpcaddyfile imports modules/caddyhttp here; conversely modules/caddyevents/eventsconfig/caddyfile.go:24 imports caddyconfig). But these are DISJOINT packages on each side: caddyconfig/httpcaddyfile is NOT imported back by modules/caddyhttp (verified: grep of modules/caddyhttp/*.go for caddyconfig/httpcaddyfile = empty). The IF-8 predicate requires a TRUE import cycle (a real cyclic dependency / SCC>=2 on the actual import unit), and the real Go-package SCC analysis (46 pkgs, 195 non-test edges) yields ZERO cycles. Firing on the collapsed top-level bucket would be the exact naive over-fire the predicate's 'structural import cycle (compile-time)' wording excludes."
+        },
+        {
+          "file": "modules/caddyhttp/staticresp.go",
+          "line": 34,
+          "reason": "NAMED SUPPRESSION (coarse-bucket-artifact). Half of the mutual cmd<->modules bucket pair: modules/caddyhttp imports the root cmd package here, while conversely cmd/caddy/main.go:37 (package main) imports modules/standard. Disjoint packages: cmd/caddy is a leaf 'package main' that NOTHING imports (verified: grep for caddyserver/caddy/v2/cmd/caddy = empty), so it can never be a cycle node. No package transitively imports back to its importer. Not a true import cycle; real Go-package graph is a proven DAG."
+        },
+        {
+          "file": "internal/testmocks/dummyverifier.go",
+          "line": 8,
+          "reason": "NAMED SUPPRESSION (test-helper edge + coarse-bucket-artifact). This is the ONLY internal->modules edge (internal/testmocks imports modules/caddytls) and the lone internal->root edge (dummyverifier.go:6 imports root). testmocks is a test-mock helper package; the reverse modules->internal / root->internal edges go to the real internal/* utility packages (e.g. modules/caddyhttp/autohttps.go:28, admin.go:49). Disjoint packages on each side; internal/* is a leaf utility tree imported BY many but its testmocks subpkg importing up does not close a real cycle. Real Go-package SCC = 0."
+        },
+        {
+          "file": "modules/caddyevents/eventsconfig/caddyfile.go",
+          "line": 24,
+          "reason": "NAMED SUPPRESSION (coarse-bucket-artifact, reverse direction of the dominant modules<->caddyconfig pair, 103 modules->caddyconfig vs 18 caddyconfig->modules edges). modules/*/caddyfile.go subpackages import caddyconfig (the Caddyfile-adapter surface) while caddyconfig/httpcaddyfile imports the modules/caddyhttp parent package. This is the canonical layered pattern (config adapters depend on module types; module subpackages register Caddyfile directives) — disjoint package sets, no same-package back-import. The real Go-package import graph is acyclic (Go compile-time cycle ban; caddy builds), so the predicate's true-cycle requirement is FALSE."
+        }
+      ],
+      "go_specific_note": "Go FORBIDS package import cycles at COMPILE time: the compiler rejects any cyclic import among packages, so a buildable Go module CANNOT contain a true package-level import cycle. Verified directly: I built the real Go-package import graph (import path = directory) over non-test files = 46 packages / 195 directed edges and ran Tarjan SCC -> ZERO strongly-connected components of size>=2 (proven DAG). This is the unit IF-8's 'structural import cycle (compile-time)' predicate actually targets, and it is acyclic. SEPARATELY, the coarse component-bucket graph (collapsing all packages into the 6 named top-level groups caddyconfig/cmd/internal/modules/notify/root) DOES produce a size-5 SCC {caddyconfig,cmd,internal,modules,root} with 4 mutual pairs (caddyconfig<->modules, cmd<->modules, internal<->modules, internal<->root). A NAIVE component-level detector would fire 1-4 IF-8 issues here. The precision-first / guarded predicate does NOT fire, because every mutual bucket pair is composed of DISJOINT packages on each side (e.g. caddyconfig/httpcaddyfile->modules/caddyhttp but modules/caddyhttp/encode->caddyconfig/httpcaddyfile; cmd/caddy[main]->modules/standard but modules/caddyhttp->cmd) — never a package importing a package that transitively imports it back. The bucket SCC is a pure granularity artifact of mapping a clean layered package DAG onto 6 oversized component buckets, not a real cyclic dependency. STRUCTURAL FACT RECORDED: at the language-enforced level caddy has 0 import cycles; the apparent cycle exists ONLY at the lossy component-grouping abstraction and is correctly suppressed. (Scope note: caddytest/ is a 7th top-level dir not in the 5 named components; it was classified separately and only ever appears as a source of edges (test harness), never creating a back-edge into a cycle.) Net: 0 genuine fires, 4 named suppressions — the expected mature-codebase outcome for a deterministic structural family against a language with a hard compile-time cycle ban."
+    },
+    {
+      "family": "IF-6",
+      "applicable": true,
+      "fired": 0,
+      "fires": [],
+      "suppressed_count": 4,
+      "suppressed": [
+        {
+          "file": "modules/caddyhttp/celmatcher.go",
+          "line": 833,
+          "reason": "MatcherNameCtxKey duplicated across 2 components (caddyconfig/caddyfile/dispenser.go:533 AND modules/caddyhttp/celmatcher.go:833) — the ONLY cross-component same-name collision in the tree. Suppressed on TWO independent predicate-FALSE grounds: (1) SAME-VALUE — both are the identical scalar literal \"matcher_name\", so the symmetric difference is empty; IF-6 requires a non-empty symmetric difference and must NEVER fire on agreement (it is the polarity-opposite of a clone detector). (2) NON-ENUMERABLE / not-a-set — these are single-valued scalar string consts, not named value-SETS; the IF-6 deterministic slice (§24/§28) covers []string / enum / z.enum / frozenset, and the spec explicitly leaves divergent named SCALARS to the deferred semantic layer (a scalar entails nothing). This is a deliberate shared context-key convention; firing would be a textbook FP."
+        },
+        {
+          "file": "modules/caddyhttp/server.go",
+          "line": 413,
+          "reason": "defaultProtocols=[\"h1\",\"h2\",\"h3\"] (caddyhttp) vs allowedVersions=[\"1.1\",\"2\",\"h2c\",\"3\"] (caddyhttp/reverseproxy, httptransport.go:178) vs defaultALPN=[\"h2\",\"http/1.1\"] (caddytls, connpolicy.go:1080) — three semantically-related HTTP-protocol/version sets across 3 components with DIVERGENT membership. Suppressed: DISTINCT NAMES. Canonical-name join is lower(name) underscores-stripped, NO fuzzy/stem matching (defaultprotocols != allowedversions != defaultalpn), so the name-keyed set-diff produces no group — by design. This is precisely the deferred fully-semantic IF-6 case (same concept, no shared symbol name); the deterministic slice correctly stays silent (precision-first: a false 'same concept' merge is the trust-killer)."
+        },
+        {
+          "file": "modules/caddyhttp/proxyprotocol/policy.go",
+          "line": 11,
+          "reason": "Type name 'Policy' appears in 2 components: caddyhttp/proxyprotocol/policy.go:11 (type Policy int — an iota enum) and caddypki/acmeserver/policy.go:12 (type Policy struct). Suppressed: ZERO-OVERLAP HOMONYM + NON-ENUMERABLE. The acmeserver Policy is a struct (not an enumerable value-set at all), the proxyprotocol Policy is an int enum; they share NO member and are different kinds entirely. IF-6 requires >=1 shared member and an enumerable set on both sides — neither holds. Unrelated homonyms, not a divergence."
+        },
+        {
+          "file": "modules/caddytls/values.go",
+          "line": 120,
+          "reason": "SupportedProtocols (caddytls/values.go:120) and unsupportedProtocols (values.go:127) are named map sets, but both live in the SAME component (caddytls). Suppressed: SAME-COMPONENT — IF-6 requires >=2 DISTINCT components (the moat gate); two same-area sets are local linter (no-redeclare) territory, not a cross-boundary contract divergence. (Also distinct names.) Representative of all the named map[string] sets, which each appear in exactly one component."
+        }
+      ],
+      "go_specific_note": "Exhaustive sweep of 318 Go files across the 6 components (caddyconfig/ cmd/ internal/ modules/ notify/ + root). ZERO genuine IF-6 fires. Three Go-specific structural facts: (1) Carrier forms in Go = `var NAME = []string{...}` (7 module-level named sets found, e.g. defaultProtocols, defaultALPN, safeHeaders, hopHeaders, defaultMIMETypes, defaultIndexNames, allowedVersions, defaultDirectiveOrder), typed enums (`type T string` + a const block of members — e.g. ACMEChallenge=http-01/dns-01/tls-alpn-01 in acmeserver, defined once), iota int enums (only ONE in the whole tree: Policy in proxyprotocol), and named map allowlists (`var X = map[string]...` — SupportedProtocols, SupportedCurves, networkTypes, etc.). (2) A name-collision scan (canonicalized lower(name), underscores stripped) over EVERY []string var, typed-enum type name, typed string-const enum, and iota enum found exactly ONE cross-component same-name pair — MatcherNameCtxKey — and it is a same-value scalar const (suppressed on same-value + non-enumerable). Every actual value-SET is defined in exactly one component, so the name-keyed set-diff has no >=2-component group to compare anywhere in the repo. (3) Go's typed-const-enum idiom (one type per package, members in a const block) plus single-package ownership of each module means the divergent-named-set shape is structurally rare here — the related-but-differently-named protocol/version sets (defaultProtocols / allowedVersions / defaultALPN) are exactly the deferred fully-semantic IF-6 case the deterministic slice intentionally does not reach. Precision outcome: 0 fires / 0 false alarms; a naive same-name-or-similar-concept matcher would have over-fired on the 3 protocol sets and on MatcherNameCtxKey — the guarded predicate correctly names each as predicate-FALSE."
+    },
+    {
+      "family": "IF-10",
+      "applicable": true,
+      "fired": 0,
+      "fires": [],
+      "suppressed_count": 6,
+      "suppressed": [
+        {
+          "file": "caddyconfig/httpcaddyfile/pkiapp.go",
+          "line": 202,
+          "reason": "NOT-MODULE-LEVEL + MUTABLE-BINDING: `skipInstallTrust := false` is a function-local `:=` variable, not a module-level `const`, and it is rebound to `true` at line 204 (`skipInstallTrust = true`). The shipped predicate's `const`/no-rebind requirement (Go `const` forbids rebind) is FALSE on both counts, so the `if skipInstallTrust`-style guard never anchors. A naive `if <bool-ident> {` scanner would chase this; the guarded detector stays silent."
+        },
+        {
+          "file": "caddyconfig/httpcaddyfile/pkiapp.go",
+          "line": 215,
+          "reason": "MUTABLE-BINDING / non-const local: `falseBool := false` is a local `:=` binding used as an addressable `*bool` sink (not a module-level literal const), so it is not a compile-time constant gate; predicate-FALSE by the mutable-binding clause."
+        },
+        {
+          "file": "sigtrap.go",
+          "line": 65,
+          "reason": "NON-BOOL const block: `const ( ExitCodeSuccess = iota; ... )` is an integer iota enumeration, not a `= true|false` literal. The IF-10 slice fires only on a bool-literal const used as the WHOLE test of an `if`; an int const never folds a boolean branch. Predicate-FALSE: not a compile-time literal bool."
+        },
+        {
+          "file": "modules/logging/filters.go",
+          "line": 287,
+          "reason": "NON-BOOL typed-string const block (`replaceAction filterAction = \"replace\"`, etc.) and the line 662 numeric block (`maxRegexpOperations = 50`). These are string/int consts, never bool literals — no boolean branch can be statically folded by them. Predicate-FALSE: RHS is not a true/false literal."
+        },
+        {
+          "file": "modules/caddyhttp/caddyhttp.go",
+          "line": 327,
+          "reason": "NON-BOOL const block: `DefaultHTTPPort = 80`, `DefaultHTTPSPort = 443` are int consts. No bool-literal const exists to gate an `if CONST {`; predicate-FALSE (not a compile-time literal bool)."
+        },
+        {
+          "file": "caddyconfig/caddyfile/formatter.go",
+          "line": 47,
+          "reason": "MUTABLE-BINDING (the `var (...)` block analog): `space = true`, `beginningOfLine = true` are function-local `var`-block initializers (the surrounding declaration is `var`, not `const`) that are reassigned throughout the loop (e.g. `space = false` at lines 122/170). The value changes at runtime → suppress by the mutable-binding clause; not a module-level const."
+        }
+      ],
+      "go_specific_note": "caddy@fcba554d (318 Go files / ~71.5k LOC) contains ZERO module-level boolean-literal consts. Exhaustive sweeps confirmed it: (1) no `const NAME = true|false` (single-line, any whitespace), (2) no `const NAME bool = ...`, (3) no `= true|false` inside any `const (...)` block — all 32 const blocks hold only `iota` enums, ints, durations, or typed-string consts, and (4) every `= true|false` hit in the repo is a function-local `var`/`:=`/struct-field assignment (mutable), never a package-level const. Because the shipped IF-10 slice anchors strictly on a module-level literal-CONSTANT bool used as the WHOLE test of a conditional, and that declaration form is absent, the detector has no anchor and correctly produces 0 fires. Go-specific structural facts worth recording: (a) Go's `const` keyword does forbid rebind (a true compile-time constant, so the §25/§29 const-fold semantics map cleanly onto Go), and Go consts are typed — so a Go bool const WOULD be a valid IF-10 anchor if one existed; it just doesn't here. (b) Idiomatic Go expresses build/debug toggles via `var` (mutable) or, for true compile-time dead code, via build tags / `//go:build` constraints and the `const enabled = false` build-tag pattern in separate files — none of which appear as an in-source `const NAME=false; if NAME {` form in this repo. (c) Go's compiler itself reports `if false {` dead branches only weakly and never const-folds a named bool const into an unreachable-code diagnostic, which is exactly the linter-silence gap IF-10 targets — but the gap is moot here for lack of any such const. Net: family is structurally applicable to the Go stack but yields no fires on this mature codebase; the deliverable is the named-suppression precision discipline (mutable locals and non-bool const blocks correctly NOT fired)."
+    },
+    {
+      "family": "IF-7c",
+      "applicable": true,
+      "fired": 0,
+      "fires": [],
+      "suppressed_count": 15,
+      "suppressed": [
+        {
+          "file": "modules/caddyhttp/replacer.go",
+          "line": 236,
+          "reason": "Deliberate documented ignore, NOT a bare empty swallow: `_, _ = io.Copy(buf, req.Body) // can't handle error, so just ignore it`. The error is explicitly discarded with a rationale comment on the happy-path body-buffering of a request placeholder (and again at line 251). IF-7c suppress clause: a deliberate ignore / non-empty handling (explicit `_, _ =` discard satisfying errcheck) is not a silent cross-boundary swallow."
+        },
+        {
+          "file": "modules/caddyhttp/replacer.go",
+          "line": 251,
+          "reason": "Same deliberate documented io.Copy discard as line 236 (`// can't handle error, so just ignore it`). Suppressed: documented intentional ignore, not an empty handler."
+        },
+        {
+          "file": "modules/caddypki/adminapi.go",
+          "line": 54,
+          "reason": "Deliberate documented graceful-degrade: `// We intentionally ignore the error since it's not fatal if the PKI app is not explicitly configured`; the err==nil path sets the field, the error path just skips. Also the enclosing `Provision` is a method on the UNEXPORTED type `adminAPI`, so not a cross-component-consumed exported symbol. Suppressed on both gates (deliberate ignore + private receiver)."
+        },
+        {
+          "file": "modules/caddyhttp/matchers.go",
+          "line": 646,
+          "reason": "Deliberate documented ignore: `// ignore error here because we can't handle it anyway` on `matches, _ := path.Match(...)`. Enclosing function returns bool (a match predicate), not error; the discard is explicit and rationale'd. Suppressed (deliberate ignore; non-error-returning function)."
+        },
+        {
+          "file": "modules/caddyhttp/app.go",
+          "line": 512,
+          "reason": "Linter-acknowledged deliberate ignore: `//nolint:errcheck` on `http2.ConfigureServer(srv.server, h2server)`. An explicit suppression annotation = a documented intentional drop, the polar opposite of a silent swallow. Suppressed."
+        },
+        {
+          "file": "modules/caddyhttp/app.go",
+          "line": 611,
+          "reason": "Second `//nolint:errcheck` deliberate ignore in app.go; same rationale as line 512. Suppressed (documented intentional ignore)."
+        },
+        {
+          "file": "admin.go",
+          "line": 351,
+          "reason": "`if err != nil { continue }` in an origin-collection loop (url.Parse) — a NON-EMPTY handler with deliberate skip-and-continue control flow (a malformed origin is excluded from the allowed set). IF-7c keys strictly on an empty/comment-only body; a `continue` is deliberate log-free skip, not a bare swallow. Suppressed (non-empty deliberate-skip handler)."
+        },
+        {
+          "file": "modules/caddyhttp/server.go",
+          "line": 705,
+          "reason": "`if err != nil { return false }` inside `(*Server).hasListenerAddress` — an UNEXPORTED method returning bool (a predicate). `return false` on a parse error correctly means 'no matching listener'; the function returns no error to swallow. Suppressed: not error-returning, not exported (not cross-consumed)."
+        },
+        {
+          "file": "modules/caddyhttp/server.go",
+          "line": 714,
+          "reason": "`if err != nil { continue }` in the listener-address loop of the same unexported predicate method `hasListenerAddress`. Deliberate skip of an unparseable address; non-empty handler; private function. Suppressed."
+        },
+        {
+          "file": "caddyconfig/httpcaddyfile/httptype.go",
+          "line": 1694,
+          "reason": "`if err != nil { return false }` inside the UNEXPORTED function `listenersUseAnyPortOtherThan` returning bool. `return false` on a non-numeric port is the correct predicate result; no error is returned/swallowed. Suppressed: not error-returning, not exported."
+        },
+        {
+          "file": "caddyconfig/httpcaddyfile/httptype.go",
+          "line": 1699,
+          "reason": "`if err != nil { continue }` in the same unexported bool-predicate function; deliberate skip of an unparseable address. Suppressed (non-empty handler, private function)."
+        },
+        {
+          "file": "modules/caddyhttp/fileserver/staticfiles.go",
+          "line": 340,
+          "reason": "`if err != nil { continue }` in a candidate-file loop — deliberate skip-and-try-next control flow, not a bare empty swallow. Non-empty handler. Suppressed (deliberate skip)."
+        },
+        {
+          "file": "modules/caddyhttp/fileserver/browse.go",
+          "line": 344,
+          "reason": "`if err != nil { return false }` inside `(*FileServer).isSymlinkTargetDir` — an UNEXPORTED method returning bool. `return false` on an fs.Stat error correctly means 'target is not a known directory'; no error return is swallowed. Suppressed: not error-returning, not exported."
+        },
+        {
+          "file": "caddytest/caddytest.go",
+          "line": 234,
+          "reason": "`if err != nil { return nil }` (and lines 239, 244) inside the `fetchConfig` closure of a TEST-HELPER package (`caddytest/`, not one of the 6 product components). The closure returns `any` for a poll/retry loop (caller retries 10x), so `return nil` is part of a deliberate retry design, not an error swallow. Suppressed: test infrastructure + local closure + non-error return type."
+        },
+        {
+          "file": "duration_fuzz.go",
+          "line": 21,
+          "reason": "`if err != nil { return 0 }` is a FUZZ-HARNESS skip (return 0 = 'uninteresting input') — by design the fuzzer feeds malformed input. Test/fuzz infrastructure, not a cross-consumed product error path. Suppressed (also: listeners_fuzz.go:21, caddyconfig/caddyfile/lexer_fuzz.go:21, modules/caddyhttp/templates/frontmatter_fuzz.go:21 — identical fuzz-skip shape)."
+        }
+      ],
+      "go_specific_note": "Family is structurally applicable (Go has explicit error values + a clear exported/unexported boundary and component dirs), but produced ZERO fires across 318 Go files / 216 non-test files. Key Go-specific structural facts that anchor the precision-first silence: (1) **`errcheck` is enabled in CI** (.golangci.yml line 27, `tests: false`), so EVERY silently-dropped error return is linter-forced into either an explicit `_ =` discard, an `exclude-functions` entry (fmt.*, zap encoders), or a `//nolint:errcheck` annotation — i.e. every surviving discard is a DELIBERATE, documented ignore, which is exactly the IF-7c suppress clause. (2) The canonical Go swallow `if err != nil {}` (empty body) appears NOWHERE in the repo (0 matches, single- or multi-line). (3) The Go bool-predicate idiom produces look-alike `if err != nil { return false }` blocks that a naive detector would over-fire on; the guarded predicate correctly stays silent because the enclosing function returns bool (a predicate result), NOT error — there is no error value being swallowed (hasListenerAddress, listenersUseAnyPortOtherThan, isSymlinkTargetDir, all also unexported). (4) Loop `if err != nil { continue }` is deliberate skip-and-proceed control flow (non-empty handler), not a bare swallow. (5) All `_ = ...err` / `_, _ = io.Copy(...)` discards in product code carry an explicit rationale comment (\"can't handle the error\", \"intentionally ignore\", \"non-fatal\"). (6) Of the function-scoped exported-AND-cross-component-consumed gate: the only structural near-candidates were either unexported (lowercase receiver/func), bool-returning predicates, or in the caddytest/ test-helper and *_fuzz.go harnesses — none is a bare empty error handler inside a cross-component-consumed exported function. Result: a mature, error-propagating codebase with zero real IF-7c fires and ~15 named suppressions, consistent with the prompt's expectation."
+    },
+    {
+      "family": "IF-3a",
+      "applicable": true,
+      "fired": 1,
+      "fires": [
+        {
+          "file": "cmd/main.go",
+          "line": 376,
+          "claim": "The cmd component reaches across the boundary to directly re-assign the root caddy package's exported mutable globals caddy.ConfigAutosavePath and caddy.DefaultStorage (cmd/main.go:376-377), duplicating the origin derivation in storage.go:157,160 verbatim with no setter/interface; read back by cmd (storagefuncs.go:95,167; commandfuncs.go:228) and root caddy internally -> silent shared-state coupling: if storage.go changes how the default is derived, cmd's re-inlined copy silently diverges.",
+          "certainty": "LOW"
+        }
+      ],
+      "suppressed_count": 9,
+      "suppressed": [
+        {
+          "file": "modules.go",
+          "line": 380,
+          "reason": "EXPLICIT REGISTRY + DOCUMENTED INTERFACE. The global module registry `modules`/`modulesMu` is unexported (Go: physically unreachable from another package) and mutated only via the documented exported funcs RegisterModule (line 138), GetModule (164), GetModules (204), under an RWMutex. Every cross-component access goes through the documented registration interface -> not silent coupling. Predicate clause 'no explicit interface' is FALSE."
+        },
+        {
+          "file": "caddy.go",
+          "line": 1207,
+          "reason": "INTRA-COMPONENT + DOCUMENTED + GUARDED. currentCtx/rawCfg/rawCfgJSON/rawCfgIndex are unexported root-caddy globals, doc-commented, guarded by currentCtxMu/rawCfgMu, and read/written only within the root caddy component (caddy.go + admin.go are the same package/component) via the public Run/Load/admin API. No cross-component boundary is crossed -> 'reached across a component boundary' is FALSE."
+        },
+        {
+          "file": "caddyconfig/httpcaddyfile/directives.go",
+          "line": 103,
+          "reason": "INTRA-COMPONENT + DOCUMENTED REGISTRATION. directiveOrder (mutable slice) is mutated only within the caddyconfig/httpcaddyfile package (directives.go, options.go, httptype.go all one component) via the exported RegisterDirective/RegisterDirectiveOrder funcs and the parse-time 'order' global-option handler. Single-package scope, documented interface -> the cross-component-boundary clause is FALSE."
+        },
+        {
+          "file": "internal/filesystems/map.go",
+          "line": 13,
+          "reason": "DOCUMENTED SINGLETON + EXPLICIT INTERFACE. DefaultFileSystem is a documented default singleton; the FileSystemMap uses a sync.Map with documented Register/Unregister/Get/Default methods. Access is mediated by an explicit documented interface, not direct shared-var mutation -> suppress clause 'documented singletons / explicit registries' applies."
+        },
+        {
+          "file": "listeners.go",
+          "line": 707,
+          "reason": "EXPLICIT REGISTRY (unexported). networkTypes is an unexported map mutated only via the documented exported RegisterNetwork (line 664) under a mutex; other components register networks through that interface, never by touching the var (Go forbids it). 'no explicit interface' is FALSE."
+        },
+        {
+          "file": "caddyconfig/configadapters.go",
+          "line": 142,
+          "reason": "EXPLICIT REGISTRY (unexported). configAdapters is unexported, mutated only via the exported RegisterAdapter (line 111) and read via GetAdapter (121). Documented registration interface -> 'no explicit interface' is FALSE."
+        },
+        {
+          "file": "metrics.go",
+          "line": 37,
+          "reason": "INTRA-COMPONENT. adminMetrics/globalMetrics are unexported root-caddy globals initialized in metrics.go init() and read in admin.go/context.go/caddy.go -- all the SAME root caddy component. No component boundary is crossed; the prometheus collectors are also internally synchronized -> not cross-component coupling."
+        },
+        {
+          "file": "logging.go",
+          "line": 806,
+          "reason": "DOCUMENTED REF-COUNTED POOL (UsagePool), intra-component. `writers` (and `listenerPool` in listeners.go:736) are unexported caddy.UsagePool instances accessed via the documented LoadOrNew/Delete/References API within the root caddy component; other components never touch the var. Explicit interface present -> suppress."
+        },
+        {
+          "file": "caddytest/integration/acme_test.go",
+          "line": 172,
+          "reason": "TEST-ONLY + THIRD-PARTY VAR. smallstepacme.InsecurePortHTTP01 is mutated only inside a caddytest integration test, setting/resetting a vendored third-party package's port for the test fixture. Test scope, not a production component coupling, and the var belongs to an external dependency -> out of scope for a production silent-coupling fire."
+        }
+      ],
+      "go_specific_note": "Decisive Go-specific structural fact that collapses IF-3a's surface here: a package-level var with a lowercase (unexported) name is PHYSICALLY unreachable from any other Go package, so it cannot be 'reached across a component boundary' at all. Consequently the only way one Caddy component can silently share-mutate another's package-level state is an EXPORTED (capitalized) var assigned directly across the package boundary with no setter. Caddy's pervasive idiom -- unexported global map/slice/pool + an exported RegisterX/GetX function (RegisterModule, RegisterNetwork, RegisterAdapter, RegisterDirective, FileSystemMap.Register, UsagePool) -- means each registry AUTOMATICALLY satisfies the predicate's 'explicit documented interface' escape clause and is correctly suppressed. The compiler-enforced export boundary plus mutex/sync.Map guarding makes this a mature, low-coupling codebase: out of ~30 package-level vars surveyed across the 6 components, exactly TWO exported mutable globals (caddy.DefaultStorage, caddy.ConfigAutosavePath) are mutated cross-component (by cmd/main.go) without an interface -> the lone LOW fire (a benign single-threaded startup re-derivation whose only real hazard is the duplicated derivation expression silently diverging from storage.go's origin). Also note: the metamorphic IF-3a substrate in Go is rarer than in dynamic-language web stacks because there is no shared global ORM/DB-session singleton -- Caddy threads config via the Context and StorageConverter interface rather than a mutable global DB handle, eliminating the classic IF-3a 'shared table/session written by two components' shape entirely."
+    }
+  ],
+  "naive_vs_guarded_illustrative": {
+    "naive_overfires_approx": 35,
+    "guarded_fires": 1,
+    "false_defects": 0,
+    "note": "A naive surface detector would over-fire on ~35 near-candidates: IF-8 ~4 (the size-5 component-bucket SCC {caddyconfig,cmd,internal,modules,root} with 4 mutual pairs, all artifacts of collapsing a clean package DAG onto 6 oversized buckets); IF-6 ~4 (the 3 divergent-but-distinctly-named HTTP protocol/version sets defaultProtocols/allowedVersions/defaultALPN + the same-value MatcherNameCtxKey scalar); IF-10 ~3 (mutable function-local bool bindings skipInstallTrust/falseBool/space chased by an `if <bool-ident>` scanner); IF-7c ~15 (bool-predicate `if err!=nil{return false}` look-alikes in unexported hasListenerAddress/listenersUseAnyPortOtherThan/isSymlinkTargetDir, loop `continue` skips, fuzz harnesses, and rationale-commented/`//nolint:errcheck` discards); IF-3a ~9 (registry/intra-component/test package-level vars). The guarded predicate fired ONCE (the real LOW exported-global coupling) with 0 false defects — every suppression names its predicate-FALSE mechanism (disjoint-package bucket artifact vs real SCC=0; same-value/distinct-name/non-enumerable; mutable-binding/non-bool-const; deliberate-documented-ignore/bool-predicate/unexported/test-harness; explicit-registry/intra-component)."
+  },
+  "key_go_findings": [
+    "IF-8 / Go compile-time cycle ban: a buildable Go module CANNOT contain a true package import cycle (the compiler rejects it). Verified by building the real 46-package / 195-edge import graph and running Tarjan SCC → 0 strongly-connected components of size≥2 (proven DAG). The coarse 6-bucket component graph DOES yield a spurious size-5 SCC, which a naive component-level IF-8 detector would over-fire on — the guarded predicate correctly suppresses it (every mutual bucket pair is DISJOINT packages on each side, a pure granularity artifact, not a real cyclic dependency).",
+    "IF-3a surface collapse: Go's unexported-is-physically-unreachable rule + Caddy's pervasive `unexported var + exported RegisterX/GetX` registry idiom collapse the cross-component shared-state surface to exactly TWO exported mutable globals — the lone fire (cmd/main.go re-assigns caddy.DefaultStorage / caddy.ConfigAutosavePath cross-component with no setter; LOW, a minor coupling/code-smell, recorded NOT filed).",
+    "IF-7c suppression by CI: caddy's CI-enforced `errcheck` forces every surviving error discard into a documented `_ =` / `//nolint:errcheck` ignore that satisfies the IF-7c deliberate-ignore suppress clause; the bool-predicate `if err!=nil{return false}` idiom is recognized as no-error-to-swallow, not a swallow (15 named suppressions, 0 fires)."
+  ],
+  "honest_assessment": "This is the FIRST Go-stack datapoint in the discovery track, and it exercises five cross-module families (IF-8 import-cycle, IF-6 divergent named set, IF-10 const-gated dead branch, IF-7c swallowed error, IF-3a silent shared-state coupling) against a mature, error-propagating codebase — landing on the expected near-silent outcome of 1 LOW fire / 38 named suppressions / 0 false defects. The decisive Go-specific structural findings are real comprehension, not keyword-matching: the compile-time package import-cycle ban means a buildable module CANNOT contain a true cycle (verified by building the 46-package / 195-edge import graph and running Tarjan SCC → 0 cycles), so IF-8 correctly refuses to fire on the lossy component-bucket SCC; the unexported-name-is-physically-unreachable rule plus Caddy's pervasive `unexported var + exported RegisterX/GetX` registry idiom collapses IF-3a's surface to exactly two exported cross-component globals (the lone fire); CI-enforced `errcheck` forces every surviving discard into a documented `_ =` / `//nolint` ignore that satisfies IF-7c's suppress clause; and the bool-predicate `if err!=nil{return false}` idiom is recognized as no-error-to-swallow rather than a swallow. The suite stayed correctly silent where the shapes were predicate-FALSE — distinguishing real cyclic dependency from grouping artifact, divergent-membership sets from same-value/distinct-name/scalar cases, and compile-time const folds from mutable locals — demonstrating comprehension of Go semantics over surface pattern-matching.",
+  "totals": {
+    "families": 5,
+    "genuine_fires": 1,
+    "fires_severity": "1 LOW (IF-3a exported-global coupling)",
+    "named_suppressions": 38,
+    "false_defects": 0
+  },
+  "counts_note": "Authoritative counts are the structured suppressed[] arrays: 38 named suppressions (IF-8 4 / IF-6 4 / IF-10 6 / IF-7c 15 / IF-3a 9) + 1 LOW IF-3a fire, 0 false defects. (The synthesis agent's free-text initially said 41 by a manual miscount; reconciled to the data.)"
+}

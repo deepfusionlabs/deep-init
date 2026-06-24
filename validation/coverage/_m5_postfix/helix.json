@@ -1,0 +1,2016 @@
+{
+  "schema": "deepinit-validation/coverage-record/v1",
+  "program": "The Mirror Test",
+  "milestone": " (blind engine pass + scored, \u00a734-gated) \u2014 held-out repo",
+  "test_plan_run": "",
+  "scored_date": "2026-06-13",
+  "repo": {
+    "name": "helix-editor/helix",
+    "scope": "the Helix modal text editor (Rust, multi-crate Cargo workspace)",
+    "url": "https://github.com/helix-editor/helix",
+    "branch": "master",
+    "pinned_sha": "14eda106f0a3e6a5fc6fb5cbd96bda9774f64ae1",
+    "pinned_sha_date": "2026-06-12T15:06:53-04:00",
+    "license": "MPL-2.0",
+    "stack": "Rust (Cargo workspace; 13 production crates + xtask)"
+  },
+  "run": {
+    "run_kind": "coverage_validation",
+    "engine_proxy": "blind-workflow (planner+per-component extractors+assembler), doc-removed tree",
+    "model": "claude-opus-4-8",
+    "date": "2026-06-13"
+  },
+  "identity": {
+    "code_loc": 104463,
+    "files": 242,
+    "languages": [
+      "Rust"
+    ],
+    "components": 14
+  },
+  "reference_doc": {
+    "kind": "ARCHITECTURE.md",
+    "source_url": "docs/architecture.md",
+    "doc_sha_or_rev": "14eda106f0a3e6a5fc6fb5cbd96bda9774f64ae1",
+    "currency_score": 0.9394,
+    "currency_bar": 0.85
+  },
+  "reference_key": {
+    "key_path": "validation/coverage/_reference_keys/helix.json",
+    "key_sha256": "bd6eeba360d9e6a77c45d34d8c7acd7d168919ba8a503016b50dcd4b9ff59983",
+    "held_out": true,
+    "rc_total_extracted": 33,
+    "rc_current": 31,
+    "rc_stale_dropped": 2,
+    "rc_unverifiable_dropped": 0
+  },
+  "reference_claims": [
+    {
+      "rc_id": "RC-001",
+      "kind": "component-exists",
+      "text": "helix-core is a crate: the core editing primitives.",
+      "code_anchor": "helix-core/Cargo.toml:2",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-002",
+      "kind": "component-exists",
+      "text": "helix-view is a crate: UI abstractions / the imperative shell.",
+      "code_anchor": "helix-view/Cargo.toml:3",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-003",
+      "kind": "component-exists",
+      "text": "helix-term is a crate: the terminal UI (the main editor binary frontend).",
+      "code_anchor": "helix-term/Cargo.toml:2",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-004",
+      "kind": "component-exists",
+      "text": "helix-lsp is a crate: the Language Server Protocol client.",
+      "code_anchor": "helix-lsp/Cargo.toml:2",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-005",
+      "kind": "component-exists",
+      "text": "helix-dap is a crate: the Debug Adapter Protocol (DAP) client.",
+      "code_anchor": "helix-dap/Cargo.toml:3",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-006",
+      "kind": "component-exists",
+      "text": "helix-event is a crate: primitives for defining and handling events within the editor.",
+      "code_anchor": "helix-event/src/lib.rs:1",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-007",
+      "kind": "component-exists",
+      "text": "helix-loader is a crate: functions for building, fetching, and loading external resources.",
+      "code_anchor": "helix-loader/src/grammar.rs:91",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-008",
+      "kind": "component-exists",
+      "text": "helix-tui is a crate: TUI primitives.",
+      "code_anchor": "helix-tui/Cargo.toml:2",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-009",
+      "kind": "component-exists",
+      "text": "helix-stdx is a crate: extensions to the standard library.",
+      "code_anchor": "helix-stdx/src/lib.rs:1",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-010",
+      "kind": "component-exists",
+      "text": "helix-lsp-types is a crate: Language Server Protocol type definitions.",
+      "code_anchor": "helix-lsp-types/src/lib.rs:3",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-011",
+      "kind": "component-role",
+      "text": "helix-core contains the basic building blocks used to construct the editor (core editing primitives).",
+      "code_anchor": "helix-core/Cargo.toml:3",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-012",
+      "kind": "component-role",
+      "text": "helix-view is the imperative shell built on top of core that provides common editor logic; Document, View and Editor live here.",
+      "code_anchor": "helix-view/src/lib.rs:83",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-013",
+      "kind": "component-role",
+      "text": "helix-term is the terminal frontend.",
+      "code_anchor": "helix-term/src/application.rs:57-72",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-014",
+      "kind": "component-role",
+      "text": "helix-lsp is a Language Server Protocol client.",
+      "code_anchor": "helix-lsp/src/client.rs:228",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-015",
+      "kind": "component-role",
+      "text": "helix-dap is a Debug Adapter Protocol client.",
+      "code_anchor": "helix-dap/Cargo.toml:3",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-017",
+      "kind": "component-role",
+      "text": "helix-loader provides functions for building, fetching, and loading external resources (e.g. grammars/config).",
+      "code_anchor": "helix-loader/src/grammar.rs:91",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-018",
+      "kind": "dependency-edge",
+      "text": "helix-view depends on helix-core (the view layer builds on top of core).",
+      "code_anchor": "helix-view/Cargo.toml:20",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-019",
+      "kind": "dependency-edge",
+      "text": "helix-term depends on helix-view (the terminal frontend builds on the view layer).",
+      "code_anchor": "helix-term/Cargo.toml:47",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-020",
+      "kind": "boundary-rule",
+      "text": "The layering is core -> view -> term: helix-core does not depend on helix-view or helix-term (core is the innermost functional layer).",
+      "code_anchor": "helix-core/Cargo.toml:18-58",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-021",
+      "kind": "key-invariant",
+      "text": "Core primitives are functional: most operations do not modify data in place but return a new copy.",
+      "code_anchor": "helix-core/src/selection.rs:138",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-022",
+      "kind": "key-invariant",
+      "text": "The main data structure for representing buffers is a Rope (the ropey library, re-exported); ropes are cheap to clone, enabling snapshots of text state.",
+      "code_anchor": "helix-core/src/lib.rs:48",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-023",
+      "kind": "key-invariant",
+      "text": "A Selection is the multiple-selection primitive: it consists of Ranges, each with a moving head and an immovable anchor; a single cursor is a selection with one range whose head and anchor coincide.",
+      "code_anchor": "helix-core/src/selection.rs:417",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-024",
+      "kind": "key-invariant",
+      "text": "Ropes are modified by constructing an OT-like Transaction that represents one coherent change, can be applied to the rope, and can be inverted to produce an undo.",
+      "code_anchor": "helix-core/src/transaction.rs:571",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-025",
+      "kind": "key-invariant",
+      "text": "A Document ties together the Rope, Selection(s), Syntax, History and language server into a representation of an open file.",
+      "code_anchor": "helix-view/src/document.rs:141",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-026",
+      "kind": "key-invariant",
+      "text": "Multiple Views can display the same Document, so the document stores selections per view (document.selection() takes a ViewId).",
+      "code_anchor": "helix-view/src/document.rs:144",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-027",
+      "kind": "component-role",
+      "text": "The Editor holds the global state: all open documents, a tree of view splits, the configuration, and a registry of language servers.",
+      "code_anchor": "helix-view/src/editor.rs:1190",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-029",
+      "kind": "technology-choice",
+      "text": "Syntax highlighting and AST interaction use tree-sitter (the Syntax type is the interface to tree-sitter ASTs).",
+      "code_anchor": "helix-core/src/syntax.rs:514",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-030",
+      "kind": "technology-choice",
+      "text": "helix-tui is forked from tui-rs (inspired by Cursive).",
+      "code_anchor": "helix-tui/README.md:2",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-031",
+      "kind": "technology-choice",
+      "text": "The Rope implementation used is the ropey library (re-exported by helix-core).",
+      "code_anchor": "helix-core/src/lib.rs:48",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-032",
+      "kind": "technology-choice",
+      "text": "Core's design is heavily based on CodeMirror 6.",
+      "code_anchor": "helix-core/src/selection.rs:55-59",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-033",
+      "kind": "entry-point",
+      "text": "helix-term's main function sets up a new Application that runs the editor event loop.",
+      "code_anchor": "helix-term/src/main.rs:144",
+      "currency": "CURRENT",
+      "load_bearing": true
+    }
+  ],
+  "emitted_claims": [
+    {
+      "ec_id": "EC-001",
+      "source_region": "AGENTS.md component registry row + architecture.md overview",
+      "kind": "component-exists",
+      "text": "helix is a single Cargo workspace (resolver \"2\") of 14 library/runtime crates plus a dev-only xtask tooling member.",
+      "code_anchor": "Cargo.toml:1-2,3-18,20-22",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-002",
+      "source_region": "AGENTS.md component registry",
+      "kind": "component-role",
+      "text": "helix-term is the top-of-stack binary crate producing the `hx` executable; it owns the async event loop, the TUI compositor, the keymap/command surface, and LSP/DAP/job plumbing.",
+      "code_anchor": "helix-term/Cargo.toml:40-41; helix-term/src/main.rs:144-147",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-003",
+      "source_region": "AGENTS.md component registry",
+      "kind": "component-role",
+      "text": "helix-view is the mid-layer editor-state + UI-abstraction crate: it owns Editor, Document buffers, View windows, the Tree split-layout, and Theme.",
+      "code_anchor": "helix-view/Cargo.toml:2; helix-view/src/editor.rs:1190; helix-view/src/lib.rs:6-19",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-004",
+      "source_region": "AGENTS.md component registry",
+      "kind": "component-role",
+      "text": "helix-core is the core editing-primitives library: the Rope text model, Selection, the invertible Transaction algebra, and Syntax/Movement/Indent.",
+      "code_anchor": "helix-core/Cargo.toml:2-3; helix-core/src/lib.rs:3-35",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-005",
+      "source_region": "AGENTS.md component registry",
+      "kind": "component-role",
+      "text": "helix-tui is the terminal-UI rendering library: a double-buffered grid of styled Cells, diffed and emitted to a pluggable Backend.",
+      "code_anchor": "helix-tui/Cargo.toml:2-3; helix-tui/src/lib.rs:1-9",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-006",
+      "source_region": "AGENTS.md component registry",
+      "kind": "component-role",
+      "text": "helix-lsp is the LSP client: it spawns each language server as a child process and drives JSON-RPC 2.0 over its stdio; it exposes Client + Registry.",
+      "code_anchor": "helix-lsp/src/lib.rs:1-11; helix-lsp/src/client.rs:55-71; helix-lsp/src/lib.rs:580-587",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-007",
+      "source_region": "AGENTS.md component registry",
+      "kind": "component-role",
+      "text": "helix-lsp-types is a pure serde data-model crate for VS Code's LSP messages, one file per protocol feature, re-exported flat.",
+      "code_anchor": "helix-lsp-types/Cargo.toml:12; helix-lsp-types/src/lib.rs:1-3",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-008",
+      "source_region": "AGENTS.md component registry",
+      "kind": "component-role",
+      "text": "helix-dap is the Debug-Adapter-Protocol client: it frames DAP JSON-RPC over stdio or TCP; it exposes Client + Registry.",
+      "code_anchor": "helix-dap/src/registry.rs:9-12; helix-dap/src/client.rs:30",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-009",
+      "source_region": "AGENTS.md component registry",
+      "kind": "component-role",
+      "text": "helix-dap-types is a pure, dependency-free serde data-model crate for the Debug Adapter Protocol wire types.",
+      "code_anchor": "helix-dap-types/Cargo.toml:2-3; helix-dap-types/src/lib.rs:1-1108",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-010",
+      "source_region": "AGENTS.md component registry",
+      "kind": "component-role",
+      "text": "helix-event is a dependency-free foundation crate: a decoupled (often async) hook/event system plus redraw/status queues.",
+      "code_anchor": "helix-event/src/lib.rs:1-4,1-32",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-011",
+      "source_region": "AGENTS.md component registry",
+      "kind": "component-role",
+      "text": "helix-loader is the build/runtime bootstrapping crate: it resolves filesystem dirs, merges layered TOML configs, fetches/compiles tree-sitter grammars, and manages workspace-trust.",
+      "code_anchor": "helix-loader/Cargo.toml:2-3; helix-loader/src/lib.rs:19-173",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-012",
+      "source_region": "AGENTS.md component registry",
+      "kind": "component-role",
+      "text": "helix-vcs is the VCS integration crate: a file's committed base version, git-status, and a live debounced background line-diff for the change gutter (git via gix).",
+      "code_anchor": "helix-vcs/src/lib.rs:1-3; helix-vcs/src/diff.rs:38-44",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-013",
+      "source_region": "AGENTS.md component registry",
+      "kind": "component-role",
+      "text": "helix-stdx is the foundation standard-library-extensions leaf crate: env/cwd/which/path/range/uri/faccess/rope helpers.",
+      "code_anchor": "helix-stdx/Cargo.toml:2-3; helix-stdx/src/lib.rs:1-12",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-014",
+      "source_region": "AGENTS.md component registry",
+      "kind": "component-role",
+      "text": "helix-parsec is a zero-dependency parser-combinator library: a Parser trait plus composable combinators.",
+      "code_anchor": "helix-parsec/Cargo.toml:2-3; helix-parsec/src/lib.rs:33-37",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-015",
+      "source_region": "AGENTS.md component registry",
+      "kind": "component-role",
+      "text": "xtask is the developer-tooling/automation binary (the cargo-xtask pattern): docgen / query-check / indent-check / theme-check.",
+      "code_anchor": "xtask/src/main.rs:302-316",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-016",
+      "source_region": "AGENTS.md technical dependencies + technical-dependencies.md",
+      "kind": "dependency-edge",
+      "text": "helix-term depends on helix-view (import; Editor as the central owned state).",
+      "code_anchor": "helix-term/src/lib.rs:1-2; helix-term/src/application.rs:10-18,73",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-017",
+      "source_region": "AGENTS.md technical dependencies",
+      "kind": "dependency-edge",
+      "text": "helix-term depends on helix-core (import; Rope/Selection/Transaction/Syntax).",
+      "code_anchor": "helix-term/src/commands.rs:22-46; helix-term/src/application.rs:3",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-018",
+      "source_region": "AGENTS.md technical dependencies",
+      "kind": "dependency-edge",
+      "text": "helix-term depends on helix-lsp (import + runtime-call; routes LanguageServerMessage).",
+      "code_anchor": "helix-term/src/application.rs:4-8,657-658,762",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-019",
+      "source_region": "AGENTS.md technical dependencies",
+      "kind": "dependency-edge",
+      "text": "helix-term depends on helix-dap (import + runtime-call).",
+      "code_anchor": "helix-term/src/commands/dap.rs:9,96",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-020",
+      "source_region": "AGENTS.md technical dependencies",
+      "kind": "dependency-edge",
+      "text": "helix-term depends on helix-vcs (import; FileChange/Hunk, behind the git default feature).",
+      "code_anchor": "helix-term/src/commands.rs:13; helix-term/Cargo.toml:34,37,50",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-021",
+      "source_region": "AGENTS.md technical dependencies",
+      "kind": "dependency-edge",
+      "text": "helix-term depends on helix-loader (import + runtime-call; config/log/runtime dirs, grammar, workspace_trust).",
+      "code_anchor": "helix-term/src/main.rs:2,29-30,94,99; helix-term/src/config.rs:122-129",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-022",
+      "source_region": "AGENTS.md technical dependencies",
+      "kind": "dependency-edge",
+      "text": "helix-term depends on helix-stdx (import; Url/path/env/rope).",
+      "code_anchor": "helix-term/src/lib.rs:24; helix-term/src/application.rs:9; helix-term/src/main.rs:108,111",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-023",
+      "source_region": "AGENTS.md technical dependencies",
+      "kind": "dependency-edge",
+      "text": "helix-term depends on helix-event (import + runtime-call; events!/start_frame/request_redraw/AsyncHook/status).",
+      "code_anchor": "helix-term/src/events.rs:1; helix-term/src/application.rs:267,336,660; helix-term/src/job.rs:1-2",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-024",
+      "source_region": "AGENTS.md technical dependencies",
+      "kind": "dependency-edge",
+      "text": "helix-term depends on helix-tui (project-ref, package `tui`: Backend/Terminal/Buffer/widgets).",
+      "code_anchor": "helix-term/Cargo.toml:57; helix-term/src/application.rs:20,68; helix-term/src/compositor.rs:7",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-025",
+      "source_region": "AGENTS.md technical dependencies",
+      "kind": "dependency-edge",
+      "text": "helix-view depends on helix-core (path-dep import).",
+      "code_anchor": "helix-view/Cargo.toml:20; helix-view/src/document.rs:36-44",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-026",
+      "source_region": "AGENTS.md technical dependencies",
+      "kind": "dependency-edge",
+      "text": "helix-view depends on helix-event (path-dep; queue-event/dispatch).",
+      "code_anchor": "helix-view/Cargo.toml:21; helix-view/src/events.rs:2,7; helix-view/src/document.rs:1385",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-027",
+      "source_region": "AGENTS.md technical dependencies",
+      "kind": "dependency-edge",
+      "text": "helix-view depends on helix-loader (path-dep; runtime-call workspace-trust).",
+      "code_anchor": "helix-view/Cargo.toml:22; helix-view/src/editor.rs:18,1746",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-028",
+      "source_region": "AGENTS.md technical dependencies",
+      "kind": "dependency-edge",
+      "text": "helix-view depends on helix-lsp (path-dep; import + runtime-registry).",
+      "code_anchor": "helix-view/Cargo.toml:23; helix-view/src/editor.rs:23,1208",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-029",
+      "source_region": "AGENTS.md technical dependencies",
+      "kind": "dependency-edge",
+      "text": "helix-view depends on helix-dap (path-dep; import + runtime-registry).",
+      "code_anchor": "helix-view/Cargo.toml:24; helix-view/src/editor.rs:55,1212",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-030",
+      "source_region": "AGENTS.md technical dependencies",
+      "kind": "dependency-edge",
+      "text": "helix-view depends on helix-vcs (path-dep; diff handle/registry).",
+      "code_anchor": "helix-view/Cargo.toml:25; helix-view/src/document.rs:18; helix-view/src/editor.rs:19,1210",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-031",
+      "source_region": "AGENTS.md technical dependencies",
+      "kind": "dependency-edge",
+      "text": "helix-view depends on helix-stdx (path-dep; path/file/env primitives).",
+      "code_anchor": "helix-view/Cargo.toml:19; helix-view/src/document.rs:17,1004; helix-view/src/editor.rs:57,2497",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-032",
+      "source_region": "AGENTS.md technical dependencies + helix-view.md",
+      "kind": "dependency-edge",
+      "text": "helix-view depends on helix-tui as a dev-dependency ONLY (doctests); it is NOT a runtime edge.",
+      "code_anchor": "helix-view/Cargo.toml:65; helix-view/src/graphics.rs:537,565",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-033",
+      "source_region": "AGENTS.md technical dependencies",
+      "kind": "dependency-edge",
+      "text": "helix-core depends on helix-stdx (project-ref + import; RopeSliceExt).",
+      "code_anchor": "helix-core/Cargo.toml:19; helix-core/src/selection.rs:16",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-034",
+      "source_region": "AGENTS.md technical dependencies",
+      "kind": "dependency-edge",
+      "text": "helix-core depends on helix-loader (project-ref + import; grammar::get_language, config::default_lang_config).",
+      "code_anchor": "helix-core/Cargo.toml:20; helix-core/src/syntax.rs:17; helix-core/src/config.rs:8",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-035",
+      "source_region": "AGENTS.md technical dependencies",
+      "kind": "dependency-edge",
+      "text": "helix-core depends on helix-parsec (project-ref + import).",
+      "code_anchor": "helix-core/Cargo.toml:21; helix-core/src/snippets/parser.rs:29",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-036",
+      "source_region": "AGENTS.md technical dependencies",
+      "kind": "dependency-edge",
+      "text": "helix-tui depends on helix-view (project-ref path-dep, term feature).",
+      "code_anchor": "helix-tui/Cargo.toml:18; helix-tui/src/buffer.rs:4; helix-tui/src/terminal.rs:5-6; helix-tui/src/backend/mod.rs:7-10",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-037",
+      "source_region": "AGENTS.md technical dependencies",
+      "kind": "dependency-edge",
+      "text": "helix-tui depends on helix-core (project-ref path-dep).",
+      "code_anchor": "helix-tui/Cargo.toml:19; helix-tui/src/buffer.rs:3; helix-tui/src/text.rs:49",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-038",
+      "source_region": "AGENTS.md technical dependencies",
+      "kind": "dependency-edge",
+      "text": "helix-lsp depends on helix-lsp-types (import; path-dep, re-exported as `lsp`).",
+      "code_anchor": "helix-lsp/Cargo.toml:19; helix-lsp/src/lib.rs:10",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-039",
+      "source_region": "AGENTS.md technical dependencies",
+      "kind": "dependency-edge",
+      "text": "helix-lsp depends on helix-core (import; Rope/ChangeSet/Transaction/diagnostic/diff).",
+      "code_anchor": "helix-lsp/Cargo.toml:17; helix-lsp/src/lib.rs:16-18,35,584; helix-lsp/src/client.rs:14-18",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-040",
+      "source_region": "AGENTS.md technical dependencies",
+      "kind": "dependency-edge",
+      "text": "helix-lsp depends on helix-loader (import; find_workspace, VERSION_AND_GIT_HASH).",
+      "code_anchor": "helix-lsp/Cargo.toml:18; helix-lsp/src/lib.rs:904; helix-lsp/src/client.rs:19,766",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-041",
+      "source_region": "AGENTS.md technical dependencies",
+      "kind": "dependency-edge",
+      "text": "helix-lsp depends on helix-stdx (import; path::normalize, env::which/cwd).",
+      "code_anchor": "helix-lsp/Cargo.toml:16; helix-lsp/src/lib.rs:19,52,995; helix-lsp/src/client.rs:20,226",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-042",
+      "source_region": "AGENTS.md technical dependencies",
+      "kind": "dependency-edge",
+      "text": "helix-lsp-types depends on helix-stdx (import + project-ref; `pub use helix_stdx::Url`) and on no other helix crate.",
+      "code_anchor": "helix-lsp-types/Cargo.toml:27; helix-lsp-types/src/lib.rs:24",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-043",
+      "source_region": "AGENTS.md technical dependencies",
+      "kind": "dependency-edge",
+      "text": "helix-dap depends on helix-dap-types (import; path-dep, wholesale re-export).",
+      "code_anchor": "helix-dap/Cargo.toml:18; helix-dap/src/lib.rs:6; helix-dap/src/client.rs:254",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-044",
+      "source_region": "AGENTS.md technical dependencies",
+      "kind": "dependency-edge",
+      "text": "helix-dap depends on helix-core (import; DebugAdapterConfig/DebuggerQuirks from helix_core::syntax::config).",
+      "code_anchor": "helix-dap/Cargo.toml:17; helix-dap/src/client.rs:7; helix-dap/src/registry.rs:4",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-045",
+      "source_region": "AGENTS.md technical dependencies",
+      "kind": "dependency-edge",
+      "text": "helix-dap depends on helix-stdx (import; env::which + ExecutableNotFoundError).",
+      "code_anchor": "helix-dap/Cargo.toml:16; helix-dap/src/client.rs:120; helix-dap/src/lib.rs:26",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-046",
+      "source_region": "AGENTS.md technical dependencies",
+      "kind": "dependency-edge",
+      "text": "helix-loader depends on helix-stdx (project-ref + import + runtime-call env::which(\"git\")); it is the only intra-workspace dependency.",
+      "code_anchor": "helix-loader/Cargo.toml:18; helix-loader/src/lib.rs:5; helix-loader/src/grammar.rs:87",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-047",
+      "source_region": "AGENTS.md technical dependencies",
+      "kind": "dependency-edge",
+      "text": "helix-vcs depends on helix-core (project-ref + import).",
+      "code_anchor": "helix-vcs/Cargo.toml:13; helix-vcs/src/diff/worker.rs:3; helix-vcs/src/diff.rs:4",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-048",
+      "source_region": "AGENTS.md technical dependencies",
+      "kind": "dependency-edge",
+      "text": "helix-vcs depends on helix-event (project-ref + runtime-call).",
+      "code_anchor": "helix-vcs/Cargo.toml:14; helix-vcs/src/diff.rs:86; helix-vcs/src/diff/worker.rs:169",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-049",
+      "source_region": "AGENTS.md technical dependencies + technical-dependencies.md",
+      "kind": "dependency-edge",
+      "text": "helix-dap-types, helix-event, helix-stdx, and helix-parsec are leaf crates with no internal (intra-workspace) outgoing edges.",
+      "code_anchor": "helix-dap-types/Cargo.toml:13-15; helix-event/Cargo.toml:14-26; helix-stdx/Cargo.toml:14-31; helix-parsec/Cargo.toml:14",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-050",
+      "source_region": "AGENTS.md technical dependencies",
+      "kind": "dependency-edge",
+      "text": "xtask depends on helix-core, helix-term, helix-view, and helix-stdx (imports).",
+      "code_anchor": "xtask/Cargo.toml:15-19; xtask/src/docgen.rs:5-8; xtask/src/main.rs:22,55,246",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-051",
+      "source_region": "AGENTS.md technical dependencies + critical-facts.md non-obvious + xtask.md",
+      "kind": "dependency-edge",
+      "text": "xtask declares helix-loader (and the external `toml` crate) as manifest dependencies but references NEITHER anywhere in xtask/src/ \u05d2\u20ac\u201d manifest-only edges (manifest-vs-code drift).",
+      "code_anchor": "xtask/Cargo.toml:18,21",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-052",
+      "source_region": "AGENTS.md architecture + technical-dependencies.md helix-core layering note",
+      "kind": "boundary-rule",
+      "text": "helix-core is foundation-only: it may depend only on helix-stdx/helix-loader/helix-parsec and on no higher crate; a grep for use of view/term/tui/lsp/dap/event/vcs in helix-core/src returned no matches.",
+      "code_anchor": "helix-core/Cargo.toml:18-21",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-053",
+      "source_region": "AGENTS.md Critical-to-know layering bullet + critical-facts.md",
+      "kind": "boundary-rule",
+      "text": "LAYERING DIRECTION: helix-term sits on top and depends on every other runtime crate; they do NOT import it. helix-view is a consumer of (not a dependency to) helix-term \u05d2\u20ac\u201d no helix_term reference appears in helix-view/src.",
+      "code_anchor": "helix-term/Cargo.toml:44-51; helix-term/src/lib.rs:1-14; helix-view/src/editor.rs:56",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-054",
+      "source_region": "critical-facts.md boundary rules + architecture.md",
+      "kind": "boundary-rule",
+      "text": "The crate split is enforced by Cargo's manifest DAG (Cargo bans cross-crate dependency cycles), forming an acyclic graph that fans in toward foundation leaves.",
+      "code_anchor": "helix-core/Cargo.toml:18-21; helix-stdx/Cargo.toml:14-31; helix-parsec/Cargo.toml:14",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-055",
+      "source_region": "AGENTS.md Critical-to-know entry-point bullet + critical-facts.md startup chain + helix-term.md",
+      "kind": "entry-point",
+      "text": "System entry point and ordered boot chain: main -> main_impl (#[tokio::main]) -> Args::parse_args -> helix_loader::initialize_config_file/log_file -> early-exit flags -> setup_logging -> set CWD -> Config::load_default -> user_lang_loader -> Application::new -> app.event_stream() -> app.run() -> process::exit.",
+      "code_anchor": "helix-term/src/main.rs:20-27,29-30,103,105-118,133,144-147",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-056",
+      "source_region": "AGENTS.md Critical-to-know + helix-term.md key facts",
+      "kind": "key-invariant",
+      "text": "run() lifecycle (ordered): terminal.claim() -> event_loop -> close() (drain jobs -> flush_writes -> close_language_servers) -> restore_term() -> propagate close errors into exit_code.",
+      "code_anchor": "helix-term/src/application.rs:1308-1326,1328-1356",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-057",
+      "source_region": "AGENTS.md Critical-to-know + helix-term.md",
+      "kind": "key-invariant",
+      "text": "The main event loop is a biased tokio::select! (biased;): signals first, then terminal input, job callbacks, status messages, wait-futures, editor events; the loop terminates when editor.should_close().",
+      "code_anchor": "helix-term/src/application.rs:306-308,312-356",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-058",
+      "source_region": "critical-facts.md lifecycle + helix-term.md",
+      "kind": "key-invariant",
+      "text": "Application::new construction order: theme loader -> backend -> Terminal -> Compositor -> ArcSwap<Config> -> handlers::setup -> Editor::new -> load theme -> push EditorView layer -> Jobs::new -> open files/tutor/stdin -> build signal stream.",
+      "code_anchor": "helix-term/src/application.rs:94-253",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-059",
+      "source_region": "AGENTS.md Critical-to-know data structure + critical-facts.md + helix-core.md",
+      "kind": "data-store",
+      "text": "CORE DATA STRUCTURE: the buffer is a ropey::Rope re-exported as the canonical text type (with a SmartString-backed Tendril for small edit strings); cheap clones/snapshots enable value-semantics editing.",
+      "code_anchor": "helix-core/src/lib.rs:48,53",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-060",
+      "source_region": "AGENTS.md Critical-to-know + critical-facts.md + helix-core.md",
+      "kind": "key-invariant",
+      "text": "Edit algebra has value semantics and is composable + invertible: Transaction/ChangeSet describe docA->docB; compose combines docA->docB with docB->docC; invert(original) produces the reverting transaction; a ChangeSet len guard refuses to apply unless lengths match.",
+      "code_anchor": "helix-core/src/transaction.rs:160-164,609-616,75-77",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-061",
+      "source_region": "AGENTS.md Critical-to-know + critical-facts.md + helix-core.md",
+      "kind": "key-invariant",
+      "text": "A Selection is never empty (always contains at least the primary range); new() asserts !ranges.is_empty() and remove() refuses the last range.",
+      "code_anchor": "helix-core/src/selection.rs:415,624,459-462",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-062",
+      "source_region": "AGENTS.md Critical-to-know + critical-facts.md + helix-view.md",
+      "kind": "key-invariant",
+      "text": "Document::apply_impl mutates self.text in place, increments self.version, and re-maps EVERY view's selection + view_position so all views stay consistent.",
+      "code_anchor": "helix-view/src/document.rs:1445,1463-1479",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-063",
+      "source_region": "AGENTS.md Critical-to-know + critical-facts.md + helix-view.md",
+      "kind": "key-invariant",
+      "text": "DocumentId is never zero: it wraps NonZeroUsize so Option<DocumentId> is one byte; the default id is 1.",
+      "code_anchor": "helix-view/src/lib.rs:23-30",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-064",
+      "source_region": "AGENTS.md Critical-to-know boundary + critical-facts.md + helix-view.md",
+      "kind": "boundary-rule",
+      "text": "Partial-borrow rule: cross-field access on Editor MUST go through the current!/doc_mut!/view_mut! macros (not &mut self methods) so Rust sees a partial borrow rather than the whole struct.",
+      "code_anchor": "helix-view/src/macros.rs:1-8",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-065",
+      "source_region": "AGENTS.md Critical-to-know boundary + critical-facts.md + helix-term.md",
+      "kind": "boundary-rule",
+      "text": "Config mutation is single-owner: only the Application applies config changes; the Editor sends an updated copy up via ConfigEvent::Update. Config is shared lock-free via arc_swap::ArcSwap and projected with arc_swap::access::Map into sub-views.",
+      "code_anchor": "helix-term/src/application.rs:75,117,123-132,373-383",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-066",
+      "source_region": "AGENTS.md Critical-to-know boundary + critical-facts.md",
+      "kind": "boundary-rule",
+      "text": "Error-propagation / no-crash-after-startup: helix-view/core/lsp/dap/loader/tui/vcs return anyhow::Result / typed errors / io::Result rather than crashing; the term shutdown path does not return early \u05d2\u20ac\u201d it runs all cleanup and collects errors into a Vec<anyhow::Error>.",
+      "code_anchor": "helix-term/src/application.rs:1328-1356; helix-view/src/document.rs:788; helix-core/src/transaction.rs:343-345",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-067",
+      "source_region": "AGENTS.md Critical-to-know boundary + critical-facts.md + helix-term.md",
+      "kind": "boundary-rule",
+      "text": "Compositor ordering: render order is bottom-to-top (later-pushed layers draw on top); event propagation is top-to-bottom bubbling through layers .rev(), stopping at the first Consumed; cursor resolution: front-most layer wins.",
+      "code_anchor": "helix-term/src/compositor.rs:104-105,184-188,156-175,190-197",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-068",
+      "source_region": "AGENTS.md Critical-to-know lifecycle + critical-facts.md + helix-view.md",
+      "kind": "key-invariant",
+      "text": "Editor::wait_event is the single tokio::select! source of truth, biased so document-saves win, then config/LSP/DAP, then redraw vs idle timers.",
+      "code_anchor": "helix-view/src/editor.rs:2375-2415",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-069",
+      "source_region": "AGENTS.md Critical-to-know lifecycle + critical-facts.md + helix-view.md",
+      "kind": "key-invariant",
+      "text": "Ordered LSP shutdown: close_language_servers first removes every client from the file-event handler (non-blocking), THEN force-shutdowns all clients under a timeout (default 3000ms).",
+      "code_anchor": "helix-view/src/editor.rs:2351-2373",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-070",
+      "source_region": "AGENTS.md Critical-to-know tech choice + critical-facts.md + helix-term.md",
+      "kind": "technology-choice",
+      "text": "Terminal backend is compile-time selected: Termina (non-Windows), Crossterm (Windows), TestBackend under the integration feature.",
+      "code_anchor": "helix-term/src/application.rs:47-61; helix-tui/src/backend/mod.rs:12-23",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-071",
+      "source_region": "AGENTS.md Critical-to-know non-obvious + critical-facts.md + helix-term.md",
+      "kind": "key-invariant",
+      "text": "Binary-file detection is a hand-rolled is_binary heuristic (BOM check, then NUL-in-first-1KB or PDF/PNG magic), explicitly replacing the content_inspector crate.",
+      "code_anchor": "helix-term/src/lib.rs:50-74",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-072",
+      "source_region": "AGENTS.md Critical-to-know non-obvious + critical-facts.md + helix-term.md",
+      "kind": "dependency-edge",
+      "text": "helix-lsp-types, helix-dap-types, helix-parsec and xtask are NOT direct manifest dependencies of helix-term; the LSP/DAP types are reached transitively via helix_lsp::lsp / helix_dap re-exports.",
+      "code_anchor": "helix-term/Cargo.toml:43-51; helix-term/src/application.rs:4-6",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-073",
+      "source_region": "data-layer.md in-memory state stores + helix-view.md",
+      "kind": "data-store",
+      "text": "Document buffer store: Editor.documents is a BTreeMap<DocumentId, Document> keyed by a NonZeroUsize id; document text is a persistent Rope plus per-view selections/view_data maps.",
+      "code_anchor": "helix-view/src/editor.rs:1195; helix-view/src/lib.rs:24-25; helix-view/src/document.rs:143-145",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-074",
+      "source_region": "data-layer.md in-memory state stores + helix-view.md",
+      "kind": "data-store",
+      "text": "Breakpoints store: Editor.breakpoints is a HashMap<PathBuf, Vec<Breakpoint>> (in-memory, per file path).",
+      "code_anchor": "helix-view/src/editor.rs:1213",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-075",
+      "source_region": "data-layer.md in-memory state stores + helix-view.md",
+      "kind": "data-store",
+      "text": "Registers (yank store): Registers.inner is a HashMap<char, Vec<String>>, with special registers backed by the system clipboard.",
+      "code_anchor": "helix-view/src/register.rs:24-32",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-076",
+      "source_region": "data-layer.md in-memory state stores + helix-tui.md",
+      "kind": "data-store",
+      "text": "TUI double frame buffer: Terminal.buffers is a [Buffer; 2] with a current index (no disk/DB persistence); a thread-local LAYOUT_CACHE: RefCell<HashMap<(Rect, Layout), Vec<Rect>>> memoizes layout.",
+      "code_anchor": "helix-tui/src/terminal.rs:66-69; helix-tui/src/layout.rs:70-72",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-077",
+      "source_region": "data-layer.md in-memory state stores + helix-lsp.md",
+      "kind": "data-store",
+      "text": "LSP client registry: a SlotMap<LanguageServerId, Arc<Client>> plus a parallel HashMap<LanguageServerName, Vec<Arc<Client>>>; the transport holds an in-flight request table Mutex<HashMap<jsonrpc::Id, Sender<Result<Value>>>>.",
+      "code_anchor": "helix-lsp/src/lib.rs:580-587; helix-lsp/src/transport.rs:46,236",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-078",
+      "source_region": "data-layer.md in-memory state stores + helix-dap.md",
+      "kind": "data-store",
+      "text": "DAP client registry: a SlotMap<DebugAdapterId, Client> plus a merged SelectAll incoming stream; per-client live debug state (stack_frames/thread_states/progress/caps); a transport correlation table pending_requests Mutex<HashMap<u64, Sender<Result<Response>>>> keyed by request seq.",
+      "code_anchor": "helix-dap/src/registry.rs:13,20; helix-dap/src/client.rs:40-49; helix-dap/src/transport.rs:56",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-079",
+      "source_region": "data-layer.md in-memory state stores + helix-vcs.md",
+      "kind": "data-store",
+      "text": "VCS diff state: shared DiffInner{diff_base: Rope, doc: Rope, hunks: Vec<Hunk>} held behind Arc<RwLock<DiffInner>>.",
+      "code_anchor": "helix-vcs/src/diff.rs:31-44",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-080",
+      "source_region": "data-layer.md in-memory state stores + helix-event.md",
+      "kind": "data-store",
+      "text": "Global event registry: events map + handlers map behind an RwLock (a process global); a global status-message mpsc queue (capacity 128); global redraw signals (a Notify + RwLock<()>).",
+      "code_anchor": "helix-event/src/registry.rs:16-19,104-111; helix-event/src/status.rs:42-43; helix-event/src/redraw.rs:10-21",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-081",
+      "source_region": "data-layer.md in-memory state stores + helix-stdx.md",
+      "kind": "data-store",
+      "text": "Process-global cwd cache: static CWD: RwLock<Option<PathBuf>> in helix-stdx, kept static so it is reachable without the Editor.",
+      "code_anchor": "helix-stdx/src/env.rs:11-12",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-082",
+      "source_region": "data-layer.md in-memory state stores + helix-loader.md",
+      "kind": "data-store",
+      "text": "Runtime-dir chain: RUNTIME_DIRS, a process-wide lazy Vec<PathBuf> priority chain in helix-loader.",
+      "code_anchor": "helix-loader/src/lib.rs:12-13,94-118",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-083",
+      "source_region": "data-layer.md overview",
+      "kind": "data-store",
+      "text": "There is no database / ORM / network-backed persistence layer; helix's data layer is in-memory editor state plus on-disk file I/O for documents, config, themes, grammars, logs, and workspace-trust lists.",
+      "code_anchor": "helix-view/src/document.rs:803,1001",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-084",
+      "source_region": "data-layer.md on-disk reads/writes + helix-view.md",
+      "kind": "data-store",
+      "text": "Document files: Document::open reads via std::fs::File::open; Document::save_impl writes via tokio::fs honoring atomic_save; a save snapshots self.text().clone() into a 'static+Send future; a non-forced save refuses to clobber a file modified on disk since last save.",
+      "code_anchor": "helix-view/src/document.rs:803,1001,1019,1026,1038-1039",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-085",
+      "source_region": "data-layer.md on-disk reads/writes + helix-view.md",
+      "kind": "data-store",
+      "text": "Themes on disk: theme::Loader searches the themes/ subdir of each runtime dir and read_to_strings <name>.toml.",
+      "code_anchor": "helix-view/src/theme.rs:89-92,100,215",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-086",
+      "source_region": "data-layer.md on-disk reads/writes + helix-loader.md",
+      "kind": "data-store",
+      "text": "Config files: global config.toml + per-workspace .helix/config.toml are read and trust-gated merged; the global languages.toml plus a built-in languages.toml embedded at compile time via include_bytes!.",
+      "code_anchor": "helix-term/src/config.rs:120-135; helix-loader/src/lib.rs:143-165; helix-loader/src/config.rs:7",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-087",
+      "source_region": "data-layer.md on-disk reads/writes + helix-loader.md",
+      "kind": "data-store",
+      "text": "Workspace-trust lists: trusted_workspaces + excluded_workspaces files under the data dir (newline-delimited path lists, read + write).",
+      "code_anchor": "helix-loader/src/lib.rs:167-173; helix-loader/src/workspace_trust.rs:31-103",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-088",
+      "source_region": "data-layer.md on-disk reads/writes + helix-loader.md",
+      "kind": "data-store",
+      "text": "Tree-sitter grammars: vendored git checkouts in runtime/grammars/sources/<g> and compiled dylibs in runtime/grammars/<name>.{so,dll,dylib,wasm}; query files (highlights/injections/locals .scm) read by helix-core via helix-loader.",
+      "code_anchor": "helix-loader/src/grammar.rs:336-346,527-532; helix-core/src/syntax.rs:73,270",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-089",
+      "source_region": "data-layer.md external processes + helix-lsp.md",
+      "kind": "technology-choice",
+      "text": "Language servers are each spawned as a child process; the client drives JSON-RPC over its stdio.",
+      "code_anchor": "helix-lsp/src/lib.rs:1-11; helix-lsp/src/client.rs:55-71",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-090",
+      "source_region": "data-layer.md external processes + helix-dap.md",
+      "kind": "technology-choice",
+      "text": "Debug adapters are each a spawned child process (stdin/stdout/stderr) or a TcpStream.",
+      "code_anchor": "helix-dap/src/client.rs:122-145,186-188",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-091",
+      "source_region": "data-layer.md external processes + helix-view.md",
+      "kind": "technology-choice",
+      "text": "System clipboard is accessed via an external process / OS API (Windows uses clipboard-win).",
+      "code_anchor": "helix-view/src/clipboard.rs:34-37; helix-view/Cargo.toml:57",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-092",
+      "source_region": "technical-dependencies.md key external dependencies + critical-facts.md tech choices",
+      "kind": "technology-choice",
+      "text": "Language/build: Rust 2021 edition, workspace pinned to rust-version 1.90; Cargo workspace resolver \"2\" with 15 members; single binary hx from helix-term.",
+      "code_anchor": "Cargo.toml:64,70,1-22; helix-term/Cargo.toml:39-41",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-093",
+      "source_region": "technical-dependencies.md key external dependencies + critical-facts.md",
+      "kind": "technology-choice",
+      "text": "Async runtime: Tokio multi-thread, entry via #[tokio::main]; async glue via futures-util / futures-executor / tokio-stream.",
+      "code_anchor": "helix-term/src/main.rs:25-26; helix-term/Cargo.toml:56; helix-lsp/Cargo.toml:28",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-094",
+      "source_region": "technical-dependencies.md key external dependencies + critical-facts.md",
+      "kind": "technology-choice",
+      "text": "Text storage: ropey rope data structure with the SIMD feature.",
+      "code_anchor": "Cargo.toml:48; helix-core/Cargo.toml:23",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-095",
+      "source_region": "technical-dependencies.md key external dependencies + critical-facts.md",
+      "kind": "technology-choice",
+      "text": "Syntax: tree-house / tree-sitter grammars fetched + built by helix-loader.",
+      "code_anchor": "Cargo.toml:41; helix-loader/Cargo.toml:30,34; helix-term/src/main.rs:94,99",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-096",
+      "source_region": "technical-dependencies.md key external dependencies + critical-facts.md + helix-tui.md",
+      "kind": "technology-choice",
+      "text": "TUI layout is solved with the cassowary constraint solver (REQUIRED constraints for bounds, WEAK for sizing).",
+      "code_anchor": "helix-tui/Cargo.toml:22; helix-tui/src/layout.rs:6-8,191-315",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-097",
+      "source_region": "technical-dependencies.md key external dependencies + critical-facts.md + helix-lsp.md",
+      "kind": "technology-choice",
+      "text": "LSP transport: JSON-RPC over tokio using sonic-rs (incoming) / serde_json (outgoing); OffsetEncoding is negotiated, default UTF-16.",
+      "code_anchor": "helix-lsp/src/transport.rs:139,166-176; helix-lsp/src/lib.rs:69-78",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-098",
+      "source_region": "technical-dependencies.md key external dependencies + helix-vcs.md",
+      "kind": "technology-choice",
+      "text": "Version control: gix (gitoxide) behind the optional git feature; diffing uses imara-diff (Algorithm::Histogram + a 4-space IndentHeuristic).",
+      "code_anchor": "helix-vcs/Cargo.toml:20,26-27; helix-vcs/src/diff.rs:121; helix-vcs/src/diff/worker.rs:82-96",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-099",
+      "source_region": "technical-dependencies.md key external dependencies + critical-facts.md",
+      "kind": "technology-choice",
+      "text": "Fuzzy matching / picker uses nucleo plus ignore/grep-*.",
+      "code_anchor": "Cargo.toml:42; helix-term/Cargo.toml:70-74",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-100",
+      "source_region": "technical-dependencies.md key external dependencies + critical-facts.md",
+      "kind": "technology-choice",
+      "text": "Concurrency primitives: parking_lot locks + arc-swap; the event-registry RwLock uses hardware-lock-elision so it is essentially free under the read-mostly pattern.",
+      "code_anchor": "Cargo.toml:50,59; helix-event/Cargo.toml:18-21",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-101",
+      "source_region": "critical-facts.md tech choices + helix-core.md",
+      "kind": "technology-choice",
+      "text": "unicode-width is deliberately version-pinned to =0.1.12 to avoid width-definition changes that disagree with terminals.",
+      "code_anchor": "helix-core/Cargo.toml:27-32",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-102",
+      "source_region": "critical-facts.md key invariants + helix-core.md",
+      "kind": "key-invariant",
+      "text": "History is a single-rooted append-only revision tree (Vec<Revision> + current index) that always has >=1 element (the empty root), storing BOTH a transaction and its inversion per revision; undo applies the inversion, redo applies the last-child transaction; the revision vector is unbounded.",
+      "code_anchor": "helix-core/src/history.rs:51-54,15-20,58-65,22-32,43-45",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-103",
+      "source_region": "critical-facts.md key invariants + helix-tui.md",
+      "kind": "key-invariant",
+      "text": "TUI buffer length invariant: Buffer.content.len() is always area.width * area.height, preserved by resize/merge; double-buffering draw flushes the diff, resets the back buffer, then flips current = 1 - current.",
+      "code_anchor": "helix-tui/src/buffer.rs:165-167,635-643; helix-tui/src/terminal.rs:66-69,196-214",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-104",
+      "source_region": "critical-facts.md key invariants + helix-lsp-types.md",
+      "kind": "key-invariant",
+      "text": "LSP wire-faithfulness invariant: the serde round-trip is the core invariant the helix-lsp-types crate exists to guarantee (deserialize(serialize(x)) == x); optional fields are omitted not null; Position/Range are zero-based and Range.end is EXCLUSIVE.",
+      "code_anchor": "helix-lsp-types/src/lib.rs:2775-2778,298,366,239-240,261-262",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-105",
+      "source_region": "critical-facts.md key invariants + helix-dap.md + helix-dap-types.md",
+      "kind": "key-invariant",
+      "text": "DAP seq monotonicity: request ids come from an AtomicU64 via fetch_add+1 so the first message is 1 and each is exactly 1 greater; Module.id is coerced to String on deserialization even when the adapter sends a JSON number.",
+      "code_anchor": "helix-dap/src/client.rs:235-241; helix-dap-types/src/lib.rs:314-315,335-350",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-106",
+      "source_region": "critical-facts.md key invariants + helix-event.md",
+      "kind": "key-invariant",
+      "text": "helix-event cancellation state is packed into ONE AtomicU64 \u05d2\u20ac\u201d low 32 bits = generation counter, high 32 bits = num_running refcount; cancelling bumps the generation.",
+      "code_anchor": "helix-event/src/cancel.rs:24-71,204-206",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-107",
+      "source_region": "critical-facts.md boundary rules security gates + helix-loader.md + helix-view.md",
+      "kind": "boundary-rule",
+      "text": "Security gate: opening files consults helix-loader workspace-trust before trusting workspace config; an untrusted workspace's .helix/languages.toml must NOT be merged (user_lang_config adds the workspace file only when trust == Trusted); insecure==true short-circuits to Trusted/AllowAlways.",
+      "code_anchor": "helix-view/src/editor.rs:1746; helix-loader/src/config.rs:13-22; helix-loader/src/workspace_trust.rs:142-144,162-164",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-108",
+      "source_region": "critical-facts.md boundary rules + helix-tui.md",
+      "kind": "boundary-rule",
+      "text": "Widget / backend isolation: widgets must NOT touch the terminal directly \u05d2\u20ac\u201d they render only into an intermediate Buffer; all terminal I/O is funneled through the Backend trait and Terminal<B> never calls an OS API directly.",
+      "code_anchor": "helix-tui/src/buffer.rs:139-142; helix-tui/src/backend/mod.rs:26-52",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-109",
+      "source_region": "critical-facts.md boundary rules + helix-lsp.md",
+      "kind": "boundary-rule",
+      "text": "LSP transport isolation: Client never touches child stdio; it sends Payload over a channel to Transport, whose three dedicated tokio tasks (recv/err/send) are the sole readers/writers of the process pipes.",
+      "code_anchor": "helix-lsp/src/client.rs:60,246-247; helix-lsp/src/transport.rs:73-87",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-110",
+      "source_region": "critical-facts.md boundary rules + helix-event.md",
+      "kind": "boundary-rule",
+      "text": "helix-event decoupling rule: components communicate via events/hooks instead of importing each other directly; events must be declared via the events! macro and hooks via register_hook!, not by hand-implementing the trait.",
+      "code_anchor": "helix-event/src/lib.rs:1-2,8-11; helix-event/src/registry.rs:125-131",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-111",
+      "source_region": "critical-facts.md non-obvious + helix-lsp.md",
+      "kind": "key-invariant",
+      "text": "LSP registry tombstones: stop() drains a server's Vec<Arc<Client>> but leaves the empty entry in inner_by_name as a tombstone so get() will NOT auto-restart a manually-stopped server.",
+      "code_anchor": "helix-lsp/src/lib.rs:692-707,718-725",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-112",
+      "source_region": "critical-facts.md non-obvious + helix-dap.md",
+      "kind": "key-invariant",
+      "text": "DAP two-transport reaping asymmetry: stdio spawns the child with kill_on_drop(true) (reaped), while tcp_process spawns detached and is NOT killed on leave (sleeping 500ms before connect).",
+      "code_anchor": "helix-dap/src/client.rs:114-145,165-184",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-113",
+      "source_region": "critical-facts.md non-obvious + helix-stdx.md",
+      "kind": "technology-choice",
+      "text": "helix-stdx uses a custom RFC3986 Url (a verbatim-String newtype parsed lazily) instead of the url crate, because LSP uses RFC3986 (not WHATWG) percent-encoding and strict servers reject unescaped [ ].",
+      "code_anchor": "helix-stdx/src/uri.rs:1-7,42-46",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-114",
+      "source_region": "critical-facts.md non-obvious + helix-event.md",
+      "kind": "technology-choice",
+      "text": "helix-event hashing is non-DOS-resistant by design: HashMaps use foldhash with a hardcoded fixed seed; DOS resistance is explicitly a non-goal.",
+      "code_anchor": "helix-event/src/registry.rs:104-111",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-115",
+      "source_region": "critical-facts.md non-obvious + xtask.md",
+      "kind": "key-invariant",
+      "text": "xtask indent-check gating asymmetry: a reindent mismatch always counts as an error; in the typing simulation, UNDER-indent is always a failure but OVER-indent fails only when the next line's leading token is NOT an @outdent token \u05d2\u20ac\u201d the check gates on under-indents only.",
+      "code_anchor": "xtask/src/main.rs:146-147,205-226,236-242",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-116",
+      "source_region": "helix-core.md boundary rules",
+      "kind": "boundary-rule",
+      "text": "All positioning in helix-core is char-offset based at this boundary: positioning is done via char offsets into the buffer; Range anchor/head are gap indices between chars.",
+      "code_anchor": "helix-core/src/selection.rs:4,26-31",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-117",
+      "source_region": "helix-core.md key facts",
+      "kind": "technology-choice",
+      "text": "Syntax is built on the tree-house tree-sitter wrapper; Language/Syntax are re-exported from helix-core; LanguageData lazily compiles per-language queries via OnceCell (compute-once caching) and a missing grammar shared library degrades gracefully to Ok(None).",
+      "code_anchor": "helix-core/src/syntax.rs:21-29,42-47,73-76; helix-core/src/lib.rs:67,77",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-118",
+      "source_region": "helix-core.md key facts",
+      "kind": "data-store",
+      "text": "The language Loader indexes languages by extension/shebang/glob for file-type detection (languages_by_extension/languages_by_shebang HashMaps + a FileTypeGlobMatcher).",
+      "code_anchor": "helix-core/src/syntax.rs:276-279",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-119",
+      "source_region": "helix-core.md data + editor_config",
+      "kind": "data-store",
+      "text": "helix-core reads on-disk .editorconfig files for a given path by walking ancestor directories (read-only).",
+      "code_anchor": "helix-core/src/editor_config.rs:48-49",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-120",
+      "source_region": "helix-view.md key facts",
+      "kind": "data-store",
+      "text": "Window layout: Tree is a SlotMap<ViewId, Node> of View/Container nodes with a root, a focus, and a recomputed area; geometry is recomputed on resize/tree-change.",
+      "code_anchor": "helix-view/src/tree.rs:4,7-18,26-30",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-121",
+      "source_region": "helix-view.md key facts",
+      "kind": "key-invariant",
+      "text": "Lazy view sync: cross-document edits are synced lazily on window switch; View.doc_revisions records the last applied history revision per doc so only new changes replay.",
+      "code_anchor": "helix-view/src/view.rs:162-166; helix-view/src/editor.rs:2476-2483",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-122",
+      "source_region": "helix-view.md key facts",
+      "kind": "key-invariant",
+      "text": "In-process event bus: editor lifecycle events (DocumentDidOpen/Change/Close, SelectionDidChange, ConfigDidChange, LanguageServerInitialized/Exited) are declared via the helix_event::events! macro and fired with dispatch.",
+      "code_anchor": "helix-view/src/events.rs:7-44; helix-view/src/editor.rs:2046,2142",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-123",
+      "source_region": "helix-tui.md key facts",
+      "kind": "key-invariant",
+      "text": "Minimal-update invariant: Buffer::diff returns only the changed cells as (x, y, &Cell), skipping cells hidden behind preceding multi-width graphemes.",
+      "code_anchor": "helix-tui/src/buffer.rs:702-755",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-124",
+      "source_region": "helix-tui.md key facts",
+      "kind": "technology-choice",
+      "text": "helix-tui default terminal size is 80x24 whenever the backend cannot report a size.",
+      "code_anchor": "helix-tui/src/terminal.rs:77-82,91",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-125",
+      "source_region": "helix-tui.md key facts",
+      "kind": "key-invariant",
+      "text": "Robustness: a grapheme exceeding SYMBOL_CAPACITY = 28 bytes is replaced by U+FFFD rather than truncated/panicking; widths are clamped into a u8.",
+      "code_anchor": "helix-tui/src/buffer.rs:8-9,24-41",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-126",
+      "source_region": "helix-lsp.md key facts",
+      "kind": "key-invariant",
+      "text": "LSP capabilities are initialized-once (capabilities: OnceCell); capabilities()/supports_feature PANIC if called before init.",
+      "code_anchor": "helix-lsp/src/client.rs:62-63,301-305,312-316",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-127",
+      "source_region": "helix-lsp.md key facts",
+      "kind": "key-invariant",
+      "text": "Initialize gate / message ordering: the LSP send task queues every non-initialize request until the server replies, then drains the queue in order to keep request order consistent.",
+      "code_anchor": "helix-lsp/src/transport.rs:345-441,348-351,468-470",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-128",
+      "source_region": "helix-lsp.md key facts",
+      "kind": "key-invariant",
+      "text": "Overlapping/out-of-order LSP edits are made safe before building a ChangeSet: edits are sorted, a full-document replacement becomes a rope diff, and any overlapping or unmappable edit is dropped (not panicked).",
+      "code_anchor": "helix-lsp/src/lib.rs:411-477",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-129",
+      "source_region": "helix-lsp-types.md boundary rules",
+      "kind": "boundary-rule",
+      "text": "helix-lsp-types forbids unsafe code crate-wide (#![forbid(unsafe_code)]) and gates unstable/proposed LSP extensions behind a `proposed` Cargo feature (compiled out by default, no semver guarantee).",
+      "code_anchor": "helix-lsp-types/src/lib.rs:18,156-159; helix-lsp-types/Cargo.toml:29-33",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-130",
+      "source_region": "helix-lsp-types.md key facts",
+      "kind": "key-invariant",
+      "text": "LSP integer enums are newtype-over-i32 with an open-ended fallback (via a lsp_enum! macro), not Rust enums, so an unknown numeric value round-trips instead of failing deserialization (forward-compat with newer servers).",
+      "code_anchor": "helix-lsp-types/src/lib.rs:68-105,449-463",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-131",
+      "source_region": "helix-dap.md key facts",
+      "kind": "key-invariant",
+      "text": "DAP request/response correlation: a request carries a one-shot back_ch reply channel (#[serde(skip)]); the transport registers it in pending_requests keyed by seq and routes the matching Response back; a response to an unknown seq is forwarded with a warning, never dropped.",
+      "code_anchor": "helix-dap/src/transport.rs:18-19,156-160,209-225",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-132",
+      "source_region": "helix-dap.md key facts",
+      "kind": "technology-choice",
+      "text": "DAP request timeout is a hard-coded 20s per call.",
+      "code_anchor": "helix-dap/src/client.rs:283-286",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-133",
+      "source_region": "helix-dap.md key facts",
+      "kind": "key-invariant",
+      "text": "DAP initialize advertises fixed client capabilities (client_id \"hx\", name \"helix\", lines/columns start at 1, run-in-terminal supported, memory-references/invalidated-event NOT supported) and stores the server's returned DebuggerCapabilities.",
+      "code_anchor": "helix-dap/src/client.rs:371-392",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-134",
+      "source_region": "helix-loader.md key facts",
+      "kind": "key-invariant",
+      "text": "Runtime-dir priority is a fixed 5-tier order highest->lowest: sibling of CARGO_MANIFEST_DIR, <config_dir>/runtime, $HELIX_RUNTIME, build-time HELIX_DEFAULT_RUNTIME, <exe_dir>/runtime; at least two paths are always returned.",
+      "code_anchor": "helix-loader/src/lib.rs:31-78",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-135",
+      "source_region": "helix-loader.md key facts",
+      "kind": "key-invariant",
+      "text": "merge_toml_values returns a NEW merged toml::Value (value-semantics; consumes left+right), merging arrays by matching the name key and recursing only while merge_depth > 0; default merge depth for languages config is 3.",
+      "code_anchor": "helix-loader/src/lib.rs:207-256; helix-loader/src/config.rs:33",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-136",
+      "source_region": "helix-loader.md key facts",
+      "kind": "key-invariant",
+      "text": "find_workspace walks CWD ancestors and returns the first dir containing .git/.svn/.jj/.helix, else (CWD, true) where the boolean flags no real workspace found.",
+      "code_anchor": "helix-loader/src/lib.rs:265-283",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-137",
+      "source_region": "helix-loader.md key facts",
+      "kind": "technology-choice",
+      "text": "Grammar compilation: tree-sitter parser.c (+ optional scanner.c/.cc) is compiled to a shared lib via the cc crate (opt_level 3, C at -std=c11, C++ at c++14, -fno-exceptions, relro,now hardening on Linux/BSD); recompile is gated by mtime comparison.",
+      "code_anchor": "helix-loader/src/grammar.rs:508-690,692-710",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-138",
+      "source_region": "helix-loader.md key facts",
+      "kind": "technology-choice",
+      "text": "Version string VERSION_AND_GIT_HASH is a build-time env baked by build.rs from CalVer plus the first 8 chars of git rev-parse HEAD, exposed as a public const.",
+      "code_anchor": "helix-loader/src/lib.rs:10; helix-loader/build.rs:18-39",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-139",
+      "source_region": "helix-parsec.md key facts",
+      "kind": "key-invariant",
+      "text": "helix-parsec core contract: ParseResult<'a, Output> = Result<(&'a str, Output), &'a str> threads (remaining_input, value) on success and the input slice on failure; parsers do not mutate input in place; a non_empty guard prevents infinite loops on zero-width matches.",
+      "code_anchor": "helix-parsec/src/lib.rs:16,79,154-155,565-573",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-140",
+      "source_region": "helix-parsec.md key facts",
+      "kind": "technology-choice",
+      "text": "helix-parsec blanket impl: any Fn(&'a str) -> ParseResult<'a, T> automatically IS a Parser, so most combinators are higher-order functions returning closures; Parser is implemented for tuples of arity 2..=10.",
+      "code_anchor": "helix-parsec/src/lib.rs:44-53,176-181,217-225",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-141",
+      "source_region": "helix-stdx.md key facts",
+      "kind": "key-invariant",
+      "text": "helix-stdx Range<T> is half-open [start, end); is_subset/is_exact_subset run in O(m+n) and REQUIRE the caller to uphold that ranges are non-overlapping and sorted.",
+      "code_anchor": "helix-stdx/src/range.rs:7-29,36-39,72",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-142",
+      "source_region": "helix-stdx.md key facts",
+      "kind": "key-invariant",
+      "text": "helix-stdx path transformers have value semantics: normalize/canonicalize return owned PathBuf, and fold_home_dir/expand_tilde/get_relative_path return a Cow<Path> unchanged when no rewrite applies.",
+      "code_anchor": "helix-stdx/src/path.rs:63,134,34,57,160",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-143",
+      "source_region": "helix-vcs.md boundary rules",
+      "kind": "boundary-rule",
+      "text": "helix-vcs provider abstraction: callers go only through DiffProviderRegistry (a Vec<DiffProvider> tried in order, first success wins); the default registry always ends with a DiffProvider::None fallback that bail!s, and the Git variant is present only when the git feature is compiled in, so a no-git build still compiles.",
+      "code_anchor": "helix-vcs/src/lib.rs:26-44,80-91,99-101",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-144",
+      "source_region": "helix-vcs.md boundary rules",
+      "kind": "boundary-rule",
+      "text": "Render-loop isolation: DiffHandle::update_document is only safe to call from the rendering loop; the expensive diff is kept off the async executor via tokio::task::block_in_place.",
+      "code_anchor": "helix-vcs/src/diff.rs:82-85; helix-vcs/src/diff/worker.rs:57-64",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-145",
+      "source_region": "helix-vcs.md key facts",
+      "kind": "key-invariant",
+      "text": "Hunk list ordering invariant: a Diff is a list of changes sorted in ascending non-overlapping order, enabling binary_search_by_key navigation (next_hunk/prev_hunk/hunk_at); invert is value-cheap/lazy (flips a bool, roles swapped at read time).",
+      "code_anchor": "helix-vcs/src/diff.rs:126-127,159-276,42,69-72,134-165",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-146",
+      "source_region": "helix-vcs.md key facts",
+      "kind": "technology-choice",
+      "text": "helix-vcs diff size guard: diffs are skipped when the file exceeds MAX_DIFF_LINES = 64 * u16::MAX lines OR MAX_DIFF_BYTES = MAX_DIFF_LINES * 128 bytes; over the limit interned_lines() returns None and the diff is not computed.",
+      "code_anchor": "helix-vcs/src/diff.rs:122-124; helix-vcs/src/diff/line_cache.rs:116-137",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-147",
+      "source_region": "helix-vcs.md key facts",
+      "kind": "technology-choice",
+      "text": "helix-vcs debounce/render-lock timing: synchronous debounce DIFF_DEBOUNCE_TIME_SYNC = 1ms, async debounce DIFF_DEBOUNCE_TIME_ASYNC = 96ms, rendering blocked at most SYNC_DIFF_TIMEOUT = 12ms.",
+      "code_anchor": "helix-vcs/src/diff.rs:115-122; helix-vcs/src/diff/worker.rs:123-137,140-211",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-148",
+      "source_region": "helix-dap-types.md boundary rules",
+      "kind": "boundary-rule",
+      "text": "helix-dap-types serialization contract: every wire struct sets #[serde(rename_all = \"camelCase\")] mapping Rust snake_case to protocol camelCase, with explicit rename exceptions (clientID/adapterID/linesStartAt1/columnsStartAt1) and the reserved word `type` mapped to a field named `ty`.",
+      "code_anchor": "helix-dap-types/src/lib.rs:26,357,361,365,367,32-33",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-149",
+      "source_region": "helix-event.md key facts",
+      "kind": "key-invariant",
+      "text": "helix-event registry uniqueness invariant: an event ID (its type name) may be registered only once; a duplicate registration panics to preserve soundness; status::setup() must be called exactly once during startup before any status message is used (a second call panics).",
+      "code_anchor": "helix-event/src/registry.rs:25-33; helix-event/src/status.rs:59-67",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-150",
+      "source_region": "helix-event.md technology choices",
+      "kind": "technology-choice",
+      "text": "runtime_local! macro: globals are plain statics in normal builds, but under the integration_test cargo feature they become per-tokio-runtime locals (keyed by tokio::runtime::Id) so multiple helix apps can run in parallel in one process.",
+      "code_anchor": "helix-event/src/runtime.rs:1-12,42-89; helix-event/Cargo.toml:28-29",
+      "in_scope": true
+    }
+  ],
+  "adjudication": [
+    {
+      "referent": "the helix-core crate (core editing primitives)",
+      "rc_id": "RC-001",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-004",
+      "ec_kind": "component-exists",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-001 asserts helix-core is a crate providing the core editing primitives (anchor helix-core/Cargo.toml:2). EC-004 [component-role] states \"helix-core is the core editing-primitives library: the Rope text model, Selection, the invertible Transaction algebra, and Syntax/Movement/Indent\" citing @helix-core/Cargo.toml:2-3. A component-role EC entails the component-exists RC for the same component, a"
+    },
+    {
+      "referent": "the helix-view crate (UI abstractions)",
+      "rc_id": "RC-002",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-003",
+      "ec_kind": "component-exists",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-002 asserts helix-view exists as a crate providing UI abstractions (anchor helix-view/Cargo.toml:3, description \"UI abstractions for use in backends\"). EC-003 [component-role] names helix-view as the \"mid-layer editor-state + UI-abstraction crate\" and grounds it at the same file (helix-view/Cargo.toml:2 plus src/editor.rs:1190, src/lib.rs:6-19). Per kind-compatibility, a component-role EC entai"
+    },
+    {
+      "referent": "helix-term crate (the terminal UI / main editor binary frontend producing the `hx` executable)",
+      "rc_id": "RC-003",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-002",
+      "ec_kind": "component-exists",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-003 asserts helix-term is a crate that is the terminal UI / main editor binary frontend. EC-002 [component-role] states \"helix-term is the top-of-stack binary crate producing the `hx` executable; it owns the async event loop, the TUI compositor, the keymap/command surface, and LSP/DAP/job plumbing\" (@helix-term/Cargo.toml:40-41; helix-term/src/main.rs:144-147). Per kind-compatibility, a compone"
+    },
+    {
+      "referent": "helix-lsp crate (the Language Server Protocol client)",
+      "rc_id": "RC-004",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-006",
+      "ec_kind": "component-exists",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-004 asserts helix-lsp exists as a crate that is the LSP client (anchor helix-lsp/Cargo.toml:2; code confirms description \"LSP client implementation for Helix project\"). EC-006 [component-role] names the same referent helix-lsp and states the same fact \u05d2\u20ac\u201d \"helix-lsp is the LSP client\" \u05d2\u20ac\u201d going further to describe it spawns each language server as a child process and drives JSON-RPC over stdio,"
+    },
+    {
+      "referent": "the helix-dap crate (Debug Adapter Protocol client)",
+      "rc_id": "RC-005",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-008",
+      "ec_kind": "component-exists",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-005 [component-exists] asserts helix-dap is a crate that is the DAP client (anchor helix-dap/Cargo.toml:3). EC-008 [component-role] states \"helix-dap is the Debug-Adapter-Protocol client: it frames DAP JSON-RPC over stdio or TCP; it exposes Client + Registry.\" Per kind-compatibility, a component-role EC naming helix-dap and describing its responsibility as the DAP client ENTAILS the component-e"
+    },
+    {
+      "referent": "helix-event crate (event-system primitives)",
+      "rc_id": "RC-006",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-010",
+      "ec_kind": "component-exists",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "EC-010 states \"helix-event is a dependency-free foundation crate: a decoupled (often async) hook/event system plus redraw/status queues\" (@helix-event/src/lib.rs:1-4,1-32) \u05d2\u20ac\u201d the same crate and the same fact as RC-006's \"helix-event is a crate: primitives for defining and handling events within the editor.\" Per kind-compatibility, a component-role EC entails the component-exists RC for the same c"
+    },
+    {
+      "referent": "helix-loader crate (build/runtime bootstrapping: fetches/compiles external tree-sitter grammars, loads/merges configs)",
+      "rc_id": "RC-007",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-011",
+      "ec_kind": "component-exists",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-007 asserts helix-loader exists as a crate with functions for building/fetching/loading external resources (anchor helix-loader/src/grammar.rs:91 = pub fn fetch_grammars, confirmed in code). EC-011 [component-role]: \"helix-loader is the build/runtime bootstrapping crate: it resolves filesystem dirs, merges layered TOML configs, fetches/compiles tree-sitter grammars, and manages workspace-trust\""
+    },
+    {
+      "referent": "helix-tui crate (TUI primitives / terminal-UI rendering library)",
+      "rc_id": "RC-008",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-005",
+      "ec_kind": "component-exists",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-008 asserts \"helix-tui is a crate: TUI primitives\" (anchor helix-tui/Cargo.toml:2). EC-005 [component-role] states \"helix-tui is the terminal-UI rendering library: a double-buffered grid of styled Cells, diffed and emitted to a pluggable Backend\" grounded to helix-tui/Cargo.toml:2-3; helix-tui/src/lib.rs:1-9. Same referent (the helix-tui crate); the component-role fact (it IS a crate providing "
+    },
+    {
+      "referent": "helix-stdx crate (extensions to the standard library)",
+      "rc_id": "RC-009",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-013",
+      "ec_kind": "component-exists",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-009 asserts \"helix-stdx is a crate: extensions to the standard library\" (anchor helix-stdx/src/lib.rs:1). EC-013 [component-role] states \"helix-stdx is the foundation standard-library-extensions leaf crate: env/cwd/which/path/range/uri/faccess/rope helpers\" with the SAME anchor (helix-stdx/Cargo.toml:2-3; helix-stdx/src/lib.rs:1-12). Per kind-compatibility, a component-ROLE EC entails the compo"
+    },
+    {
+      "referent": "helix-lsp-types crate (LSP type definitions)",
+      "rc_id": "RC-010",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-007",
+      "ec_kind": "component-exists",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-010 asserts helix-lsp-types exists as a crate providing Language Server Protocol type definitions (anchor lib.rs:3 \"Language Server Protocol types for Rust\"). EC-007 [component-role] captures the SAME referent and fact: \"helix-lsp-types is a pure serde data-model crate for VS Code's LSP messages, one file per protocol feature, re-exported flat\" (@helix-lsp-types/Cargo.toml:12; helix-lsp-types/s"
+    },
+    {
+      "referent": "helix-core crate (the core editing-primitives library / basic building blocks of the editor)",
+      "rc_id": "RC-011",
+      "rc_kind": "component-role",
+      "ec_id": "EC-004",
+      "ec_kind": "component-role",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-011 says helix-core \"contains the basic building blocks used to construct the editor (core editing primitives),\" anchored to helix-core/Cargo.toml:3 (description = \"Helix editor core editing primitives\"). EC-004 captures the SAME fact about the SAME referent: \"helix-core is the core editing-primitives library: the Rope text model, Selection, the invertible Transaction algebra, and Syntax/Moveme"
+    },
+    {
+      "referent": "helix-view crate \u05d2\u20ac\u201d the editor-state layer above helix-core where Document, View, and Editor live",
+      "rc_id": "RC-012",
+      "rc_kind": "component-role",
+      "ec_id": "EC-003",
+      "ec_kind": "component-role",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-012 says helix-view is the imperative shell built on top of core providing common editor logic, with Document/View/Editor living there (anchor helix-view/src/lib.rs:83 re-exports Document/Editor/View/Theme \u05d2\u20ac\u201d verified at C:/tmp/p5_helix/helix-view/src/lib.rs:83-87). EC-003 [component-role] captures the SAME fact about the SAME referent: \"helix-view is the mid-layer editor-state + UI-abstractio"
+    },
+    {
+      "referent": "helix-term crate (the terminal frontend)",
+      "rc_id": "RC-013",
+      "rc_kind": "component-role",
+      "ec_id": "EC-002",
+      "ec_kind": "component-role",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-013 (component-role): \"helix-term is the terminal frontend\" anchored at helix-term/src/application.rs:57-72. EC-002 (component-role) states helix-term is the top-of-stack binary crate producing the `hx` executable that owns the async event loop, the TUI compositor, the keymap/command surface, and LSP/DAP/job plumbing (@helix-term/Cargo.toml:40-41; helix-term/src/main.rs:144-147). Both describe "
+    },
+    {
+      "referent": "helix-lsp crate (the Language Server Protocol client component)",
+      "rc_id": "RC-014",
+      "rc_kind": "component-role",
+      "ec_id": "EC-006",
+      "ec_kind": "component-role",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-014 asserts \"helix-lsp is a Language Server Protocol client.\" EC-006 [component-role] states \"helix-lsp is the LSP client: it spawns each language server as a child process and drives JSON-RPC 2.0 over its stdio; it exposes Client + Registry.\" Same referent (helix-lsp crate), same fact (it is the LSP client), with the EC being strictly more specific (mechanism + exposed types) \u05d2\u20ac\u201d a more-specif"
+    },
+    {
+      "referent": "helix-dap crate (Debug Adapter Protocol client)",
+      "rc_id": "RC-015",
+      "rc_kind": "component-role",
+      "ec_id": "EC-008",
+      "ec_kind": "component-role",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-015 states \"helix-dap is a Debug Adapter Protocol client\" (anchor helix-dap/Cargo.toml:3, whose description reads \"DAP client implementation for Helix project\"). EC-008 captures the identical fact about the same referent: \"helix-dap is the Debug-Adapter-Protocol client: it frames DAP JSON-RPC over stdio or TCP; it exposes Client + Registry.\" (cited @helix-dap/src/registry.rs:9-12; helix-dap/src"
+    },
+    {
+      "referent": "helix-loader crate (build/fetch/load of external resources: grammars + config)",
+      "rc_id": "RC-017",
+      "rc_kind": "component-role",
+      "ec_id": "EC-011",
+      "ec_kind": "component-role",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-017 says helix-loader provides functions for building, fetching, and loading external resources (grammars/config), anchored at helix-loader/src/grammar.rs:91 (fetch_grammars). EC-011 [component-role] states helix-loader \"is the build/runtime bootstrapping crate: it resolves filesystem dirs, merges layered TOML configs, fetches/compiles tree-sitter grammars, and manages workspace-trust\" (@helix-"
+    },
+    {
+      "referent": "helix-view -> helix-core dependency edge (view layer builds on core)",
+      "rc_id": "RC-018",
+      "rc_kind": "dependency-edge",
+      "ec_id": "EC-025",
+      "ec_kind": "dependency-edge",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "EC-025 states \"helix-view depends on helix-core (path-dep import)\" citing @helix-view/Cargo.toml:20 plus helix-view/src/document.rs:36-44 \u05d2\u20ac\u201d the identical referent, identical fact, and identical key anchor (helix-view/Cargo.toml:20) as RC-018. Verified in code: helix-view/Cargo.toml line 20 reads `helix-core = { path = \"../helix-core\" }`. Exact fact-keyed match."
+    },
+    {
+      "referent": "helix-term -> helix-view dependency edge (terminal frontend builds on the view layer)",
+      "rc_id": "RC-019",
+      "rc_kind": "dependency-edge",
+      "ec_id": "EC-016",
+      "ec_kind": "dependency-edge",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-019 asserts helix-term depends on helix-view (anchor helix-term/Cargo.toml:47, confirmed in C:/tmp/p5_helix/helix-term/Cargo.toml line 47: `helix-view = { path = \"../helix-view\" }`). The blind artifact captures the SAME fact, SAME referent, SAME kind: EC-016 [dependency-edge] \"helix-term depends on helix-view (import; Editor as the central owned state)\" \u05d2\u20ac\u201d present verbatim in the blind AGENTS."
+    },
+    {
+      "referent": "helix-core's layering position \u05d2\u20ac\u201d foundation-only, must not depend on view/term (innermost functional layer)",
+      "rc_id": "RC-020",
+      "rc_kind": "boundary-rule",
+      "ec_id": "EC-052",
+      "ec_kind": "boundary-rule",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-020 asserts core -> view -> term layering: helix-core does not depend on helix-view/helix-term (innermost layer). EC-052 [boundary-rule] states the SAME fact about the SAME referent: \"helix-core is foundation-only: it may depend only on helix-stdx/helix-loader/helix-parsec and on no higher crate; a grep for use of view/term/tui/lsp/dap/event/vcs in helix-core/src returned no matches\" (@helix-co"
+    },
+    {
+      "referent": "helix-core core editing primitives are functional / have value semantics (operations return a new copy rather than mutating in place)",
+      "rc_id": "RC-021",
+      "rc_kind": "key-invariant",
+      "ec_id": "EC-060",
+      "ec_kind": "key-invariant",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-021 asserts helix-core primitives are functional: most operations do not modify data in place but return a new copy (anchor selection.rs:138 flip() which constructs and returns a new Self). EC-060 [key-invariant] captures the same fact: \"Edit algebra has value semantics and is composable + invertible: Transaction/ChangeSet describe docA->docB...\" The blind artifact also states this even more di"
+    },
+    {
+      "referent": "The Rope (ropey, re-exported) as the canonical buffer text data structure; cheap clones/snapshots",
+      "rc_id": "RC-022",
+      "rc_kind": "key-invariant",
+      "ec_id": "EC-059",
+      "ec_kind": "key-invariant",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-022 says the main buffer data structure is a Rope (ropey, re-exported), cheap to clone enabling text-state snapshots, anchored at helix-core/src/lib.rs:48. EC-059 [data-store] asserts the SAME fact about the SAME referent: \"CORE DATA STRUCTURE: the buffer is a ropey::Rope re-exported as the canonical text type (with a SmartString-backed Tendril...); cheap clones/snapshots enable value-semantics"
+    },
+    {
+      "referent": "The Selection/Range data model in helix-core (Selection as the multiple-selection primitive composed of one-or-more Ranges, each with an anchor and a head)",
+      "rc_id": "RC-023",
+      "rc_kind": "key-invariant",
+      "ec_id": "EC-061",
+      "ec_kind": "key-invariant",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-023 (key anchor helix-core/src/selection.rs:417, the `Selection` struct) asserts: (1) a Selection is the multiple-selection primitive consisting of Ranges; (2) each Range has a moving head + immovable anchor; (3) a single cursor = a selection with one range whose head and anchor coincide.\n\nThe blind artifact captured the SAME referent and its core structural fact at the SAME key anchor: EC-061 "
+    },
+    {
+      "referent": "helix-core Transaction/ChangeSet edit algebra (helix-core/src/transaction.rs)",
+      "rc_id": "RC-024",
+      "rc_kind": "key-invariant",
+      "ec_id": "EC-060",
+      "ec_kind": "key-invariant",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-024 asserts Ropes are modified by constructing an OT-like Transaction representing one coherent change, applied to the rope and invertible to produce undo (anchor transaction.rs:571, which documents \"Transaction represents a single undoable unit of changes\"). EC-060 [key-invariant] captures the same fact about the same referent: \"Edit algebra has value semantics and is composable + invertible: "
+    },
+    {
+      "referent": "The `Document` struct (helix-view/src/document.rs:141) as the central composite that ties together Rope, Selection(s), Syntax, History, and language server into a representation of an open file.",
+      "rc_id": "RC-025",
+      "rc_kind": "key-invariant",
+      "ec_id": null,
+      "ec_kind": null,
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": false,
+      "evidence": "RC-025's distinguishing fact is that the Document struct is the AGGREGATION POINT bundling all FIVE subsystems (Rope text:143, Selection(s):144, Syntax:174, History:186, language_servers:200) into one open-file representation. The blind artifact provably analyzed this exact area \u05d2\u20ac\u201d EC-062/EC-073/EC-084 and data-layer.md/helix-view.md all cite helix-view/src/document.rs, and EC-073 cites document."
+    },
+    {
+      "referent": "Document's per-view selection storage (selections: HashMap<ViewId, Selection> at helix-view/src/document.rs:144) \u05d2\u20ac\u201d because multiple Views can show the same Document, each View has its own selection.",
+      "rc_id": "RC-026",
+      "rc_kind": "key-invariant",
+      "ec_id": "EC-073",
+      "ec_kind": "key-invariant",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-026's fact \u05d2\u20ac\u201d the document stores selections per view (keyed by ViewId) because multiple Views share one Document \u05d2\u20ac\u201d is captured by the blind artifact. EC-073 [data-store] grounds to the exact key-anchor area: \"document text is a persistent Rope plus per-view selections/view_data maps\" @helix-view/src/document.rs:143-145 (RC-026 key anchor = document.rs:144, the field `selections: HashMap<Vie"
+    },
+    {
+      "referent": "The helix-view Editor struct as the central holder of global editor state (open documents, view-split Tree, config, language-server registry)",
+      "rc_id": "RC-027",
+      "rc_kind": "component-role",
+      "ec_id": "EC-003",
+      "ec_kind": "component-role",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "EC-003 [component-role] states helix-view \"owns Editor, Document buffers, View windows, the Tree split-layout, and Theme\" anchored to the SAME line as RC-027 (helix-view/src/editor.rs:1190). The blind component doc helix-view.md Role section says the Editor \"owns the central mutable editor state (Editor, the buffers Document, the windows View, the split layout Tree, the color Theme)\". RC-027's fou"
+    },
+    {
+      "referent": "The Syntax type in helix-core (helix-core/src/syntax.rs:514) as the interface to tree-sitter ASTs / the tree-sitter technology choice for syntax highlighting and AST interaction.",
+      "rc_id": "RC-029",
+      "rc_kind": "technology-choice",
+      "ec_id": "EC-117",
+      "ec_kind": "technology-choice",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-029 asserts syntax highlighting/AST interaction use tree-sitter and that the Syntax type is the interface to tree-sitter ASTs (anchor helix-core/src/syntax.rs:514, where `pub struct Syntax { inner: tree_house::Syntax }`). EC-117 [technology-choice] states the SAME FACT about the SAME referent: \"Syntax is built on the tree-house tree-sitter wrapper; Language/Syntax are re-exported from helix-cor"
+    },
+    {
+      "referent": "helix-tui crate provenance (forked from tui-rs, inspired by Cursive)",
+      "rc_id": "RC-030",
+      "rc_kind": "technology-choice",
+      "ec_id": null,
+      "ec_kind": null,
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": false,
+      "evidence": "RC-030 is a provenance/origin fact for helix-tui sourced from helix-tui/README.md:2 (\"This library is a fork of the great library tui-rs\"). The blind artifact (C:/tmp/p5_helix_blind_v2art/AGENTS.md) contains NO mention of \"tui-rs\", \"fork\", \"Cursive\", or \"fdehau\" (grep returned zero hits). The artifact DID thoroughly analyze the helix-tui crate area \u05d2\u20ac\u201d EC-005 describes helix-tui's role (helix-tui/"
+    },
+    {
+      "referent": "The rope text data structure used by helix (ropey library), re-exported by helix-core at helix-core/src/lib.rs:48",
+      "rc_id": "RC-031",
+      "rc_kind": "technology-choice",
+      "ec_id": "EC-059",
+      "ec_kind": "technology-choice",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-031 asserts the Rope implementation is the ropey library re-exported by helix-core, anchored at helix-core/src/lib.rs:48. Code confirms: helix-core/src/lib.rs:48 = `pub use ropey::{self, str_utils, Rope, RopeBuilder, RopeSlice};`. The blind artifact captures the IDENTICAL fact: EC-059 [data-store] states \"the buffer is a ropey::Rope re-exported as the canonical text type\" cited at helix-core/sr"
+    },
+    {
+      "referent": "helix-core's design lineage / the design basis of its core editing primitives",
+      "rc_id": "RC-032",
+      "rc_kind": "technology-choice",
+      "ec_id": null,
+      "ec_kind": null,
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": false,
+      "evidence": "RC-032's fact is a design-provenance attribution: helix-core is \"heavily based on CodeMirror 6\" (source: C:/tmp/p5_helix/docs/architecture.md:24 \u05d2\u20ac\u201d \"heavily based on [CodeMirror 6]... The primitives are functional: most operations won't modify data in place but instead return a new copy\"). This is a technology/design-lineage choice that lives only in docs/comments, not derivable from code alone. "
+    },
+    {
+      "referent": "helix-term entry point: main creating Application and running the editor event loop (helix-term/src/main.rs:144-147)",
+      "rc_id": "RC-033",
+      "rc_kind": "entry-point",
+      "ec_id": "EC-055",
+      "ec_kind": "entry-point",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-033 [entry-point] says helix-term's main sets up a new Application that runs the editor event loop (anchor main.rs:144). EC-055 [entry-point] captures the SAME fact at the SAME referent: it documents the ordered boot chain \"...Application::new -> app.event_stream() -> app.run() -> process::exit\" cited to helix-term/src/main.rs:20-27,...,144-147 \u05d2\u20ac\u201d the exact lines (144 = Application::new, 147 ="
+    }
+  ],
+  "beyond_doc": [
+    {
+      "ec_id": "EC-001",
+      "referent": "the Cargo workspace itself",
+      "note": "resolver \"2\" workspace of 14 lib/runtime crates + a dev-only xtask member. Grounded @Cargo.toml:1-22 (members list = 14 + xtask). No RC describes the workspace structure / member count."
+    },
+    {
+      "ec_id": "EC-012",
+      "referent": "helix-vcs crate",
+      "note": "VCS integration crate (git base version, status, debounced background line-diff via gix). Grounded @helix-vcs/src/lib.rs:1-3, diff.rs:31-44. The RC list has no vcs crate at all."
+    },
+    {
+      "ec_id": "EC-017",
+      "referent": "helix-term -> helix-core dependency edge",
+      "note": "term imports Rope/Selection/Transaction/Syntax from core. Grounded @helix-term/src/commands.rs:22-46. Doc only states view->core (RC-018) and term->view (RC-019); the direct term->core edge is unstated."
+    },
+    {
+      "ec_id": "EC-077",
+      "referent": "LSP client registry data store",
+      "note": "SlotMap<LanguageServerId, Arc<Client>> + parallel HashMap<name,Vec<Arc<Client>>> + transport in-flight request table Mutex<HashMap<jsonrpc::Id,...>>. Grounded @helix-lsp/src/lib.rs:580-587. No RC covers any data store internals."
+    },
+    {
+      "ec_id": "EC-101",
+      "referent": "unicode-width dependency",
+      "note": "deliberately version-pinned to =0.1.12 to avoid width-definition drift vs terminals. Grounded @helix-core/Cargo.toml:27-32 (the inline comment confirms the rationale verbatim). No RC mentions it."
+    },
+    {
+      "ec_id": "EC-106",
+      "referent": "helix-event cancellation state",
+      "note": "packed into ONE AtomicU64 (low 32 = generation counter, high 32 = num_running refcount); cancel bumps generation. Grounded @helix-event/src/cancel.rs:24-71. No RC covers event-system internals."
+    },
+    {
+      "ec_id": "EC-113",
+      "referent": "helix-stdx Url type",
+      "note": "custom lazy RFC3986 String-newtype instead of the url crate, because LSP uses RFC3986 not WHATWG percent-encoding (strict servers like Deno reject unescaped []). Grounded @helix-stdx/src/uri.rs:1-7. Beyond doc scope."
+    },
+    {
+      "ec_id": "EC-053",
+      "referent": "layering direction (term on top)",
+      "note": "BORDERLINE-but-distinct: term depends on every other runtime crate and none import it; no helix_term ref in helix-view/src (grep-confirmed = 0). Grounded @helix-view/src/editor.rs:56. Adjacent to RC-020 (core does not depend up) but states the opposite end of the layering, a genuinely separate fact -> NEUTRAL beyond-doc."
+    }
+  ],
+  "scores": {
+    "coverage_overall": {
+      "n": 28,
+      "d": 31,
+      "pct": 0.9032,
+      "wilson95_lb": 0.751
+    },
+    "coverage_by_kind": {
+      "component-exists": {
+        "n": 10,
+        "d": 10
+      },
+      "component-role": {
+        "n": 7,
+        "d": 7
+      },
+      "dependency-edge": {
+        "n": 2,
+        "d": 2
+      },
+      "data-store": {
+        "n": 0,
+        "d": 0
+      },
+      "boundary-rule": {
+        "n": 1,
+        "d": 1
+      },
+      "key-invariant": {
+        "n": 5,
+        "d": 6
+      },
+      "entry-point": {
+        "n": 1,
+        "d": 1
+      },
+      "technology-choice": {
+        "n": 2,
+        "d": 4
+      }
+    },
+    "faithfulness": {
+      "n": 28,
+      "d": 28,
+      "pct": 1.0,
+      "wilson95_lb": 0.8794
+    },
+    "beyond_doc_count": 131,
+    "deepinit_wrong_high": 0
+  },
+  "scoring_provenance": {
+    "method": " isolated-agent scoring (separation of duties): a key-reader + an EC-extractor (BLIND to the key) + one matcher per RC + a faithfulness refuter per overlap (vs CODE) + a beyond-doc finder. Workflow  ( post-fix v2).",
+    "orchestrator_caveat": "The orchestrating session authored the curator keys, so it is not a fully fresh scorer; but every EC-extraction, match, and faithfulness JUDGMENT was made by an isolated agent (the EC-extractor blind to the key). Recorded honestly.",
+    "reconciliation": ""
+  },
+  "provenance": {
+    "doc_in_inputs": false,
+    "key_held_out": true,
+    "training_contamination_caveat": true,
+    "publishable": "indicative",
+    "caveats": [
+      "INDICATIVE \u2014 small-n, fuzzy truth, below any ship-gate",
+      "attribution-adjudicated \u2014 divergences resolved to CODE, not auto-scored",
+      "doc-bounded \u2014 agreement with a good human doc, not absolute completeness",
+      "\u00a718 (9/9, FP 0) stays the product headline",
+      "training-contamination \u2014 helix is a public repo; the blind output may be informed by pretraining, so the number is INDICATIVE."
+    ],
+    "tune_or_heldout": "held-out",
+    "harness_section": "\u00a734"
+  }
+}

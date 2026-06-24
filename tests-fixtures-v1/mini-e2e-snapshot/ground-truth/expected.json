@@ -1,0 +1,11 @@
+{
+  "fixture": "mini-e2e-snapshot",
+  "purpose": "A synthetic, minimal end-to-end snapshot — the SECOND snapshot the §A3 multi-repo gate generalizes §40's four invariants over (kemal is the first, real one). Proves the generalized auditor handles >1 snapshot with no per-repo code; a real corpus snapshot joins the audited set the moment a metered Tier-2 run commits it under validation/integration/snapshots/<repo>/.",
+  "expected_invariants": {
+    "sarif_valid_v210": true,
+    "dashboard_self_contained": true,
+    "lean_owned_region_no_issue_leak": true,
+    "e2e_record_all_resolved_0_refuted": true
+  },
+  "note": "Synthetic by design (no real engine run); the four structural invariants are exactly what §A3 re-checks per snapshot."
+}

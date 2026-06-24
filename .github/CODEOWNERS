@@ -1,0 +1,32 @@
+# CODEOWNERS — automatic PR reviewer assignment.
+#
+# Place this file at one of:
+#   .github/CODEOWNERS   (recommended)
+#   CODEOWNERS           (repo root)
+#   docs/CODEOWNERS
+#
+# Syntax: <path-pattern> <@user-or-team> [<@user-or-team> ...]
+# Later matches override earlier ones, so put broad rules first.
+#
+# Owner: @elad-reznikov is the maintainer's GitHub handle (a member of the
+#   deepfusionlabs org). Note: GitHub does NOT expand environment variables in
+#   this file and silently ignores an owner that is not a real user/team with
+#   repo access — so keep this handle in sync with the maintainer's actual login.
+#
+# Reference:
+#   https://docs.github.com/en/repositories/managing-your-repositories-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner for everything in the repo.
+* @elad-reznikov
+
+# Examples (uncomment and adapt):
+#
+# # All workflow + CI changes need a platform reviewer.
+# /.github/         @elad-reznikov @your-org/platform
+#
+# # Security-sensitive code paths.
+# /src/auth/        @your-org/security
+# SECURITY.md       @your-org/security
+#
+# # Docs can have a separate set of owners.
+# /docs/            @your-org/docs

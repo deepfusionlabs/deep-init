@@ -1,0 +1,96 @@
+{
+  "fixture": "mini-if7a-errorrule",
+  "subcase": "IF-7(a) commission — an ERROR/catch path executes the exact effect a DOCUMENTED, failure-scoped rule forbids; certainty caps at MEDIUM (the FIRE→DEFECT step is an inference); dual-citation (rule + contradicting error-path code) is mandatory.",
+  "purpose": "IF-7(a) error-path-contradicts-a-documented-rule, COMMISSION sub-type. E1-E3 fire (dual-cited, MEDIUM). T1-T9 are PREDICATE-FALSE traps (the rule read in full sanctions/forbids; or there is no hard failure-scoped rule; or it routes to IF-4) — each must be seen-and-suppressed. The omission sub-type (T9) is deferred behind its own gate.",
+  "expected_issues": [
+    {
+      "family": "IF-7",
+      "file": "src/payments/charge.ts",
+      "line": 14,
+      "severity": "High",
+      "certainty": "MEDIUM",
+      "rule_ref": { "id": "ADR-014", "file": ".ai/docs/decisions.md", "line": 23 },
+      "code_ref": { "file": "src/payments/charge.ts", "line": 14 },
+      "claim": "possible error-path contradiction of ADR-014 on the failure path of chargeAndFulfill: the catch sets order.status='paid' after a charge failure — the exact effect ADR-014 forbids on the error path — review (not the sanctioned idempotency_replay case)",
+      "evidence": "ADR-014 at .ai/docs/decisions.md:16-29 (Decision at :23 — 'status MUST NOT be set to paid ... on the error path', EXCEPT idempotency replay) vs `order.status = \"paid\"` inside the catch at src/payments/charge.ts:14"
+    },
+    {
+      "family": "IF-7",
+      "file": "src/auth/authorize.py",
+      "line": 16,
+      "severity": "High",
+      "certainty": "MEDIUM",
+      "rule_ref": { "id": "INVARIANT(authorize)", "file": "src/auth/authorize.py", "line": 8 },
+      "code_ref": { "file": "src/auth/authorize.py", "line": 16 },
+      "claim": "possible error-path contradiction of the documented fail-closed invariant on the except path of authorize(): the handler returns True (allows) on a token/provider error — review (framed as an access-control BUSINESS-RULE violation, never a security finding)",
+      "evidence": "the docstring INVARIANT at src/auth/authorize.py:8 ('On any token/provider error, authorize() MUST FAIL CLOSED — return False (deny)') vs `return True` in `except TimeoutError` at src/auth/authorize.py:16"
+    },
+    {
+      "family": "IF-7",
+      "file": "src/payments/outbox.ts",
+      "line": 18,
+      "severity": "High",
+      "certainty": "MEDIUM",
+      "rule_ref": { "id": "ADR-021", "file": ".ai/docs/decisions.md", "line": 38 },
+      "code_ref": { "file": "src/payments/outbox.ts", "line": 18 },
+      "claim": "possible error-path contradiction of ADR-021 on the failure path of publishEvent: the catch commits the transaction after a failed outbox write, treating a failed publish as success — review",
+      "evidence": "ADR-021 at .ai/docs/decisions.md:31-39 (Decision at :38 — 'the surrounding transaction MUST be aborted ... never committed') vs `await tx.commit()` inside the catch at src/payments/outbox.ts:18"
+    }
+  ],
+  "must_not_fire": [
+    {
+      "family": "IF-7",
+      "file": "src/payments/charge.ts",
+      "line": 27,
+      "reason": "documented exception (predicate-FALSE): chargeWithIdempotency marks paid ONLY in the e.code==='idempotency_replay' branch, which ADR-014 read in full explicitly sanctions — no hard-invariant violation. Must be seen-and-suppressed."
+    },
+    {
+      "family": "IF-7",
+      "file": "src/orders/order.service.ts",
+      "line": 11,
+      "reason": "happy path (predicate-FALSE for IF-7(a)): the ADR-007 contradiction (inline send) is on the SUCCESS path, not inside an error handler — routes to IF-4, not IF-7(a). The lexical enclosing-handler test must keep IF-7(a) silent here."
+    },
+    {
+      "family": "IF-7",
+      "file": "src/cache/store.ts",
+      "line": 12,
+      "reason": "fail-open documented (predicate-FALSE): the catch serves origin/stale, exactly the REQUIRED outcome of BR-cache:002 on a cache-read failure — the rule's mandate is satisfied, not violated."
+    },
+    {
+      "family": "IF-7",
+      "file": "src/billing/refund.ts",
+      "line": 11,
+      "reason": "soft / advisory rule (predicate-FALSE): only a 'we should probably ... eventually (TODO)' comment, no deontic MUST — not a hard documented invariant, so nothing anchorable to contradict."
+    },
+    {
+      "family": "IF-7",
+      "file": "src/money/pricing.ts",
+      "line": 11,
+      "reason": "not about errors (predicate-FALSE): ADR-002 is a money-representation rule with no failure clause; the default-rate catch is unrelated — there is no failure-scoped invariant to contradict."
+    },
+    {
+      "family": "IF-7",
+      "file": "src/payments/charge.ts",
+      "line": 44,
+      "reason": "reconciled / finally (predicate-FALSE): chargeWithGuard's catch sets paid but the finally resets it to 'pending' before return when the charge did not succeed — no forbidden state survives the function."
+    },
+    {
+      "family": "IF-7",
+      "file": "src/billing/refund.ts",
+      "line": 24,
+      "reason": "one-sided / no documented rule (predicate-FALSE): refundWithStatus's catch sets a status but NO documented invariant governs this error behaviour — there is nothing to dual-cite, so drop."
+    },
+    {
+      "family": "IF-7",
+      "file": "src/legacy/session.ts",
+      "line": 14,
+      "reason": "superseded (predicate-FALSE): the catch retries on timeout, which only the SUPERSEDED ADR-009 forbade; current policy sanctions a keyed retry — a superseded rule cannot anchor a live contradiction."
+    },
+    {
+      "family": "IF-7",
+      "file": "src/inventory/reserve.ts",
+      "line": 15,
+      "reason": "omission sub-type deferred (out of the commission-first ship): reserve's catch fails to perform the BR-inv:001 release but commits NO forbidden effect — omission-from-absence, gated behind its own future measurement; must appear in suppressed[] as deferred, not raised."
+    }
+  ]
+}

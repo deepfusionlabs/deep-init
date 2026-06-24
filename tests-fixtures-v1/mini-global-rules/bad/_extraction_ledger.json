@@ -1,0 +1,6 @@
+{
+  "files": [
+    {"path": "src/a.ts", "tag": "grep"},
+    {"path": "src/b.ts"}
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "fixture": "mini-if6-enumforms",
+  "purpose": "IF-6 named-set coverage cluster — the SHIPPED §24 name-keyed set-difference applied to TS `enum`, Zod `z.enum`, and Python `frozenset` forms (the workshop-endorsed deterministic extension; keeps §24's behavioral-entailment property). Three divergences FIRE; three same-value clones must NOT (the polarity-opposite-of-a-clone-detector guard, per form). §28 keys on `canon`; `file:line` grounds each finding (R1) and lets §14 normalize.",
+  "expected_issues": [
+    { "family": "IF-6", "canon": "priority", "file": "src/billing/enums.ts", "line": 2, "components": ["billing", "payments"], "divergent_members": ["Med"], "form": "ts-enum", "claim": "possible divergent named allowed-value set Priority (TS enum): billing defines Med, payments does not — a value one component admits the other's copy rejects; review" },
+    { "family": "IF-6", "canon": "channel", "file": "src/worker/schema.ts", "line": 3, "components": ["api", "worker"], "divergent_members": ["push"], "form": "z.enum", "claim": "possible divergent named allowed-value set Channel (z.enum): worker admits 'push', api does not; review" },
+    { "family": "IF-6", "canon": "roles", "file": "src/svc_b/roles.py", "line": 2, "components": ["svc_a", "svc_b"], "divergent_members": ["guest"], "form": "py-frozenset", "claim": "possible divergent named allowed-value set ROLES (frozenset): svc_b admits 'guest', svc_a does not; review" }
+  ],
+  "must_not_fire": [
+    { "family": "IF-6", "canon": "mode", "file": "src/payments/enums.ts", "line": 3, "reason": "same-value clone (TS enum): Mode is {On, Off} identically in payments and billing — agreed duplication, the jscpd-opposite guard; require a non-empty symmetric difference, never fire on agreement." },
+    { "family": "IF-6", "canon": "loglevel", "file": "src/api/schema.ts", "line": 4, "reason": "same-value clone (z.enum): LogLevel is ['debug','info'] identically in api and worker — identical membership → suppressed." },
+    { "family": "IF-6", "canon": "perms", "file": "src/svc_a/roles.py", "line": 3, "reason": "same-value clone (frozenset): PERMS is {'r','w'} identically in svc_a and svc_b — identical membership → suppressed." }
+  ]
+}

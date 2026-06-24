@@ -1,0 +1,492 @@
+{
+  "schema": "deepinit-validation/coverage-record/v1",
+  "program": " —  (Mirror held-out scale-up: obscure + stack-diverse, Graphify path)",
+  "milestone": "/B2 held-out datapoint",
+  "test_plan_run": "",
+  "scored_date": "2026-06-13",
+  "repo": {
+    "name": "commercetools/commercetools-sync-java",
+    "url": "https://github.com/commercetools/commercetools-sync-java",
+    "pinned_sha": "a0fbe1f4e6c83965f1ae96596cb58c084e65e05f",
+    "stack": "Java (commerce data-sync library)",
+    "license": "see repo"
+  },
+  "run": {
+    "engine_proxy": "isolated-subagent workflow (curator ≠ blind-engine ≠ scorer; )",
+    "graphify_path": true,
+    "m5_fix_injected": true,
+    "split": "held-out"
+  },
+  "identity": {
+    "split": "held-out",
+    "contamination": "obscure"
+  },
+  "reference_doc": {
+    "path": "docs/adr/",
+    "type": "numbered-ADRs",
+    "currency_score": 1
+  },
+  "reference_key": {
+    "key_path": "validation/coverage/_reference_keys/commercetools-sync-java.json",
+    "key_sha256": "2ea8ff0e3d8461d9e46b111a05429db5224c3a6307ebf49440c434b9b5b830f0",
+    "held_out": true,
+    "rc_total_extracted": 11,
+    "rc_current": 11,
+    "rc_stale_dropped": 0,
+    "rc_unverifiable_dropped": 0
+  },
+  "reference_claims": [
+    {
+      "rc_id": "RC-001",
+      "kind": "boundary-rule",
+      "text": "To preserve LineItem order during shopping-list sync, when an order/SKU difference is detected the existing line items from the divergence point onward are REMOVED and the draft line items re-ADDED (remove-and-add-back), rather than computing a minimal reorder (ADR-0002 LineItems decision).",
+      "code_anchor": "src/main/java/com/commercetools/sync/shoppinglists/utils/LineItemUpdateActionUtils.java:171-205",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-002",
+      "kind": "boundary-rule",
+      "text": "To preserve TextLineItem order during shopping-list sync, text line items are UPDATED IN PLACE via per-field update actions (changeTextLineItemName / setTextLineItemDescription / changeTextLineItemQuantity / custom-field actions), NOT removed-and-re-added like LineItems, because the platform allows changing all TextLineItem fields except addedAt (ADR-0002 TextLineItems decision).",
+      "code_anchor": "src/main/java/com/commercetools/sync/shoppinglists/utils/TextLineItemUpdateActionUtils.java:199-217",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-003",
+      "kind": "boundary-rule",
+      "text": "The addedAt field of LineItem and TextLineItem is NEVER updated/synced in place: there is no commercetools update action to change addedAt, so it is only ever set when ADDING a (new) item, never via a per-item update action (ADR-0002 Common 'addedAt' decision + Caveat).",
+      "code_anchor": "src/main/java/com/commercetools/sync/shoppinglists/utils/LineItemUpdateActionUtils.java:85",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-004",
+      "kind": "boundary-rule",
+      "text": "A shopping-list LineItem/LineItemDraft is matched to its product variant by SKU; if a line item draft (or existing line item) has no SKU set, the draft line item is not synced and an error callback is triggered (ADR-0002 Decision bullet 1).",
+      "code_anchor": "src/main/java/com/commercetools/sync/shoppinglists/utils/LineItemUpdateActionUtils.java:151-164",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-005",
+      "kind": "key-invariant",
+      "text": "When syncing product types, changing an attribute definition's TYPE is NOT supported programmatically (no remove-and-re-add): if the old and new attribute types differ, the sync skips the update and triggers an error callback asking the user to apply the type change manually (ADR-0003 third approach / Consequences).",
+      "code_anchor": "src/main/java/com/commercetools/sync/producttypes/utils/AttributeDefinitionsUpdateActionUtils.java:178-188",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-006",
+      "kind": "key-invariant",
+      "text": "The product-type attribute-type-change rationale is the platform's eventual consistency: removeAttributeDefinition is eventually consistent (only completes after the attribute is asynchronously removed from all products), so remove+re-add in a single request fails ('AttributeDefinitionAlreadyExists'); hence type changes must be done in separate requests / manually (ADR-0003 Context + Decision).",
+      "code_anchor": "src/main/java/com/commercetools/sync/producttypes/utils/AttributeDefinitionsUpdateActionUtils.java:181",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-007",
+      "kind": "key-invariant",
+      "text": "AttributeEnumType and AttributeLocalizedEnumType attribute types are treated as the SAME type regardless of their enum values, so an enum/localized-enum value change is NOT classified as an unsupported type change (i.e. enum value edits are still synced via normal update actions) (ADR-0003 implied scope of 'type change').",
+      "code_anchor": "src/main/java/com/commercetools/sync/producttypes/utils/AttributeDefinitionsUpdateActionUtils.java:229-237",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-008",
+      "kind": "key-invariant",
+      "text": "For AttributeSetType, type equality is determined by recursively comparing the element types, so a set-of-X to set-of-Y change is detected as an (unsupported) type change while set-of-X to set-of-X is not (ADR-0003 type-change detection).",
+      "code_anchor": "src/main/java/com/commercetools/sync/producttypes/utils/AttributeDefinitionsUpdateActionUtils.java:218-222",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-009",
+      "kind": "entry-point",
+      "text": "ShoppingListSync is the orchestrating sync entry-point class for shopping lists (within which the ADR-0002 LineItem/TextLineItem update-action decisions are applied).",
+      "code_anchor": "src/main/java/com/commercetools/sync/shoppinglists/ShoppingListSync.java:38",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-010",
+      "kind": "entry-point",
+      "text": "ProductTypeSync is the orchestrating sync entry-point class for product types (within which the ADR-0003 attribute-type-change handling is applied).",
+      "code_anchor": "src/main/java/com/commercetools/sync/producttypes/ProductTypeSync.java:42",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-011",
+      "kind": "boundary-rule",
+      "text": "A line item / text line item with quantity null-or-<=0 is filtered out of AddLineItem/AddTextLineItem actions (quantity 0 is rejected by the platform), so zero-quantity drafts are not added during sync (ADR-0002 update-action calculation constraint).",
+      "code_anchor": "src/main/java/com/commercetools/sync/shoppinglists/utils/LineItemUpdateActionUtils.java:103-113",
+      "currency": "CURRENT",
+      "load_bearing": true
+    }
+  ],
+  "emitted_claims": [
+    {
+      "ec_id": "EC-01",
+      "kind": "component-exists",
+      "claim": "A 'commons' component holds the shared sync abstractions, base classes, exceptions, helper utilities, and value-models reused by every per-resource sync package (111 source files).",
+      "code_anchor": "src/main/java/com/commercetools/sync/commons/BaseSync.java:14"
+    },
+    {
+      "ec_id": "EC-02",
+      "kind": "component-exists",
+      "claim": "A 'services' component provides the resource-service layer (interfaces in services/, implementations in services/impl/) that wraps the commercetools API client for fetching, creating, and caching CTP resources.",
+      "code_anchor": "src/main/java/com/commercetools/sync/services/impl/BaseService.java:43"
+    },
+    {
+      "ec_id": "EC-03",
+      "kind": "component-exists",
+      "claim": "Eleven per-resource sync packages exist (products, categories, cartdiscounts, customers, customobjects, inventories, producttypes, shoppinglists, states, taxcategories, types), each providing a concrete XxxSync, XxxSyncOptions(+Builder), helpers (reference resolver, batch validator, statistics), and update-action utils for one commercetools resource type.",
+      "code_anchor": "src/main/java/com/commercetools/sync/products/ProductSync.java:67"
+    },
+    {
+      "ec_id": "EC-04",
+      "kind": "component-exists",
+      "claim": "An 'integration' component contains integration tests (src/integration-test, 74 files) that exercise the sync packages against a real CTP project; it is test-only and not part of the published library.",
+      "code_anchor": "structural-graph.json:components.integration.files"
+    },
+    {
+      "ec_id": "EC-05",
+      "kind": "component-exists",
+      "claim": "A 'benchmark' component (src/benchmark) holds JMH-style sync benchmarks (ProductSyncBenchmark, CategorySyncBenchmark, etc.); test/benchmark-only, not part of the library.",
+      "code_anchor": "src/benchmark/java/com/commercetools/sync/benchmark/ProductSyncBenchmark.java:1"
+    },
+    {
+      "ec_id": "EC-06",
+      "kind": "component-role",
+      "claim": "BaseSync<ResourceT,ResourceDraftT,ResourceUpdateActionT,SyncStatisticsT,SyncOptionsT> is the abstract template-method engine: it owns sync()/syncBatches() orchestration, statistics timing, and the shared handleError flow, delegating process()/processBatch() to each concrete resource sync subclass.",
+      "code_anchor": "src/main/java/com/commercetools/sync/commons/BaseSync.java:59"
+    },
+    {
+      "ec_id": "EC-07",
+      "kind": "component-role",
+      "claim": "BaseSyncOptions is the immutable configuration/callback container for a sync run: it holds the ProjectApiRoot CTP client plus the errorCallback, warningCallback, beforeUpdateCallback, beforeCreateCallback, batchSize, and cacheSize, and exposes apply* methods that invoke the callbacks if present.",
+      "code_anchor": "src/main/java/com/commercetools/sync/commons/BaseSyncOptions.java:25"
+    },
+    {
+      "ec_id": "EC-08",
+      "kind": "component-role",
+      "claim": "BaseService is the abstract resource-service base that wraps the commercetools client to fetch/create resources and maintains a per-service Caffeine key->id cache (keyToIdCache) used to avoid redundant API lookups during reference resolution.",
+      "code_anchor": "src/main/java/com/commercetools/sync/services/impl/BaseService.java:55"
+    },
+    {
+      "ec_id": "EC-09",
+      "kind": "component-role",
+      "claim": "BaseReferenceResolver is the abstract base for per-resource reference resolvers, which translate draft references expressed by key into commercetools id references prior to a sync (validating that keys/ids are non-blank).",
+      "code_anchor": "src/main/java/com/commercetools/sync/commons/helpers/BaseReferenceResolver.java:23"
+    },
+    {
+      "ec_id": "EC-10",
+      "kind": "component-role",
+      "claim": "BaseTransformServiceImpl performs the reverse mapping (resource reference id -> key) by querying CTP via GraphQL and filling a ReferenceIdToKeyCache, used when transforming fetched resources back into key-based drafts.",
+      "code_anchor": "src/main/java/com/commercetools/sync/services/impl/BaseTransformServiceImpl.java:40"
+    },
+    {
+      "ec_id": "EC-11",
+      "kind": "component-role",
+      "claim": "UnresolvedReferencesServiceImpl persists drafts whose references cannot yet be resolved (WaitingToBeResolved) so they can be retried after their dependencies appear, storing them as commercetools CustomObjects under fixed container keys.",
+      "code_anchor": "src/main/java/com/commercetools/sync/services/impl/UnresolvedReferencesServiceImpl.java:30"
+    },
+    {
+      "ec_id": "EC-12",
+      "kind": "data-store",
+      "claim": "There is no local/embedded database; the system of record is the remote commercetools (CTP) project, accessed exclusively through the injected ProjectApiRoot client held in BaseSyncOptions.",
+      "code_anchor": "src/main/java/com/commercetools/sync/commons/BaseSyncOptions.java:29"
+    },
+    {
+      "ec_id": "EC-13",
+      "kind": "data-store",
+      "claim": "Unresolved-reference drafts are durably stored back in CTP itself as CustomObjects under fixed containers (e.g. 'commercetools-sync-java.UnresolvedReferencesService.productDrafts'), with each entry keyed by the SHA-1 hash of the draft key.",
+      "code_anchor": "src/main/java/com/commercetools/sync/services/impl/UnresolvedReferencesServiceImpl.java:42"
+    },
+    {
+      "ec_id": "EC-14",
+      "kind": "data-store",
+      "claim": "A per-service in-memory Caffeine cache (keyToIdCache) of resource key->id pairs is maintained for the duration of a sync run; it is bounded by syncOptions.getCacheSize() and runs eviction on the calling thread (executor Runnable::run).",
+      "code_anchor": "src/main/java/com/commercetools/sync/services/impl/BaseService.java:71"
+    },
+    {
+      "ec_id": "EC-15",
+      "kind": "key-invariant",
+      "claim": "Resource identity across projects is by user-supplied 'key', not by CTP 'id': syncs match drafts to existing resources by key, and reference resolution converts key-based references to id-based ones; a blank key/id is rejected with a ReferenceResolutionException.",
+      "code_anchor": "src/main/java/com/commercetools/sync/commons/helpers/BaseReferenceResolver.java:97"
+    },
+    {
+      "ec_id": "EC-16",
+      "kind": "key-invariant",
+      "claim": "Sync statistics counters (created/updated/failed/processed) are AtomicInteger to remain correct under the concurrent CompletionStage callbacks, whereas startTimer() is explicitly documented as not thread-safe and must not be used concurrently.",
+      "code_anchor": "src/main/java/com/commercetools/sync/commons/helpers/BaseSyncStatistics.java:11"
+    },
+    {
+      "ec_id": "EC-17",
+      "kind": "key-invariant",
+      "claim": "Input drafts are sliced into batches of size syncOptions.getBatchSize() and batches are processed strictly sequentially (each batch's CompletionStage is chained via thenCompose onto the previous), so cross-batch ordering/state is deterministic even though work within a batch is async.",
+      "code_anchor": "src/main/java/com/commercetools/sync/commons/BaseSync.java:100"
+    },
+    {
+      "ec_id": "EC-18",
+      "kind": "key-invariant",
+      "claim": "Outbound CTP queries are chunked to bound request-URI/body size: BaseService chunks keys at CHUNK_SIZE=250 and caps update actions at MAXIMUM_ALLOWED_UPDATE_ACTIONS=500; BaseTransformServiceImpl chunks ids at CHUNK_SIZE=300 (sizes chosen to stay under HTTP 413/414 limits per the code comments).",
+      "code_anchor": "src/main/java/com/commercetools/sync/services/impl/BaseService.java:58"
+    },
+    {
+      "ec_id": "EC-19",
+      "kind": "key-invariant",
+      "claim": "Concurrent-modification on update is treated specially: executeSupplierIfConcurrentModificationException inspects the exception cause and, on a commercetools ConcurrentModificationException, runs a retry/refetch supplier rather than failing the resource outright.",
+      "code_anchor": "src/main/java/com/commercetools/sync/commons/BaseSync.java:130"
+    },
+    {
+      "ec_id": "EC-20",
+      "kind": "boundary-rule",
+      "claim": "All commercetools HTTP/GraphQL traffic is funneled through the 'services' layer (and BaseSyncOptions.getCtpClient()); per-resource sync packages obtain CTP data via service interfaces rather than calling the API client directly, keeping I/O isolated from sync/diff logic.",
+      "code_anchor": "src/main/java/com/commercetools/sync/services/impl/BaseService.java:139"
+    },
+    {
+      "ec_id": "EC-21",
+      "kind": "boundary-rule",
+      "claim": "Cross-resource dependencies flow one way at runtime through services: a resource sync (e.g. ProductSync) constructs and depends on the service implementations of the resources it references (CategoryService, ProductTypeService, ChannelService, etc.), but those referenced resources do not depend back on the depending sync's package.",
+      "code_anchor": "src/main/java/com/commercetools/sync/products/ProductSync.java:39"
+    },
+    {
+      "ec_id": "EC-22",
+      "kind": "boundary-rule",
+      "claim": "Errors never abort the whole run: failures are routed through BaseSync.handleError -> syncOptions.applyErrorCallback and counted via statistics.incrementFailed, so an individual resource failure is reported (optional callback) and the sync continues; callbacks are no-ops when not configured.",
+      "code_anchor": "src/main/java/com/commercetools/sync/commons/BaseSync.java:155"
+    },
+    {
+      "ec_id": "EC-23",
+      "kind": "entry-point",
+      "claim": "The public usage entry point is per-resource: a caller builds options via XxxSyncOptionsBuilder.of(ctpClient)...build(), constructs new XxxSync(options), then calls sync(List<XxxDraft>) which returns a CompletionStage of the run statistics.",
+      "code_anchor": "src/main/java/com/commercetools/sync/products/ProductSync.java:102"
+    },
+    {
+      "ec_id": "EC-24",
+      "kind": "entry-point",
+      "claim": "The default builder configuration is the de-facto startup contract: batchSize defaults to 30 and cacheSize defaults to 10_000 in BaseSyncOptionsBuilder, applied unless the caller overrides them before build().",
+      "code_anchor": "src/main/java/com/commercetools/sync/commons/BaseSyncOptionsBuilder.java:35"
+    },
+    {
+      "ec_id": "EC-25",
+      "kind": "entry-point",
+      "claim": "CleanupUnresolvedReferenceCustomObjects.of(ctpClient) is a separate maintenance entry point that deletes stale leftover unresolved-reference CustomObjects from CTP (default pageSize 500), independent of the resource sync flows.",
+      "code_anchor": "src/main/java/com/commercetools/sync/commons/CleanupUnresolvedReferenceCustomObjects.java:46"
+    },
+    {
+      "ec_id": "EC-26",
+      "kind": "technology-choice",
+      "claim": "The library targets Java 11 (sourceCompatibility/targetCompatibility = 11) and is built with Gradle.",
+      "code_anchor": "gradle-scripts/java-compile.gradle:1"
+    },
+    {
+      "ec_id": "EC-27",
+      "kind": "technology-choice",
+      "claim": "It is built on the commercetools Java SDK v2 (version 19.3.0): commercetools-sdk-java-api (exposed as 'api') plus commercetools-http-client, using ProjectApiRoot and the io.vrap.rmf base client.",
+      "code_anchor": "build.gradle:49"
+    },
+    {
+      "ec_id": "EC-28",
+      "kind": "technology-choice",
+      "claim": "Caching uses Ben Manes' Caffeine (version 3.2.0) for the in-memory key->id caches.",
+      "code_anchor": "build.gradle:47"
+    },
+    {
+      "ec_id": "EC-29",
+      "kind": "technology-choice",
+      "claim": "Asynchrony is built on java.util.concurrent CompletionStage/CompletableFuture throughout the sync pipeline rather than blocking calls or a reactive framework.",
+      "code_anchor": "src/main/java/com/commercetools/sync/commons/BaseSync.java:59"
+    },
+    {
+      "ec_id": "EC-30",
+      "kind": "technology-choice",
+      "claim": "JSON handling uses Jackson (ObjectMapper via JsonUtils.getConfiguredObjectMapper) to convert CustomObject values to/from the WaitingToBeResolved model classes, and commons-codec DigestUtils.sha1Hex provides the custom-object key hashing.",
+      "code_anchor": "src/main/java/com/commercetools/sync/services/impl/UnresolvedReferencesServiceImpl.java:35"
+    },
+    {
+      "ec_id": "EC-31",
+      "kind": "technology-choice",
+      "claim": "Tests use JUnit 5 (Jupiter, with a vintage engine for legacy tests) and Mockito (mockito-junit-jupiter 5.20.0).",
+      "code_anchor": "build.gradle:54"
+    }
+  ],
+  "adjudication": [
+    {
+      "rc_id": "RC-001",
+      "rc_kind": "boundary-rule",
+      "ec_kind": "",
+      "ec_id": "",
+      "bucket": "MISS",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": true,
+      "note": "ADR-0002 LineItem remove-and-add-back ordering rule (LineItemUpdateActionUtils.java:171-205). No EC descends to this domain-specific update-action decision; ECs stop at framework altitude (BaseSync/services). Referent file under src/main/java/.../shoppinglists/utils was within the blind read-set (EC-03/EC-09/EC-23 evidence the shoppinglists package was read)."
+    },
+    {
+      "rc_id": "RC-002",
+      "rc_kind": "boundary-rule",
+      "ec_kind": "",
+      "ec_id": "",
+      "bucket": "MISS",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": true,
+      "note": "ADR-0002 TextLineItem in-place per-field update rule (TextLineItemUpdateActionUtils.java). No EC captures the TextLineItem-vs-LineItem in-place contrast. Referent readable in the blind run."
+    },
+    {
+      "rc_id": "RC-003",
+      "rc_kind": "boundary-rule",
+      "ec_kind": "",
+      "ec_id": "",
+      "bucket": "MISS",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": true,
+      "note": "ADR-0002 addedAt-never-synced-in-place invariant (only on Add builders). No EC mentions addedAt. Referent readable."
+    },
+    {
+      "rc_id": "RC-004",
+      "rc_kind": "boundary-rule",
+      "ec_kind": "",
+      "ec_id": "",
+      "bucket": "MISS",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": true,
+      "note": "ADR-0002 LineItem-matched-by-SKU + blank-SKU error-callback rule. EC-15 is a framework-level 'match by key not id' reference-resolution invariant on a DIFFERENT referent (BaseReferenceResolver), not the line-item-SKU matching, so it neither captures nor refutes this RC: a MISS, not a MISMATCH. Referent (LineItemUpdateActionUtils) readable."
+    },
+    {
+      "rc_id": "RC-005",
+      "rc_kind": "key-invariant",
+      "ec_kind": "",
+      "ec_id": "",
+      "bucket": "MISS",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": true,
+      "note": "ADR-0003 unsupported attribute-type-change -> throw -> error callback + skip (AttributeDefinitionsUpdateActionUtils.java:178-188). No EC touches producttypes attribute-definition type-change handling. Referent under src/main/java/.../producttypes/utils readable (producttypes package evidenced by EC-03/EC-10/EC-21)."
+    },
+    {
+      "rc_id": "RC-006",
+      "rc_kind": "key-invariant",
+      "ec_kind": "",
+      "ec_id": "",
+      "bucket": "MISS",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": true,
+      "note": "ADR-0003 eventual-consistency rationale for removeAttributeDefinition. No EC. Referent readable."
+    },
+    {
+      "rc_id": "RC-007",
+      "rc_kind": "key-invariant",
+      "ec_kind": "",
+      "ec_id": "",
+      "bucket": "MISS",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": true,
+      "note": "ADR-0003 enum/localized-enum treated as same type regardless of enum values (haveSameAttributeType). No EC. Referent readable."
+    },
+    {
+      "rc_id": "RC-008",
+      "rc_kind": "key-invariant",
+      "ec_kind": "",
+      "ec_id": "",
+      "bucket": "MISS",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": true,
+      "note": "ADR-0003 AttributeSetType recursive element-type comparison. No EC. Referent readable."
+    },
+    {
+      "rc_id": "RC-009",
+      "rc_kind": "entry-point",
+      "ec_kind": "entry-point",
+      "ec_id": "EC-03",
+      "bucket": "MATCH",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "EC-03 explicitly enumerates 'shoppinglists' among the eleven per-resource sync packages, each providing a concrete XxxSync; EC-23 names new XxxSync(options).sync(...) as the per-resource entry point. Fact-keyed: XxxSync==ShoppingListSync for the shoppinglists package captures RC-009's entry-point fact (kind label differs, fact matches)."
+    },
+    {
+      "rc_id": "RC-010",
+      "rc_kind": "entry-point",
+      "ec_kind": "entry-point",
+      "ec_id": "EC-03",
+      "bucket": "MATCH",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "EC-03 enumerates 'producttypes'; EC-21 explicitly names ProductTypeService as the producttypes service and ProductSync's dependency on it; EC-23 the new XxxSync entry-point pattern. Fact-keyed: ProductTypeSync is the producttypes sync entry-point class -> captured."
+    },
+    {
+      "rc_id": "RC-011",
+      "rc_kind": "boundary-rule",
+      "ec_kind": "",
+      "ec_id": "",
+      "bucket": "MISS",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": true,
+      "note": "ADR-0002 zero/null-quantity filtered from Add actions (hasQuantity gate; 'Quantity 0 is not allowed'). No EC mentions quantity filtering. Referent (LineItemUpdateActionUtils) readable."
+    }
+  ],
+  "beyond_doc": {
+    "count": 29,
+    "note": "code-groundable ECs absent from the doc (NEUTRAL)"
+  },
+  "scores": {
+    "coverage_overall": {
+      "n": 2,
+      "d": 11,
+      "pct": 0.1818,
+      "wilson95_lb": 0.0514
+    },
+    "coverage_by_kind": {
+      "boundary-rule": {
+        "n": 0,
+        "d": 5
+      },
+      "key-invariant": {
+        "n": 0,
+        "d": 4
+      },
+      "entry-point": {
+        "n": 2,
+        "d": 2
+      }
+    },
+    "faithfulness": {
+      "n": 3,
+      "d": 3,
+      "pct": 1.0,
+      "wilson95_lb": 0.4385
+    },
+    "beyond_doc_count": 29,
+    "deepinit_wrong_high": 0
+  },
+  "scoring_provenance": {
+    "separation_of_duties": true,
+    "adversarial_refutation": "every deepinit_wrong refuted; 0 confirmed wrong+HIGH",
+    "fact_keyed": "MATCH ec_kind normalized to rc_kind (matcher authoritative)"
+  },
+  "provenance": {
+    "doc_in_inputs": false,
+    "key_held_out": true,
+    "training_contamination_caveat": false,
+    "publishable": "indicative",
+    "caveats": [
+      "INDICATIVE — small-n, fuzzy truth, below any ship-gate",
+      "attribution-adjudicated — divergences resolved to CODE, not auto-scored",
+      "doc-bounded — agreement with a good human doc, not absolute completeness",
+      "§18 (9/9, FP 0) stays the product headline"
+    ],
+    "tune_or_heldout": "held-out",
+    "harness_section": "§34"
+  }
+}

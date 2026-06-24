@@ -1,0 +1,57 @@
+==============================================================================================
+ — MIRROR-TEST POOLED RESULTS
+
+========== HELD-OUT (the REPORTED number) (3 repos: evolutionary-architecture-by-example, helix, scrapy) ==========
+ evolutionary-architecture-by-example (.NET 10 / C# (Domain-Driven ) cov 26/33= 79% faith 26/27= 96% beyond 43 hardgate 0
+ helix (Rust (Cargo workspace; 13 pr) cov 22/31= 71% faith 23/24= 96% beyond 148 hardgate 0
+ scrapy (Python (Twisted event-driven) cov 23/24= 96% faith 23/24= 96% beyond 168 hardgate 0
+ --------------------------------------------------------------------------------------------
+ POOLED cov 71/88 = 80.7% (Wilson95 LB 71%) | faith 72/75 = 96.0% (LB 89%) | beyond 359 | hard-gate Σ 0
+ per-kind coverage (pooled):
+ component-exists 22/24 = 92%
+ component-role 21/21 = 100%
+ dependency-edge 7/ 9 = 78%
+ data-store 1/ 1 = 100%
+ boundary-rule 5/ 7 = 71%
+ key-invariant 2/ 9 = 22%
+ entry-point 2/ 2 = 100%
+ technology-choice 11/15 = 73%
+
+========== TUNE (gap-mining only, NOT reported) (1 repos: opentelemetry-collector) ==========
+ opentelemetry-collector (Go (multi-module) ) cov 26/29= 90% faith 26/26= 100% beyond 169 hardgate 0
+ --------------------------------------------------------------------------------------------
+ POOLED cov 26/29 = 89.7% (Wilson95 LB 74%) | faith 26/26 = 100.0% (LB 87%) | beyond 169 | hard-gate Σ 0
+ per-kind coverage (pooled):
+ component-exists 10/10 = 100%
+ component-role 7/ 8 = 88%
+ dependency-edge 3/ 3 = 100%
+ data-store 0/ 0 (empty denominator)
+ boundary-rule 3/ 4 = 75%
+ key-invariant 2/ 2 = 100%
+ entry-point 0/ 1 = 0%
+ technology-choice 1/ 1 = 100%
+
+========== MISS TAXONOMY (held-out) ==========
+ total MISS rows (held-out): 13
+ [component-exists] 1 MISS:
+ evolutionary-architecture-by-example/RC-007: The solution contains both unit-test projects and integration-test pro
+ [boundary-rule] 2 MISS:
+ evolutionary-architecture-by-example/RC-002: The module-isolation boundary rule: modules do NOT reference other mod
+ evolutionary-architecture-by-example/RC-004: Code-organization principle: vertical slices (each business process in
+ [key-invariant] 6 MISS:
+ evolutionary-architecture-by-example/RC-006: Visibility convention: classes are 'internal sealed' by default unless
+ helix/RC-021: The functional / value-semantics invariant of helix-core's text-editin
+ helix/RC-022: The main buffer data structure = a Rope (ropey library, re-exported) w
+ helix/RC-024: The `Transaction` type (helix-core/src/transaction.rs:571) and its key
+ helix/RC-025: The Document struct (helix-view/src/document.rs:141) as the per-open-f
+ helix/RC-026: The per-view selection storage invariant: Document stores selections k
+ [technology-choice] 4 MISS:
+ evolutionary-architecture-by-example/RC-009: Project build config: static code analysis enabled (analyzers on, warn
+ evolutionary-architecture-by-example/RC-034: Tests use Shouldly as the assertion library (the project migrated to S
+ helix/RC-030: helix-tui's provenance: it is a fork of tui-rs (inspired by Cursive), 
+ helix/RC-032: helix-core overall design lineage / influence: "Core's design is heavi
+
+ -- TUNE MISS (for mining) --
+ [component-role] 1: RC-015
+ [boundary-rule] 1: RC-025
+ [entry-point] 1: RC-028

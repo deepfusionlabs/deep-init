@@ -1,0 +1,63 @@
+{
+  "schema": "deepinit-validation/discovery-record/v1",
+  "program": "DeepInit in the Wild",
+  "track": "3 — recall/discovery (Java-class IF-8: a JVM language with no package-cycle ban → IF-8 FIRES on a package cycle; the other four families a clean Shape-B)",
+  "shape": "A+B — IF-8 FIRED (a 14-package strongly-connected cycle in the okhttp core module) + IF-6/IF-10/IF-7c/IF-3a silent. 1 genuine fire (GATED) + 45 named suppressions / 0 false defects.",
+  "recorded": "2026-06-13",
+  "engine_proxy": "deterministic-detector-sweep (5 read-only agents via the generalized cross-language sweep harness; NOT a full Detect→Emit pipeline; no cost ledger). Build chain:  (5 agents, ~323k tokens). MAIN-LOOP VERIFICATION: the IF-8 14-package SCC + 17 mutual-import pairs were INDEPENDENTLY re-computed by the main loop (a separate Tarjan over its own grep of okhttp3 `import` edges) and agree EXACTLY with the agent (same 14-member SCC). All 5 agents finalized.",
+  "repo": {
+    "name": "square/okhttp", "url": "https://github.com/square/okhttp", "branch": "master",
+    "pinned_sha": "eef98589a84b2724e8f9ae64f09b9bde43a51eef", "license": "Apache-2.0",
+    "stack": "Kotlin (the OkHttp HTTP client) — the ELEVENTH instrumented stack and the FIRST Kotlin datapoint",
+    "size": "96,535 Kotlin code LOC / 525 files; multi-module Gradle (okhttp core + okhttp-tls/brotli/dnsoverhttps/…)"
+  },
+  "analysis_scope": "the okhttp core module okhttp3 package tree (okhttp/src/{jvmMain,commonJvmAndroid}/kotlin/okhttp3/**, 147 files / 39 packages); IF-8 over the package import graph (component = okhttp3 sub-package); IF-6/IF-10/IF-7c/IF-3a over the same core.",
+  "result_headline": "Track-3 Kotlin field sweep over square/okhttp@eef98589: IF-8 FIRED on a 14-package strongly-connected import cycle anchored on the public okhttp3 package (Tarjan over 39 packages / 93 import-edges → one SCC of 14; 17 minimal 2-node mutual-import pairs; bidirectional 2-cycles verified on real file:lines, e.g. okhttp3 ↔ okhttp3.internal.connection). IF-6/IF-10/IF-7c/IF-3a stayed silent. 1 genuine fire (GATED) + 45 named suppressions / 0 false defects. Kotlin on the JVM is in the same structural class as Java for IF-8: kotlinc imposes NO package-cycle ban (Gradle bans only cross-MODULE cycles; this sweep scopes within the core module where package cycles are permitted).",
+  "per_family": [
+    {
+      "family": "IF-8", "applicable": true, "fired": 1,
+      "fires": [{
+        "title": "14-package strongly-connected cycle within the okhttp core module, anchored on the public okhttp3 package",
+        "severity": "High", "certainty": "HIGH", "fp_risk": "LOW", "scc_size": 14,
+        "scc_members": ["okhttp3", "okhttp3.internal", "okhttp3.internal.authenticator", "okhttp3.internal.cache", "okhttp3.internal.concurrent", "okhttp3.internal.connection", "okhttp3.internal.http", "okhttp3.internal.http1", "okhttp3.internal.http2", "okhttp3.internal.platform", "okhttp3.internal.publicsuffix", "okhttp3.internal.tls", "okhttp3.internal.url", "okhttp3.internal.ws"],
+        "why_core": "the SCC includes the public-API package okhttp3 (OkHttpClient, Call, Request, Response, Interceptor) → High",
+        "distinct_2node_mutual_pairs": 17,
+        "representative_verified_2cycles": [
+          "okhttp3 ↔ okhttp3.internal.connection: ConnectionPool.kt:21 (import internal.connection.ConnectionListener) ↔ internal/connection/ConnectInterceptor.kt:20 (import okhttp3.Interceptor)",
+          "okhttp3.internal.connection ↔ okhttp3.internal.http: internal/connection/ConnectInterceptor.kt:22 (import internal.http.RealInterceptorChain) ↔ internal/http/ExchangeCodec.kt:23 (import internal.connection.RealCall)",
+          "okhttp3.internal.http ↔ okhttp3.internal.http2: internal/http/CallServerInterceptor.kt:25 ↔ internal/http2/Http2ExchangeCodec.kt:28"
+        ],
+        "recorded_disposition": "GATED / reported, not filed. A real, deterministic IF-8 fire (Kotlin permits package cycles). A KNOWN, accepted OkHttp design pattern (the okhttp3.internal.* layer implements the public okhttp3 types and the public types delegate to internal — a public↔internal mutual dependency); reported as a structural fact, deep tier, High because it touches the public Core package. Not a defect to fix."
+      }],
+      "suppressed_count": 5,
+      "suppressed": [
+        {"category": "4 singleton (size-1) SCCs — pure sinks/sources", "members": ["okhttp3.internal.proxy", "okhttp3.internal.graal", "okhttp3.internal.idn", "okhttp3.internal.http2.flowcontrol"], "predicate_false_clause": "acyclic — no back-edge (verified: zero out-edges into the SCC for the sinks; graal feeds only platform)"},
+        {"category": "intra-package (same-component) references + recursion", "predicate_false_clause": "intra-component recursion is not an SCC>=2 (same-package refs need no import; dropped at edge construction)"}
+      ],
+      "kotlin_specific_note": "Kotlin on the JVM imposes NO package-cycle ban (like Java; unlike Go/Rust). kotlinc compiles intra-module package cycles; Gradle bans cross-MODULE cycles only, and the entire 14-package SCC lives within the single okhttp core module, so the cycle is real and compiles. The agent verified multiple INDEPENDENT bidirectional 2-cycles on real import file:lines (not a fragile single chain), and the main loop independently reproduced the 14-SCC / 17 pairs. Same structural class as Java (Signal-Server, 33-package SCC) and C#-namespace-level — permitted + explicit imports → groundable fire.",
+      "naive_overfire_estimate": 65
+    },
+    {"family": "IF-6", "applicable": true, "fired": 0, "fires": [], "suppressed_count": 5,
+     "suppressed": [{"category": "enum class / sealed hierarchies / companion-const collections bucketed by canonical name across packages; same-named candidates are coincidental homonyms or same-component", "predicate_false_clause": "zero-overlap homonym / same-component / no entailment"}],
+     "kotlin_specific_note": "Value-sets surface as enum class, sealed class/interface hierarchies, and companion-object consts. No cross-package canonical name carried a conflicting membership with behavioral entailment → 0 fires / 5 named suppressions.", "naive_overfire_estimate": 4},
+    {"family": "IF-10", "applicable": true, "fired": 0, "fires": [], "suppressed_count": 7,
+     "suppressed": [{"category": "`const val`/`val` bool-literal near-candidates", "predicate_false_clause": "non-literal RHS / mixed condition / not a whole if-test — config is runtime"}],
+     "kotlin_specific_note": "Kotlin has bool-only truthiness (like Java). `const val FLAG=true/false` is the only compile-time-const shape, and none gates a whole if-test as dead → 0 fires / 7 named suppressions.", "naive_overfire_estimate": 5},
+    {"family": "IF-7c", "applicable": true, "fired": 0, "fires": [], "suppressed_count": 20,
+     "suppressed": [{"category": "try/catch + runCatching across the networking core; every empty/typed catch either rethrows, closes-and-continues (non-empty), is a deliberate IOException expected-condition handler, is private, or is not cross-package-consumed", "predicate_false_clause": "non-empty / re-raises / private / not-cross-consumed"}],
+     "kotlin_specific_note": "Kotlin error model = exceptions + nullable types + Result. okhttp (a networking lib) has dense IOException handling, overwhelmingly close-and-continue or rethrow (non-empty → §23 error-as-value suppress). 20 near-candidates, no bare empty cross-consumed catch → 0 fires.", "naive_overfire_estimate": 20},
+    {"family": "IF-3a", "applicable": true, "fired": 0, "fires": [], "suppressed_count": 8,
+     "suppressed": [{"category": "connection pools / dispatchers / caches (shared mutable, but accessed via typed APIs); @Volatile fields; companion vals", "predicate_false_clause": "reached through a typed interface (mediated) / immutable val / per-instance"}],
+     "kotlin_specific_note": "okhttp holds real shared mutable state (connection pool, dispatcher, caches) but accesses it through typed APIs (the explicit interface → mediated, suppress); no mutable companion/top-level `var` read/written by >=2 packages with no interface → 0 fires / 8 named suppressions.", "naive_overfire_estimate": 17}
+  ],
+  "key_kotlin_findings": [
+    "IF-8 / no package-cycle ban → 14-package SCC FIRED: Kotlin on the JVM is in the same structural class as Java — kotlinc permits intra-module package cycles (Gradle bans only cross-module). The okhttp core is internally a tightly cyclic 14-package SCC anchored on the public okhttp3 package (public↔internal mutual dependency, a known OkHttp pattern), verified bidirectionally on real file:lines and double-verified (agent + main-loop Tarjan).",
+    "IF-6/IF-10/IF-7c/IF-3a clean: value-sets are coincidental homonyms; bool-only truthiness + runtime config starves IF-10; the networking error-handling is close-and-continue/rethrow (non-empty); shared connection/dispatcher state is typed-API-mediated."
+  ],
+  "honest_assessment": "The ELEVENTH stack and first Kotlin datapoint, confirming Kotlin sits in the Java structural class for IF-8 (no package-cycle ban → a real 14-package SCC in the okhttp core, a known public↔internal layering pattern, recorded GATED). The other four families are a clean Shape-B with 45 mechanism-named suppressions — most tellingly IF-7c (20 networking catches, all non-empty/deliberate) and IF-3a (connection-pool/dispatcher state, all typed-API-mediated). 1 genuine GATED fire + 0 false defects + 45 named suppressions.",
+  "totals": {
+    "families": 5, "genuine_fires": 1, "genuine_fire_disposition": "GATED (IF-8 14-package SCC) — reported, not filed",
+    "named_suppressions": 45, "per_family_suppressed": "IF-8 5 / IF-6 5 / IF-10 7 / IF-7c 20 / IF-3a 8",
+    "false_defects": 0, "counts_note": "IF-8 fire double-verified (agent + main-loop Tarjan, same 14-SCC / 17 pairs)."
+  }
+}

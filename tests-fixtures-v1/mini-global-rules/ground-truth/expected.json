@@ -1,0 +1,17 @@
+{
+  "fixture": "mini-global-rules",
+  "purpose": "Offline oracles for the global rules that had no harness gate yet (M8-T5). R7 (§44) and R9 (§45) already done; this adds R1/R2/R3/R8. A compliant set (good/) must pass all four; a violating set (bad/) carries exactly one rule break per file — the §51 checker must catch each and the good set must stay clean (RED-confirm built in).",
+  "rules": {
+    "R1": "never fabricate — every claim record (- BR-/WF-/IP-/KL-/ISS-) carries a file:line citation AND a [HIGH|MEDIUM|LOW] certainty tag",
+    "R2": "strict input boundaries — every cited path in a subagent record is under one of that agent's declared inputs",
+    "R3": "provenance header — every emitted output .md carries a provenance header (stage/component/run/inputs/date)",
+    "R8": "graceful degradation honesty — every analyzed file in the extraction ledger carries one of the 5 fallback tags (graphify/ctags/grep/llm-only/skip); no silent untagged entry"
+  },
+  "good_passes_all": true,
+  "bad_violations": {
+    "r1_ungrounded.md": "R1",
+    "r3_noprovenance.md": "R3",
+    "_extraction_ledger.json": "R8",
+    "_subagent_billing.json": "R2"
+  }
+}

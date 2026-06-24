@@ -1,0 +1,28 @@
+{
+  "schema_version": 3,
+  "deepinit_version": "2.0.0",
+  "run_id": "run-fixture-docsviewer",
+  "generated": "2026-06-14T00:00:00Z",
+  "repo": {
+    "name": "widgetstore",
+    "pinned_sha": "deadbeefcafe0000deadbeefcafe0000deadbeef",
+    "source_root": "tests-fixtures-v1/mini-docs-viewer"
+  },
+  "components": {
+    "core": {
+      "doc": ".ai/docs/components/core.md",
+      "files": ["src/core/guard.ts", "src/core/link.ts"],
+      "content_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+      "verified_at": "2026-06-14T00:00:00Z"
+    }
+  },
+  "deep_docs": ["decisions.md", "issues.md"],
+  "counts": {
+    "components": 1,
+    "lean_facts": 2,
+    "adrs": 1,
+    "knowledge_log_entries": 1,
+    "verified_issues": 0,
+    "named_suppressions": 1
+  }
+}

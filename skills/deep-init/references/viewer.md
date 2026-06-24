@@ -1,0 +1,29 @@
+# viewer.md — C-VIEW (self-contained docs-navigation viewer)
+
+Emits one **`.ai/docs-viewer.html`** — a browsable, beautifully-presented READER over the *generated documentation* (the lean `AGENTS.md` + the `.ai/docs/components/*.md` tree + the `decisions.md` ADR/KL narrative + the `issues.md` ledger). The generated docs are written for the *coding agent* to consume; this viewer is the **human-facing first impression** — the surface a person evaluating the project (or the tool) actually browses. **Read `redaction.md` first:** the embedded corpus passes through redaction before it is written into the file.
+
+**It is a DOCS READER, never a graph explorer** — the interactive dependency graph stays DeepMap's territory (S-8). It is **now merged** with `.ai/dashboard.html` into the unified `.ai/report.html` (C-REPORT — `report.md`, ADR-019), where this C-VIEW reader becomes the report's **Docs** view; this spec + `tools/build_docs_viewer.py` remain the legacy standalone reader until the cutover completes.
+
+## Hard constraints (AC-7 / AF-6 / S-8 — same clearance as the dashboard)
+- **One self-contained file.** Vanilla JS + **inline** CSS. **NO framework, NO CDN, NO external `src`/`href`, no `fetch`/XHR/WebSocket, no network calls of any kind.** Opens from `file://`. (License-clean precisely because nothing third-party is bundled — the renderer, search, tree, and Markdown parser are all first-party.)
+- **Embedded inline JSON island.** `file://` CORS forbids fetching a sibling data file, so the whole corpus is serialized into one `<script type="application/json" id="deepinit-data">` block the page reads with `JSON.parse(textContent)` — never `eval`, never `fetch`.
+- **Escape-first embed (load-bearing).** The viewer embeds full doc TEXT from arbitrary analyzed repos, so a snippet may contain a literal `</script>` (or `<img onerror=…>`). At embed time every `<`/`>` is escaped to `<`/`>` so no substring can break out of the island tag; `JSON.parse` restores them transparently. This is the single must-do of the embed step.
+- **Safe rendering (escape-first, no sanitizer).** Markdown renders via a first-party safe-subset renderer: escape `&`/`<`/`>`, build DOM via `createElement` + `textContent` on a fixed element allow-list, and apply a URL-scheme allow-list (`http:`/`https:`/`mailto:`/`vscode:`/`#` only — `javascript:`/`data:text/html` are dropped to plain text). **Never** assigns payload-derived strings to `innerHTML`; never emits `id`/`name` from payload (DOM-clobbering guard — all app anchors are prefixed). A `file://`-origin XSS is worse than web, so this is the whole defense — there is no third-party sanitizer to keep current.
+- **Generated, not hand-edited.** R3 provenance + a visible gen-banner at the top; regenerated every run; **no owned-region protection** (unlike `AGENTS.md`).
+- **Default-on is gated** behind a build-time assertion that the template carries **zero off-host refs and no `innerHTML`/`eval`/`document.write` sink** (harness §43). If the assertion fails, do not emit / do not default on.
+
+## How it is built
+`tools/build_docs_viewer.py <output_dir>` parses `AGENTS.md` + `.ai/docs/**` into a structured model and injects it (redacted) into `skills/deep-init/assets/docs-viewer-template.html` at the single `/*__DEEPINIT_VIEWER_DATA__*/` placeholder. The parser is tolerant (R8): a missing/oddly-shaped section is skipped, never fatal — and the raw Markdown of every doc is always carried, so the reader renders faithfully even where the structured extraction is partial.
+
+**Data model (`docs-viewer/v1`):** `project` (name/tagline/architecture/repo_sha/source_root/run_id/generated/version) · `counts` (reflect what is displayed) · `lean_facts[]` (text + cites + ids + certainty + anchor) · `components[]` (role/paths/facts/edges/body_md/anchor/content_hash) · `decisions[]` (ADR fields + anchor) · `knowledge_log[]` · `open_questions[]` · `issues{summary,verified,suppressions}` · `files_index[]` (every cited file → who references it) · `xref{id→anchor}` (drives in-doc links; an ID NOT in here renders as plain text — R1 honesty, never a dead link) · `search_index[]` (pre-flattened) · `manifest`.
+
+## Views & features (§5.3 analogue, but a READER not a triage board)
+1. **Overview** — project, tagline, architecture prose, a component grid, and the lean "Critical to know" facts (each grounded to a `file:line` chip + cross-ref links + a certainty pill).
+2. **Component** — per-doc: role, the file list, the rendered Markdown body, business-rule/workflow facts, cross-component edges, content hash.
+3. **Decisions** — the ADRs as a vertical TIMELINE (status badge + certainty pill + date), the Knowledge Log, and Open Questions (a muted "not asserted" callout).
+4. **Issue ledger** — the honest posture up top (0 fires / N suppressions), the verified table (severity chips), and the named suppressions as an accordion with the predicate-FALSE mechanism for each.
+5. **Grounding index** — every `file:line` citation grouped by file: the evidence trail behind each claim.
+- Cross-cutting: instant client-side **search** (debounced linear + subsequence fuzzy; ARIA combobox), a **component tree** (ARIA), **jump-to-`file:line`** (click-to-copy), **scrollspy TOC** (IntersectionObserver), hash routing, keyboard shortcuts (`/`, `?`, `Esc`, arrows), and a dark/light/auto theme persisted to `localStorage` (pre-paint restore avoids flash).
+
+## Template
+`skills/deep-init/assets/docs-viewer-template.html` carries the markup + inline CSS + the first-party vanilla-JS modules (safe Markdown renderer, xref linker, tree, search, router, TOC/scrollspy, citation copy, keyboard, theme, view renderers) and the single data placeholder. Self-containment is asserted at build (the §43 gate greps for off-host refs + the no-sink discipline + proves the escape is load-bearing on an adversarial fixture).

@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# >>> deepinit mutation-lock guard >>>
+# Block a commit while a file-mutating test run holds the lock — a planted mutation would otherwise be
+# committed as a torn tree (this corrupted 3 releases). Contract matches oss-kit's commit-guard.sh:
+# <git-toplevel>/.oss-kit/.mutation-running, PID on line 1. FAILS CLOSED. Skip with OSS_KIT_NO_MUTATION_LOCK=1.
+if [ "${OSS_KIT_NO_MUTATION_LOCK:-}" != "1" ]; then
+  _dl_root="$(git rev-parse --show-toplevel 2>/dev/null || echo .)"
+  _dl_lock="${OSS_KIT_MUTATION_LOCK_PATH:-$_dl_root/.oss-kit/.mutation-running}"
+  if [ -f "$_dl_lock" ]; then
+    # Liveness MUST be PID-namespace-correct: the Python harness writes a Windows PID that a bash `kill -0`
+    # cannot see on Windows. Prefer the Python helper (ctypes OpenProcess); fall back to native tasklist.
+    _dl_py=""
+    for _dl_c in python python3 "py -3"; do
+      if $_dl_c -c "pass" >/dev/null 2>&1; then _dl_py="$_dl_c"; break; fi
+    done
+    if [ -n "$_dl_py" ]; then
+      $_dl_py "$_dl_root/tools/mutation_lock.py" --check || exit 1
+    else
+      # No working interpreter — decide in bash, fail closed (unparseable PID blocks).
+      _dl_pid="$(head -n 1 "$_dl_lock" | tr -dc '0-9')"
+      _dl_alive=1
+      if [ -n "$_dl_pid" ]; then
+        case "$(uname -s 2>/dev/null)" in
+          MINGW*|MSYS*|CYGWIN*) tasklist //FI "PID eq $_dl_pid" //NH 2>/dev/null | grep -q "$_dl_pid" || _dl_alive=0 ;;
+          *) kill -0 "$_dl_pid" 2>/dev/null || _dl_alive=0 ;;
+        esac
+      fi
+      if [ "$_dl_alive" = "1" ]; then
+        echo "ABORT: a file-mutating test run is in flight; wait for it." >&2
+        echo "  Lock: $_dl_lock" >&2
+        echo "  If NO run is active, this lock is stale — remove it: rm \"$_dl_lock\"" >&2
+        exit 1
+      fi
+    fi
+  fi
+fi
+# <<< deepinit mutation-lock guard <<<
+# >>> oss-kit managed >>>
+# Modern gitleaks subcommand; --redact prevents secret values from leaking into logs.
+# --log-level error: gitleaks otherwise prints INFO noise ("… INF … 0 commits scanned") on EVERY
+# commit incl. success, which VS Code's Git dialog surfaces while BURYING the real commit-msg
+# (commitlint) error behind it. At error level a clean scan is silent; real findings still print
+# (via the reporter) and still exit non-zero. (Local fix pending the oss-kit upstream — see the
+# oss-kit feedback inbox; remove if oss-kit ships the same default.)
+gitleaks git --staged --no-banner --redact --log-level error
+# <<< oss-kit managed <<<

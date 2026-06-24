@@ -1,0 +1,114 @@
+{
+  "schema": "deepinit-validation/discovery-record/v1",
+  "program": "DeepInit in the Wild",
+  "track": "3 — recall/discovery (M4c: the Swift datapoint — SPM-manifest hard-ban IF-8 + a magic-string env-key IF-3a fire)",
+  "shape": "A-structurally-verified ×1 (one grounded IF-3a magic-string env-var coupling, recorded GATED / not filed) + a clean Shape-B across the other four families / 0 false defects",
+  "recorded": "2026-06-13",
+  "engine_proxy": "deterministic-detector-sweep (5 read-only agents — IF-8 / IF-6 / IF-10 / IF-7c / IF-3a — applying the SHIPPED deterministic predicates directly to real Swift source; NOT a full Detect→Emit pipeline; no cost ledger). Build chain:  (5 agents, ~338k tokens, 76 tool-uses). The IF-8 headline (SPM-manifest DAG) and the IF-3a fire (SWIFTNIO_STRICT) were INDEPENDENTLY re-verified by the main loop (a second import-graph Tarjan over the core modules + a re-grep of the env-key read sites).",
+  "repo": {
+    "name": "apple/swift-nio",
+    "url": "https://github.com/apple/swift-nio",
+    "branch": "main",
+    "pinned_sha": "3263350c88b44704a90b4d9bc0fda4828d470df5",
+    "pinned_sha_note": "shallow-clone HEAD at 2026-06-13; the file:line citations are the durable anchors.",
+    "license": "Apache-2.0",
+    "stack": "Swift (the SwiftNIO networking framework) — the FIRST Swift datapoint; SPM-target hard-ban IF-8 (a build-manifest DAG, same enforcement class as OCaml/dune) + the do/try/catch error model + the ARC caveat (a memory concept, explicitly NOT IF-8).",
+    "size": "multi-module SPM; 8 core Swift target modules in scope (NIOCore 71f / NIOPosix 56f / NIOHTTP1 17f / NIOWebSocket 10f / NIOConcurrencyHelpers 6f / NIOTLS 5f / NIOEmbedded 3f / NIOFoundationCompat 3f); CNIO* C-shims, example/demo targets, and Tests/ excluded"
+  },
+  "analysis_scope": "the 8 core Swift SPM-target modules (production Sources/ only). IF-8 built the real cross-module import graph (8 nodes / 11 production edges) and cross-checked it against the Package.swift .target(dependencies:) manifest (agree, DAG even with the conditional NIO umbrella edges → 9 nodes / 17 edges / DAG).",
+  "result_headline": "Across five families on swift-nio@3263350c (8 core modules / ~171 Swift files), the guarded sweep produced exactly 1 fire — an IF-3a magic-string coupling on the env-var key \"SWIFTNIO_STRICT\" read independently by NIOPosix and NIOEmbedded with no shared constant and divergent parsing (LOW-MED, GATED) — against 43 named suppressions (IF-8 6 / IF-6 11 / IF-10 8 / IF-7c 7 / IF-3a 11) and 0 false defects. IF-8 is HARD-BAN (a strict DAG, build-enforced by the SPM target manifest — the same manifest-DAG enforcement class as OCaml/dune), independently main-loop-verified; the sweep also names two Swift-specific over-fire traps (ARC retain-cycles are a memory concept ≠ a module-graph edge; 94 `@testable import` test-edges are out of the Sources/ component scope).",
+  "per_family": [
+    {
+      "family": "IF-8",
+      "applicable": true,
+      "fired": 0,
+      "fires": [],
+      "suppressed_count": 6,
+      "regime": "HARD-BAN — build-enforced DAG via the SPM target manifest",
+      "key_suppressions": [
+        "The 8-node / 11-edge core import graph: Tarjan → all SCCs size 1 (strict DAG). Every edge points leaf-ward (NIOCore→NIOConcurrencyHelpers; NIOHTTP1/NIOTLS→NIOCore; NIOWebSocket→{NIOCore,NIOHTTP1}; NIOEmbedded/NIOPosix→{NIOCore,NIOConcurrencyHelpers}). No back-edge.",
+        "NIOConcurrencyHelpers is a pure Swift sink (imports only the CNIOAtomics C-shim, excluded) → cannot close a cycle. NIOCore is a high-fan-in hub (84+ inbound) but points only DOWN → fan-in ≠ SCC.",
+        "The conditional `NIO` umbrella manifest edges (NIOHTTP1/NIOTLS/… → NIO): NIO depends only on NIOCore/NIOEmbedded/NIOPosix, never back → forward edge to a deeper node; the fuller 9-node/17-edge manifest graph is still a DAG; `import NIO` appears 0× in core source.",
+        "94 `@testable import <coreModule>` statements are all in Tests/ (test targets, excluded from the Sources/<Module> component scope) — phantom back-edges if naively included.",
+        "ARC RETAIN-CYCLE conflation: an ARC reference cycle (weak/unowned) is a MEMORY-management concern between object instances, NOT an edge in the module dependency graph — IF-8 operates only on the SPM-target import graph and does not fire on retain cycles."
+      ],
+      "language_specific_note": "SWIFT = HARD-BAN IF-8, build-enforced via the SPM target manifest (SPM rejects target-dependency cycles with a 'cyclic dependency' build error, so a buildable package's target graph is structurally a DAG). Doubly-confirmed: (1) the real source-import graph over the 8 core modules = 8 nodes / 11 edges / all SCCs size 1; (2) the Package.swift manifest agrees edge-for-edge and stays a DAG with the conditional NIO edges added. Within a module Swift gives whole-module visibility (no import needed) → no intra-module import-cycle concept. Two Swift-specific over-fire traps named: the ARC retain-cycle (memory ≠ module graph) and the 94 `@testable import` test-edges (out of component scope). Independently main-loop-verified (a second import-graph Tarjan over all 35 Sources modules → 33-node / 80-edge DAG, convergent with the agent's 8-core-module DAG).",
+      "naive_overfire_estimate": 2
+    },
+    {
+      "family": "IF-6",
+      "applicable": true,
+      "fired": 0,
+      "fires": [],
+      "suppressed_count": 11,
+      "language_specific_note": "Clean single-definition regime, driven by SPM module-per-component + whole-module visibility. Every genuine named value-set / wire-protocol enum is defined in EXACTLY ONE owning module and IMPORTED (never redefined) by consumers — WebSocketOpcode/WebSocketErrorCode (NIOWebSocket), HTTPResponseStatus/HTTPMethod (NIOHTTP1), ALPNResult (NIOTLS), NIOBSDSocket.AddressFamily/ProtocolFamily/OptionLevel + Endianness + NIOExplicitCongestionNotificationState (NIOCore). No same-canonical-name value-set is redefined with conflicting membership across ≥2 modules. 0 fires / 11 named suppressions.",
+      "naive_overfire_estimate": 9
+    },
+    {
+      "family": "IF-10",
+      "applicable": true,
+      "fired": 0,
+      "fires": [],
+      "suppressed_count": 8,
+      "language_specific_note": "Muted (0 fires). The predicate maps onto Swift's `static let FLAG = false` / top-level `let FLAG = false` whole-`if` test, but two suppression families dominate: (1) `#if os(...)` / `#if false` COMPILE-FLAG forms (config-as-build, the C-preprocessor twin — e.g. supportsUDP*Offload `#if os(Linux)` non-literal C-call RHS vs `#else=false`, and a `#if false` debug block) → out of scope; (2) whole-module visibility makes many bool literals protocol-conformance witnesses (DeadChannel.isActive/isWritable as Channel requirements) read only via dynamic dispatch, not a const-folded whole-`if` test. 0 fires / 8 named suppressions.",
+      "naive_overfire_estimate": 5
+    },
+    {
+      "family": "IF-7c",
+      "applicable": true,
+      "fired": 0,
+      "fires": [],
+      "suppressed_count": 7,
+      "language_specific_note": "Swift error model = `do { try } catch {}` + throws + Result + try?. A deterministic brace-balancer over the 7 core modules (~128 catch-mentions) found exactly 7 empty/comment-only catch bodies; 2 are DocC `///` examples (not code). Of the 5 real-code candidates, ALL suppress on a named clause, 0 fire: comment-only catch used as a control-flow fall-through terminated by an unconditional `throw` (SocketAddresses IPv4-then-IPv6; NonBlockingFileIO mkdir-then-recheck) = RE-RAISES; the rest non-empty (log / fail a promise / return a default). NOTE: `try?` (returns nil on error) is the deferred error-as-optional case, NOT the empty-handler predicate. 0 fires / 7 named suppressions.",
+      "naive_overfire_estimate": 5
+    },
+    {
+      "family": "IF-3a",
+      "applicable": true,
+      "fired": 1,
+      "fires": [
+        {
+          "title": "Silent cross-module coupling on the magic-string env-var key \"SWIFTNIO_STRICT\"",
+          "resource": "the process environment variable key literal \"SWIFTNIO_STRICT\" (a NAMED shared external resource: the process environment). Each module hard-codes the same string and re-implements its own truthy-set parse; no shared constant, no NIOCore-exposed accessor, no typed interface mediating the key.",
+          "coupled_components": ["NIOPosix", "NIOEmbedded"],
+          "sites": [
+            "NIOEmbedded: Sources/NIOEmbedded/Embedded.swift:408 (in a 3-key list [\"SWIFTNIO_STRICT\",\"SWIFTNIO_CI\",\"SWIFTNIO_STRICT_EMBEDDED\"]), :410 (Windows getenv), :412 (POSIX getenv)",
+            "NIOPosix: Sources/NIOPosix/SelectableEventLoop.swift:98 (Windows getenv), :100 (POSIX getenv) — the bare key alone"
+          ],
+          "mechanism": "Two distinct SPM target modules independently read the same env-var string literal with NO shared constant and DIVERGENT handling (NIOEmbedded folds it into a 3-variable strict-mode set; NIOPosix reads it standalone) — if the env-var contract changes, the two silently diverge. Main-loop-verified by re-grepping the read sites (NIOEmbedded Embedded.swift:408-412 + NIOPosix SelectableEventLoop.swift:98-100; also NIOCrashTester, a tool module out of core scope).",
+          "severity": "LOW-MED",
+          "certainty": "HIGH",
+          "fp_risk": "LOW",
+          "gated": true,
+          "filed": false,
+          "note": "Recorded GATED — a real but minor magic-string coupling (parallel to discourse's Redis-key and caddy's exported-globals fires); not filed."
+        }
+      ],
+      "suppressed_count": 11,
+      "language_specific_note": "Swift shared mutable state is mostly instance-threaded (EventLoop/Channel/ByteBufferAllocator passed as parameters) or mediated by actors / NIOLock / NIOLockedValueBox / atomics → those suppress. The ONE fire that survives is the env-var magic-string key (the process environment is the shared resource, keyed by a bare duplicated string with no constant/accessor) — like discourse's Redis-key, an external-named-resource coupling rather than an in-process global. 1 fire / 11 named suppressions.",
+      "naive_overfire_estimate": 11
+    }
+  ],
+  "naive_vs_guarded_illustrative": {
+    "naive_overfires_approx": 32,
+    "guarded_fires": 1,
+    "false_defects": 0,
+    "note": "A naive surface detector would over-fire on ~32 candidates (IF-8 ~2 incl. the ARC/@testable traps; IF-6 ~9 same-name-across-module enums that are single-definition imports; IF-10 ~5 #if-os/protocol-witness bools; IF-7c ~5 empty-looking catches that re-raise/are DocC; IF-3a ~11 env/static/global candidates). The guarded predicate fired exactly once (the real SWIFTNIO_STRICT env coupling), LOW-MED, GATED, 0 false defects."
+  },
+  "key_swift_findings": [
+    "IF-8 / HARD-BAN via the SPM target manifest: SPM rejects target-dependency cycles (build error) → the target graph is a structural DAG. Verified the 8-core-module source-import graph (11 edges, all SCCs size 1) AND the Package.swift manifest (agree; DAG even with the conditional NIO umbrella edges). The same MANIFEST-DAG enforcement class as OCaml/dune — distinct from a compiler's import-cycle check (Go/Rust) or a module system (Java/C#).",
+    "Two Swift-specific IF-8 over-fire traps NAMED and suppressed: (a) an ARC retain/reference cycle (weak/unowned) is a memory concept, NOT a module-dependency edge — IF-8 does not fire on it; (b) 94 `@testable import` of core modules are all in Tests/ (test targets), out of the Sources/<Module> component scope.",
+    "IF-3a fires on an external-named-resource coupling (the SWIFTNIO_STRICT env key, NIOPosix + NIOEmbedded, divergent parse, no shared constant) — the same shape as discourse's Redis-key, on a stack whose in-process state is otherwise instance-threaded or actor/lock-mediated.",
+    "IF-6/IF-10/IF-7c clean: single-definition-per-module (whole-module visibility), #if-os compile-flags + protocol-conformance bool witnesses, and re-raising/control-flow catches respectively."
+  ],
+  "honest_assessment": "The first Swift datapoint, component-scoped to the 8 core SwiftNIO modules. IF-8 is HARD-BAN (a build-enforced DAG via the SPM target manifest — confirming the manifest-DAG enforcement mechanism shared with OCaml/dune, and the broader hard-ban regime of Go/Rust/Java-module/C#-project), independently main-loop-verified against both the source-import graph and the Package.swift manifest. The comprehension shows in the named over-fire traps unique to Swift — refusing to conflate an ARC retain cycle (a memory concern) with a module-dependency cycle, and excluding 94 `@testable import` test-edges from the production component scope. The one fire is an honest LOW-MED IF-3a magic-string env-var coupling, the same external-named-resource shape that fired on Ruby/discourse. Recorded GATED (training-contamination caveat noted; facts rest on the live code at the pinned SHA).",
+  "totals": {
+    "families": 5,
+    "genuine_fires": 1,
+    "fires_severity": "1 LOW-MED (IF-3a SWIFTNIO_STRICT env-key coupling), GATED / not filed",
+    "named_suppressions": 43,
+    "false_defects": 0,
+    "naive_overfire_surface": 32
+  },
+  "counts_note": "Authoritative counts are the structured suppressed[] arrays: 43 named suppressions (IF-8 6 / IF-6 11 / IF-10 8 / IF-7c 7 / IF-3a 11) + 1 LOW-MED IF-3a fire, 0 false defects."
+}

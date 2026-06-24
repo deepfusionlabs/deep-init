@@ -1,0 +1,57 @@
+{
+  "fixture": "mini-fp-trap",
+  "purpose": "Consolidated false-positive trap: legitimate-but-suspicious patterns across IF-1/IF-2/IF-3a/IF-4/IF-5 that ALL families must suppress; expected_issues is empty by design and every false flag counts against the measured FP rate.",
+  "expected_issues": [],
+  "must_not_fire": [
+    {
+      "family": "IF-1",
+      "file": "src/payments/payments.webhook.ts:25",
+      "reason": "markPaid (entity=order, operation=mark-paid) is reached from the webhook with no requireRole, while cancelOrder has requireRole('admin'). A naive detector pairs them as inconsistent enforcement, but the AF-1 FP-guard forbids it: the guarded sibling (cancelOrder, orders.routes.ts:17) is a DIFFERENT operation (cancel != mark-paid), so condition (i) same entity+operation fails. The pairing must not raise."
+    },
+    {
+      "family": "IF-1",
+      "file": "src/payments/payments.webhook.ts:16",
+      "reason": "The webhook write path has no user JWT / requireRole, but an EQUIVALENT UPSTREAM GUARD exists: verifyWebhookSignature (HMAC, middleware.ts:31) authenticates the server-to-server caller. AF-1 condition (iii) 'no alternative guard exists upstream' is not met, so IF-1(a)/(d) must suppress."
+    },
+    {
+      "family": "IF-1",
+      "file": "src/orders/orders.service.ts:13",
+      "reason": "placeOrder does an order INSERT with no in-function ownership check, unlike paths that re-check. But ownership is enforced UPSTREAM at the router (orders.routes.ts:9: authMiddleware sets req.userId and the route inserts with THAT id only — no cross-user write surface). With an equivalent upstream guard present (AF-1 (iii)), this must not raise."
+    },
+    {
+      "family": "IF-3a",
+      "file": "app/models/order_report.rb:16",
+      "reason": "order_events is read/written by two components (orders service writes; reporting model reads), which a naive IF-3a would call silent coupling. It is NOT silent: the coupling is documented in docs/shared-tables.md (ADR-014), the access is asymmetric (sole writer + read-only reader enforced by the reporting_ro DB role and readonly? at line 19), and the event schema is an explicit published interface. The spec's documented-exception shared table must not fire."
+    },
+    {
+      "family": "IF-2",
+      "file": "src/shared/schema.ts:22",
+      "reason": "ORM declares decimal(12,2) for orders.total; the live schema (db/migrations/001_init.sql:18) declares NUMERIC(12,2). decimal and numeric are exact Postgres base-type synonyms AND precision/scale are identical, so the BASE-TYPE-ONLY normalization with preserved params suppresses this. (Contrast: mini-orm-drift's decimal(10,2)-vs-numeric(12,4) MUST still fire — params differ there.)"
+    },
+    {
+      "family": "IF-2",
+      "file": "src/shared/schema.ts:24",
+      "reason": "ORM maps is_paid as boolean; the live schema (001_init.sql:20) declares BOOLEAN. Identical base type, no params to compare. bool/boolean is a documented synonym pair, so IF-2 must not flag drift."
+    },
+    {
+      "family": "IF-2",
+      "file": "app/db/schema.rb:11",
+      "reason": "Reporting MySQL replica declares `flagged` as tinyint(1); Rails maps it as :boolean. tinyint(1) === boolean is an explicit dialect synonym in the spec, with no extra params to compare, so IF-2 must suppress this type pair."
+    },
+    {
+      "family": "IF-4",
+      "file": "src/payments/reconcile.ts:15",
+      "reason": "WA-PAY-1 is a workaround for provider bug PROV-3821, which is STILL OPEN as of 2026-06 (documented at reconcile.ts:4-8). IF-4(b) only flags a WA- whose original triggering condition NO LONGER holds; here the condition still holds, so the workaround is current and valid and must not be flagged as stale."
+    },
+    {
+      "family": "IF-5",
+      "file": "src/shared/constants.ts:11",
+      "reason": "constants.ts is the highest-churn file in the repo (CHURN.md: 41 commits/6mo, 6 authors) but is Peripheral with no behaviour/business rule. IF-5 must rank behaviour-change first (mirror filter.md), NOT churn-only, so this file must not be ranked up as a risk hotspot and must not bury Core files. IF-5 does not raise a standalone issue from ranking alone."
+    },
+    {
+      "family": "IF-5",
+      "file": "src/shared/constants.ts:11",
+      "reason": "constants.ts co-changes with almost every file (CHURN.md), which a naive change-coupling check would promote to hidden coupling. It is a shared VOCABULARY file (labels/enums/page-size), not a shared RESOURCE, so its co-change pairs must not be emitted as IF-5 hidden-coupling, and (no named shared resource) must not be emitted as IF-3a."
+    }
+  ]
+}

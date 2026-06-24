@@ -1,0 +1,8 @@
+source 'https://rubygems.org'
+gem 'rails', '~> 7.0'
+gem 'pg'
+gem 'authlogic'
+gem 'bcrypt'
+gem 'active_scaffold'
+gem 'stripe'
+gem 'puma'

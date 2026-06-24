@@ -1,0 +1,116 @@
+{
+  "fixture": "mini-multicomponent",
+  "_comment": "Emit-completeness + canonical-file oracle (B1, revised by the 'DeepInit owns the front door' model). The lean tier's CANONICAL file is CLAUDE.md by default (Claude-Code-native; Claude Code does not read AGENTS.md natively); AGENTS.md is a CONDITIONAL cross-tool export (only when Cursor/Copilot/Windsurf are present, or --canonical=agents, or forced). Under --canonical=agents a thin CLAUDE.md @AGENTS.md import (import_stub_file) is ALSO emitted (the sole auto-load surface). The nested RULE is file-agnostic (which components earn a nested lean file); the canonical basename decides what it's called. tools/emit_plan.py is the reference; harness section 59 scores it.",
+  "horizontal_docs": ["technical-dependencies.md", "data-layer.md", "domain-model.md", "functional-workflows.md", "cross-references.md", "shared-state-conflicts.md"],
+  "cases": [
+    {
+      "name": "Claude-native DEFAULT, multi-component -> root + nested CLAUDE.md + all five horizontal; NO root AGENTS.md",
+      "options": {},
+      "registry": [
+        {"name": "auth",    "files": 4, "source_lines": 600, "has_own_dir": true,  "lean_findings": 3},
+        {"name": "billing", "files": 3, "source_lines": 450, "has_own_dir": true,  "lean_findings": 2},
+        {"name": "utils",   "files": 5, "source_lines": 800, "has_own_dir": true,  "lean_findings": 0},
+        {"name": "config",  "files": 1, "source_lines": 40,  "has_own_dir": true,  "lean_findings": 1},
+        {"name": "cli",     "files": 1, "source_lines": 120, "has_own_dir": false, "lean_findings": 2}
+      ],
+      "expected": {
+        "canonical": "claude", "root_lean_file": "CLAUDE.md", "nested_file": "CLAUDE.md",
+        "import_stub_file": null, "import_stub_target": null,
+        "nested": ["auth", "billing"],
+        "nested_skipped": {"utils": "no_lean_findings", "config": "trivial_size", "cli": "no_own_dir"},
+        "horizontal_emitted": true,
+        "horizontal_docs": ["technical-dependencies.md", "data-layer.md", "domain-model.md", "functional-workflows.md", "cross-references.md", "shared-state-conflicts.md"],
+        "horizontal_reason_code": "multi_component",
+        "emit_agents_export": false, "agents_export_reason": "not_needed"
+      }
+    },
+    {
+      "name": "tiny single-component repo -> root only, horizontal FOLDED into root (stated); CLAUDE.md canonical",
+      "options": {},
+      "registry": [
+        {"name": "app", "files": 3, "source_lines": 300, "has_own_dir": true, "lean_findings": 2}
+      ],
+      "expected": {
+        "canonical": "claude", "root_lean_file": "CLAUDE.md", "nested_file": "CLAUDE.md",
+        "import_stub_file": null, "import_stub_target": null,
+        "nested": [],
+        "nested_skipped": {"app": "single_component"},
+        "horizontal_emitted": false, "horizontal_docs": [], "horizontal_reason_code": "tiny_single_component",
+        "emit_agents_export": false, "agents_export_reason": "not_needed"
+      }
+    },
+    {
+      "name": "large single-component repo -> root only (nested==root) but horizontal STILL emitted (above-Tiny branch)",
+      "options": {},
+      "registry": [
+        {"name": "monolith", "files": 40, "source_lines": 12000, "has_own_dir": true, "lean_findings": 9}
+      ],
+      "expected": {
+        "canonical": "claude", "root_lean_file": "CLAUDE.md", "nested_file": "CLAUDE.md",
+        "import_stub_file": null, "import_stub_target": null,
+        "nested": [],
+        "nested_skipped": {"monolith": "single_component"},
+        "horizontal_emitted": true,
+        "horizontal_docs": ["technical-dependencies.md", "data-layer.md", "domain-model.md", "functional-workflows.md", "cross-references.md", "shared-state-conflicts.md"],
+        "horizontal_reason_code": "above_tiny",
+        "emit_agents_export": false, "agents_export_reason": "not_needed"
+      }
+    },
+    {
+      "name": "OR-arm + fail-safe traps: a 1-file/400-line module emits via the SOURCE-LINES arm; a 1-file/150-line module skips trivial_size; a component with has_own_dir ABSENT fails safe to no_own_dir",
+      "_comment": "Witnesses the MIN_SOURCE_LINES OR-arm (fatmodule files<2, emits only via the >=200-lines arm) + the fail-safe default for a missing has_own_dir (noflag -> a REPORTED no_own_dir skip, never a silent emit).",
+      "options": {},
+      "registry": [
+        {"name": "fatmodule", "files": 1, "source_lines": 400, "has_own_dir": true, "lean_findings": 2},
+        {"name": "thinfile",  "files": 1, "source_lines": 150, "has_own_dir": true, "lean_findings": 2},
+        {"name": "noflag",    "files": 4, "source_lines": 500, "lean_findings": 3}
+      ],
+      "expected": {
+        "canonical": "claude", "root_lean_file": "CLAUDE.md", "nested_file": "CLAUDE.md",
+        "import_stub_file": null, "import_stub_target": null,
+        "nested": ["fatmodule"],
+        "nested_skipped": {"thinfile": "trivial_size", "noflag": "no_own_dir"},
+        "horizontal_emitted": true,
+        "horizontal_docs": ["technical-dependencies.md", "data-layer.md", "domain-model.md", "functional-workflows.md", "cross-references.md", "shared-state-conflicts.md"],
+        "horizontal_reason_code": "multi_component",
+        "emit_agents_export": false, "agents_export_reason": "not_needed"
+      }
+    },
+    {
+      "name": "CONDITIONAL cross-tool export: a .cursor/ consumer is present -> ALSO emit the AGENTS.md export + projections (CLAUDE.md stays canonical)",
+      "options": {"cross_tool_consumers": ["cursor"]},
+      "registry": [
+        {"name": "auth",    "files": 4, "source_lines": 600, "has_own_dir": true, "lean_findings": 3},
+        {"name": "billing", "files": 3, "source_lines": 450, "has_own_dir": true, "lean_findings": 2}
+      ],
+      "expected": {
+        "canonical": "claude", "root_lean_file": "CLAUDE.md", "nested_file": "CLAUDE.md",
+        "import_stub_file": null, "import_stub_target": null,
+        "nested": ["auth", "billing"],
+        "nested_skipped": {},
+        "horizontal_emitted": true,
+        "horizontal_docs": ["technical-dependencies.md", "data-layer.md", "domain-model.md", "functional-workflows.md", "cross-references.md", "shared-state-conflicts.md"],
+        "horizontal_reason_code": "multi_component",
+        "emit_agents_export": true, "agents_export_reason": "cross_tool_detected"
+      }
+    },
+    {
+      "name": "--canonical=agents (advanced, AGENTS-first user) -> AGENTS.md canonical content; nested AGENTS.md; a thin CLAUDE.md @AGENTS.md import stub; export on",
+      "options": {"canonical": "agents"},
+      "registry": [
+        {"name": "auth",    "files": 4, "source_lines": 600, "has_own_dir": true, "lean_findings": 3},
+        {"name": "billing", "files": 3, "source_lines": 450, "has_own_dir": true, "lean_findings": 2}
+      ],
+      "expected": {
+        "canonical": "agents", "root_lean_file": "AGENTS.md", "nested_file": "AGENTS.md",
+        "import_stub_file": "CLAUDE.md", "import_stub_target": "AGENTS.md",
+        "nested": ["auth", "billing"],
+        "nested_skipped": {},
+        "horizontal_emitted": true,
+        "horizontal_docs": ["technical-dependencies.md", "data-layer.md", "domain-model.md", "functional-workflows.md", "cross-references.md", "shared-state-conflicts.md"],
+        "horizontal_reason_code": "multi_component",
+        "emit_agents_export": true, "agents_export_reason": "canonical_agents"
+      }
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "fixture": "mini-if1-violation",
+  "purpose": "IF-1(a) recall + precision — owner-only Order delete enforced on the single-delete path but absent on a sibling bulk-delete path to the same entity+operation; legitimate same-entity siblings (read-only export, equivalent-upstream-guard purge) must NOT fire.",
+  "expected_issues": [
+    {
+      "family": "IF-1",
+      "file": "src/orders/order.service.ts",
+      "line": 34,
+      "severity": "High",
+      "certainty": "MEDIUM",
+      "claim": "Possible unenforced ownership rule: bulkDeleteOrders deletes Order rows on the bulk/API path without the owner check that the single-delete path enforces — same entity (Order) and operation (delete), guard absent on this sibling.",
+      "evidence": "Contrast: the owner-only rule is enforced on the single-delete sibling at src/orders/order.service.ts:27 (assertOwner inside deleteOwnedOrder, reached from DELETE /orders/:id at src/orders/order.routes.ts:21), but the bulk-delete sibling bulkDeleteOrders (src/orders/order.service.ts:34, reached from POST /orders/bulk-delete at src/orders/order.routes.ts:36) loops deleteOrderRow() with no assertOwner call. Both paths key to entity=Order, operation=delete; no alternative upstream guard exists on the bulk path; rule criticality=Core. Certainty MEDIUM — the contrast is exact."
+    }
+  ],
+  "must_not_fire": [
+    {
+      "family": "IF-1",
+      "file": "src/orders/order.service.ts",
+      "line": 57,
+      "reason": "exportAllOrders (reached from GET /orders/export at src/orders/order.routes.ts:54) touches the SAME entity (Order) but a DIFFERENT operation (read-only projection, no write/delete). The owner-only rule is a delete-operation rule; there is no guarded delete sibling to contrast a read against, so the entity+operation key does not match. AF-1 keys on entity+operation, not fuzzy 'touches Order' — must suppress."
+    },
+    {
+      "family": "IF-1",
+      "file": "src/orders/account.service.ts",
+      "line": 8,
+      "reason": "purgeOwnOrdersOnAccountClose (reached from POST /account/close at src/account/account.routes.ts:10) IS a sibling delete path on the SAME entity+operation (Order delete), but it has an EQUIVALENT UPSTREAM GUARD: it resolves rows via findOrdersByUser(userId) at src/orders/account.service.ts:9, so every row it deletes is by construction owned by the caller. AF-1 clause (iii) — 'no alternative guard exists upstream' is NOT satisfied here, so it must be suppressed despite the missing inline assertOwner call. This is the make-or-break false-alarm case."
+    }
+  ]
+}

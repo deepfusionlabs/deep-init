@@ -1,0 +1,5 @@
+{
+  "agent": "extract:billing",
+  "inputs": ["src/billing"],
+  "cites": ["src/billing/invoice.ts:30", "src/auth/secret.ts:9"]
+}

@@ -1,0 +1,1749 @@
+{
+  "schema": "deepinit-validation/coverage-record/v1",
+  "program": "The Mirror Test",
+  "milestone": " (blind engine pass + scored, \u00a734-gated) \u2014 held-out repo",
+  "test_plan_run": "",
+  "scored_date": "2026-06-13",
+  "repo": {
+    "name": "scrapy/scrapy",
+    "scope": "the Scrapy web-crawling framework (Python, Twisted async)",
+    "url": "https://github.com/scrapy/scrapy",
+    "branch": "master",
+    "pinned_sha": "af30cfea120a0b0853984bedc350e8dc114bba25",
+    "pinned_sha_date": "2026-06-12T16:15:36+02:00",
+    "license": "BSD-3-Clause",
+    "stack": "Python (Twisted event-driven async)"
+  },
+  "run": {
+    "run_kind": "coverage_validation",
+    "engine_proxy": "blind-workflow (planner+per-component extractors+assembler), doc-removed tree",
+    "model": "claude-opus-4-8",
+    "date": "2026-06-13"
+  },
+  "identity": {
+    "code_loc": 29501,
+    "files": 174,
+    "languages": [
+      "Python"
+    ],
+    "components": 25
+  },
+  "reference_doc": {
+    "kind": "architecture.rst",
+    "source_url": "docs/topics/architecture.rst",
+    "doc_sha_or_rev": "af30cfea120a0b0853984bedc350e8dc114bba25",
+    "currency_score": 1.0,
+    "currency_bar": 0.85
+  },
+  "reference_key": {
+    "key_path": "validation/coverage/_reference_keys/scrapy.json",
+    "key_sha256": "b53ed017e9da57d9bd7c8861ff4d42f3b6967d57ff3a74eb4fe0904a349affe8",
+    "held_out": true,
+    "rc_total_extracted": 24,
+    "rc_current": 24,
+    "rc_stale_dropped": 0,
+    "rc_unverifiable_dropped": 0
+  },
+  "reference_claims": [
+    {
+      "rc_id": "RC-001",
+      "kind": "component-exists",
+      "text": "There is a Scrapy execution Engine component.",
+      "code_anchor": "scrapy/core/engine.py:102",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-002",
+      "kind": "component-exists",
+      "text": "There is a Scheduler component.",
+      "code_anchor": "scrapy/core/scheduler.py:127",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-003",
+      "kind": "component-exists",
+      "text": "There is a Downloader component.",
+      "code_anchor": "scrapy/core/downloader/__init__.py:99",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-004",
+      "kind": "component-exists",
+      "text": "There are Spiders: custom classes (a Spider base class) written by users.",
+      "code_anchor": "scrapy/spiders/__init__.py:31",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-005",
+      "kind": "component-exists",
+      "text": "There is an Item Pipeline component.",
+      "code_anchor": "scrapy/pipelines/__init__.py:31",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-006",
+      "kind": "component-exists",
+      "text": "There are Downloader middlewares (a downloader-middleware layer/manager).",
+      "code_anchor": "scrapy/core/downloader/middleware.py:34",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-007",
+      "kind": "component-exists",
+      "text": "There are Spider middlewares (a spider-middleware layer/manager).",
+      "code_anchor": "scrapy/core/spidermw.py:48",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-008",
+      "kind": "component-role",
+      "text": "The Engine is responsible for controlling the data flow between all components of the system and triggering events when certain actions occur.",
+      "code_anchor": "scrapy/core/engine.py:2",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-009",
+      "kind": "component-role",
+      "text": "The Scheduler receives requests from the engine and enqueues them for feeding them later (back to the engine) when the engine requests them.",
+      "code_anchor": "scrapy/core/scheduler.py:53",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-010",
+      "kind": "component-role",
+      "text": "The Downloader is responsible for fetching web pages and feeding them to the engine (which feeds them to the spiders).",
+      "code_anchor": "scrapy/core/downloader/__init__.py:228",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-011",
+      "kind": "component-role",
+      "text": "Spiders parse responses and extract items from them or additional requests to follow.",
+      "code_anchor": "scrapy/spiders/crawl.py:184",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-012",
+      "kind": "component-role",
+      "text": "The Item Pipeline processes items once they have been extracted by the spiders (typical tasks: cleansing, validation, persistence).",
+      "code_anchor": "scrapy/core/scraper.py:480",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-013",
+      "kind": "component-role",
+      "text": "Downloader middlewares are hooks that sit between the Engine and the Downloader and process requests (Engine->Downloader) and responses (Downloader->Engine).",
+      "code_anchor": "scrapy/core/downloader/middleware.py:96-138",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-014",
+      "kind": "component-role",
+      "text": "Spider middlewares are hooks that sit between the Engine and the Spiders and process spider input (responses) and output (items and requests).",
+      "code_anchor": "scrapy/core/spidermw.py:75",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-015",
+      "kind": "dependency-edge",
+      "text": "The Engine schedules requests in the Scheduler and asks it for the next requests to crawl (Engine<->Scheduler).",
+      "code_anchor": "scrapy/core/engine.py:364",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-016",
+      "kind": "dependency-edge",
+      "text": "The Engine sends requests to the Downloader and receives the generated Responses (Engine<->Downloader).",
+      "code_anchor": "scrapy/core/engine.py:495",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-017",
+      "kind": "dependency-edge",
+      "text": "The Engine sends Responses to the Spider for processing and receives scraped items and new requests (Engine<->Spider).",
+      "code_anchor": "scrapy/core/scraper.py:458",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-018",
+      "kind": "dependency-edge",
+      "text": "The Engine sends processed (scraped) items to the Item Pipelines.",
+      "code_anchor": "scrapy/core/scraper.py:495",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-019",
+      "kind": "boundary-rule",
+      "text": "All requests and responses passing between the Engine and the Downloader pass through the Downloader middlewares.",
+      "code_anchor": "scrapy/core/downloader/__init__.py:133",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-020",
+      "kind": "boundary-rule",
+      "text": "All spider input (responses) and output (items/requests) passing between the Engine and the Spiders pass through the Spider middlewares.",
+      "code_anchor": "scrapy/core/scraper.py:255",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-021",
+      "kind": "boundary-rule",
+      "text": "The data flow is controlled centrally by the execution engine; the engine mediates between the other components rather than them being wired directly to each other.",
+      "code_anchor": "scrapy/core/engine.py:2",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-022",
+      "kind": "key-invariant",
+      "text": "The crawl loop repeats: the engine keeps asking the scheduler for the next requests until there are no more requests from the scheduler.",
+      "code_anchor": "scrapy/core/engine.py:334",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-023",
+      "kind": "entry-point",
+      "text": "The crawl begins with the Engine getting the initial Requests to crawl from the Spider (start requests).",
+      "code_anchor": "scrapy/core/engine.py:541",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-024",
+      "kind": "technology-choice",
+      "text": "Scrapy is written with Twisted, an event-driven networking framework, and is implemented using non-blocking (asynchronous) code for concurrency.",
+      "code_anchor": "scrapy/core/engine.py:19",
+      "currency": "CURRENT",
+      "load_bearing": true
+    }
+  ],
+  "emitted_claims": [
+    {
+      "ec_id": "EC-001",
+      "source_region": "AGENTS.md Component registry row (cmdline)",
+      "kind": "component-exists",
+      "text": "cmdline (CLI entry point) \u05d2\u20ac\u201d sole user-facing executable + command dispatcher.",
+      "code_anchor": "scrapy/cmdline.py:169",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-002",
+      "source_region": "AGENTS.md Component registry row (commands)",
+      "kind": "component-exists",
+      "text": "commands \u05d2\u20ac\u201d one `class Command` per `scrapy <command>` operation.",
+      "code_anchor": "scrapy/commands/__init__.py:27",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-003",
+      "source_region": "AGENTS.md Component registry row (crawler)",
+      "kind": "component-role",
+      "text": "crawler (lifecycle orchestration) \u05d2\u20ac\u201d owns the full crawl lifecycle, reactor/loop, settings, signals.",
+      "code_anchor": "scrapy/crawler.py:57",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-004",
+      "source_region": "AGENTS.md Component registry row (core.engine)",
+      "kind": "component-role",
+      "text": "core.engine (ExecutionEngine) \u05d2\u20ac\u201d central control loop coordinating scheduler/downloader/scraper.",
+      "code_anchor": "scrapy/core/engine.py:102",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-005",
+      "source_region": "AGENTS.md Component registry row (core.scheduler)",
+      "kind": "component-role",
+      "text": "core.scheduler \u05d2\u20ac\u201d stores, prioritizes and dedups requests for the engine.",
+      "code_anchor": "scrapy/core/scheduler.py:127",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-006",
+      "source_region": "AGENTS.md Component registry row (core.downloader)",
+      "kind": "component-role",
+      "text": "core.downloader \u05d2\u20ac\u201d fetches a Request via middleware chain + per-key concurrency Slot.",
+      "code_anchor": "scrapy/core/downloader/__init__.py:99",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-007",
+      "source_region": "AGENTS.md Component registry row (core.downloader.handlers)",
+      "kind": "component-role",
+      "text": "core.downloader.handlers \u05d2\u20ac\u201d pluggable per-URL-scheme transport layer.",
+      "code_anchor": "scrapy/core/downloader/handlers/__init__.py:49",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-008",
+      "source_region": "AGENTS.md Component registry row (core.http2)",
+      "kind": "component-role",
+      "text": "core.http2 \u05d2\u20ac\u201d opt-in HTTP/2 client for the downloader (on the `h2` library).",
+      "code_anchor": "scrapy/core/http2/agent.py:32",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-009",
+      "source_region": "AGENTS.md Component registry row (core.scraper)",
+      "kind": "component-role",
+      "text": "core.scraper \u05d2\u20ac\u201d parses responses, routes through spider middleware + item pipelines.",
+      "code_anchor": "scrapy/core/scraper.py:244",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-010",
+      "source_region": "AGENTS.md Component registry row (middleware)",
+      "kind": "component-role",
+      "text": "middleware (MiddlewareManager base) \u05d2\u20ac\u201d abstract base for all middleware managers.",
+      "code_anchor": "scrapy/middleware.py:35",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-011",
+      "source_region": "AGENTS.md Component registry row (core.spidermw)",
+      "kind": "component-role",
+      "text": "core.spidermw (SpiderMiddlewareManager) \u05d2\u20ac\u201d concrete spider-side middleware manager.",
+      "code_anchor": "scrapy/core/spidermw.py:48",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-012",
+      "source_region": "AGENTS.md Component registry row (spidermiddlewares)",
+      "kind": "component-exists",
+      "text": "spidermiddlewares \u05d2\u20ac\u201d built-in spider middlewares (depth/httperror/referer/urllength/start).",
+      "code_anchor": "scrapy/spidermiddlewares/base.py:18",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-013",
+      "source_region": "AGENTS.md Component registry row (downloadermiddlewares)",
+      "kind": "component-exists",
+      "text": "downloadermiddlewares \u05d2\u20ac\u201d built-in downloader middlewares (cookies/retry/redirect/cache/...).",
+      "code_anchor": "scrapy/downloadermiddlewares/__init__.py:1",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-014",
+      "source_region": "AGENTS.md Component registry row (pipelines)",
+      "kind": "component-role",
+      "text": "pipelines (ItemPipelineManager + media/files/images) \u05d2\u20ac\u201d item-pipeline subsystem + media download family.",
+      "code_anchor": "scrapy/pipelines/__init__.py:31",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-015",
+      "source_region": "AGENTS.md Component registry row (spiders)",
+      "kind": "component-role",
+      "text": "spiders \u05d2\u20ac\u201d user-extension surface: base Spider + built-in spider types.",
+      "code_anchor": "scrapy/spiders/__init__.py:31",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-016",
+      "source_region": "AGENTS.md Component registry row (extensions)",
+      "kind": "component-role",
+      "text": "extensions \u05d2\u20ac\u201d optional signal-wired runtime add-ons.",
+      "code_anchor": "scrapy/extensions/corestats.py:21",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-017",
+      "source_region": "AGENTS.md Component registry row (http)",
+      "kind": "component-role",
+      "text": "http (Request/Response model) \u05d2\u20ac\u201d canonical in-memory data model for one HTTP exchange.",
+      "code_anchor": "scrapy/http/request/__init__.py:84-87",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-018",
+      "source_region": "AGENTS.md Component registry row (selector)",
+      "kind": "component-role",
+      "text": "selector \u05d2\u20ac\u201d thin parsel subclass layer for XPath/CSS/JSON extraction.",
+      "code_anchor": "scrapy/selector/unified.py:39",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-019",
+      "source_region": "AGENTS.md Component registry row (linkextractors)",
+      "kind": "component-role",
+      "text": "linkextractors \u05d2\u20ac\u201d synchronous follow-worthy-link extraction library.",
+      "code_anchor": "scrapy/linkextractors/lxmlhtml.py:164",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-020",
+      "source_region": "AGENTS.md Component registry row (settings)",
+      "kind": "component-role",
+      "text": "settings \u05d2\u20ac\u201d priority-based dict-like configuration system.",
+      "code_anchor": "scrapy/settings/__init__.py:79",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-021",
+      "source_region": "AGENTS.md Component registry row (loader)",
+      "kind": "component-role",
+      "text": "loader \u05d2\u20ac\u201d ItemLoader subclass of external itemloaders.",
+      "code_anchor": "scrapy/loader/__init__.py:20",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-022",
+      "source_region": "AGENTS.md Component registry row (exporters)",
+      "kind": "component-role",
+      "text": "exporters \u05d2\u20ac\u201d item serialization family (JSON/XML/CSV/Pickle/...).",
+      "code_anchor": "scrapy/exporters.py:39",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-023",
+      "source_region": "AGENTS.md Component registry row (contracts)",
+      "kind": "component-role",
+      "text": "contracts \u05d2\u20ac\u201d spider-contracts testing subsystem.",
+      "code_anchor": "scrapy/contracts/__init__.py:92",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-024",
+      "source_region": "AGENTS.md Component registry row (extras)",
+      "kind": "component-exists",
+      "text": "extras \u05d2\u20ac\u201d non-importable distribution assets (completions/man/bench).",
+      "code_anchor": "pyproject.toml:69",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-025",
+      "source_region": "AGENTS.md Component registry row (utils)",
+      "kind": "component-role",
+      "text": "utils (shared library) \u05d2\u20ac\u201d cross-cutting helpers + Twisted/asyncio bridge.",
+      "code_anchor": "scrapy/utils/reactor.py:114",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-026",
+      "source_region": "AGENTS.md Architecture / Technical dependencies (cmdline -> commands)",
+      "kind": "dependency-edge",
+      "text": "cmdline -> commands: imports command base classes and reflectively discovers/instantiates command classes under `scrapy.commands`.",
+      "code_anchor": "scrapy/cmdline.py:12, scrapy/cmdline.py:79",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-027",
+      "source_region": "AGENTS.md Technical dependencies (cmdline -> crawler)",
+      "kind": "dependency-edge",
+      "text": "cmdline -> crawler: imports Async/CrawlerProcess and constructs one into `cmd.crawler_process`.",
+      "code_anchor": "scrapy/cmdline.py:13, scrapy/cmdline.py:206",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-028",
+      "source_region": "AGENTS.md Technical dependencies (cmdline -> settings)",
+      "kind": "dependency-edge",
+      "text": "cmdline -> settings: imports BaseSettings/Settings and builds process settings via `get_project_settings` plus command setdict defaults.",
+      "code_anchor": "scrapy/cmdline.py:23, scrapy/cmdline.py:174",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-029",
+      "source_region": "AGENTS.md Technical dependencies (cmdline -> utils)",
+      "kind": "dependency-edge",
+      "text": "cmdline -> utils: imports walk_modules_iter, get_project_settings/inside_project, garbage_collect, _asyncio_reactor_path.",
+      "code_anchor": "scrapy/cmdline.py:15-18",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-030",
+      "source_region": "AGENTS.md Technical dependencies (commands -> crawler)",
+      "kind": "dependency-edge",
+      "text": "commands -> crawler: runtime-call `crawler_process.crawl/.start`.",
+      "code_anchor": "scrapy/commands/crawl.py:31-32",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-031",
+      "source_region": "AGENTS.md Technical dependencies (commands -> core.engine)",
+      "kind": "dependency-edge",
+      "text": "commands -> core.engine: runtime-call `engine.start_async` / `pcrawler.engine.scraper.itemproc`.",
+      "code_anchor": "scrapy/commands/shell.py:99-100, scrapy/commands/parse.py:285",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-032",
+      "source_region": "AGENTS.md Technical dependencies (commands -> contracts)",
+      "kind": "dependency-edge",
+      "text": "commands -> contracts: imports `ContractsManager`.",
+      "code_anchor": "scrapy/commands/check.py:11,79",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-033",
+      "source_region": "AGENTS.md Technical dependencies (crawler -> core.engine)",
+      "kind": "dependency-edge",
+      "text": "crawler -> core.engine: imports and constructs `ExecutionEngine`.",
+      "code_anchor": "scrapy/crawler.py:17, scrapy/crawler.py:233-234",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-034",
+      "source_region": "AGENTS.md Technical dependencies (crawler -> spiders)",
+      "kind": "dependency-edge",
+      "text": "crawler -> spiders: imports Spider and creates it via `spidercls.from_crawler`.",
+      "code_anchor": "scrapy/crawler.py:15, scrapy/crawler.py:231",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-035",
+      "source_region": "AGENTS.md Technical dependencies (crawler -> extensions)",
+      "kind": "dependency-edge",
+      "text": "crawler -> extensions: builds `self.extensions` via `ExtensionManager.from_crawler`.",
+      "code_anchor": "scrapy/crawler.py:146",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-036",
+      "source_region": "AGENTS.md Technical dependencies (core.engine -> core.scheduler)",
+      "kind": "dependency-edge",
+      "text": "core.engine -> core.scheduler: imports BaseScheduler, issubclass-checks the configured class, and calls `next_request()`.",
+      "code_anchor": "scrapy/core/engine.py:23, scrapy/core/engine.py:364",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-037",
+      "source_region": "AGENTS.md Technical dependencies (core.engine -> core.scraper)",
+      "kind": "dependency-edge",
+      "text": "core.engine -> core.scraper: imports Scraper, constructs `Scraper(crawler)`, drives `enqueue_scrape`.",
+      "code_anchor": "scrapy/core/engine.py:24, scrapy/core/engine.py:149, scrapy/core/engine.py:413",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-038",
+      "source_region": "AGENTS.md Technical dependencies (core.engine -> core.downloader)",
+      "kind": "dependency-edge",
+      "text": "core.engine -> core.downloader: settings-resolved `load_object(DOWNLOADER)` then constructs and calls `fetch`.",
+      "code_anchor": "scrapy/core/engine.py:132, scrapy/core/engine.py:495-497",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-039",
+      "source_region": "AGENTS.md Technical dependencies (core.scheduler -> dupefilters/pqueues/statscollectors)",
+      "kind": "dependency-edge",
+      "text": "core.scheduler -> dupefilters / pqueues / statscollectors / http / spiders / utils, all resolved via settings load_object.",
+      "code_anchor": "scrapy/core/scheduler.py:255, scrapy/core/scheduler.py:374, scrapy/core/scheduler.py:380",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-040",
+      "source_region": "AGENTS.md Technical dependencies (core.downloader -> core.downloader.handlers)",
+      "kind": "dependency-edge",
+      "text": "core.downloader -> core.downloader.handlers: owns a `DownloadHandlers` instance and dispatches transfer to it.",
+      "code_anchor": "scrapy/core/downloader/__init__.py:109, scrapy/core/downloader/__init__.py:228",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-041",
+      "source_region": "AGENTS.md Technical dependencies (core.downloader -> downloadermiddlewares)",
+      "kind": "dependency-edge",
+      "text": "core.downloader -> downloadermiddlewares: builds the DOWNLOADER_MIDDLEWARES chain.",
+      "code_anchor": "scrapy/core/downloader/middleware.py:39-41",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-042",
+      "source_region": "AGENTS.md Technical dependencies (core.downloader -> middleware)",
+      "kind": "dependency-edge",
+      "text": "core.downloader -> middleware: DownloaderMiddlewareManager subclasses the shared MiddlewareManager base.",
+      "code_anchor": "scrapy/core/downloader/middleware.py:15,34",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-043",
+      "source_region": "AGENTS.md Technical dependencies (core.downloader.handlers -> core.http2)",
+      "kind": "dependency-edge",
+      "text": "core.downloader.handlers -> core.http2: `H2DownloadHandler` imports H2Agent/H2ConnectionPool.",
+      "code_anchor": "scrapy/core/downloader/handlers/http2.py:9",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-044",
+      "source_region": "AGENTS.md Technical dependencies (core.http2 -> core.downloader)",
+      "kind": "dependency-edge",
+      "text": "core.http2 -> core.downloader: imports `_AcceptableProtocolsContextFactory`.",
+      "code_anchor": "scrapy/core/http2/agent.py:17",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-045",
+      "source_region": "AGENTS.md Technical dependencies (core.scraper -> core.spidermw/pipelines/engine)",
+      "kind": "dependency-edge",
+      "text": "core.scraper -> core.spidermw / pipelines / core.engine / http / spiders.",
+      "code_anchor": "scrapy/core/scraper.py:16, scrapy/core/scraper.py:24, scrapy/core/scraper.py:459-460",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-046",
+      "source_region": "AGENTS.md Technical dependencies (core.spidermw -> middleware/spidermiddlewares)",
+      "kind": "dependency-edge",
+      "text": "core.spidermw -> middleware (subclass) + spidermiddlewares (config-load SPIDER_MIDDLEWARES_BASE).",
+      "code_anchor": "scrapy/core/spidermw.py:22, scrapy/core/spidermw.py:54",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-047",
+      "source_region": "AGENTS.md Technical dependencies (spidermiddlewares invoked inbound by core.spidermw)",
+      "kind": "dependency-edge",
+      "text": "spidermiddlewares are invoked INBOUND by core.spidermw (they depend on http/spiders/utils, never on the manager).",
+      "code_anchor": "scrapy/core/spidermw.py:58",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-048",
+      "source_region": "AGENTS.md Technical dependencies (downloadermiddlewares -> core.engine RobotsTxt)",
+      "kind": "dependency-edge",
+      "text": "downloadermiddlewares -> core.engine: RobotsTxt calls `crawler.engine.download_async`.",
+      "code_anchor": "scrapy/downloadermiddlewares/robotstxt.py:100",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-049",
+      "source_region": "AGENTS.md Technical dependencies (pipelines -> core.engine media)",
+      "kind": "dependency-edge",
+      "text": "pipelines -> core.engine: media pipeline calls `engine.download_async` (media egress goes through the engine).",
+      "code_anchor": "scrapy/pipelines/media.py:212",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-050",
+      "source_region": "AGENTS.md Technical dependencies (pipelines -> middleware)",
+      "kind": "dependency-edge",
+      "text": "pipelines -> middleware: ItemPipelineManager subclasses the MiddlewareManager base.",
+      "code_anchor": "scrapy/pipelines/__init__.py:16,31",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-051",
+      "source_region": "AGENTS.md Technical dependencies (spiders -> http/linkextractors/selector)",
+      "kind": "dependency-edge",
+      "text": "spiders -> http / linkextractors / selector / utils / crawler(DI).",
+      "code_anchor": "scrapy/spiders/__init__.py:13, scrapy/spiders/crawl.py:18, scrapy/spiders/feed.py:14",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-052",
+      "source_region": "AGENTS.md Technical dependencies (extensions -> exporters feedexport)",
+      "kind": "dependency-edge",
+      "text": "extensions -> exporters: feedexport loads FEED_EXPORTERS BaseItemExporter subclasses; ExtensionManager loads extensions inversely.",
+      "code_anchor": "scrapy/extensions/feedexport.py:498, scrapy/extension.py:18",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-053",
+      "source_region": "AGENTS.md Technical dependencies (http -> selector deferred)",
+      "kind": "dependency-edge",
+      "text": "http -> selector: deferred import to break a cycle (`Selector(self)` inside TextResponse.selector).",
+      "code_anchor": "scrapy/http/response/text.py:150-152",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-054",
+      "source_region": "AGENTS.md Technical dependencies (selector -> http)",
+      "kind": "dependency-edge",
+      "text": "selector -> http / utils / external parsel.",
+      "code_anchor": "scrapy/selector/unified.py:11-14",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-055",
+      "source_region": "AGENTS.md Technical dependencies (exporters consumed inbound by feedexport)",
+      "kind": "dependency-edge",
+      "text": "exporters -> utils/item/itemadapter; consumed INBOUND by feedexport.",
+      "code_anchor": "scrapy/exporters.py:21-22, scrapy/extensions/feedexport.py:44",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-056",
+      "source_region": "AGENTS.md Technical dependencies (contracts -> http/utils)",
+      "kind": "dependency-edge",
+      "text": "contracts -> http / utils / settings (registration-by-consumer, SPIDER_CONTRACTS_BASE).",
+      "code_anchor": "scrapy/contracts/__init__.py:12, scrapy/settings/default_settings.py:540-545",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-057",
+      "source_region": "technical-dependencies.md (commands -> spiderloader)",
+      "kind": "dependency-edge",
+      "text": "commands -> spiderloader: `get_spider_loader`; DummySpiderLoader used by runspider.",
+      "code_anchor": "scrapy/commands/list.py:6,22, scrapy/commands/runspider.py:10",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-058",
+      "source_region": "technical-dependencies.md (crawler -> addons)",
+      "kind": "dependency-edge",
+      "text": "crawler -> addons: imports AddonManager, loads settings and per-crawler add-on instances.",
+      "code_anchor": "scrapy/crawler.py:16, scrapy/crawler.py:348",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-059",
+      "source_region": "technical-dependencies.md (crawler -> signals)",
+      "kind": "dependency-edge",
+      "text": "crawler -> signals: imports SignalManager as `self.signals`.",
+      "code_anchor": "scrapy/crawler.py:21, scrapy/crawler.py:76",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-060",
+      "source_region": "technical-dependencies.md (core.engine -> scrapy.signals)",
+      "kind": "dependency-edge",
+      "text": "core.engine -> scrapy.signals: fires engine_started/stopped, spider_opened and other lifecycle signals via the SignalManager.",
+      "code_anchor": "scrapy/core/engine.py:22, scrapy/core/engine.py:185, scrapy/core/engine.py:556-558",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-061",
+      "source_region": "technical-dependencies.md (extensions -> core.downloader autothrottle)",
+      "kind": "dependency-edge",
+      "text": "extensions -> core.downloader: AutoThrottle mutates `engine.downloader.slots[].delay` and type-imports Slot.",
+      "code_anchor": "scrapy/extensions/throttle.py:102",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-062",
+      "source_region": "technical-dependencies.md (extras -> framework one-way)",
+      "kind": "dependency-edge",
+      "text": "extras depends INTO the framework (http/spiders/commands/cmdline) one-way; nothing in scrapy/ imports from extras.",
+      "code_anchor": "extras/qpsclient.py:11-12, pyproject.toml:64",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-063",
+      "source_region": "AGENTS.md Architecture / data-layer Summary",
+      "kind": "data-store",
+      "text": "Scrapy owns NO central database; almost all component state is per-process in-memory, with durable persistence only at optional pluggable edges.",
+      "code_anchor": "data-layer.md (Summary), scrapy/core/scheduler.py:480",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-064",
+      "source_region": "data-layer.md Durable stores (scheduler job directory)",
+      "kind": "data-store",
+      "text": "Scheduler job directory `<JOBDIR>/requests.queue/` is created when JOBDIR is set (crawl resume).",
+      "code_anchor": "scrapy/core/scheduler.py:480",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-065",
+      "source_region": "data-layer.md Durable stores (active.json)",
+      "kind": "data-store",
+      "text": "`active.json` is a JSON snapshot of priority-queue state (startprios), read on open/resume and written on clean close.",
+      "code_anchor": "scrapy/core/scheduler.py:489, scrapy/core/scheduler.py:496",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-066",
+      "source_region": "data-layer.md Durable stores (HTTP cache)",
+      "kind": "data-store",
+      "text": "HTTP cache persistence is pluggable via HTTPCACHE_STORAGE (DbmCacheStorage dbm file, FilesystemCacheStorage dir per request) keyed by request fingerprint.",
+      "code_anchor": "scrapy/downloadermiddlewares/httpcache.py:80, scrapy/extensions/httpcache.py:247,310",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-067",
+      "source_region": "data-layer.md Durable stores (feed export storage)",
+      "kind": "data-store",
+      "text": "Feed export uses pluggable IFeedStorage backends (local file / stdout / S3-boto3 / GCS / FTP) selected by scheme from FEED_STORAGES.",
+      "code_anchor": "scrapy/extensions/feedexport.py:187, scrapy/extensions/feedexport.py:91",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-068",
+      "source_region": "data-layer.md Durable stores (media/files/images storage)",
+      "kind": "data-store",
+      "text": "Media/files/images storage writes via STORE_SCHEMES registry (file->FSFilesStore, s3->S3FilesStore, gs->GCSFilesStore, ftp->FTPFilesStore) reached only through the FilesStoreProtocol interface.",
+      "code_anchor": "scrapy/pipelines/files.py:446, scrapy/pipelines/files.py:87",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-069",
+      "source_region": "data-layer.md Durable stores (media content-addressing)",
+      "kind": "data-store",
+      "text": "Media storage is content-addressed by sha1(request.url) -> full/{sha1}{ext}; images full/{sha1}.jpg, thumbs thumbs/{thumb_id}/{sha1}.jpg; checksums are md5 of the body.",
+      "code_anchor": "scrapy/pipelines/files.py:740,757, scrapy/pipelines/images.py:248,261",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-070",
+      "source_region": "data-layer.md Durable stores (spider-state file)",
+      "kind": "data-store",
+      "text": "SpiderState pickles `spider.state` to `<jobdir>/spider.state` on close and reloads it on open (pickle protocol 4).",
+      "code_anchor": "scrapy/extensions/spiderstate.py:37,42, scrapy/extensions/spiderstate.py:39",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-071",
+      "source_region": "data-layer.md Shared stats store",
+      "kind": "data-store",
+      "text": "Stats are a shared read/write StatsCollector (not owned by any one component): corestats/logstats/middlewares/scheduler all increment the same crawler StatsCollector.",
+      "code_anchor": "scrapy/extensions/corestats.py:53, scrapy/core/scheduler.py:380",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-072",
+      "source_region": "data-layer.md request.meta cross-middleware store",
+      "kind": "data-store",
+      "text": "`request.meta` is the documented cross-middleware shared dict (retry_times, redirect_times/urls, proxy, cached_response, download_slot, dont_filter).",
+      "code_anchor": "scrapy/downloadermiddlewares/retry.py:110, scrapy/http/request/__init__.py:209-234",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-073",
+      "source_region": "data-layer.md in-memory state (downloader slots/dnscache)",
+      "kind": "data-store",
+      "text": "core.downloader holds the live `self.slots: dict[str, Slot]` table (GC'd every 60s) and `self.active: set[Request]`, reading module-global `dnscache = LocalCache(10000)` from scrapy.resolver for IP-concurrency slot keys.",
+      "code_anchor": "scrapy/core/downloader/__init__.py:107, scrapy/resolver.py:29",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-074",
+      "source_region": "data-layer.md in-memory state (http CookieJar)",
+      "kind": "data-store",
+      "text": "http CookieJar is an in-memory adapter over stdlib http.cookiejar.CookieJar; cookie store is nested dict domain->path->name->Cookie.",
+      "code_anchor": "scrapy/http/cookies.py:34, scrapy/http/cookies.py:76-77",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-075",
+      "source_region": "AGENTS.md Critical to know / critical-facts (system boot chain)",
+      "kind": "entry-point",
+      "text": "User entry is the `scrapy` console command declared `scrapy = scrapy.cmdline:execute`; `execute()` resolves settings, discovers commands, parses argv, constructs a CrawlerProcess if required, runs the command, then `sys.exit(cmd.exitcode)`.",
+      "code_anchor": "pyproject.toml:64, scrapy/cmdline.py:169-215",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-076",
+      "source_region": "critical-facts.md startup workflow (Process layer -> crawl/start)",
+      "kind": "entry-point",
+      "text": "The Process layer drives `process.crawl` (-> Crawler.crawl) then `process.start()`, which sets up and runs the reactor/loop and BLOCKS until the crawl finishes.",
+      "code_anchor": "scrapy/crawler.py:766-793, scrapy/crawler.py:864-889",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-077",
+      "source_region": "critical-facts.md startup workflow (Crawler.crawl_async -> engine)",
+      "kind": "entry-point",
+      "text": "`Crawler.crawl_async` creates the spider, applies+freezes settings, then `self.engine = ExecutionEngine(...)` -> `open_spider_async()` -> `start_async()`, which blocks on `self._closewait` until the crawl finishes.",
+      "code_anchor": "scrapy/crawler.py:217-223, scrapy/core/engine.py:176-203",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-078",
+      "source_region": "AGENTS.md Boundary rules (mediator boundary)",
+      "kind": "boundary-rule",
+      "text": "Mediator boundary: Scheduler/Downloader/Scraper never reach across each other \u05d2\u20ac\u201d the engine pulls from `scheduler.next_request()`, pushes to `downloader.fetch()`, routes output to `scraper.enqueue_scrape()`.",
+      "code_anchor": "scrapy/core/engine.py:364, scrapy/core/engine.py:369, scrapy/core/engine.py:413",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-079",
+      "source_region": "AGENTS.md Boundary rules (inversion of control)",
+      "kind": "boundary-rule",
+      "text": "Inversion of control: spiders never import/call the engine or scraper; the core calls into the spider (scraper uses `spider._parse` default callback, spidermw consumes `spider.start()` as crawl seed).",
+      "code_anchor": "scrapy/core/scraper.py:318, scrapy/core/spidermw.py:246",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-080",
+      "source_region": "AGENTS.md Boundary rules (layering down-only at leaves)",
+      "kind": "boundary-rule",
+      "text": "Layering DOWN-only at the leaves: http, selector, linkextractors, exporters, settings, utils import no orchestration component \u05d2\u20ac\u201d flow code depends on the model, not vice versa.",
+      "code_anchor": "scrapy/selector/unified.py:11-14, scrapy/settings/__init__.py:14",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-081",
+      "source_region": "AGENTS.md Boundary rules (engine->downloader one-directional)",
+      "kind": "boundary-rule",
+      "text": "Engine -> Downloader is one-directional: core.downloader never imports core.engine, only the injected Crawler (TYPE_CHECKING-only).",
+      "code_anchor": "scrapy/core/engine.py:54, scrapy/core/downloader/__init__.py:38",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-082",
+      "source_region": "AGENTS.md Boundary rules (reactor-isolation, lint-enforced)",
+      "kind": "boundary-rule",
+      "text": "Reactor-isolation rule (project-wide, lint-enforced): module-level imports of twisted.internet.reactor (and twisted.protocols.ftp) are banned; the reactor is imported lazily inside the method that needs it.",
+      "code_anchor": "pyproject.toml:406-413, scrapy/crawler.py:635",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-083",
+      "source_region": "AGENTS.md Boundary rules (error-propagation convention)",
+      "kind": "boundary-rule",
+      "text": "Error-propagation convention: log/return and continue, do not crash the loop after startup (engine errbacks only log.info; scheduler rejection returned as a bool; middlewares filter by raising IgnoreRequest; CLI errors surface as sys.exit).",
+      "code_anchor": "scrapy/core/engine.py:371-395, scrapy/core/scheduler.py:101, scrapy/cmdline.py:153-166",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-084",
+      "source_region": "AGENTS.md Boundary rules (security boundary on redirect)",
+      "kind": "boundary-rule",
+      "text": "Security boundary on redirect: Cookie stripped on cross-host/scheme-downgrade and Authorization stripped on any scheme/host/port change per WHATWG fetch.",
+      "code_anchor": "scrapy/downloadermiddlewares/redirect.py:162-174",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-085",
+      "source_region": "critical-facts.md Boundary rules (module isolation: required chain)",
+      "kind": "boundary-rule",
+      "text": "Module isolation: a request must pass the downloader-middleware chain before any transfer (`fetch` wraps `_enqueue_request` inside `middleware.download_async`); spider-side the callback is wrapped with input/output/exception hooks.",
+      "code_anchor": "scrapy/core/downloader/__init__.py:131-135, scrapy/core/spidermw.py:209",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-086",
+      "source_region": "critical-facts.md Boundary rules (extensions are observers, feedexport exception)",
+      "kind": "boundary-rule",
+      "text": "Extensions are a lifecycle-observer layer, never in the Request->Response chain \u05d2\u20ac\u201d they observe via signals; the structural exception is feed export serializing items at `item_scraped`.",
+      "code_anchor": "scrapy/extensions/corestats.py:31, scrapy/extensions/feedexport.py:450",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-087",
+      "source_region": "critical-facts.md Boundary rules (type guards at engine boundary)",
+      "kind": "boundary-rule",
+      "text": "Type guards at the engine boundary: downloader output must be Request/Response/Failure and fetch result Response/Request else TypeError; middleware output contract enforced or `_InvalidOutput`.",
+      "code_anchor": "scrapy/core/engine.py:402-405, scrapy/core/downloader/middleware.py:107-111",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-088",
+      "source_region": "critical-facts.md Boundary rules (layered exit-status ownership)",
+      "kind": "boundary-rule",
+      "text": "Layered exit-status ownership: the process exits with `cmd.exitcode` (default 0); the command, not cmdline, decides status; crawl/runspider set exitcode=1 when bootstrap_failed.",
+      "code_anchor": "scrapy/cmdline.py:215, scrapy/commands/crawl.py:33-34",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-089",
+      "source_region": "critical-facts.md Boundary rules (HttpAuth credential-leak guard)",
+      "kind": "boundary-rule",
+      "text": "HttpAuth raises ValueError if HTTPAUTH_USER/PASS is set without an explicit HTTPAUTH_DOMAIN, preventing credential leakage to all hosts.",
+      "code_anchor": "scrapy/downloadermiddlewares/httpauth.py:41-50",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-090",
+      "source_region": "critical-facts.md Boundary rules (HTTP/2 hostname isolation)",
+      "kind": "boundary-rule",
+      "text": "HTTP/2 hostname-isolation: a stream verifies request host == connected peer before sending.",
+      "code_anchor": "scrapy/core/http2/stream.py:199-207",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-091",
+      "source_region": "AGENTS.md Lifecycle invariants (ordered open)",
+      "kind": "key-invariant",
+      "text": "ORDERED OPEN (engine open_spider_async): set spider -> CallLaterOnce(_start_scheduled_requests) -> build scheduler -> create _Slot -> spidermw.process_start() -> optional scheduler.open() -> scraper.open_spider_async() -> stats.open_spider() -> send spider_opened.",
+      "code_anchor": "scrapy/core/engine.py:530-558",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-092",
+      "source_region": "AGENTS.md Lifecycle invariants (ordered close)",
+      "kind": "key-invariant",
+      "text": "ORDERED CLOSE (engine close_spider_async): slot.close() -> downloader.close() -> scraper.close_spider_async() -> scheduler.close(reason) -> send spider_closed -> stats.close_spider() -> null _slot+spider -> _spider_closed_callback; each step independently try/except-logged.",
+      "code_anchor": "scrapy/core/engine.py:595-686",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-093",
+      "source_region": "AGENTS.md Lifecycle invariants (single-slot)",
+      "kind": "key-invariant",
+      "text": "Single-slot invariant: only one spider open at a time \u05d2\u20ac\u201d opening while `self._slot is not None` raises 'No free spider slot'.",
+      "code_anchor": "scrapy/core/engine.py:532-535",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-094",
+      "source_region": "AGENTS.md Lifecycle invariants (drain)",
+      "kind": "key-invariant",
+      "text": "Drain invariant: `_Slot.close()` does not fire until `inprogress` is empty, so in-flight requests drain before close.",
+      "code_anchor": "scrapy/core/engine.py:88-99",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-095",
+      "source_region": "AGENTS.md Lifecycle invariants (single-use crawler)",
+      "kind": "key-invariant",
+      "text": "Single-use invariant: a Crawler may run once; `crawl()/crawl_async()` raise RuntimeError if already crawling/started.",
+      "code_anchor": "scrapy/crawler.py:179-185, scrapy/crawler.py:209-215",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-096",
+      "source_region": "AGENTS.md Lifecycle invariants (extensions/pipelines teardown)",
+      "kind": "key-invariant",
+      "text": "Server/loop extensions start on engine_started and tear down on engine_stopped; pipelines tear down in reverse (LIFO) via `appendleft(close_spider)`.",
+      "code_anchor": "scrapy/extensions/telnet.py:66,82, scrapy/pipelines/__init__.py:42,48",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-097",
+      "source_region": "critical-facts.md Lifecycle (pipelines open/close parallel, process_item sequential)",
+      "kind": "key-invariant",
+      "text": "Pipelines open/close run all pipelines in PARALLEL while `process_item` runs them SEQUENTIALLY.",
+      "code_anchor": "scrapy/pipelines/__init__.py:61,103-118",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-098",
+      "source_region": "critical-facts.md Lifecycle (scheduler ordered lifecycle / resume)",
+      "kind": "key-invariant",
+      "text": "Scheduler ordered lifecycle: from_crawler -> open(spider) builds mqs, conditionally dqs (resuming from active.json, logs 'Resuming crawl') -> steady state -> close(reason) dumps disk-queue state to active.json.",
+      "code_anchor": "scrapy/core/scheduler.py:342-362",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-099",
+      "source_region": "critical-facts.md Lifecycle (spider must have a name)",
+      "kind": "key-invariant",
+      "text": "A spider must have a name (`__init__` raises ValueError otherwise); `_set_crawler` connects `self.close` to `spider_closed`.",
+      "code_anchor": "scrapy/spiders/__init__.py:45, scrapy/spiders/__init__.py:80",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-100",
+      "source_region": "AGENTS.md Key invariants (Request/Response value semantics)",
+      "kind": "key-invariant",
+      "text": "Request/Response value-semantics via copy-on-replace: `copy()`/`replace(**kw)` build a NEW instance from the `attributes` tuple, never mutating in place; the `attributes` tuple is the single source of truth for round-trip fields.",
+      "code_anchor": "scrapy/http/request/__init__.py:325-344, scrapy/http/request/__init__.py:90-100",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-101",
+      "source_region": "AGENTS.md Key invariants (__slots__ in http model)",
+      "kind": "key-invariant",
+      "text": "`__slots__` everywhere in the http model; mutable attrs (meta/headers/cookies/flags) lazy-init a fresh dict/list only on first access.",
+      "code_anchor": "scrapy/http/request/__init__.py:109-120,239-249",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-102",
+      "source_region": "AGENTS.md Key invariants (settings immutable-snapshot)",
+      "kind": "key-invariant",
+      "text": "Settings immutable-snapshot idiom: `frozencopy()` = `copy()` (full deepcopy) then `freeze()`; `getlist`/`getdict` return NEW copies.",
+      "code_anchor": "scrapy/settings/__init__.py:634-642, scrapy/settings/__init__.py:225-245",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-103",
+      "source_region": "AGENTS.md Key invariants (downloader Slot data structure)",
+      "kind": "key-invariant",
+      "text": "Downloader core data structure: `Slot = @dataclass(slots=True, eq=False)` with active/transferring sets + FIFO `deque[(Request, Deferred)]` + a single `latercall` mutex blocking `_process_queue` until the delay timer fires.",
+      "code_anchor": "scrapy/core/downloader/__init__.py:44-58,195-198",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-104",
+      "source_region": "AGENTS.md Key invariants (downloader ordering 'Do not change!')",
+      "kind": "key-invariant",
+      "text": "Downloader load-bearing ORDERING invariant marked 'Do not change!': `_download` awaits transfer, fires response_downloaded BEFORE pulling the next queued request, then removes from transferring + re-pumps + fires request_left_downloader in finally.",
+      "code_anchor": "scrapy/core/downloader/__init__.py:223-252",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-105",
+      "source_region": "AGENTS.md Key invariants (MiddlewareManager methods dict)",
+      "kind": "key-invariant",
+      "text": "MiddlewareManager core data structure: `self.methods: dict[str, deque[Callable|None]]`, one ordered deque per hook; subclasses `append` request-side and `appendleft` response/exception-side so the response chain runs in reverse of the request chain.",
+      "code_anchor": "scrapy/middleware.py:53, scrapy/core/downloader/middleware.py:43-52",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-106",
+      "source_region": "AGENTS.md Key invariants (scheduler two-tier queue)",
+      "kind": "key-invariant",
+      "text": "Scheduler two-tier queue: single memory PQ by default; a disk PQ added only when JOBDIR is set; enqueue is disk-first/memory-fallback, dequeue is memory-first/disk-fallback.",
+      "code_anchor": "scrapy/core/scheduler.py:134, scrapy/core/scheduler.py:377,396",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-107",
+      "source_region": "AGENTS.md Key invariants (dedup gate ordering)",
+      "kind": "key-invariant",
+      "text": "Dedup gate ordering invariant: `dupefilter.request_seen` is checked BEFORE any enqueue \u05d2\u20ac\u201d a seen request (unless dont_filter) is dropped and never queued.",
+      "code_anchor": "scrapy/core/scheduler.py:374",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-108",
+      "source_region": "critical-facts.md Key invariants (settings priority layering)",
+      "kind": "key-invariant",
+      "text": "Settings priority layering: default(0) < command(10) < addon(15) < project(20) < spider(30) < cmdline(40); a set takes effect only if priority >= stored.",
+      "code_anchor": "scrapy/settings/__init__.py:31-38, scrapy/settings/__init__.py:67-73",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-109",
+      "source_region": "critical-facts.md Key invariants (Headers multi-valued caseless dict)",
+      "kind": "key-invariant",
+      "text": "Headers is a multi-valued caseless dict: keys title-cased to bytes, values stored as list[bytes]; __getitem__/get return the LAST value, getlist returns all; empty value-list yields None not KeyError.",
+      "code_anchor": "scrapy/http/headers.py:23-24,70-88",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-110",
+      "source_region": "critical-facts.md Key invariants (scraper accounting symmetry / backpressure)",
+      "kind": "key-invariant",
+      "text": "Scraper accounting symmetry: active_size incremented in add_response_request and decremented by the identical max(len(body),1024) in finish_response; backpressure once active_size > max_active_size (default 5,000,000).",
+      "code_anchor": "scrapy/core/scraper.py:77-93, scrapy/core/scraper.py:61",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-111",
+      "source_region": "critical-facts.md Key invariants (HTTP/2 stream dispatch)",
+      "kind": "key-invariant",
+      "text": "HTTP/2 StreamCloseReason is an 8-value Enum, the single dispatch key for stream termination; body built in a BytesIO and converted exactly once via make_response when the stream ENDs; client streams use odd ids.",
+      "code_anchor": "scrapy/core/http2/stream.py:58-83, scrapy/core/http2/protocol.py:114-117",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-112",
+      "source_region": "critical-facts.md Key invariants (request fingerprint)",
+      "kind": "key-invariant",
+      "text": "Request fingerprint is SHA1 over canonicalized url+method+body; headers ignored by default; memoized in a per-Request WeakKeyDictionary.",
+      "code_anchor": "scrapy/utils/request.py:74-103",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-113",
+      "source_region": "critical-facts.md Key invariants (media dedup, scheduler LIFO/DFO)",
+      "kind": "key-invariant",
+      "text": "Media dedup: each media request keyed by request fingerprint, a URL downloaded at most once per spider run; default scheduler crawl order is LIFO -> DFO.",
+      "code_anchor": "scrapy/pipelines/media.py:154, scrapy/core/scheduler.py:156",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-114",
+      "source_region": "AGENTS.md Technology choices (Twisted + asyncio reactor)",
+      "kind": "technology-choice",
+      "text": "Twisted (>=21.7.0) is the core async substrate (Deferred/inlineCallbacks throughout), bridged to native asyncio \u05d2\u20ac\u201d AsyncioSelectorReactor is the default reactor.",
+      "code_anchor": "pyproject.toml:10, scrapy/utils/reactor.py:95",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-115",
+      "source_region": "AGENTS.md Technology choices (pluggability via load_object)",
+      "kind": "technology-choice",
+      "text": "Components are pluggable via settings + `load_object`/`build_from_crawler`: DOWNLOADER, SCHEDULER, DUPEFILTER_CLASS, ITEM_PROCESSOR, DOWNLOAD_HANDLERS, etc.",
+      "code_anchor": "scrapy/core/engine.py:132,156, scrapy/utils/misc.py:58-90",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-116",
+      "source_region": "AGENTS.md Technology choices (parsing/selectors)",
+      "kind": "technology-choice",
+      "text": "lxml + parsel + cssselect + w3lib for parsing/selectors; queuelib backs the scheduler queues.",
+      "code_anchor": "pyproject.toml:14,16,18,24, pyproject.toml:21",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-117",
+      "source_region": "AGENTS.md Technology choices (HTTP/2 via optional h2)",
+      "kind": "technology-choice",
+      "text": "HTTP/2 via the optional `h2` (hyper-h2) library, NOT in the hard dependencies, loaded only when an HTTP/2 download is requested.",
+      "code_anchor": "scrapy/core/http2/protocol.py:8-22, pyproject.toml:9-29",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-118",
+      "source_region": "critical-facts.md Technology choices (Python >=3.10, Scrapy v2.16.0)",
+      "kind": "technology-choice",
+      "text": "Python >=3.10, single hatchling-built distribution Scrapy v2.16.0 with tool.hatch.version reading scrapy/VERSION.",
+      "code_anchor": "pyproject.toml:1-3,52,83-85",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-119",
+      "source_region": "critical-facts.md Technology choices (zope.interface)",
+      "kind": "technology-choice",
+      "text": "zope.interface for component interfaces (IFeedStorage(Interface)).",
+      "code_anchor": "pyproject.toml:25, scrapy/extensions/feedexport.py:91",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-120",
+      "source_region": "critical-facts.md Technology choices (PyDispatcher signal bus)",
+      "kind": "technology-choice",
+      "text": "PyDispatcher (pydispatch) for the signals/event bus; queuelib backs the disk/memory request queues.",
+      "code_anchor": "pyproject.toml:27, pyproject.toml:21",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-121",
+      "source_region": "critical-facts.md Technology choices (TLS stack, non-verifying default)",
+      "kind": "technology-choice",
+      "text": "cryptography + pyOpenSSL + service_identity for TLS; TLS default is non-verifying \u05d2\u20ac\u201d cert errors logged/ignored unless DOWNLOAD_VERIFY_CERTIFICATES is set.",
+      "code_anchor": "pyproject.toml:11,20,22, scrapy/core/downloader/tls.py:71-110",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-122",
+      "source_region": "critical-facts.md Technology choices (robots.txt, item abstraction, tldextract)",
+      "kind": "technology-choice",
+      "text": "protego + robotexclusionrulesparser for robots.txt; itemadapter + itemloaders for item abstraction; tldextract for domain handling.",
+      "code_anchor": "pyproject.toml:19, pyproject.toml:12-13, pyproject.toml:23",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-123",
+      "source_region": "critical-facts.md Technology choices (in-flight async migration)",
+      "kind": "technology-choice",
+      "text": "In-flight async migration: across engine/scraper/spidermw/pipelines every sync public method is a deprecated Deferred-returning shim over an `_async` coroutine; the `_async` methods are the real API.",
+      "code_anchor": "scrapy/core/engine.py:164-174, scrapy/core/scraper.py:153-161",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-124",
+      "source_region": "core.scheduler.md Key facts (default wiring)",
+      "kind": "technology-choice",
+      "text": "Scheduler default wiring: SCHEDULER=Scheduler, DUPEFILTER_CLASS=RFPDupeFilter, SCHEDULER_PRIORITY_QUEUE=DownloaderAwarePriorityQueue, memory LIFO / disk Pickle-LIFO queues, FIFO start queues, JOBDIR=None.",
+      "code_anchor": "scrapy/settings/default_settings.py:529, scrapy/settings/default_settings.py:533",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-125",
+      "source_region": "core.scheduler.md Boundary rules (duck-typed interface via metaclass)",
+      "kind": "boundary-rule",
+      "text": "BaseScheduler interface conformance is duck-typed via a metaclass (__subclasscheck__ accepts any class exposing has_pending_requests/enqueue_request/next_request), enforced by the engine's issubclass check before construction.",
+      "code_anchor": "scrapy/core/scheduler.py:33-49, scrapy/core/engine.py:157-162",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-126",
+      "source_region": "core.scheduler.md Boundary rules (enqueue_request returns bool)",
+      "kind": "boundary-rule",
+      "text": "enqueue_request returns a bool, never raises, to signal rejection: False means dropped (dupefilter rejection), prompting the engine's request_dropped signal.",
+      "code_anchor": "scrapy/core/scheduler.py:101-110,374-376",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-127",
+      "source_region": "core.downloader.md Boundary rules (handler dispatch by scheme)",
+      "kind": "boundary-rule",
+      "text": "Handler dispatch is by URL scheme only and refuses unknown schemes (NotSupported) rather than crashing the run.",
+      "code_anchor": "scrapy/core/downloader/handlers/__init__.py:141-147",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-128",
+      "source_region": "core.downloader.md Key facts (concurrency gate)",
+      "kind": "key-invariant",
+      "text": "Downloader concurrency gate: a slot transfers only while free_transfer_slots() = concurrency - len(transferring) > 0; global backout triggers when len(self.active) >= total_concurrency.",
+      "code_anchor": "scrapy/core/downloader/__init__.py:60-61,140-141,210",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-129",
+      "source_region": "core.scraper.md Dependencies (settings defaults)",
+      "kind": "technology-choice",
+      "text": "Scraper reads ITEM_PROCESSOR (default ItemPipelineManager), CONCURRENT_ITEMS (default 100), SCRAPER_SLOT_MAX_ACTIVE_SIZE (default 5000000).",
+      "code_anchor": "scrapy/core/scraper.py:109,120,168, scrapy/settings/default_settings.py:435,251,537",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-130",
+      "source_region": "http--Request-Response-model-.md Boundary rules (str-vs-bytes body)",
+      "kind": "boundary-rule",
+      "text": "str-vs-bytes body invariant: a base Response body MUST be bytes (raises TypeError directing to TextResponse/HtmlResponse for unicode); TextResponse is the only place a str body is accepted.",
+      "code_anchor": "scrapy/http/response/__init__.py:128-138, scrapy/http/response/text.py:62-72",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-131",
+      "source_region": "http--Request-Response-model-.md Boundary rules (text-only capability gate)",
+      "kind": "boundary-rule",
+      "text": "text-only capability gate: the base Response raises NotSupported for css/xpath/jmespath; only TextResponse subtypes implement them.",
+      "code_anchor": "scrapy/http/response/__init__.py:195-218",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-132",
+      "source_region": "settings.md Boundary rules (immutability gate)",
+      "kind": "key-invariant",
+      "text": "Settings immutability gate: every mutator routes through _assert_mutability(), raising TypeError once frozen, and the Crawler freezes settings during _apply_settings.",
+      "code_anchor": "scrapy/settings/__init__.py:608-610, scrapy/crawler.py:147",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-133",
+      "source_region": "critical-facts.md Notable non-obvious facts (one file = one command, union of three sources)",
+      "kind": "boundary-rule",
+      "text": "One file = one command: _iter_command_classes selects classes where obj.__module__ == module.__name__ and the CLI name is the module filename; the command set is the UNION of three sources (built-in scrapy.commands, the entry-point group, then COMMANDS_MODULE) layered with .update().",
+      "code_anchor": "scrapy/cmdline.py:40-51,76-84",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-134",
+      "source_region": "critical-facts.md Notable non-obvious facts (shell bypasses crawl-then-start)",
+      "kind": "boundary-rule",
+      "text": "`shell` is the deliberate exception to the crawl-then-start chain \u05d2\u20ac\u201d it bypasses crawler_process.crawl() and manually creates the crawler + engine because the Shell hand-drives the engine.",
+      "code_anchor": "scrapy/commands/shell.py:84-100",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-135",
+      "source_region": "critical-facts.md Notable non-obvious facts (downloadermiddlewares/spidermiddlewares register nothing)",
+      "kind": "boundary-rule",
+      "text": "The downloadermiddlewares/spidermiddlewares packages register nothing in __init__.py (both 0 bytes) \u05d2\u20ac\u201d wired in by dotted path in *_BASE settings; fixed spider-mw ordering Start(25)->HttpError(50)->Referer(700)->UrlLength(800)->Depth(900).",
+      "code_anchor": "scrapy/downloadermiddlewares/__init__.py:1, scrapy/settings/default_settings.py:552-553",
+      "in_scope": true
+    }
+  ],
+  "adjudication": [
+    {
+      "referent": "The Scrapy execution Engine (ExecutionEngine) component at scrapy/core/engine.py:102",
+      "rc_id": "RC-001",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-004",
+      "ec_kind": "component-exists",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "EC-004 [component-role] \"core.engine (ExecutionEngine) \u05d2\u20ac\u201d central control loop coordinating scheduler/downloader/scraper\" at @scrapy/core/engine.py:102 names the SAME referent at the EXACT same anchor as RC-001 (scrapy/core/engine.py:102). The blind artifact additionally has a dedicated component doc core.engine--ExecutionEngine-.md. Per kind-compatibility, a component-role EC entails the compone"
+    },
+    {
+      "referent": "The Scheduler component (scrapy/core/scheduler.py)",
+      "rc_id": "RC-002",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-005",
+      "ec_kind": "component-exists",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "EC-005 [component-role] \"core.scheduler \u05d2\u20ac\u201d stores, prioritizes and dedups requests for the engine.\" is anchored at the EXACT same file:line as RC-002 (@scrapy/core/scheduler.py:127). Per kind-compatibility, a component-ROLE EC entails the component-EXISTS RC for the same component. The blind artifact clearly identifies core.scheduler as a first-class component and additionally elaborates it acros"
+    },
+    {
+      "referent": "The Downloader component (scrapy/core/downloader, class Downloader)",
+      "rc_id": "RC-003",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-006",
+      "ec_kind": "component-exists",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-003 asserts the existence of a Downloader component at scrapy/core/downloader/__init__.py:99. EC-006 [component-role] \"core.downloader \u05d2\u20ac\u201d fetches a Request via middleware chain + per-key concurrency Slot\" is anchored at the identical location @scrapy/core/downloader/__init__.py:99. Code confirms `class Downloader:` is defined at line 99. A component-role EC entails the component-exists RC for "
+    },
+    {
+      "referent": "The spiders component \u05d2\u20ac\u201d the Spider base class users subclass (scrapy/spiders/__init__.py:31)",
+      "rc_id": "RC-004",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-015",
+      "ec_kind": "component-exists",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-004 says the codebase has Spiders: custom classes written by users, anchored at scrapy/spiders/__init__.py:31 (the `class Spider(object_ref)` base class users must subclass). EC-015 captures the SAME referent at the identical anchor: \"spiders \u05d2\u20ac\u201d user-extension surface: base Spider + built-in spider types (@scrapy/spiders/__init__.py:31)\". It explicitly identifies the base Spider class and fram"
+    },
+    {
+      "referent": "The Item Pipeline component (scrapy.pipelines / ItemPipelineManager)",
+      "rc_id": "RC-005",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-014",
+      "ec_kind": "component-exists",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "EC-014 describes the \"pipelines (ItemPipelineManager + media/files/images) \u05d2\u20ac\u201d item-pipeline subsystem + media download family\" anchored to @scrapy/pipelines/__init__.py:31 \u05d2\u20ac\u201d the EXACT same file:line as RC-005's key anchor (scrapy/pipelines/__init__.py:31). Per the KIND-COMPATIBILITY rule, this component-role EC (describing the item-pipeline subsystem's responsibility) entails the component-exis"
+    },
+    {
+      "referent": "DownloaderMiddlewareManager \u05d2\u20ac\u201d the downloader-middleware layer/manager (scrapy/core/downloader/middleware.py:34)",
+      "rc_id": "RC-006",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-042",
+      "ec_kind": "component-exists",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-006 asserts there is a downloader-middleware layer/manager, key anchor scrapy/core/downloader/middleware.py:34 (the `class DownloaderMiddlewareManager(MiddlewareManager)` line, verified in C:/tmp/p5_scrapy). The blind artifact captures this exact fact at the exact referent line in many places. Best match: EC-042 'core.downloader -> middleware: DownloaderMiddlewareManager subclasses the shared M"
+    },
+    {
+      "referent": "The spider-middleware layer/manager (SpiderMiddlewareManager in scrapy/core/spidermw.py)",
+      "rc_id": "RC-007",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-011",
+      "ec_kind": "component-exists",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-007 (key anchor scrapy/core/spidermw.py:48) asserts a spider-middleware layer/manager exists. EC-011 [component-role] \"core.spidermw (SpiderMiddlewareManager) \u05d2\u20ac\u201d concrete spider-side middleware manager\" cites the IDENTICAL anchor @scrapy/core/spidermw.py:48, verified to be the `class SpiderMiddlewareManager(MiddlewareManager)` definition. A component-role EC entails the component-exists RC for"
+    },
+    {
+      "referent": "The Engine (scrapy.core.engine / ExecutionEngine) \u05d2\u20ac\u201d its responsibility for controlling data flow between components and triggering events",
+      "rc_id": "RC-008",
+      "rc_kind": "component-role",
+      "ec_id": "EC-004",
+      "ec_kind": "component-role",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-008 asserts two facts about the Engine: (1) it controls data flow between all components, and (2) it triggers events when actions occur. Both are captured in the blind artifact. EC-004 [component-role] states \"core.engine (ExecutionEngine) \u05d2\u20ac\u201d central control loop coordinating scheduler/downloader/scraper\" (@scrapy/core/engine.py:102), and the blind component doc C:/tmp/p5_scrapy_blind_v2art/.a"
+    },
+    {
+      "referent": "core.scheduler component role (its responsibility: receive requests from the engine and feed them back to the engine on request)",
+      "rc_id": "RC-009",
+      "rc_kind": "component-role",
+      "ec_id": "EC-005",
+      "ec_kind": "component-role",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-009 (anchor scrapy/core/scheduler.py:53, the BaseScheduler docstring \"responsible for storing requests received from the engine, and feeding them back upon request (also to the engine)\") is captured by EC-005 [component-role] core.scheduler. The blind artifact's backing component doc C:/tmp/p5_scrapy_blind_v2art/.ai/docs/components/core.scheduler.md line 7 (Role) states verbatim: \"stores reques"
+    },
+    {
+      "referent": "scrapy core.downloader (Downloader) component \u05d2\u20ac\u201d its responsibility to fetch web pages and hand them back to the engine",
+      "rc_id": "RC-010",
+      "rc_kind": "component-role",
+      "ec_id": "EC-006",
+      "ec_kind": "component-role",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-010 says the Downloader fetches web pages and feeds them to the engine. The blind AGENTS.md captures this same fact: EC-006 (component registry, line 26) gives core.downloader the role \"Fetches a Request via middleware chain + per-key concurrency Slot\" (@scrapy/core/downloader/__init__.py:99), directly stating the Downloader's fetching responsibility. The Architecture paragraph (line 15) reinfo"
+    },
+    {
+      "referent": "The spiders component's core responsibility: parse responses and extract items from them or additional requests to follow (RC anchor scrapy/spiders/crawl.py:184, CrawlSpider.parse_with_rules yielding request_or_item).",
+      "rc_id": "RC-011",
+      "rc_kind": "component-role",
+      "ec_id": "EC-009",
+      "ec_kind": "component-role",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "The blind artifact captures the exact RC-011 fact. core.scraper.md:8 states the spider callback/errback \"Parses downloaded responses... through the spider middleware chain and the request callback/errback, then dispatches the produced requests (back to the engine to crawl) and items (to the item pipelines)\" \u05d2\u20ac\u201d i.e. spiders parse responses and produce items OR requests-to-follow. core.scraper.md:3"
+    },
+    {
+      "referent": "The Item Pipeline subsystem (scrapy.pipelines / ItemPipelineManager) and its role processing items after spider extraction",
+      "rc_id": "RC-012",
+      "rc_kind": "component-role",
+      "ec_id": "EC-014",
+      "ec_kind": "component-role",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-012 asserts the Item Pipeline processes items once spiders have extracted them (cleansing/validation/persistence). EC-014 [component-role] pipelines is the same referent (the item-pipeline subsystem). The blind pipelines component doc Role captures the same fact: ItemPipelineManager \"runs each scraped item through every enabled pipeline's process_item/open_spider/close_spider hook in priority o"
+    },
+    {
+      "referent": "downloader middlewares (the downloadermiddlewares package / DownloaderMiddlewareManager middleware chain) as request/response hooks sitting between the Engine and the Downloader",
+      "rc_id": "RC-013",
+      "rc_kind": "component-role",
+      "ec_id": "EC-013",
+      "ec_kind": "component-role",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-013 asserts downloader middlewares are hooks that sit between Engine and Downloader, processing requests (Engine->Downloader) and responses (Downloader->Engine), anchored at scrapy/core/downloader/middleware.py:96-138. The blind artifact captures the SAME fact about the SAME referent in multiple places. (1) EC-013 names the referent: \"downloadermiddlewares \u05d2\u20ac\u201d built-in downloader middlewares (c"
+    },
+    {
+      "referent": "Spider middlewares (the spidermiddlewares pack / spider-side middleware layer): hooks between the Engine and the Spiders processing spider input (responses) and output (items/requests)",
+      "rc_id": "RC-014",
+      "rc_kind": "component-role",
+      "ec_id": "EC-012",
+      "ec_kind": "component-role",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-014 asserts the component-role of spider middlewares: hooks that sit between Engine and Spiders, processing spider input (responses) and output (items/requests). The blind artifact captures this SAME FACT about the SAME referent nearly verbatim. EC-012 (component spidermiddlewares) has a blind doc C:/tmp/p5_scrapy_blind_v2art/.ai/docs/components/spidermiddlewares.md whose Role section states: \""
+    },
+    {
+      "referent": "The Engine<->Scheduler dependency edge: Engine schedules requests in and pulls next requests from the Scheduler",
+      "rc_id": "RC-015",
+      "rc_kind": "dependency-edge",
+      "ec_id": "EC-036",
+      "ec_kind": "dependency-edge",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-015 asserts the Engine<->Scheduler edge (Engine schedules requests in the Scheduler and asks it for the next requests to crawl), key anchor scrapy/core/engine.py:364. EC-036 [dependency-edge] states \"core.engine -> core.scheduler: imports BaseScheduler, issubclass-checks the configured class, and calls next_request()\" with anchor scrapy/core/engine.py:23, scrapy/core/engine.py:364 \u05d2\u20ac\u201d same refe"
+    },
+    {
+      "referent": "The Engine -> Downloader dependency edge (Engine calls downloader.fetch() to send requests and receive the generated Responses)",
+      "rc_id": "RC-016",
+      "rc_kind": "dependency-edge",
+      "ec_id": "EC-038",
+      "ec_kind": "dependency-edge",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "EC-038 [dependency-edge] \"core.engine -> core.downloader: settings-resolved load_object(DOWNLOADER) then constructs and calls fetch\" anchored @scrapy/core/engine.py:132, scrapy/core/engine.py:495-497 \u05d2\u20ac\u201d the SAME referent and SAME fact as RC-016 (Engine<->Downloader), with the IDENTICAL key anchor (RC anchor engine.py:495; EC anchor engine.py:495-497). Verified in code at C:/tmp/p5_scrapy/scrapy/c"
+    },
+    {
+      "referent": "The Engine<->Spider round-trip data edge (responses sent to the spider for processing; scraped items + new requests flow back), mediated in code by the Scraper.",
+      "rc_id": "RC-017",
+      "rc_kind": "dependency-edge",
+      "ec_id": "EC-045",
+      "ec_kind": "dependency-edge",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-017's referent is the conceptual Engine<->Spider round-trip (the classic Scrapy diagram framing). In the real code this round-trip is mediated by the Scraper, and the RC's key anchor scrapy/core/scraper.py:458 is exactly where the scraper checks isinstance(output, Request) and crawls produced requests back via engine.crawl (scraper.py:459-460). The blind artifact captures the SAME FACT, decompo"
+    },
+    {
+      "referent": "The dataflow edge by which processed/scraped items reach the Item Pipelines (core.scraper -> pipelines / ItemPipelineManager).",
+      "rc_id": "RC-018",
+      "rc_kind": "dependency-edge",
+      "ec_id": "EC-045",
+      "ec_kind": "dependency-edge",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-018 asserts scraped items flow into the Item Pipelines (anchor scrapy/core/scraper.py:495, inside start_itemproc_async which calls self.itemproc.process_item_async). The doc frames the Scraper's item-dispatch as the Engine's core processing; the same fact is the core.scraper->pipelines edge. EC-045 [dependency-edge] explicitly captures `core.scraper -> ... pipelines`. The blind component doc co"
+    },
+    {
+      "referent": "The boundary rule that requests/responses between the Engine and the Downloader pass through the downloader-middleware chain (scrapy/core/downloader/__init__.py:131-135, fetch wraps _enqueue_request inside middleware.download_async)",
+      "rc_id": "RC-019",
+      "rc_kind": "boundary-rule",
+      "ec_id": "EC-085",
+      "ec_kind": "boundary-rule",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "EC-085 [boundary-rule]: \"Module isolation: a request must pass the downloader-middleware chain before any transfer (`fetch` wraps `_enqueue_request` inside `middleware.download_async`)\" anchored at scrapy/core/downloader/__init__.py:131-135 \u05d2\u20ac\u201d the exact same boundary fact about the same referent, and the RC anchor line 133 falls inside that range. Corroborated in the blind artifact's critical-fac"
+    },
+    {
+      "referent": "The spider-middleware boundary: all spider input (responses) and output (items/requests) between the Engine/Scraper and the Spiders pass through the Spider Middleware chain (SpiderMiddlewareManager / scrape_response_async).",
+      "rc_id": "RC-020",
+      "rc_kind": "boundary-rule",
+      "ec_id": "EC-085",
+      "ec_kind": "boundary-rule",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-020 asserts that all spider input (responses) and output (items/requests) between Engine and Spiders pass through the Spider middlewares; key anchor scraper.py:255 (`self.spidermw.scrape_response_async(self.call_spider_async, result, request)`). The blind artifact captures the SAME fact about the SAME referent in multiple places. EC-085 (boundary-rule, scrapy/core/downloader/__init__.py:131-135"
+    },
+    {
+      "referent": "The central-mediator boundary: the ExecutionEngine controls data flow between Scheduler/Downloader/Scraper rather than them being wired directly to each other",
+      "rc_id": "RC-021",
+      "rc_kind": "boundary-rule",
+      "ec_id": "EC-078",
+      "ec_kind": "boundary-rule",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-021 asserts the data flow is controlled centrally by the execution engine, which mediates between components rather than them being wired directly. EC-078 (boundary-rule) states the SAME FACT for the SAME referent: \"Mediator boundary: Scheduler/Downloader/Scraper never reach across each other \u05d2\u20ac\u201d the engine pulls from scheduler.next_request(), pushes to downloader.fetch(), routes output to scra"
+    },
+    {
+      "referent": "The engine crawl loop in `_start_scheduled_requests` (scrapy/core/engine.py:330-339) \u05d2\u20ac\u201d the `while not needs_backout(): if not _start_scheduled_request(): break` loop that repeatedly calls `scheduler.next_request()` (engine.py:364) and stops when it returns None (scheduler_empty).",
+      "rc_id": "RC-022",
+      "rc_kind": "key-invariant",
+      "ec_id": null,
+      "ec_kind": null,
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": false,
+      "evidence": "RC-022's fact is the REPEAT/loop-until-empty invariant: the engine keeps asking the scheduler for the next request over and over until there are no more requests (the `while not self.needs_backout(): if not self._start_scheduled_request(): break` at engine.py:334-336, breaking when next_request() returns None / scheduler_empty fires at engine.py:364-367).\n\nThe blind artifact provably analyzed this"
+    },
+    {
+      "referent": "The crawl entry point / seed: the Engine obtains the initial start requests from the Spider (spider.start() consumed via spidermw.process_start) at scrapy/core/engine.py:541.",
+      "rc_id": "RC-023",
+      "rc_kind": "entry-point",
+      "ec_id": "EC-079",
+      "ec_kind": "entry-point",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-023 (entry-point): \"The crawl begins with the Engine getting the initial Requests to crawl from the Spider (start requests)\", key anchor scrapy/core/engine.py:541. Code confirms: open_spider_async at engine.py:541 does `self._start = await self.scraper.spidermw.process_start()`, and spidermw.process_start (spidermw.py:246) does `start = self._spider.start()` then runs it through the chain \u05d2\u20ac\u201d i"
+    },
+    {
+      "referent": "Scrapy's foundational concurrency substrate: Twisted as the async/event-driven networking framework",
+      "rc_id": "RC-024",
+      "rc_kind": "technology-choice",
+      "ec_id": "EC-114",
+      "ec_kind": "technology-choice",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-024 asserts Scrapy is written with Twisted (an event-driven networking framework) using non-blocking/asynchronous code for concurrency; key anchor scrapy/core/engine.py:19. EC-114 [technology-choice] states the SAME fact about the SAME referent: \"Twisted (>=21.7.0) is the core async substrate (Deferred/inlineCallbacks throughout), bridged to native asyncio \u05d2\u20ac\u201d AsyncioSelectorReactor is the defa"
+    }
+  ],
+  "beyond_doc": [
+    {
+      "ec_id": "EC-003",
+      "referent": "crawler (lifecycle orchestration) \u05d2\u20ac\u201d owns the full crawl lifecycle, reactor/loop, settings, signals",
+      "note": "Verified: class Crawler at scrapy/crawler.py. The doc's 7-component model has no Crawler/CrawlerProcess lifecycle owner above the Engine; the doc only describes the engine-mediated dataflow components, not the orchestration shell that constructs the engine and drives the reactor."
+    },
+    {
+      "ec_id": "EC-020",
+      "referent": "settings \u05d2\u20ac\u201d priority-based dict-like configuration system (BaseSettings)",
+      "note": "Verified: class BaseSettings(MutableMapping) at scrapy/settings/__init__.py:79; SETTINGS_PRIORITIES default(0)<command(10)<addon(15)<project(20)<spider(30)<cmdline(40). No RC mentions a settings/configuration component at all."
+    },
+    {
+      "ec_id": "EC-063",
+      "referent": "Scrapy owns NO central database; component state is per-process in-memory with durable persistence only at optional pluggable edges",
+      "note": "Verified against scheduler/cache/feed/media storage code. The doc has zero data-store claims; this whole data-store kind (EC-063..074: JOBDIR queue, active.json, HTTP cache, feed/media stores, request.meta, stats, cookiejar) is entirely beyond-doc."
+    },
+    {
+      "ec_id": "EC-075",
+      "referent": "User entry is the `scrapy` console command `scrapy = scrapy.cmdline:execute`",
+      "note": "Verified: pyproject.toml:64 declares scrapy = \"scrapy.cmdline:execute\"; cmdline.py:169 def execute(). RC-023 covers a different entry concept (engine getting start requests from the spider), not the CLI/process bootstrap layer."
+    },
+    {
+      "ec_id": "EC-091",
+      "referent": "ORDERED OPEN sequence in engine.open_spider_async (set spider -> CallLaterOnce -> build scheduler -> create _Slot -> spidermw.process_start -> scheduler.open -> scraper.open_spider_async -> stats.open_spider -> send spider_opened)",
+      "note": "Verified in scrapy/core/engine.py. The doc's only invariant is the crawl-loop-repeats claim (RC-022); the precise lifecycle ordering invariants (open/close order, single-slot, drain, single-use) are all omitted."
+    },
+    {
+      "ec_id": "EC-116",
+      "referent": "lxml + parsel + cssselect + w3lib for parsing/selectors; queuelib backs the scheduler queues",
+      "note": "Verified in pyproject.toml dependencies (cssselect, lxml, parsel, queuelib, w3lib). RC-024 names only Twisted/async; every other technology choice (parsing libs, zope.interface, PyDispatcher, TLS stack, Python>=3.10/hatchling, optional h2) is beyond-doc."
+    },
+    {
+      "ec_id": "EC-084",
+      "referent": "Security boundary on redirect: Cookie stripped on cross-host/scheme-downgrade and Authorization stripped on any scheme/host/port change per WHATWG fetch",
+      "note": "Verified in scrapy/downloadermiddlewares/redirect.py. The doc's boundary rules cover only the middleware/mediator structure (RC-019/020/021); security/type/error-propagation boundary rules are all omitted."
+    },
+    {
+      "ec_id": "EC-037",
+      "referent": "core.engine -> core.scraper: engine imports Scraper, constructs Scraper(crawler), drives enqueue_scrape",
+      "note": "Verified in scrapy/core/engine.py. The doc models engine<->spider directly (RC-017); the internal Scraper component that routes responses through spider-middleware + pipelines is a finer-grained edge the doc never names."
+    }
+  ],
+  "scores": {
+    "coverage_overall": {
+      "n": 23,
+      "d": 24,
+      "pct": 0.9583,
+      "wilson95_lb": 0.7976
+    },
+    "coverage_by_kind": {
+      "component-exists": {
+        "n": 7,
+        "d": 7
+      },
+      "component-role": {
+        "n": 7,
+        "d": 7
+      },
+      "dependency-edge": {
+        "n": 4,
+        "d": 4
+      },
+      "data-store": {
+        "n": 0,
+        "d": 0
+      },
+      "boundary-rule": {
+        "n": 3,
+        "d": 3
+      },
+      "key-invariant": {
+        "n": 0,
+        "d": 1
+      },
+      "entry-point": {
+        "n": 1,
+        "d": 1
+      },
+      "technology-choice": {
+        "n": 1,
+        "d": 1
+      }
+    },
+    "faithfulness": {
+      "n": 23,
+      "d": 23,
+      "pct": 1.0,
+      "wilson95_lb": 0.8569
+    },
+    "beyond_doc_count": 118,
+    "deepinit_wrong_high": 0
+  },
+  "scoring_provenance": {
+    "method": " isolated-agent scoring (separation of duties): a key-reader + an EC-extractor (BLIND to the key) + one matcher per RC + a faithfulness refuter per overlap (vs CODE) + a beyond-doc finder. Workflow  ( post-fix v2).",
+    "orchestrator_caveat": "The orchestrating session authored the curator keys, so it is not a fully fresh scorer; but every EC-extraction, match, and faithfulness JUDGMENT was made by an isolated agent (the EC-extractor blind to the key). Recorded honestly.",
+    "reconciliation": ""
+  },
+  "provenance": {
+    "doc_in_inputs": false,
+    "key_held_out": true,
+    "training_contamination_caveat": true,
+    "publishable": "indicative",
+    "caveats": [
+      "INDICATIVE \u2014 small-n, fuzzy truth, below any ship-gate",
+      "attribution-adjudicated \u2014 divergences resolved to CODE, not auto-scored",
+      "doc-bounded \u2014 agreement with a good human doc, not absolute completeness",
+      "\u00a718 (9/9, FP 0) stays the product headline",
+      "training-contamination \u2014 scrapy is a public repo; the blind output may be informed by pretraining, so the number is INDICATIVE."
+    ],
+    "tune_or_heldout": "held-out",
+    "harness_section": "\u00a734"
+  }
+}

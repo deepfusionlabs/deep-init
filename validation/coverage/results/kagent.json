@@ -1,0 +1,864 @@
+{
+  "schema": "deepinit-validation/coverage-record/v1",
+  "program": "The Mirror Test",
+  "milestone": "/ (blind engine pass + scored, §34-gated) — contamination-resistant held-out repo",
+  "test_plan_run": "",
+  "scored_date": "2026-06-14",
+  "repo": {
+    "name": "kagent-dev/kagent",
+    "url": "https://github.com/kagent-dev/kagent",
+    "pinned_sha": "f1f015ebcb03c0fbdcd6083c30ac5ba54a9cdd96",
+    "license": "Apache-2.0",
+    "stack": "Go (CNCF k8s agent controller; 3 modules adk/api/core)",
+    "contamination": "obscure"
+  },
+  "run": {
+    "run_kind": "coverage_validation",
+    "engine_proxy": "blind-workflow (curator≠blind≠scorer), doc-removed tree, Graphify structural path",
+    "model": "claude-opus-4-8",
+    "date": "2026-06-14"
+  },
+  "identity": {
+    "languages": [
+      "Go"
+    ],
+    "components": null
+  },
+  "reference_doc": {
+    "kind": "architecture-docs-folder",
+    "source_url": "docs/architecture/",
+    "doc_sha_or_rev": "f1f015ebcb03c0fbdcd6083c30ac5ba54a9cdd96",
+    "currency_score": 0.973,
+    "currency_bar": 0.85
+  },
+  "reference_key": {
+    "key_path": "validation/coverage/_reference_keys/kagent.json",
+    "key_sha256": "d1d4e2a6356d8cbd71c11425267d20a500bc9f79b74a4f86c12b601821600254",
+    "held_out": true,
+    "rc_total_extracted": 37,
+    "rc_current": 36,
+    "rc_stale_dropped": 1,
+    "rc_unverifiable_dropped": 0
+  },
+  "reference_claims": [
+    {
+      "rc_id": "RC-001",
+      "kind": "entry-point",
+      "claim": "The controller HTTP server listens on port 8083 and is the entry point that receives the UI's A2A JSON-RPC requests.",
+      "code_anchor": "go/core/internal/controller/translator/agent/manifest_builder.go:379 (KAGENT_URL value http://{controller}.{ns}:8083); go/core/cli/internal/config/config.go:46 (default kagent_url http://localhost:8083)",
+      "currency": "CURRENT",
+      "currency_reason": "Port 8083 is the controller URL across translator, CLI port-forward (cli/internal/cli/agent/utils.go:53), and golden test outputs."
+    },
+    {
+      "rc_id": "RC-002",
+      "kind": "component-role",
+      "claim": "The controller proxies the A2A JSON-RPC request to the agent pod (it does not run the LLM itself).",
+      "code_anchor": "go/core/internal/httpserver/server.go:336 (router.PathPrefix(/api/a2a/{namespace}/{name}).Handler(A2AHandler)); go/core/internal/httpserver/server.go:68 (A2AHandler a2a.A2AHandlerMux)",
+      "currency": "CURRENT",
+      "currency_reason": "The A2A proxy is wired as a PathPrefix handler delegating to the A2AHandlerMux; the controller forwards rather than invoking the model."
+    },
+    {
+      "rc_id": "RC-003",
+      "kind": "dependency-edge",
+      "claim": "The controller reaches the agent pod via its Kubernetes Service URL of the form http://{agent-name}.{namespace}:8080.",
+      "code_anchor": "go/core/internal/controller/translator/agent/compiler.go:98 (fmt.Sprintf(\"http://%s.%s:8080\", agent.GetName(), agent.GetNamespace())); go/core/internal/controller/translator/agent/utils.go:18",
+      "currency": "CURRENT",
+      "currency_reason": "Agent pod URL is constructed as {name}.{namespace}:8080 in the translator and the agent-card URL; deployments expose container port 8080."
+    },
+    {
+      "rc_id": "RC-005",
+      "kind": "data-store",
+      "claim": "The database holds these tables/models: Agent, ToolServer, Tool, Session, Task, Event, Feedback, and Memory (with a pgvector embedding and ExpiresAt).",
+      "code_anchor": "go/api/database/models.go:13 (Agent), :151 (ToolServer), :141 (Tool), :65 (Session), :79 (Task), :24 (Event), :129 (Feedback), :210-218 (Memory, pgvector.Vector embedding, ExpiresAt)",
+      "currency": "CURRENT",
+      "currency_reason": "All eight models exist in models.go with the documented field shapes; Memory uses pgvector.Vector and an ExpiresAt pointer."
+    },
+    {
+      "rc_id": "RC-006",
+      "kind": "key-invariant",
+      "claim": "The Session model carries a Source column ('user' or 'agent') indicating how the session was created; agent-sourced sessions are excluded from the agent's session list.",
+      "code_anchor": "go/api/database/models.go:60-76 (SessionSourceUser/SessionSourceAgent, Session.Source); go/core/internal/database/queries/sessions.sql:14 (AND (source IS NULL OR source != 'agent'))",
+      "currency": "CURRENT",
+      "currency_reason": "Source enum and column exist; ListSessionsForAgent SQL filters source != 'agent', matching the a2a-subagents session-query table."
+    },
+    {
+      "rc_id": "RC-007",
+      "kind": "component-exists",
+      "claim": "The controller manager runs multiple controllers (AgentController, RemoteMCPServerController, an MCPServer/MCPServerTool controller) that share a single reconciler instance.",
+      "code_anchor": "go/core/internal/controller/agent_controller.go:43 (AgentController); go/core/internal/controller/remote_mcp_server_controller.go:44 (RemoteMCPServerController); go/core/internal/controller/mcp_server_tool_controller.go:41 (MCPServerToolController)",
+      "currency": "CURRENT",
+      "currency_reason": "The named controllers exist; the doc's box 'MCPServer Controller' maps to MCPServerToolController plus the ReconcileKagentMCPServer path. Minor naming drift only."
+    },
+    {
+      "rc_id": "RC-008",
+      "kind": "component-role",
+      "claim": "The shared kagentReconciler holds the ADK translator, the kube client, and the DB client and is the single instance all controllers delegate to.",
+      "code_anchor": "go/core/internal/controller/reconciler/reconciler.go:83-90 (kagentReconciler struct: adkTranslator, kube, dbClient); :115-118 (NewKagentReconciler wires them)",
+      "currency": "CURRENT",
+      "currency_reason": "The reconciler struct has exactly adkTranslator/kube/dbClient fields as the diagram shows."
+    },
+    {
+      "rc_id": "RC-009",
+      "kind": "key-invariant",
+      "claim": "DB writes for agents and tool servers use atomic upserts (SQL INSERT ... ON CONFLICT DO UPDATE), making concurrent reconciliation idempotent without application-level locks.",
+      "code_anchor": "go/core/internal/database/queries/agents.sql:14 (ON CONFLICT (id) DO UPDATE); go/core/internal/database/queries/tools.sql:41 (ON CONFLICT (name, group_kind) DO UPDATE); go/core/internal/controller/reconciler/reconciler.go:45 (no mutexes in reconciler)",
+      "currency": "CURRENT",
+      "currency_reason": "ON CONFLICT DO UPDATE upserts exist for agents/sessions/tasks/tools; the reconciler uses no Go sync primitives. (The doc attributes serialization to SQLite, but the upsert mechanism itself is real on Postgres.)"
+    },
+    {
+      "rc_id": "RC-010",
+      "kind": "key-invariant",
+      "claim": "Tool refresh wraps delete-all-existing + insert-new in a single DB transaction for atomicity.",
+      "code_anchor": "go/core/internal/database/client_postgres.go:358-360 (RefreshToolsForServer calls withTx); :34-43 (withTx Begin/Commit); SoftDeleteToolsForServer + inserts inside the tx",
+      "currency": "CURRENT",
+      "currency_reason": "RefreshToolsForServer runs SoftDeleteToolsForServer plus inserts inside withTx (Begin/Commit), matching the documented transaction."
+    },
+    {
+      "rc_id": "RC-011",
+      "kind": "key-invariant",
+      "claim": "Network I/O (connecting to remote MCP servers and listing tools) happens OUTSIDE database transactions so long-running network ops do not hold DB locks.",
+      "code_anchor": "go/core/internal/controller/reconciler/reconciler.go:1073-1097 (StoreToolServer upsert, then createMcpTransport+listTools with no tx, then RefreshToolsForServer transaction last)",
+      "currency": "CURRENT",
+      "currency_reason": "upsertToolServerForRemoteMCPServer does the upsert, then the MCP connect + listTools (network, no tx), then RefreshToolsForServer (the only tx) — exactly the documented ordering."
+    },
+    {
+      "rc_id": "RC-012",
+      "kind": "boundary-rule",
+      "claim": "The AgentController's event predicate processes all Create and Delete events, but only processes Update events when the agent's generation or labels changed (filtering out status-only updates).",
+      "code_anchor": "go/core/internal/controller/agent_controller.go:71 (For(&Agent{}, WithPredicates(predicate.Or(GenerationChangedPredicate{}, LabelChangedPredicate{}))))",
+      "currency": "CURRENT",
+      "currency_reason": "The For() predicate is GenerationChangedPredicate OR LabelChangedPredicate, exactly the documented update filtering."
+    },
+    {
+      "rc_id": "RC-013",
+      "kind": "component-exists",
+      "claim": "The Agent CRD (kagent.dev/v1alpha2) is the central CRD with type Declarative|BYO and references ModelConfig, RemoteMCPServer, and MCPServer.",
+      "code_anchor": "go/api/v1alpha2/agent_types.go:31-37 (AgentType enum Declarative;BYO); :63,:68 (BYO/Declarative sub-specs); go/api/v1alpha2/groupversion_info.go (kagent.dev/v1alpha2)",
+      "currency": "CURRENT",
+      "currency_reason": "AgentType enum and the Declarative/BYO sub-specs exist in agent_types.go under the v1alpha2 group."
+    },
+    {
+      "rc_id": "RC-014",
+      "kind": "boundary-rule",
+      "claim": "Agent CRD CEL validation enforces: type must be Declarative or BYO; the matching sub-spec must be set; systemMessage and systemMessageFrom are mutually exclusive; serviceAccountName and serviceAccountConfig are mutually exclusive.",
+      "code_anchor": "go/api/v1alpha2/agent_types.go:51-52 (type + declarative/byo XValidation); :168 (systemMessage/systemMessageFrom mutually exclusive); :422 (serviceAccountName/serviceAccountConfig mutually exclusive)",
+      "currency": "CURRENT",
+      "currency_reason": "All four documented CEL XValidation rules are present at the cited lines."
+    },
+    {
+      "rc_id": "RC-015",
+      "kind": "boundary-rule",
+      "claim": "On an Agent's McpServerTool, each requireApproval entry must also appear in toolNames (CEL-enforced subset rule).",
+      "code_anchor": "go/api/v1alpha2/agent_types.go:533 (XValidation: each RequireApproval entry must also appear in ToolNames)",
+      "currency": "CURRENT",
+      "currency_reason": "The subset CEL rule is present on McpServerTool exactly as documented."
+    },
+    {
+      "rc_id": "RC-016",
+      "kind": "component-exists",
+      "claim": "The ModelConfig CRD configures LLM provider credentials/params, with provider an enum over Anthropic/OpenAI/AzureOpenAI/Ollama/Gemini/GeminiVertexAI/AnthropicVertexAI/Bedrock (plus SAPAICore).",
+      "code_anchor": "go/api/v1alpha2/modelconfig_types.go:30 (Enum=Anthropic;OpenAI;AzureOpenAI;Ollama;Gemini;GeminiVertexAI;AnthropicVertexAI;Bedrock;SAPAICore)",
+      "currency": "CURRENT",
+      "currency_reason": "The provider enum exists; the doc lists 8 providers but the code adds a 9th (SAPAICore). The structural claim holds; the enumeration is slightly under-counted in the doc but not contradicted."
+    },
+    {
+      "rc_id": "RC-017",
+      "kind": "boundary-rule",
+      "claim": "ModelConfig CEL rules enforce: provider-specific config blocks must only be set when provider matches; apiKeyPassthrough and apiKeySecret are mutually exclusive; apiKeyPassthrough is disallowed for Gemini/GeminiVertexAI/AnthropicVertexAI; TLS caCertSecretRef and caCertSecretKey must be set together.",
+      "code_anchor": "go/api/v1alpha2/modelconfig_types.go:371-379 (provider.X must be nil if provider != X); :382 (passthrough/apiKeySecret exclusive); :383 (passthrough false for Gemini/VertexAI); :318-319 (caCert ref/key require each other)",
+      "currency": "CURRENT",
+      "currency_reason": "Each documented ModelConfig validation rule is present at the cited XValidation lines."
+    },
+    {
+      "rc_id": "RC-018",
+      "kind": "component-exists",
+      "claim": "The RemoteMCPServer CRD declares a remote MCP tool server with a protocol enum SSE|STREAMABLE_HTTP (default STREAMABLE_HTTP), url, headersFrom, terminateOnClose, and allowedNamespaces; its status carries discoveredTools.",
+      "code_anchor": "go/api/v1alpha2/remotemcpserver_types.go:31-36 (protocol enum), :46-48 (default STREAMABLE_HTTP), :53 (HeadersFrom), :61 (TerminateOnClose), :75 (AllowedNamespaces), :119 (DiscoveredTools)",
+      "currency": "CURRENT",
+      "currency_reason": "All listed spec/status fields and the protocol enum+default exist in remotemcpserver_types.go."
+    },
+    {
+      "rc_id": "RC-019",
+      "kind": "component-role",
+      "claim": "On RemoteMCPServer reconcile, the controller connects to the MCP server, lists tools, and populates status.discoveredTools.",
+      "code_anchor": "go/core/internal/controller/reconciler/reconciler.go:600-678 (ReconcileKagentRemoteMCPServer -> upsertToolServerForRemoteMCPServer -> listTools -> reconcileRemoteMCPServerStatus); :745 (Status.DiscoveredTools = discoveredTools)",
+      "currency": "CURRENT",
+      "currency_reason": "The reconcile path connects (createMcpTransport), lists tools (listTools), and writes DiscoveredTools onto status."
+    },
+    {
+      "rc_id": "RC-020",
+      "kind": "component-exists",
+      "claim": "Common types include ValueRef (resolves a value from a Secret/ConfigMap key), AllowedNamespaces (From All|Selector, follows Gateway API pattern), and TypedReference/TypedLocalReference.",
+      "code_anchor": "go/api/v1alpha2/common_types.go:147 (ValueRef), :40-44 (NamespacesFromAll/Selector), :53 (AllowedNamespaces)",
+      "currency": "CURRENT",
+      "currency_reason": "ValueRef, AllowedNamespaces with From=All/Selector, and the typed-reference types exist. (Doc names the enum AllowedNamespacesFrom; code names it FromNamespaces — prose drift only.)"
+    },
+    {
+      "rc_id": "RC-021",
+      "kind": "component-role",
+      "claim": "The translator (adk_api_translator.go, method translateInlineAgent) converts CRD types into Go ADK config (AgentConfig) which is serialized to config.json.",
+      "code_anchor": "go/core/internal/controller/translator/agent/compiler.go:213 (func (a *adkApiTranslator) translateInlineAgent); :130 (translateInlineAgent called during compile)",
+      "currency": "CURRENT",
+      "currency_reason": "translateInlineAgent exists on adkApiTranslator and is the CRD->AgentConfig conversion entry; the doc cites adk_api_translator.go but the method lives in the sibling compiler.go of the same package (path-precise but file slightly off)."
+    },
+    {
+      "rc_id": "RC-022",
+      "kind": "technology-choice",
+      "claim": "The same config data flows through three type systems: CRD Go types -> Go ADK types (go/api/adk/types.go: AgentConfig, HttpMcpServerConfig, SseMcpServerConfig) -> Python ADK types, serialized as config.json.",
+      "code_anchor": "go/api/adk/types.go:497-502 (AgentConfig with HttpTools/SseTools), :22 (HttpMcpServerConfig), :40 (SseMcpServerConfig)",
+      "currency": "CURRENT",
+      "currency_reason": "The Go ADK AgentConfig/HttpMcpServerConfig/SseMcpServerConfig types exist (the doc cites go/adk/types.go but the real path is go/api/adk/types.go — path drift, content correct)."
+    },
+    {
+      "rc_id": "RC-023",
+      "kind": "key-invariant",
+      "claim": "Agent config is delivered by baking the resolved AgentConfig JSON into a Kubernetes Secret mounted at /config, and the agent pod reads /config/config.json at startup.",
+      "code_anchor": "go/core/internal/controller/translator/agent/manifest_builder.go:83 (buildConfigSecret); go/core/internal/controller/translator/agent/deployments.go:163 (\"/config\" mount); python/packages/kagent-adk/src/kagent/adk/cli.py:58,63 (filepath=/config, open config.json)",
+      "currency": "CURRENT",
+      "currency_reason": "The translator builds a config Secret mounted at /config; the Python ADK CLI opens /config/config.json at startup."
+    },
+    {
+      "rc_id": "RC-024",
+      "kind": "boundary-rule",
+      "claim": "Prompt templates are resolved at reconciliation time using Go text/template with an include('source/key') function; the resolved plain-string prompt is stored in the config Secret. systemMessage is treated as a template only when promptTemplate is set.",
+      "code_anchor": "go/core/internal/controller/translator/agent/template.go:97-122 (executeSystemMessageTemplate, include funcMap, text/template); go/core/internal/controller/translator/agent/compiler.go:361-369 (only resolved when PromptTemplate set)",
+      "currency": "CURRENT",
+      "currency_reason": "executeSystemMessageTemplate uses text/template with an include func; compiler.go gates resolution on spec.Declarative.PromptTemplate being set."
+    },
+    {
+      "rc_id": "RC-025",
+      "kind": "component-exists",
+      "claim": "When promptTemplate is set, template variables AgentName, AgentNamespace, Description, ToolNames, and SkillNames are available, populated after tools are translated.",
+      "code_anchor": "go/core/internal/controller/translator/agent/template.go:18-28 (PromptTemplateContext: AgentName/AgentNamespace/Description/ToolNames/SkillNames); compiler.go:367 (buildTemplateContext after tool translation)",
+      "currency": "CURRENT",
+      "currency_reason": "PromptTemplateContext has exactly the five documented fields, built after the config (tools) is assembled."
+    },
+    {
+      "rc_id": "RC-026",
+      "kind": "component-exists",
+      "claim": "Kagent ships a kagent-builtin-prompts ConfigMap (via Helm) with keys skills-usage, tool-usage-best-practices, safety-guardrails, kubernetes-context, and a2a-communication.",
+      "code_anchor": "helm/kagent/templates/builtin-prompts-configmap.yaml:10,25,47,69,99 (the five keys)",
+      "currency": "CURRENT",
+      "currency_reason": "The Helm ConfigMap defines all five documented keys."
+    },
+    {
+      "rc_id": "RC-027",
+      "kind": "boundary-rule",
+      "claim": "The agent controller watches ConfigMaps referenced by agents (via promptTemplate.dataSources / systemMessageFrom) and re-reconciles referencing agents when a ConfigMap changes.",
+      "code_anchor": "go/core/internal/controller/agent_controller.go:78-82 (addCommonAgentWatches with configMap: agentDependencyFinder(..., referencesConfigMap))",
+      "currency": "CURRENT",
+      "currency_reason": "The controller registers a ConfigMap watch keyed by referencesConfigMap to find and re-reconcile dependent agents."
+    },
+    {
+      "rc_id": "RC-028",
+      "kind": "component-role",
+      "claim": "HITL tool approval is implemented via a before_tool_callback that calls ADK's ToolContext.request_confirmation() for tools in the requireApproval set; on resume the same tool call is replayed (no LLM call on the approve path).",
+      "code_anchor": "python/packages/kagent-adk/src/kagent/adk/_approval.py:1-3,49-86 (before_tool_callback requests confirmation for specified tools via request_confirmation())",
+      "currency": "CURRENT",
+      "currency_reason": "_approval.py implements the before_tool_callback that calls tool_context.request_confirmation() for the configured approval set, as documented."
+    },
+    {
+      "rc_id": "RC-029",
+      "kind": "component-role",
+      "claim": "KAgentRemoteA2ATool (a BaseTool) replaces upstream AgentTool(RemoteA2aAgent) to manage the A2A subagent conversation and propagate HITL state up via request_confirmation(), with a two-phase run_async (normal call / HITL resume).",
+      "code_anchor": "python/packages/kagent-adk/src/kagent/adk/_remote_a2a_tool.py:158 (class KAgentRemoteA2ATool(BaseTool)); :301-324 (two-phase run_async, request_confirmation on input_required)",
+      "currency": "CURRENT",
+      "currency_reason": "KAgentRemoteA2ATool exists as a BaseTool with the documented two-phase run_async and request_confirmation HITL propagation."
+    },
+    {
+      "rc_id": "RC-030",
+      "kind": "component-exists",
+      "claim": "KAgentRemoteA2AToolset is a thin BaseToolset wrapper whose job is closing the owned httpx.AsyncClient when the runner shuts down (ADK cleanup only discovers BaseToolset instances).",
+      "code_anchor": "python/packages/kagent-adk/src/kagent/adk/_remote_a2a_tool.py:523-538 (class KAgentRemoteA2AToolset(BaseToolset), httpx_client cleanup)",
+      "currency": "CURRENT",
+      "currency_reason": "The toolset wrapper exists as a BaseToolset that owns/closes the httpx.AsyncClient, exactly as documented."
+    },
+    {
+      "rc_id": "RC-031",
+      "kind": "boundary-rule",
+      "claim": "_SubagentInterceptor (registered at A2A client construction) injects x-user-id (parent session user ID) and x-kagent-source: 'agent' headers on every outgoing subagent request; interceptors must be passed at ClientFactory.create time.",
+      "code_anchor": "python/packages/kagent-adk/src/kagent/adk/_remote_a2a_tool.py:58-59 (_USER_ID_CONTEXT_KEY x-user-id, _SOURCE_HEADER x-kagent-source); :83-97 (interceptor injects headers); :218 (interceptors=[_SubagentInterceptor()])",
+      "currency": "CURRENT",
+      "currency_reason": "The interceptor injects both documented headers (source value 'agent') and is passed via interceptors=[...] at client construction."
+    },
+    {
+      "rc_id": "RC-032",
+      "kind": "component-role",
+      "claim": "The A2aAgentExecutor builds a {tool_name -> session_id} map from tools implementing SubagentSessionProvider so the UI can show live subagent activity; the event converter stamps this as kagent_subagent_session_id metadata on function_call DataParts.",
+      "code_anchor": "python/packages/kagent-adk/src/kagent/adk/_agent_executor.py:96 (class A2aAgentExecutor), :592-595 (builds map from SubagentSessionProvider tools); converters/event_converter.py:137 (stamps subagent session id onto function_call DataPart)",
+      "currency": "CURRENT",
+      "currency_reason": "A2aAgentExecutor builds the SubagentSessionProvider map and the event converter stamps the subagent session id, as documented."
+    },
+    {
+      "rc_id": "RC-033",
+      "kind": "component-role",
+      "claim": "The ADK->A2A event converter maps text to TextPart, FunctionCall/FunctionResponse to DataParts, errors to TaskState.failed, and sets task state working/completed/input_required/auth_required.",
+      "code_anchor": "python/packages/kagent-adk/src/kagent/adk/converters/event_converter.py:242 (TaskState.failed), :276 (working), :289 (auth_required), :297 (input_required)",
+      "currency": "CURRENT",
+      "currency_reason": "The converter sets the documented TaskState values for error/normal/auth/HITL events."
+    },
+    {
+      "rc_id": "RC-034",
+      "kind": "component-exists",
+      "claim": "A built-in ask_user tool is added unconditionally to every agent, letting the model pose batched questions, and it reuses the same request_confirmation HITL plumbing.",
+      "code_anchor": "python/packages/kagent-adk/src/kagent/adk/tools/ask_user_tool.py (AskUserTool); python/packages/kagent-adk/src/kagent/adk/types.py:512-513 (Add built-in ask_user tool unconditionally; tools.append(AskUserTool()))",
+      "currency": "CURRENT",
+      "currency_reason": "AskUserTool is appended unconditionally in types.py with the comment 'every agent can ask the user questions', reusing the HITL plumbing."
+    },
+    {
+      "rc_id": "RC-035",
+      "kind": "boundary-rule",
+      "claim": "Session queries differ by subagent visibility: GET /api/sessions/agent/{ns}/{name} excludes subagent (source='agent') sessions, while GET /api/sessions/{id} and GET /api/sessions/{id}/tasks include them.",
+      "code_anchor": "go/core/internal/httpserver/server.go:243 (/api/sessions/agent/{ns}/{name} -> HandleGetSessionsForAgent), :244,:245 (/{session_id}, /{session_id}/tasks); queries/sessions.sql:14 (ListSessionsForAgent filters source != 'agent')",
+      "currency": "CURRENT",
+      "currency_reason": "The three documented session routes are registered and the agent-scoped list applies the source != 'agent' SQL filter."
+    },
+    {
+      "rc_id": "RC-036",
+      "kind": "boundary-rule",
+      "claim": "On template-resolution failure the agent's Accepted status condition is set to False (ReconcileFailed) and the deployment is not updated until resolved.",
+      "code_anchor": "go/api/v1alpha2/agent_types.go:90-95 (AgentStatus conditions Accepted/Ready); go/core/internal/controller/reconciler/reconciler.go:277 (reconcileAgentStatus surfaces reconcile error onto Accepted condition)",
+      "currency": "CURRENT",
+      "currency_reason": "AgentStatus carries the Accepted condition and the reconciler funnels reconcile errors (including template-resolution failures from translateInlineAgent) into that condition."
+    },
+    {
+      "rc_id": "RC-037",
+      "kind": "boundary-rule",
+      "claim": "The executeCodeBlocks field on the declarative agent spec is currently ignored.",
+      "code_anchor": "go/api/v1alpha2/agent_types.go:220-221 (comment: due to a bug in adk ... this field is ignored for now; ExecuteCodeBlocks *bool)",
+      "currency": "CURRENT",
+      "currency_reason": "The field exists with an explicit 'ignored for now' comment, matching the doc."
+    }
+  ],
+  "emitted_claims": [
+    {
+      "ec_id": "EC-001",
+      "kind": "technology-choice",
+      "claim": "kagent is a Go (1.26.3) project organized as a multi-module workspace under module path github.com/kagent-dev/kagent/go, split into three modules: adk, api, and core.",
+      "code_anchor": "go/go.mod:1-3"
+    },
+    {
+      "ec_id": "EC-002",
+      "kind": "entry-point",
+      "claim": "The controller binary entry point is core/cmd/controller/main.go; it constructs a NoopAuthorizer, selects an authenticator by auth mode (unsecure | trusted-proxy), wires the default agentsxk8s sandbox backend, and delegates the full startup to app.Start.",
+      "code_anchor": "go/core/cmd/controller/main.go:33-58"
+    },
+    {
+      "ec_id": "EC-003",
+      "kind": "component-role",
+      "claim": "core/pkg/app.Start is the controller's central bootstrap/wiring routine: it parses flags+env config, initializes tracing, builds the controller-runtime Manager, runs DB migrations, connects to Postgres, constructs the reconciler/translator, registers every controller, and starts the HTTP + A2A + admin servers under the manager.",
+      "code_anchor": "go/core/pkg/app/app.go:342-815"
+    },
+    {
+      "ec_id": "EC-004",
+      "kind": "entry-point",
+      "claim": "Controller startup workflow (ordered): SetupSignalHandler -> SetFlags+flag.Parse -> LoadFromEnv (env overrides flags) -> InitTracerProvider -> NewManager -> ResolveURL -> run DB migrations -> Connect+NewClient -> getExtensionConfig -> build translator+reconciler -> SetupWithManager for each controller -> register A2A/MCP handlers and HTTP server -> mgr.Start.",
+      "code_anchor": "go/core/pkg/app/app.go:347-815"
+    },
+    {
+      "ec_id": "EC-005",
+      "kind": "key-invariant",
+      "claim": "Database migrations MUST be applied before any connection/query: the resolved DB URL is computed once so migration runner and pool share the same value, migrations.RunUp runs first, and only then does database.Connect open the pool — a migration failure os.Exit(1)s the process.",
+      "code_anchor": "go/core/pkg/app/app.go:498-529"
+    },
+    {
+      "ec_id": "EC-006",
+      "kind": "data-store",
+      "claim": "The persistent data store is PostgreSQL, accessed via jackc/pgx v5 pgxpool; Connect parses the URL, optionally registers pgvector types when VectorEnabled, and retries Ping with exponential backoff (500ms initial, 5s max, 120s overall timeout) until ready.",
+      "code_anchor": "go/core/internal/database/connect.go:32-77"
+    },
+    {
+      "ec_id": "EC-007",
+      "kind": "technology-choice",
+      "claim": "Vector/embedding storage uses the pgvector extension: when VectorEnabled the pool registers pgvector types on each connection (pgvector-go/pgx), gated by the --database-vector-enabled flag (default true) for the memory table.",
+      "code_anchor": "go/core/internal/database/connect.go:47-51"
+    },
+    {
+      "ec_id": "EC-008",
+      "kind": "component-role",
+      "claim": "core/internal/database implements the persistence layer as a postgresClient that wraps sqlc-generated Queries (core/internal/database/gen) and the pgxpool, providing transactional helpers (withTx begin/commit/rollback) behind the api/database.Client interface.",
+      "code_anchor": "go/core/internal/database/client_postgres.go:22-44"
+    },
+    {
+      "ec_id": "EC-009",
+      "kind": "boundary-rule",
+      "claim": "The DB contract is split: api/database defines the storage model TYPES (Agent, Event, Session, Tool, ToolServer, Feedback, etc.) and the Client interface, while core/internal/database provides the concrete Postgres IMPLEMENTATION — the implementation imports the api package and returns dbpkg.Client, never the reverse.",
+      "code_anchor": "go/api/database/client.go:22-60"
+    },
+    {
+      "ec_id": "EC-010",
+      "kind": "component-role",
+      "claim": "core/internal/controller/reconciler.kagentReconciler is the core reconciliation engine implementing KagentReconciler: it reconciles Agents, SandboxAgents, ModelConfigs, ModelProviderConfigs, RemoteMCPServers, MCPServers and MCP services, holding the adkTranslator, kube client, dbClient, and sandboxBackend.",
+      "code_anchor": "go/core/internal/controller/reconciler/reconciler.go:71-104"
+    },
+    {
+      "ec_id": "EC-011",
+      "kind": "component-role",
+      "claim": "core/internal/controller/translator/agent translates a kagent v1alpha2 Agent CRD into Kubernetes workload objects (Deployment) and ADK config (api/adk), applying image/egress/MCP-service conventions; ValidationError marks user-fixable config errors that must NOT trigger exponential-backoff retries.",
+      "code_anchor": "go/core/internal/controller/translator/agent/adk_api_translator.go:59-67"
+    },
+    {
+      "ec_id": "EC-012",
+      "kind": "component-role",
+      "claim": "core/internal/httpserver hosts the REST API plus mounts the A2A and MCP handlers; it exposes a fixed set of /api/* paths (agents, sessions, tasks, tools, toolservers, modelconfigs, memories, feedback, namespaces, sandboxagents, agentharnesses) and infra paths (/health, /version, /mcp, /api/a2a).",
+      "code_anchor": "go/core/internal/httpserver/server.go:27-56"
+    },
+    {
+      "ec_id": "EC-013",
+      "kind": "component-role",
+      "claim": "core/internal/a2a.A2ARegistrar is a manager.Runnable that watches the cache and registers per-agent A2A handlers/clients, bridging the controller's reconciler+translator to the A2A protocol surface (handler mux, AgentClientRegistry, substrate sandbox actor backend).",
+      "code_anchor": "go/core/internal/a2a/a2a_registrar.go:29-45"
+    },
+    {
+      "ec_id": "EC-014",
+      "kind": "technology-choice",
+      "claim": "The controller is built on the Kubernetes controller-runtime: it registers v1alpha1, v1alpha2, kmcp v1alpha1, agent-sandbox and substrate schemes, runs a Manager with leader election (LeaderElectionID 0e9f6799.kagent.dev), metrics, and health/ready probes.",
+      "code_anchor": "go/core/pkg/app/app.go:99-107"
+    },
+    {
+      "ec_id": "EC-015",
+      "kind": "key-invariant",
+      "claim": "HTTP/2 is disabled by default on the metrics/webhook TLS servers (NextProtos forced to http/1.1) unless --enable-http2 is set, deliberately to avoid the HTTP/2 Rapid Reset / Stream Cancellation CVEs.",
+      "code_anchor": "go/core/pkg/app/app.go:384-391"
+    },
+    {
+      "ec_id": "EC-016",
+      "kind": "boundary-rule",
+      "claim": "api/v1alpha2 is the current CRD API group (Group kagent.dev, Version v1alpha2) where new features go; api/v1alpha1 is the legacy group kept for backward compatibility — both register into the same controller scheme.",
+      "code_anchor": "go/api/v1alpha2/groupversion_info.go:28-40"
+    },
+    {
+      "ec_id": "EC-017",
+      "kind": "entry-point",
+      "claim": "adk/cmd/main.go is the per-agent Go ADK runtime binary: it materializes+loads agent config from a config dir, initializes telemetry, optionally starts a KAgent token+session+memory service (when KAGENT_URL is set), builds a Google-ADK Runner and KAgentExecutor, then runs an A2A HTTP server.",
+      "code_anchor": "go/adk/cmd/main.go:57-232"
+    },
+    {
+      "ec_id": "EC-018",
+      "kind": "component-role",
+      "claim": "adk/pkg/a2a.KAgentExecutor implements the Google ADK a2asrv.AgentExecutor interface, wrapping a runner.Config, session service, and skills directory to execute agent turns over the A2A protocol; the assertion var _ a2asrv.AgentExecutor enforces the contract.",
+      "code_anchor": "go/adk/pkg/a2a/executor.go:42-53"
+    },
+    {
+      "ec_id": "EC-019",
+      "kind": "key-invariant",
+      "claim": "ADK agent app_name identity is derived deterministically: when both KAGENT_NAMESPACE and KAGENT_NAME env vars are set they are dash-to-underscore normalized and joined as namespace + __NS__ + name; otherwise it falls back to the agent card name, then to go-adk-agent.",
+      "code_anchor": "go/adk/cmd/main.go:234-253"
+    },
+    {
+      "ec_id": "EC-020",
+      "kind": "technology-choice",
+      "claim": "The ADK runtime supports multiple LLM provider backends — Anthropic (incl. Bedrock/Vertex), OpenAI, Ollama, AWS Bedrock, SAP AI Core, and Google GenAI/Gemini — each implemented as a model adapter under adk/pkg/models.",
+      "code_anchor": "go/adk/pkg/models/base.go:1"
+    },
+    {
+      "ec_id": "EC-021",
+      "kind": "component-role",
+      "claim": "core/cli (binary core/cli/cmd/kagent) is a Cobra-based CLI and TUI named kagent, composing agent, mcp, envdoc subcommands plus a profiles/config layer and a Bubble Tea TUI workspace.",
+      "code_anchor": "go/core/cli/cmd/kagent/main.go:20-60"
+    },
+    {
+      "ec_id": "EC-022",
+      "kind": "component-role",
+      "claim": "api/client provides the Go HTTP client SDK (ClientSet) for the controller's REST API, aggregating typed sub-clients (Agent, Session, Tool, ToolServer, ModelConfig, ModelProviderConfig, Model, Memory, Namespace, Feedback, Health, Version) over a shared BaseClient; the CLI is its primary consumer.",
+      "code_anchor": "go/api/client/clientset.go:4-40"
+    },
+    {
+      "ec_id": "EC-023",
+      "kind": "entry-point",
+      "claim": "core/cmd/skills-init/main.go is a Kubernetes init-container binary that fetches an Agent's skills from git repositories and OCI images before the main agent container starts, reading config from a ConfigMap-mounted JSON file.",
+      "code_anchor": "go/core/cmd/skills-init/main.go:1-21"
+    },
+    {
+      "ec_id": "EC-024",
+      "kind": "key-invariant",
+      "claim": "skills-init performs all subprocess invocations with argv vectors and never interpolates user input into a shell — an explicit hardening invariant called out as the original design defect the rewrite eliminated (command-injection avoidance).",
+      "code_anchor": "go/core/cmd/skills-init/main.go:4-8"
+    },
+    {
+      "ec_id": "EC-025",
+      "kind": "technology-choice",
+      "claim": "Database schema migrations are compiled into the binary via go:embed (embed.FS over the core and vector directories) in core/pkg/migrations, so the controller carries and applies its own migrations at startup.",
+      "code_anchor": "go/core/pkg/migrations/migrations.go:5-8"
+    },
+    {
+      "ec_id": "EC-026",
+      "kind": "component-role",
+      "claim": "core/pkg/sandboxbackend provides pluggable sandbox execution backends behind a Backend/AsyncBackend interface — agentsxk8s (default, plain Kubernetes pods), openshell (gRPC gateway) and substrate (Agent Substrate ate-api) — selected/composed at startup via NewRoutingBackend based on CLI flags.",
+      "code_anchor": "go/core/pkg/app/app.go:545-668"
+    },
+    {
+      "ec_id": "EC-027",
+      "kind": "boundary-rule",
+      "claim": "Optional runtime integrations are gated by config presence: the Substrate AgentHarness backend is wired only when --substrate-ate-api-endpoint is set, and the OpenShell sandbox backend only when --openshell-gateway-url is set; with none set the AgentHarness controller is disabled and logged.",
+      "code_anchor": "go/core/pkg/app/app.go:610-668"
+    },
+    {
+      "ec_id": "EC-028",
+      "kind": "boundary-rule",
+      "claim": "Cross-module dependency flows one way: core imports api (api/database, api/v1alpha2, api/adk, api/httpapi) and adk, while api imports only its own sub-packages and external libs — api never imports core, keeping shared types free of controller/server logic.",
+      "code_anchor": "go/core/internal/database/client_postgres.go:11-19"
+    },
+    {
+      "ec_id": "EC-029",
+      "kind": "technology-choice",
+      "claim": "Agent-to-agent communication and tool integration use two open protocols: the A2A protocol (a2aproject/a2a-go, both v1 and v2) for invoking agents, and MCP (Model Context Protocol, modelcontextprotocol/go-sdk) for tool servers — both surfaced as HTTP handlers (/api/a2a, /mcp) by the controller and natively by the ADK runtime.",
+      "code_anchor": "go/core/internal/httpserver/server.go:47-49"
+    },
+    {
+      "ec_id": "EC-030",
+      "kind": "data-store",
+      "claim": "Agent runtime events (conversation history) are persisted as JSON-serialized A2A protocol messages: the Event model stores the message in a Data string field and Parse/ParseMessages round-trip it back to a2a.Message via encoding/json.",
+      "code_anchor": "go/api/database/models.go:24-50"
+    },
+    {
+      "ec_id": "EC-031",
+      "kind": "key-invariant",
+      "claim": "Configuration precedence is flags then environment: LoadFromEnv visits every defined flag, derives an UPPER_SNAKE env name (dashes->underscores), and overrides the flag value when that env var is non-empty.",
+      "code_anchor": "go/core/pkg/app/app.go:252-266"
+    },
+    {
+      "ec_id": "EC-032",
+      "kind": "component-role",
+      "claim": "api/openshell holds generated gRPC/protobuf client stubs (compute, datamodel, inference, sandbox, openshell test/v1 services) used by the core OpenShell sandbox backend to talk to the external OpenShell gateway.",
+      "code_anchor": "go/api/openshell/gen/openshellv1/openshell_grpc.pb.go:1"
+    }
+  ],
+  "adjudication": [
+    {
+      "rc_id": "RC-001",
+      "rc_kind": "entry-point",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "No EC states the controller listens on port 8083 as the entry point for the UI's A2A requests. ECs cover the controller binary entry (EC-002) and that A2A is surfaced (EC-029), but the specific 8083 listen port / UI-entry fact is absent. manifest_builder.go:379 confirms 8083 KAGENT_URL."
+    },
+    {
+      "rc_id": "RC-002",
+      "rc_kind": "component-role",
+      "bucket": "MATCH",
+      "note": "EC-013 (A2ARegistrar bridges the controller's reconciler+translator to the A2A protocol surface, registering per-agent A2A handlers/clients) plus EC-029 (A2A surfaced as /api/a2a by the controller AND natively by the ADK runtime) and EC-017 (agent pod runs the ADK Runner) together capture the controller-proxies-A2A-to-the-pod role. Fact-keyed bridge across the registrar/runtime split.",
+      "ec_kind": "component-role"
+    },
+    {
+      "rc_id": "RC-003",
+      "rc_kind": "dependency-edge",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "No EC mentions the http://{name}.{namespace}:8080 agent-pod Service URL. compiler.go:98 confirms the URL construction."
+    },
+    {
+      "rc_id": "RC-005",
+      "rc_kind": "data-store",
+      "bucket": "MATCH",
+      "note": "EC-009 names the storage model TYPES (Agent, Event, Session, Tool, ToolServer, Feedback, etc.) and EC-030 covers the Event model; EC-012 lists memories/feedback paths. models.go confirms all 8 models incl. Memory (pgvector.Vector, ExpiresAt). The model-set fact is captured.",
+      "ec_kind": "data-store"
+    },
+    {
+      "rc_id": "RC-006",
+      "rc_kind": "key-invariant",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "No EC mentions the Session.Source user/agent column or the agent-sourced-session exclusion. models.go:55-77 + sessions.sql:14 confirm the invariant."
+    },
+    {
+      "rc_id": "RC-007",
+      "rc_kind": "component-exists",
+      "bucket": "MATCH",
+      "note": "EC-003 (registers every controller) + EC-010 (the shared kagentReconciler is the core engine all controllers delegate to). app.go registers AgentController, RemoteMCPServerController, MCPServerToolController, etc., all wired to one rcnclr — confirmed.",
+      "ec_kind": "component-exists"
+    },
+    {
+      "rc_id": "RC-008",
+      "rc_kind": "component-role",
+      "bucket": "MATCH",
+      "note": "EC-010 explicitly states the kagentReconciler holds adkTranslator, kube client, dbClient (and sandboxBackend). reconciler.go:83-124 confirms exactly these fields and the single shared instance.",
+      "ec_kind": "component-role"
+    },
+    {
+      "rc_id": "RC-009",
+      "rc_kind": "key-invariant",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "No EC mentions ON CONFLICT DO UPDATE atomic upserts / lock-free idempotency. agents.sql:14 + tools.sql:41 + the mutex-free reconciler confirm the upsert invariant."
+    },
+    {
+      "rc_id": "RC-010",
+      "rc_kind": "key-invariant",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "EC-008 mentions withTx helpers generically but no EC states tool refresh wraps delete-all + insert in one transaction. client_postgres.go:358-374 confirms RefreshToolsForServer runs SoftDelete + upserts inside withTx."
+    },
+    {
+      "rc_id": "RC-011",
+      "rc_kind": "key-invariant",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "No EC states network I/O (MCP connect + listTools) happens outside DB transactions. reconciler.go:1072-1099 confirms the upsert/connect/list/refresh ordering with the tx only at the end."
+    },
+    {
+      "rc_id": "RC-012",
+      "rc_kind": "boundary-rule",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "No EC mentions the AgentController event predicate (GenerationChanged OR LabelChanged). agent_controller.go:71 confirms the For() predicate."
+    },
+    {
+      "rc_id": "RC-013",
+      "rc_kind": "component-exists",
+      "bucket": "MATCH",
+      "note": "EC-011 translates 'a kagent v1alpha2 Agent CRD' (establishing the Agent CRD exists in v1alpha2) and EC-016 confirms the v1alpha2 group. The Declarative|BYO enum + refs detail is not enumerated by an EC, but the component-exists fact (the central Agent CRD in v1alpha2) is captured. agent_types.go:31-68 confirms the type enum + sub-specs.",
+      "ec_kind": "component-exists"
+    },
+    {
+      "rc_id": "RC-014",
+      "rc_kind": "boundary-rule",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "No EC mentions Agent CEL XValidation (type enum, sub-spec presence, systemMessage exclusivity, serviceAccount exclusivity). agent_types.go:51-52,168,422 confirm the rules."
+    },
+    {
+      "rc_id": "RC-015",
+      "rc_kind": "boundary-rule",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "No EC mentions the McpServerTool requireApproval-subset-of-toolNames CEL rule. agent_types.go:533 confirms it."
+    },
+    {
+      "rc_id": "RC-016",
+      "rc_kind": "component-exists",
+      "bucket": "MATCH",
+      "note": "EC-022/EC-012 establish ModelConfig as a resource (sub-client + /api/modelconfigs) and EC-020 enumerates the same provider set (Anthropic/OpenAI/AzureOpenAI/Ollama/Gemini/GeminiVertexAI/AnthropicVertexAI/Bedrock/SAPAICore) for the ADK runtime adapters. Fact-keyed bridge: ModelConfig configures the LLM provider over that enum. modelconfig_types.go:30 confirms the 9-value enum.",
+      "ec_kind": "component-exists"
+    },
+    {
+      "rc_id": "RC-017",
+      "rc_kind": "boundary-rule",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "No EC mentions ModelConfig CEL rules (provider-block nil, passthrough/secret exclusivity, passthrough disallowed for Gemini/VertexAI, caCert ref/key together). modelconfig_types.go:371-385,318-319 confirm them."
+    },
+    {
+      "rc_id": "RC-018",
+      "rc_kind": "component-exists",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "No EC asserts the RemoteMCPServer CRD with protocol enum (SSE|STREAMABLE_HTTP), default, headersFrom, terminateOnClose, allowedNamespaces, or status.discoveredTools. remotemcpserver_types.go:31-119 confirms all fields."
+    },
+    {
+      "rc_id": "RC-019",
+      "rc_kind": "component-role",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "EC-010 lists RemoteMCPServers among reconciled types but no EC captures the substantive role (connect to MCP server, list tools, populate status.discoveredTools). reconciler.go:600+/745 confirms the discovery behavior."
+    },
+    {
+      "rc_id": "RC-020",
+      "rc_kind": "component-exists",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "No EC mentions the common types ValueRef, AllowedNamespaces (From All|Selector, Gateway API pattern), TypedReference/TypedLocalReference. common_types.go:36-53,147 confirms them."
+    },
+    {
+      "rc_id": "RC-021",
+      "rc_kind": "component-role",
+      "bucket": "MATCH",
+      "note": "EC-011 (the translator/agent package translates the Agent CRD into ADK config api/adk). compiler.go:113-213 confirms translateInlineAgent is the CRD->AgentConfig conversion entry. Fact-keyed match (the RC's adk_api_translator.go file ref is the same package).",
+      "ec_kind": "component-role"
+    },
+    {
+      "rc_id": "RC-022",
+      "rc_kind": "technology-choice",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "EC-011 mentions 'ADK config (api/adk)' but no EC captures the three-type-system pipeline (CRD Go types -> Go ADK types -> Python ADK types serialized as config.json). api/adk/types.go confirms AgentConfig/HttpMcpServerConfig/SseMcpServerConfig."
+    },
+    {
+      "rc_id": "RC-023",
+      "rc_kind": "key-invariant",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "No EC mentions the config-Secret-mounted-at-/config delivery and the agent reading /config/config.json at startup. manifest_builder.go:83 + deployments.go:163 + cli.py:58,63 confirm it."
+    },
+    {
+      "rc_id": "RC-024",
+      "rc_kind": "boundary-rule",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "No EC mentions the text/template include() prompt-template resolution at reconcile time. template.go:97-114 + compiler.go gating confirm it."
+    },
+    {
+      "rc_id": "RC-025",
+      "rc_kind": "component-exists",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "No EC mentions the promptTemplate context variables (AgentName/AgentNamespace/Description/ToolNames/SkillNames). template.go:17-28 confirms the 5 fields."
+    },
+    {
+      "rc_id": "RC-026",
+      "rc_kind": "component-exists",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "No EC mentions the kagent-builtin-prompts Helm ConfigMap and its 5 keys. builtin-prompts-configmap.yaml confirms them (helm template, readable in the repo)."
+    },
+    {
+      "rc_id": "RC-027",
+      "rc_kind": "boundary-rule",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "No EC mentions the controller watching ConfigMaps referenced by agents and re-reconciling dependents. agent_controller.go:78-83 confirms the configMap dependency finder."
+    },
+    {
+      "rc_id": "RC-028",
+      "rc_kind": "component-role",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "No EC covers the Python HITL before_tool_callback / request_confirmation plumbing. _approval.py confirms it. The blind emission was Go-infra-centric and did not project the Python kagent-adk subsystem."
+    },
+    {
+      "rc_id": "RC-029",
+      "rc_kind": "component-role",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "No EC mentions KAgentRemoteA2ATool (the BaseTool replacing AgentTool(RemoteA2aAgent)). _remote_a2a_tool.py:158 confirms it. Python subsystem not projected."
+    },
+    {
+      "rc_id": "RC-030",
+      "rc_kind": "component-exists",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "No EC mentions KAgentRemoteA2AToolset (the BaseToolset httpx cleanup wrapper). _remote_a2a_tool.py:523 confirms it."
+    },
+    {
+      "rc_id": "RC-031",
+      "rc_kind": "boundary-rule",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "No EC mentions the _SubagentInterceptor injecting x-user-id and x-kagent-source:agent headers. _remote_a2a_tool.py:58-97,218 confirms it."
+    },
+    {
+      "rc_id": "RC-032",
+      "rc_kind": "component-role",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "No EC mentions A2aAgentExecutor building the SubagentSessionProvider {tool->session} map or the event converter stamping kagent_subagent_session_id. _agent_executor.py:590-595 confirms it."
+    },
+    {
+      "rc_id": "RC-033",
+      "rc_kind": "component-role",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "No EC mentions the ADK->A2A event converter task-state mapping (failed/working/input_required/auth_required). event_converter.py:242,276,289,297 confirms it."
+    },
+    {
+      "rc_id": "RC-034",
+      "rc_kind": "component-exists",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "No EC mentions the built-in ask_user tool added unconditionally to every agent. types.py:512-513 confirms tools.append(AskUserTool())."
+    },
+    {
+      "rc_id": "RC-035",
+      "rc_kind": "boundary-rule",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "No EC mentions the subagent-visibility split across the three session routes. server.go:243-245 + sessions.sql:14 confirm the filter."
+    },
+    {
+      "rc_id": "RC-036",
+      "rc_kind": "boundary-rule",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "No EC mentions template-resolution failure setting Accepted=False / blocking deployment update. agent_types.go:643-649 (AgentStatus Accepted/Ready) + reconciler.go:277 confirm the error funneling."
+    },
+    {
+      "rc_id": "RC-037",
+      "rc_kind": "boundary-rule",
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "note": "No EC mentions executeCodeBlocks being currently ignored. agent_types.go:220-221 confirms the 'ignored for now' comment."
+    }
+  ],
+  "beyond_doc": {
+    "count": 19
+  },
+  "scores": {
+    "coverage_overall": {
+      "n": 7,
+      "d": 36,
+      "pct": 0.1944,
+      "wilson95_lb": 0.0975
+    },
+    "coverage_by_kind": {
+      "entry-point": {
+        "n": 0,
+        "d": 1,
+        "pct": 0.0
+      },
+      "component-role": {
+        "n": 3,
+        "d": 8,
+        "pct": 0.375
+      },
+      "dependency-edge": {
+        "n": 0,
+        "d": 1,
+        "pct": 0.0
+      },
+      "data-store": {
+        "n": 1,
+        "d": 1,
+        "pct": 1.0
+      },
+      "key-invariant": {
+        "n": 0,
+        "d": 5,
+        "pct": 0.0
+      },
+      "component-exists": {
+        "n": 3,
+        "d": 9,
+        "pct": 0.3333
+      },
+      "boundary-rule": {
+        "n": 0,
+        "d": 10,
+        "pct": 0.0
+      },
+      "technology-choice": {
+        "n": 0,
+        "d": 1,
+        "pct": 0.0
+      }
+    },
+    "faithfulness": {
+      "n": 13,
+      "d": 13,
+      "pct": 1.0,
+      "wilson95_lb": 0.7719
+    },
+    "beyond_doc_count": 19,
+    "deepinit_wrong_high": 0
+  },
+  "scoring_provenance": {
+    "method": " isolated-agent Mirror cycle (separation of duties): curator → blind engine (doc-blind, Graphify path) → independent scorer → adversarial refuter per deepinit_wrong.",
+    "orchestrator_caveat": "The orchestrating session launched the workflow; curator/blind/scorer/refuter were distinct agents with strict input firewalls.",
+    "graphify_path": true
+  },
+  "provenance": {
+    "doc_in_inputs": false,
+    "key_held_out": true,
+    "training_contamination_caveat": true,
+    "publishable": "indicative",
+    "publishable_value": "indicative",
+    "caveats": [
+      "INDICATIVE — small-n, fuzzy truth, below any ship-gate",
+      "attribution-adjudicated — divergences resolved to CODE, not auto-scored",
+      "doc-bounded — agreement with a good human doc, not absolute completeness",
+      "§18 (9/9, FP 0) stays the product headline",
+      "training-contamination — obscure (recent/obscure repo); the blind output is unlikely to be informed by pretraining, so the number is INDICATIVE."
+    ],
+    "tune_or_heldout": "held-out",
+    "harness_section": "§34"
+  },
+  "publishable": "indicative"
+}

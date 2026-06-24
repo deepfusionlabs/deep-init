@@ -1,0 +1,41 @@
+{
+  "fixture": "mini-if1-fptrap",
+  "purpose": "IF-1 PRECISION stress — a dense false-positive trap cluster. IF-1 is the precision-first 'forgotten safety check' detector (semantic, live-measured — the deterministic harness can't run it). This fixture pins the discipline: FOUR documented-rule look-alikes that OMIT the owner-only delete check but are each legitimately exempt (a cited suppression mechanism), against ONE genuine unenforced-rule violation that MUST still fire. The trap density (4 must_not_fire : 1 fire) is the precision-first calibration — start strict, fire only on the real gap. §C6 gates the fixture's well-formedness; the live FP rate is measured in Claude Code runs (§18 lineage).",
+  "expected_issues": [
+    {
+      "family": "IF-1",
+      "file": "src/orders/order.service.ts",
+      "line": 16,
+      "severity": "High",
+      "certainty": "MEDIUM",
+      "claim": "Possible unenforced ownership rule: bulkDeleteOrders deletes orders without the owner-only check its single-delete sibling enforces.",
+      "evidence": "Contrast: deleteOrder (src/orders/order.service.ts:10) calls assertOwner before repo.delete; bulkDeleteOrders maps repo.delete with no equivalent guard — same destructive operation, rule dropped."
+    }
+  ],
+  "must_not_fire": [
+    {
+      "family": "IF-1",
+      "file": "src/orders/order.service.ts",
+      "line": 22,
+      "reason": "exportOrdersReport is a DIFFERENT operation — read-only projection (no state change), so the owner-only DELETE rule does not apply; suppress."
+    },
+    {
+      "family": "IF-1",
+      "file": "src/orders/order.service.ts",
+      "line": 28,
+      "reason": "purgeOnAccountClose runs behind an EQUIVALENT upstream guard — the account-close handler already asserted ownership of the whole account, so a per-order check is redundant; suppress."
+    },
+    {
+      "family": "IF-1",
+      "file": "src/orders/order.service.ts",
+      "line": 35,
+      "reason": "adminForceCancel is a DOCUMENTED, sanctioned admin-only bypass (ADR-007) — the owner check is intentionally skipped for admins; suppress."
+    },
+    {
+      "family": "IF-1",
+      "file": "src/orders/order.service.ts",
+      "line": 42,
+      "reason": "recordOrderEvent writes an APPEND-ONLY audit log (frozen records), never a mutation of an owned order, so the owner-only rule does not apply; suppress."
+    }
+  ]
+}

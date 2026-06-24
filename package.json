@@ -1,0 +1,26 @@
+{
+  "name": "deep-init",
+  "version": "0.5.0",
+  "private": true,
+  "description": "DeepInit — a Claude Code skill that generates a grounded, verified, two-tier agent context layer (lean CLAUDE.md + deep .ai/docs) for any codebase, plus report-only issue detection. 100% local, read-only, MIT.",
+  "license": "MIT",
+  "author": "Deep Fusion Labs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/deepfusionlabs/deep-init.git"
+  },
+  "homepage": "https://github.com/deepfusionlabs/deep-init",
+  "bugs": "https://github.com/deepfusionlabs/deep-init/issues",
+  "scripts": {
+    "prepare": "husky",
+    "report:build": "python tools/build_report.py .",
+    "report:smoke": "node tools/smoke_report.mjs",
+    "report": "npm run report:build && npm run report:smoke"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.0.2",
+    "@commitlint/config-conventional": "^21.0.2",
+    "husky": "^9.1.7",
+    "jsdom": "^29.1.1"
+  }
+}

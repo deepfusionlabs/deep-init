@@ -1,0 +1,811 @@
+{
+  "per_run": {
+    "DataDog/saluki": {
+      "beyond_doc_count": 25,
+      "citation_resolution": {
+        "available": false
+      },
+      "coverage_by_kind": {
+        "boundary-rule": {
+          "d": 3,
+          "n": 2,
+          "pct": 0.6667
+        },
+        "component-exists": {
+          "d": 1,
+          "n": 1,
+          "pct": 1.0
+        },
+        "component-role": {
+          "d": 3,
+          "n": 2,
+          "pct": 0.6667
+        },
+        "data-store": {
+          "d": 1,
+          "n": 0,
+          "pct": 0.0
+        },
+        "key-invariant": {
+          "d": 6,
+          "n": 3,
+          "pct": 0.5
+        },
+        "technology-choice": {
+          "d": 1,
+          "n": 1,
+          "pct": 1.0
+        }
+      },
+      "coverage_overall": {
+        "d": 15,
+        "n": 9,
+        "pct": 0.6,
+        "wilson95_lb": 0.3575
+      },
+      "deepinit_wrong_high": 0,
+      "faithfulness": {
+        "d": 7,
+        "n": 7,
+        "pct": 1.0,
+        "wilson95_lb": 0.6457
+      },
+      "publishable": "indicative",
+      "repo": "DataDog/saluki",
+      "split": "held-out",
+      "stack": "Rust (Datadog Agent Data Plane; 21-crate Cargo workspace under lib/)",
+      "timing_cost": {
+        "available": false,
+        "reason": "no committed cost ledger for this run yet"
+      }
+    },
+    "Kotlin/kotlinx-schema": {
+      "beyond_doc_count": 20,
+      "citation_resolution": {
+        "available": false
+      },
+      "coverage_by_kind": {
+        "boundary-rule": {
+          "d": 1,
+          "n": 1,
+          "pct": 1.0
+        },
+        "component-exists": {
+          "d": 9,
+          "n": 9,
+          "pct": 1.0
+        },
+        "component-role": {
+          "d": 9,
+          "n": 9,
+          "pct": 1.0
+        },
+        "data-store": {
+          "d": 1,
+          "n": 1,
+          "pct": 1.0
+        },
+        "dependency-edge": {
+          "d": 5,
+          "n": 4,
+          "pct": 0.8
+        },
+        "entry-point": {
+          "d": 2,
+          "n": 2,
+          "pct": 1.0
+        },
+        "key-invariant": {
+          "d": 2,
+          "n": 2,
+          "pct": 1.0
+        },
+        "technology-choice": {
+          "d": 3,
+          "n": 2,
+          "pct": 0.6667
+        }
+      },
+      "coverage_overall": {
+        "d": 32,
+        "n": 30,
+        "pct": 0.9375,
+        "wilson95_lb": 0.7985
+      },
+      "deepinit_wrong_high": 0,
+      "faithfulness": {
+        "d": 27,
+        "n": 27,
+        "pct": 1.0,
+        "wilson95_lb": 0.8754
+      },
+      "publishable": null,
+      "repo": "Kotlin/kotlinx-schema",
+      "split": "held-out",
+      "stack": "Kotlin (multiplatform, KSP + reflection)",
+      "timing_cost": {
+        "available": false,
+        "reason": "no committed cost ledger for this run yet"
+      }
+    },
+    "commercetools/commercetools-sync-java": {
+      "beyond_doc_count": 29,
+      "citation_resolution": {
+        "available": false
+      },
+      "coverage_by_kind": {
+        "boundary-rule": {
+          "d": 5,
+          "n": 0,
+          "pct": 0.0
+        },
+        "entry-point": {
+          "d": 2,
+          "n": 2,
+          "pct": 1.0
+        },
+        "key-invariant": {
+          "d": 4,
+          "n": 0,
+          "pct": 0.0
+        }
+      },
+      "coverage_overall": {
+        "d": 11,
+        "n": 2,
+        "pct": 0.1818,
+        "wilson95_lb": 0.0514
+      },
+      "deepinit_wrong_high": 0,
+      "faithfulness": {
+        "d": 3,
+        "n": 3,
+        "pct": 1.0,
+        "wilson95_lb": 0.4385
+      },
+      "publishable": null,
+      "repo": "commercetools/commercetools-sync-java",
+      "split": "held-out",
+      "stack": "Java (commerce data-sync library)",
+      "timing_cost": {
+        "available": false,
+        "reason": "no committed cost ledger for this run yet"
+      }
+    },
+    "evolutionary-architecture/evolutionary-architecture-by-example": {
+      "beyond_doc_count": 43,
+      "citation_resolution": {
+        "available": false
+      },
+      "coverage_by_kind": {
+        "boundary-rule": {
+          "d": 3,
+          "n": 1,
+          "pct": 0.3333
+        },
+        "component-exists": {
+          "d": 7,
+          "n": 6,
+          "pct": 0.8571
+        },
+        "component-role": {
+          "d": 7,
+          "n": 7,
+          "pct": 1.0
+        },
+        "data-store": {
+          "d": 1,
+          "n": 1,
+          "pct": 1.0
+        },
+        "dependency-edge": {
+          "d": 3,
+          "n": 2,
+          "pct": 0.6667
+        },
+        "key-invariant": {
+          "d": 2,
+          "n": 1,
+          "pct": 0.5
+        },
+        "technology-choice": {
+          "d": 10,
+          "n": 8,
+          "pct": 0.8
+        }
+      },
+      "coverage_overall": {
+        "d": 33,
+        "n": 26,
+        "pct": 0.7879,
+        "wilson95_lb": 0.6225
+      },
+      "deepinit_wrong_high": 0,
+      "faithfulness": {
+        "d": 27,
+        "n": 26,
+        "pct": 0.963,
+        "wilson95_lb": 0.8172
+      },
+      "publishable": null,
+      "repo": "evolutionary-architecture/evolutionary-architecture-by-example",
+      "split": "held-out",
+      "stack": ".NET 10 / C# (Domain-Driven Design): modular monolith (Offers/Passes/Reports) + an extracted Contracts microservice (Clean Architecture) + shared Fitnet.Common libraries",
+      "timing_cost": {
+        "available": false,
+        "reason": "no committed cost ledger for this run yet"
+      }
+    },
+    "excalidraw/excalidraw": {
+      "beyond_doc_count": 21,
+      "citation_resolution": {
+        "available": false
+      },
+      "coverage_by_kind": {
+        "boundary-rule": {
+          "d": 1,
+          "n": 0,
+          "pct": 0.0
+        },
+        "component-exists": {
+          "d": 7,
+          "n": 6,
+          "pct": 0.8571
+        },
+        "dependency-edge": {
+          "d": 1,
+          "n": 1,
+          "pct": 1.0
+        },
+        "technology-choice": {
+          "d": 5,
+          "n": 4,
+          "pct": 0.8
+        }
+      },
+      "coverage_overall": {
+        "d": 14,
+        "n": 11,
+        "pct": 0.7857,
+        "wilson95_lb": 0.5241
+      },
+      "deepinit_wrong_high": 0,
+      "faithfulness": {
+        "d": 9,
+        "n": 9,
+        "pct": 1.0,
+        "wilson95_lb": 0.7008
+      },
+      "publishable": null,
+      "repo": "excalidraw/excalidraw",
+      "split": "tune",
+      "stack": "TypeScript (Yarn-workspaces monorepo)",
+      "timing_cost": {
+        "available": false,
+        "reason": "no committed cost ledger for this run yet"
+      }
+    },
+    "helix-editor/helix": {
+      "beyond_doc_count": 148,
+      "citation_resolution": {
+        "available": false
+      },
+      "coverage_by_kind": {
+        "boundary-rule": {
+          "d": 1,
+          "n": 1,
+          "pct": 1.0
+        },
+        "component-exists": {
+          "d": 10,
+          "n": 9,
+          "pct": 0.9
+        },
+        "component-role": {
+          "d": 7,
+          "n": 7,
+          "pct": 1.0
+        },
+        "dependency-edge": {
+          "d": 2,
+          "n": 2,
+          "pct": 1.0
+        },
+        "entry-point": {
+          "d": 1,
+          "n": 1,
+          "pct": 1.0
+        },
+        "key-invariant": {
+          "d": 6,
+          "n": 0,
+          "pct": 0.0
+        },
+        "technology-choice": {
+          "d": 4,
+          "n": 2,
+          "pct": 0.5
+        }
+      },
+      "coverage_overall": {
+        "d": 31,
+        "n": 22,
+        "pct": 0.7097,
+        "wilson95_lb": 0.5341
+      },
+      "deepinit_wrong_high": 0,
+      "faithfulness": {
+        "d": 24,
+        "n": 23,
+        "pct": 0.9583,
+        "wilson95_lb": 0.7976
+      },
+      "publishable": null,
+      "repo": "helix-editor/helix",
+      "split": "held-out",
+      "stack": "Rust (Cargo workspace; 13 production crates + xtask)",
+      "timing_cost": {
+        "available": false,
+        "reason": "no committed cost ledger for this run yet"
+      }
+    },
+    "kagent-dev/kagent": {
+      "beyond_doc_count": 19,
+      "citation_resolution": {
+        "available": false
+      },
+      "coverage_by_kind": {
+        "boundary-rule": {
+          "d": 10,
+          "n": 0,
+          "pct": 0.0
+        },
+        "component-exists": {
+          "d": 9,
+          "n": 3,
+          "pct": 0.3333
+        },
+        "component-role": {
+          "d": 8,
+          "n": 3,
+          "pct": 0.375
+        },
+        "data-store": {
+          "d": 1,
+          "n": 1,
+          "pct": 1.0
+        },
+        "dependency-edge": {
+          "d": 1,
+          "n": 0,
+          "pct": 0.0
+        },
+        "entry-point": {
+          "d": 1,
+          "n": 0,
+          "pct": 0.0
+        },
+        "key-invariant": {
+          "d": 5,
+          "n": 0,
+          "pct": 0.0
+        },
+        "technology-choice": {
+          "d": 1,
+          "n": 0,
+          "pct": 0.0
+        }
+      },
+      "coverage_overall": {
+        "d": 36,
+        "n": 7,
+        "pct": 0.1944,
+        "wilson95_lb": 0.0975
+      },
+      "deepinit_wrong_high": 0,
+      "faithfulness": {
+        "d": 13,
+        "n": 13,
+        "pct": 1.0,
+        "wilson95_lb": 0.7719
+      },
+      "publishable": "indicative",
+      "repo": "kagent-dev/kagent",
+      "split": "held-out",
+      "stack": "Go (CNCF k8s agent controller; 3 modules adk/api/core)",
+      "timing_cost": {
+        "available": false,
+        "reason": "no committed cost ledger for this run yet"
+      }
+    },
+    "mozilla/uniffi-rs": {
+      "beyond_doc_count": 30,
+      "citation_resolution": {
+        "available": false
+      },
+      "coverage_by_kind": {
+        "boundary-rule": {
+          "d": 2,
+          "n": 1,
+          "pct": 0.5
+        },
+        "component-exists": {
+          "d": 1,
+          "n": 1,
+          "pct": 1.0
+        },
+        "component-role": {
+          "d": 2,
+          "n": 1,
+          "pct": 0.5
+        },
+        "entry-point": {
+          "d": 1,
+          "n": 1,
+          "pct": 1.0
+        },
+        "key-invariant": {
+          "d": 2,
+          "n": 1,
+          "pct": 0.5
+        },
+        "technology-choice": {
+          "d": 2,
+          "n": 2,
+          "pct": 1.0
+        }
+      },
+      "coverage_overall": {
+        "d": 10,
+        "n": 7,
+        "pct": 0.7,
+        "wilson95_lb": 0.3968
+      },
+      "deepinit_wrong_high": 0,
+      "faithfulness": {
+        "d": 22,
+        "n": 22,
+        "pct": 1.0,
+        "wilson95_lb": 0.8513
+      },
+      "publishable": null,
+      "repo": "mozilla/uniffi-rs",
+      "split": "held-out",
+      "stack": "Rust (FFI bindings generator)",
+      "timing_cost": {
+        "available": false,
+        "reason": "no committed cost ledger for this run yet"
+      }
+    },
+    "open-telemetry/opentelemetry-collector": {
+      "beyond_doc_count": 169,
+      "citation_resolution": {
+        "available": false
+      },
+      "coverage_by_kind": {
+        "boundary-rule": {
+          "d": 4,
+          "n": 3,
+          "pct": 0.75
+        },
+        "component-exists": {
+          "d": 10,
+          "n": 10,
+          "pct": 1.0
+        },
+        "component-role": {
+          "d": 8,
+          "n": 7,
+          "pct": 0.875
+        },
+        "dependency-edge": {
+          "d": 3,
+          "n": 3,
+          "pct": 1.0
+        },
+        "entry-point": {
+          "d": 1,
+          "n": 0,
+          "pct": 0.0
+        },
+        "key-invariant": {
+          "d": 2,
+          "n": 2,
+          "pct": 1.0
+        },
+        "technology-choice": {
+          "d": 1,
+          "n": 1,
+          "pct": 1.0
+        }
+      },
+      "coverage_overall": {
+        "d": 29,
+        "n": 26,
+        "pct": 0.8966,
+        "wilson95_lb": 0.7361
+      },
+      "deepinit_wrong_high": 0,
+      "faithfulness": {
+        "d": 26,
+        "n": 26,
+        "pct": 1.0,
+        "wilson95_lb": 0.8713
+      },
+      "publishable": null,
+      "repo": "open-telemetry/opentelemetry-collector",
+      "split": "tune",
+      "stack": "Go (multi-module)",
+      "timing_cost": {
+        "available": false,
+        "reason": "no committed cost ledger for this run yet"
+      }
+    },
+    "scrapy/scrapy": {
+      "beyond_doc_count": 168,
+      "citation_resolution": {
+        "available": false
+      },
+      "coverage_by_kind": {
+        "boundary-rule": {
+          "d": 3,
+          "n": 3,
+          "pct": 1.0
+        },
+        "component-exists": {
+          "d": 7,
+          "n": 7,
+          "pct": 1.0
+        },
+        "component-role": {
+          "d": 7,
+          "n": 7,
+          "pct": 1.0
+        },
+        "dependency-edge": {
+          "d": 4,
+          "n": 3,
+          "pct": 0.75
+        },
+        "entry-point": {
+          "d": 1,
+          "n": 1,
+          "pct": 1.0
+        },
+        "key-invariant": {
+          "d": 1,
+          "n": 1,
+          "pct": 1.0
+        },
+        "technology-choice": {
+          "d": 1,
+          "n": 1,
+          "pct": 1.0
+        }
+      },
+      "coverage_overall": {
+        "d": 24,
+        "n": 23,
+        "pct": 0.9583,
+        "wilson95_lb": 0.7976
+      },
+      "deepinit_wrong_high": 0,
+      "faithfulness": {
+        "d": 24,
+        "n": 23,
+        "pct": 0.9583,
+        "wilson95_lb": 0.7976
+      },
+      "publishable": null,
+      "repo": "scrapy/scrapy",
+      "split": "held-out",
+      "stack": "Python (Twisted event-driven async)",
+      "timing_cost": {
+        "available": false,
+        "reason": "no committed cost ledger for this run yet"
+      }
+    }
+  },
+  "program": "Per-run quality scorecard (§C9) — the feedback-loop input",
+  "provenance": {
+    "byte_stable": "sorted reads, fixed key order, no clock/RNG — recomputes identically (§36 spine)",
+    "derived_from": "validation/coverage/results/*.json + validation/cost/*.json",
+    "hard_gate": "rollup.wrong_high_total == 0 (assert_clean)"
+  },
+  "rollup": {
+    "all": {
+      "coverage_by_kind_pooled": {
+        "boundary-rule": {
+          "d": 33,
+          "n": 12,
+          "pct": 0.3636,
+          "wilson95_lb": 0.2219
+        },
+        "component-exists": {
+          "d": 61,
+          "n": 52,
+          "pct": 0.8525,
+          "wilson95_lb": 0.7428
+        },
+        "component-role": {
+          "d": 51,
+          "n": 43,
+          "pct": 0.8431,
+          "wilson95_lb": 0.7199
+        },
+        "data-store": {
+          "d": 4,
+          "n": 3,
+          "pct": 0.75,
+          "wilson95_lb": 0.3006
+        },
+        "dependency-edge": {
+          "d": 19,
+          "n": 15,
+          "pct": 0.7895,
+          "wilson95_lb": 0.5667
+        },
+        "entry-point": {
+          "d": 9,
+          "n": 7,
+          "pct": 0.7778,
+          "wilson95_lb": 0.4526
+        },
+        "key-invariant": {
+          "d": 30,
+          "n": 10,
+          "pct": 0.3333,
+          "wilson95_lb": 0.1923
+        },
+        "technology-choice": {
+          "d": 28,
+          "n": 21,
+          "pct": 0.75,
+          "wilson95_lb": 0.5664
+        }
+      },
+      "coverage_pooled": {
+        "d": 235,
+        "n": 163,
+        "pct": 0.6936,
+        "wilson95_lb": 0.632
+      },
+      "faithfulness_pooled": {
+        "d": 182,
+        "n": 179,
+        "pct": 0.9835,
+        "wilson95_lb": 0.9527
+      },
+      "runs": 10
+    },
+    "held_out": {
+      "coverage_by_kind_pooled": {
+        "boundary-rule": {
+          "d": 28,
+          "n": 9,
+          "pct": 0.3214,
+          "wilson95_lb": 0.1793
+        },
+        "component-exists": {
+          "d": 44,
+          "n": 36,
+          "pct": 0.8182,
+          "wilson95_lb": 0.6804
+        },
+        "component-role": {
+          "d": 43,
+          "n": 36,
+          "pct": 0.8372,
+          "wilson95_lb": 0.7003
+        },
+        "data-store": {
+          "d": 4,
+          "n": 3,
+          "pct": 0.75,
+          "wilson95_lb": 0.3006
+        },
+        "dependency-edge": {
+          "d": 15,
+          "n": 11,
+          "pct": 0.7333,
+          "wilson95_lb": 0.4805
+        },
+        "entry-point": {
+          "d": 8,
+          "n": 7,
+          "pct": 0.875,
+          "wilson95_lb": 0.5291
+        },
+        "key-invariant": {
+          "d": 28,
+          "n": 8,
+          "pct": 0.2857,
+          "wilson95_lb": 0.1525
+        },
+        "technology-choice": {
+          "d": 22,
+          "n": 16,
+          "pct": 0.7273,
+          "wilson95_lb": 0.5185
+        }
+      },
+      "coverage_pooled": {
+        "d": 192,
+        "n": 126,
+        "pct": 0.6562,
+        "wilson95_lb": 0.5866
+      },
+      "faithfulness_pooled": {
+        "d": 147,
+        "n": 144,
+        "pct": 0.9796,
+        "wilson95_lb": 0.9417
+      },
+      "runs": 8
+    },
+    "runs": 10,
+    "timing_available_runs": 0,
+    "timing_note": "per-stage timing/cost populate as metered runs land a cost ledger; 0 ledgers matched ⇒ timing degrades to available:false (honest no-data)",
+    "tune": {
+      "coverage_by_kind_pooled": {
+        "boundary-rule": {
+          "d": 5,
+          "n": 3,
+          "pct": 0.6,
+          "wilson95_lb": 0.2307
+        },
+        "component-exists": {
+          "d": 17,
+          "n": 16,
+          "pct": 0.9412,
+          "wilson95_lb": 0.7302
+        },
+        "component-role": {
+          "d": 8,
+          "n": 7,
+          "pct": 0.875,
+          "wilson95_lb": 0.5291
+        },
+        "dependency-edge": {
+          "d": 4,
+          "n": 4,
+          "pct": 1.0,
+          "wilson95_lb": 0.5101
+        },
+        "entry-point": {
+          "d": 1,
+          "n": 0,
+          "pct": 0.0,
+          "wilson95_lb": 0.0
+        },
+        "key-invariant": {
+          "d": 2,
+          "n": 2,
+          "pct": 1.0,
+          "wilson95_lb": 0.3424
+        },
+        "technology-choice": {
+          "d": 6,
+          "n": 5,
+          "pct": 0.8333,
+          "wilson95_lb": 0.4365
+        }
+      },
+      "coverage_pooled": {
+        "d": 43,
+        "n": 37,
+        "pct": 0.8605,
+        "wilson95_lb": 0.7274
+      },
+      "faithfulness_pooled": {
+        "d": 35,
+        "n": 35,
+        "pct": 1.0,
+        "wilson95_lb": 0.9011
+      },
+      "runs": 2
+    },
+    "wrong_high_total": 0
+  },
+  "schema": "deepinit-validation/scorecard/v1"
+}

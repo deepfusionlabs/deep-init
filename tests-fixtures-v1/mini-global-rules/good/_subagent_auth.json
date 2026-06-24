@@ -1,0 +1,5 @@
+{
+  "agent": "extract:auth",
+  "inputs": ["src/auth"],
+  "cites": ["src/auth/token.ts:42", "src/auth/refresh.ts:18", "src/auth/store.ts:7"]
+}

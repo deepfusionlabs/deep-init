@@ -1,0 +1,39 @@
+# Dependency Review — GitHub-native PR check that fails when a PR
+# introduces a dependency with a known vulnerability or a disallowed
+# license.
+#
+# Cost: Free for public repos. For PRIVATE repos this action requires
+# GitHub Advanced Security (GHAS) — without GHAS, the workflow will
+# error out on private repos. See:
+#   https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/about-dependency-review
+
+name: Dependency Review
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  dependency-review:
+    name: dependency-review
+    # dependency-review-action needs GHAS on private repos; skip on private so
+    # PRs don't fail. Free + auto-activates once the repo is public.
+    if: ${{ github.event.repository.private == false }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: high
+          comment-summary-in-pr: on-failure

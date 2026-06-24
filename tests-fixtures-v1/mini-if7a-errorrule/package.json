@@ -1,0 +1,7 @@
+{
+  "name": "mini-if7a-errorrule",
+  "version": "0.0.0",
+  "private": true,
+  "description": "IF-7(a) fixture — error-path-contradicts-a-documented-rule (commission sub-type): E1-E3 fire, T1-T9 predicate-FALSE traps must NOT fire",
+  "type": "module"
+}

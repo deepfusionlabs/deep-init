@@ -1,0 +1,6 @@
+# Shell scripts and git hooks MUST stay LF-only. With core.autocrlf=true (common on Windows),
+# a checkout would otherwise rewrite them to CRLF — and a CRLF bash script silently fails
+# (`#!/usr/bin/env bash\r` → bad interpreter), disabling the pre-commit guard + the shipped
+# SessionStart hook without any error. eol=lf pins storage AND checkout to LF. See docs/PROCESS.md §9.
+*.sh        text eol=lf
+.husky/**   text eol=lf

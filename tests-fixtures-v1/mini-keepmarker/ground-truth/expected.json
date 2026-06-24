@@ -1,0 +1,13 @@
+{
+  "fixture": "mini-keepmarker",
+  "purpose": "AC7 — content outside DEEPINIT markers preserved byte-for-byte; .bak written before overwrite",
+  "managed_region_markers": {"start": "<!-- DEEPINIT:START -->", "end": "<!-- DEEPINIT:END -->"},
+  "preserved_spans": [
+    "# My Project — Human-Authored Notes",
+    "Architecture rationale: we deliberately keep the monolith; do not suggest microservices.",
+    "## My Notes (human-owned, below the managed region)",
+    "- Remember: the staging DB is read-replica only.",
+    "- TODO(me): refactor the billing edge case next sprint."
+  ],
+  "bak_required": true
+}

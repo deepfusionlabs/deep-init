@@ -1,0 +1,29 @@
+{
+  "fixture": "mini-if3b-contract",
+  "purpose": "IF-3b (roadmap family #2): a component imports a symbol another component does not export (broken interface contract) fires; a valid import does not. Deterministic — reuses the public-surface extraction.",
+  "expected_issues": [
+    {
+      "family": "IF-3b",
+      "file": "src/api/client.ts",
+      "line": 3,
+      "symbol": "fetchOrders",
+      "exporter": "core",
+      "severity": "High",
+      "certainty": "HIGH",
+      "claim": "Possible interface contract breach: src/api/client.ts imports `fetchOrders` from core/repo, but core/repo's public surface exports only `fetchUser` — the imported symbol does not exist on the exporter.",
+      "evidence": "src/api/client.ts:3 `import { fetchUser, fetchOrders } from '../core/repo'`; src/core/repo.ts exports `fetchUser` only (`_hydrate` is private, not exported). `fetchOrders` is absent from the exporter's public surface."
+    }
+  ],
+  "must_not_fire": [
+    {
+      "family": "IF-3b",
+      "file": "src/web/page.ts",
+      "reason": "src/web/page.ts:2 imports only `fetchUser`, which core/repo DOES export — a valid contract, must not fire."
+    },
+    {
+      "family": "IF-3b",
+      "file": "src/api/client.ts",
+      "reason": "the `fetchUser` portion of client.ts's import is valid (exported by core/repo); only `fetchOrders` is the breach — do not flag the whole import line, only the missing symbol."
+    }
+  ]
+}

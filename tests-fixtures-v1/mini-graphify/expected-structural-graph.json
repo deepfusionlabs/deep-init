@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "source": "graphify",
+  "generated_by": "tools/graphify_adapter.py",
+  "components": {
+    "api": {
+      "files": [
+        "api/handler.py"
+      ],
+      "exports": [],
+      "imports_from": {
+        "core": [
+          "connect()",
+          "db.py"
+        ]
+      },
+      "imported_by": {}
+    },
+    "core": {
+      "files": [
+        "core/db.py",
+        "core/models.py"
+      ],
+      "exports": [
+        "connect()",
+        "db.py"
+      ],
+      "imports_from": {},
+      "imported_by": {
+        "api": [
+          "connect()",
+          "db.py"
+        ]
+      }
+    }
+  },
+  "external_dependencies": {
+    "api": [
+      "requests"
+    ]
+  }
+}

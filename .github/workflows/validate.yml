@@ -1,0 +1,66 @@
+# DeepInit validation gate — the deterministic harness MUST stay all-PASS, and the
+# committed STATS.json / human-facing figures must not drift from the validation records.
+#
+# There is no application code in this repo: the "test" is tests-fixtures-v1/_chat_validation.py,
+# a no-LLM deterministic oracle over the fixtures (see README → Validate). This workflow runs it
+# on every push/PR plus the stats-aggregator drift guard, so a regression or a hand-typed stale
+# figure fails CI instead of shipping.
+#
+# Free on public AND private repos (no GHAS needed — it's just Python).
+
+name: validate
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  harness:
+    name: deterministic harness + stats drift
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install harness deps
+        run: python -m pip install --upgrade pip pyyaml
+
+      # One command, every gate: the deterministic harness + stats drift + count drift + the mutation
+      # meta-harness + the public-harness contract (green WITHOUT the internal held-out keys — the Phase-7
+      # unblock). validate_all prints a per-gate PASS/FAIL line, so CI keeps full visibility in one step.
+      - name: Run ALL validation gates (tools/validate_all.py)
+        env:
+          PYTHONUTF8: '1'
+        run: python tools/validate_all.py
+
+      - name: Graphify adapter self-test (no Graphify install needed — runs on the committed fixture)
+        env:
+          PYTHONUTF8: '1'
+        run: |
+          python - <<'PY'
+          import json, sys, importlib.util
+          spec = importlib.util.spec_from_file_location("ga", "tools/graphify_adapter.py")
+          ga = importlib.util.module_from_spec(spec); spec.loader.exec_module(ga)
+          graph = json.load(open("tests-fixtures-v1/mini-graphify/graph.json", encoding="utf-8"))
+          reg = json.load(open("tests-fixtures-v1/mini-graphify/registry.json", encoding="utf-8"))
+          exp = json.load(open("tests-fixtures-v1/mini-graphify/expected-structural-graph.json", encoding="utf-8"))
+          got = ga.build_structural_graph(graph, registry=reg)
+          assert got == exp, "adapter output drifted from the committed oracle"
+          assert ga.detect_cycles(got) == [], "DAG fixture should have no cycle"
+          print("graphify adapter self-test OK")
+          PY

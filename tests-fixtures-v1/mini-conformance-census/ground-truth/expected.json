@@ -1,0 +1,78 @@
+{
+  "fixture": "mini-conformance-census",
+  "subcase": "Class-conformance census OVERLAY — a deterministic, additive evidence/ranking pass that rides on already-raised IF-4/IF-6/IF-7(a) fires whose cited rule is CLASS-RANGING. It NEVER fires on its own and never changes whether a host fire happens (no recall/FP impact); it only attaches a sibling-conformance census and a ranking signal. The lone honest, structurally-clean artifact the IF-9 design-workshop + adversarial-refutation panel surfaced unanimously (test-plan Run 13/14); it clears the structural test as a NON-detector (a structural count asserting no new defect predicate, so no intent-guess).",
+  "purpose": "Census signal = f(N, conformers): CORROBORATE a lone-deviant fire (strong majority conforms), DOWN-RANK an IF-4 fire against a de-facto-STALE rule (majority of the class also deviates → rule likely dead), DEGRADE (emit nothing) on cardinality-1 / non-structural property / N<3. Deterministic enumeration + structural conformance check + threshold math; the NL rule→(class_glob, conformance_regex) parse is the semantic step (live-run, like IF-4), the census COMPUTATION is what §31 gates.",
+  "signal_thresholds": {
+    "DEGRADE": "N < 3 (no majority can exist), OR a member of ambiguous membership (generated/test/vendored path, @generated header) — excluded; OR a conformance property that cannot be a single unambiguous structural fact (aliased/re-exported/namespaced base) — the whole census degrades.",
+    "CORROBORATE": "conformers >= ceil(2N/3) AND conformers > N-conformers (strong majority conforms → the fired site is a clear minority outlier; annotate 'lone deviant among N' + raise IF-5 PRIORITY/rank only — never certainty, never raise/suppress)",
+    "STALE": "N >= 4 AND conformers <= floor(N/3) (the documented rule is contradicted by the MAJORITY of its own class). This is a NEUTRAL rule-health FLAG, not an auto-judgment: majority-deviation is genuinely ambiguous (de-facto-stale OR systemically-violated — e.g. 5/6 services missing a mandated auth base is a crisis, not a dead rule), so the overlay attaches a hedged caveat 'rule-health: k of N of the class also deviate — confirm de-facto-superseded vs systemically-violated' and CHANGES NOTHING (no priority/certainty/raise change). The human adjudicates. N>=4 keeps a thin 2-of-3 split out. (Adversarial-review fix, Run 14: the prior auto-down-rank could bury a systemic Core/security defect and smuggled in the intent-inference IF-9 deferred.)",
+    "NEUTRAL": "otherwise (mixed; attach the census, no change)"
+  },
+  "census_specs": [
+    {
+      "rule_id": "ADR-100",
+      "class_glob": "src/repos/*.repository.ts",
+      "conformance_regex": "extends\\s+BaseRepository",
+      "expected": {
+        "N": 5,
+        "conformers": 4,
+        "deviants": ["src/repos/audit.repository.ts"],
+        "signal": "CORROBORATE"
+      },
+      "use": "Corroborates the IF-4 fire on AuditRepository (ADR-100) as a minority outlier — 4 of 5 repositories conform, this is the lone deviant."
+    },
+    {
+      "rule_id": "ADR-101",
+      "class_glob": "src/services/*.service.ts",
+      "conformance_regex": "extends\\s+LegacyService",
+      "expected": {
+        "N": 6,
+        "conformers": 1,
+        "deviants": [
+          "src/services/auth.service.ts",
+          "src/services/billing.service.ts",
+          "src/services/catalog.service.ts",
+          "src/services/notify.service.ts",
+          "src/services/shipping.service.ts"
+        ],
+        "signal": "STALE"
+      },
+      "use": "A NEUTRAL rule-health flag on any IF-4 fire raised against ADR-101 — only 1 of 6 services still conforms, so the rule is contradicted by its own majority. Surfaces 'rule-health: 5 of 6 of the class also deviate — confirm de-facto-stale vs systemically-violated' and changes NOTHING (no down-rank → can't bury the crisis reading where a Core/security rule is systemically violated). The human adjudicates stale-vs-systemic."
+    },
+    {
+      "rule_id": "ADR-104",
+      "class_glob": "src/gateways/*.gateway.ts",
+      "conformance_regex": "implements\\s+Retryable",
+      "expected": {
+        "N": 2,
+        "conformers": 1,
+        "deviants": ["src/gateways/email.gateway.ts"],
+        "signal": "DEGRADE"
+      },
+      "use": "DEGRADE: class-ranging with a structural check, but N=2 < 3 — no majority can exist, so the census emits nothing (never a 1-of-2 'convention')."
+    }
+  ],
+  "semantic_degrade": [
+    {
+      "rule_id": "ADR-102",
+      "reason": "cardinality-1 — 'the cache layer uses Redis' does not quantify over a class of siblings, so there is no population to census; a contradiction is plain IF-4. The engine emits NO census_spec (no class_glob derivable)."
+    },
+    {
+      "rule_id": "ADR-103",
+      "reason": "non-structural conformance property — 'every controller MUST be cohesive / single-responsibility' is class-ranging but its property has no decidable structural check, so the census degrades (never guesses a conformance fact it cannot compute). The engine emits NO census_spec (no conformance_regex derivable)."
+    }
+  ],
+  "threshold_probe": [
+    { "N": 5, "conformers": 4, "expect": "CORROBORATE" },
+    { "N": 5, "conformers": 3, "expect": "NEUTRAL" },
+    { "N": 6, "conformers": 1, "expect": "STALE" },
+    { "N": 6, "conformers": 2, "expect": "STALE" },
+    { "N": 6, "conformers": 3, "expect": "NEUTRAL" },
+    { "N": 2, "conformers": 1, "expect": "DEGRADE" },
+    { "N": 9, "conformers": 6, "expect": "CORROBORATE" },
+    { "N": 9, "conformers": 3, "expect": "STALE" },
+    { "N": 3, "conformers": 1, "expect": "NEUTRAL" },
+    { "N": 4, "conformers": 1, "expect": "STALE" },
+    { "N": 3, "conformers": 2, "expect": "CORROBORATE" }
+  ]
+}

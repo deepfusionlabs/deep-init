@@ -1,0 +1,48 @@
+{
+  "project": "mini-rails",
+  "architecture": "MVC (Rails)",
+  "tech_stack": ["Ruby", "Rails 7", "PostgreSQL", "Authlogic", "Active Scaffold", "Stripe"],
+  "components": {
+    "auth": { "files": ["app/models/user.rb", "app/controllers/sessions_controller.rb"], "type": "domain" },
+    "billing": { "files": ["app/models/invoice.rb", "app/models/line_item.rb", "app/controllers/invoices_controller.rb", "app/services/invoice_service.rb"], "type": "domain" },
+    "reports": { "files": ["app/models/report.rb", "app/controllers/reports_controller.rb"], "type": "domain" }
+  },
+  "dependencies": {
+    "billing": ["auth"],
+    "reports": ["auth", "billing"],
+    "auth": []
+  },
+  "business_rules": [
+    { "id": "BR-1", "rule": "Email must be unique and valid format", "file": "app/models/user.rb" },
+    { "id": "BR-2", "rule": "Password minimum 8 characters", "file": "app/models/user.rb" },
+    { "id": "BR-3", "rule": "Role must be admin/accountant/viewer", "file": "app/models/user.rb" },
+    { "id": "BR-4", "rule": "Only admin/accountant can create invoices", "file": "app/controllers/invoices_controller.rb" },
+    { "id": "BR-5", "rule": "Invoice number auto-generated INV-YYYY-NNNN", "file": "app/models/invoice.rb" },
+    { "id": "BR-6", "rule": "Invoice status: draft → sent → paid (or overdue)", "file": "app/models/invoice.rb" },
+    { "id": "BR-7", "rule": "Cannot pay a cancelled invoice", "file": "app/models/invoice.rb" },
+    { "id": "BR-8", "rule": "Invoice total = sum of line item amounts", "file": "app/models/invoice.rb" },
+    { "id": "BR-9", "rule": "Line item amount must be positive", "file": "app/models/line_item.rb" },
+    { "id": "BR-10", "rule": "Overdue if unpaid past due_date", "file": "app/models/invoice.rb" },
+    { "id": "BR-11", "rule": "Users can only view own reports (unless admin)", "file": "app/controllers/reports_controller.rb" },
+    { "id": "BR-12", "rule": "Report types: revenue/aging/outstanding", "file": "app/models/report.rb" },
+    { "id": "BR-13", "rule": "Authentication required for all except sessions", "file": "app/controllers/application_controller.rb" }
+  ],
+  "workflows": [
+    { "id": "WF-1", "name": "Login", "steps": ["find by email", "verify password (Authlogic)", "create session"] },
+    { "id": "WF-2", "name": "Create invoice", "steps": ["auth required", "validate role", "create draft", "add line items"] },
+    { "id": "WF-3", "name": "Mark invoice paid", "steps": ["verify not cancelled", "update status", "record payment date"] },
+    { "id": "WF-4", "name": "Check overdue", "steps": ["find sent invoices past due", "mark overdue", "send notice"] }
+  ],
+  "integration_points": [
+    { "id": "IP-1", "name": "PostgreSQL database", "type": "data persistence" },
+    { "id": "IP-2", "name": "Stripe API (payment links)", "type": "payment processing" },
+    { "id": "IP-3", "name": "ActionMailer (email)", "type": "notifications" },
+    { "id": "IP-4", "name": "Authlogic (authentication)", "type": "auth library" },
+    { "id": "IP-5", "name": "Active Scaffold (admin UI)", "type": "UI framework" }
+  ],
+  "special_tests": {
+    "rails_decomposition": "Should decompose by domain (auth/billing/reports) NOT by layer (controllers/models/views)",
+    "autoloading": "Ruby has no explicit imports — dependencies must be inferred from class references and associations",
+    "active_scaffold": "Dynamic metaprogramming — generates methods not visible in source code"
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "_fixture": "mini-coverage-record — a synthetic, internally-consistent coverage-record/v1 that exercises every §34 machinery invariant (MATCH/MISMATCH/MISS/BEYOND_DOC + the hard gate). Used by _chat_validation.py §34 to prove the gates pass on a clean record AND to RED-confirm each gate flips under a one-field mutation. NOT a real measurement.",
+  "schema": "deepinit-validation/coverage-record/v1",
+  "program": "The Mirror Test",
+  "repo": { "name": "acme/widget", "url": "https://example.invalid/acme/widget", "pinned_sha": "0123456789abcdef0123456789abcdef01234567", "license": "MIT", "stack": "Go" },
+  "run": { "run_kind": "coverage_validation", "engine_proxy": "single-engine", "model": "test", "date": "2026-06-13" },
+  "identity": { "code_loc": 1000, "files": 20, "languages": ["Go"], "components": 3 },
+
+  "reference_doc": { "kind": "ADR", "source_url": "n/a", "doc_sha_or_rev": "0123456789abcdef0123456789abcdef01234567", "currency_score": 0.75, "currency_bar": 0.85 },
+
+  "reference_key": {
+    "key_path": "tests-fixtures-v1/mini-coverage-record/good.json",
+    "key_sha256": "SELF-NOT-CHECKED-IN-FIXTURE",
+    "held_out": true,
+    "rc_total_extracted": 4,
+    "rc_current": 3,
+    "rc_stale_dropped": 1,
+    "rc_unverifiable_dropped": 0
+  },
+
+  "reference_claims": [
+    { "rc_id": "RC-001", "kind": "component-exists", "text": "There is a Scheduler service.", "code_anchor": "src/sched/scheduler.go:10", "currency": "CURRENT", "load_bearing": true },
+    { "rc_id": "RC-002", "kind": "dependency-edge", "text": "Web depends on Core, not vice-versa.", "code_anchor": "src/web/app.go:14", "currency": "CURRENT", "load_bearing": true },
+    { "rc_id": "RC-003", "kind": "data-store", "text": "Sessions are persisted in Redis.", "code_anchor": "src/store/redis.go:8", "currency": "CURRENT", "load_bearing": true }
+  ],
+
+  "emitted_claims": [
+    { "ec_id": "EC-001", "source_region": "component-registry", "kind": "component-exists", "text": "A Scheduler component schedules jobs.", "code_anchor": "src/sched/scheduler.go:10", "in_scope": true },
+    { "ec_id": "EC-002", "source_region": "dependency-edge", "kind": "dependency-edge", "text": "Web depends on Core via an in-memory queue.", "code_anchor": "src/web/app.go:14", "in_scope": true },
+    { "ec_id": "EC-003", "source_region": "data-layer", "kind": "data-store", "text": "Metrics are persisted in Postgres.", "code_anchor": "src/store/pg.go:5", "in_scope": true }
+  ],
+
+  "adjudication": [
+    { "referent": "Scheduler service", "rc_id": "RC-001", "ec_id": "EC-001", "bucket": "MATCH", "rc_kind": "component-exists", "ec_kind": "component-exists", "miss_referent_read": false, "mismatch_attribution": null, "mismatch_certainty": null, "refuter_signoff": true },
+    { "referent": "Web->Core edge", "rc_id": "RC-002", "ec_id": "EC-002", "bucket": "MISMATCH", "rc_kind": "dependency-edge", "ec_kind": "dependency-edge", "miss_referent_read": false, "mismatch_attribution": "stale_doc", "mismatch_certainty": null, "refuter_signoff": true },
+    { "referent": "Session store", "rc_id": "RC-003", "ec_id": null, "bucket": "MISS", "rc_kind": "data-store", "ec_kind": null, "miss_referent_read": true, "mismatch_attribution": null, "mismatch_certainty": null, "refuter_signoff": true },
+    { "referent": "Metrics store (Postgres)", "rc_id": null, "ec_id": "EC-003", "bucket": "BEYOND_DOC", "rc_kind": null, "ec_kind": "data-store", "miss_referent_read": false, "mismatch_attribution": null, "mismatch_certainty": null, "refuter_signoff": true }
+  ],
+
+  "scores": {
+    "coverage_overall": { "n": 1, "d": 3, "pct": 0.3333, "wilson95_lb": 0.06 },
+    "coverage_by_kind": {
+      "component-exists": { "n": 1, "d": 1 },
+      "component-role":   { "n": 0, "d": 0 },
+      "dependency-edge":  { "n": 0, "d": 1 },
+      "data-store":       { "n": 0, "d": 1 },
+      "boundary-rule":    { "n": 0, "d": 0 },
+      "key-invariant":    { "n": 0, "d": 0 },
+      "entry-point":      { "n": 0, "d": 0 },
+      "technology-choice":{ "n": 0, "d": 0 }
+    },
+    "faithfulness": { "n": 1, "d": 2, "pct": 0.5, "wilson95_lb": 0.09 },
+    "beyond_doc_count": 1,
+    "deepinit_wrong_high": 0
+  },
+
+  "provenance": {
+    "doc_in_inputs": false,
+    "key_held_out": true,
+    "training_contamination_caveat": true,
+    "publishable": "indicative",
+    "caveats": [
+      "INDICATIVE — small-n, fuzzy truth, below any ship-gate",
+      "attribution-adjudicated — divergences resolved to CODE, not auto-scored",
+      "doc-bounded — agreement with a good human doc, not absolute completeness",
+      "§18 (9/9, FP 0) stays the product headline"
+    ],
+    "tune_or_heldout": "tune",
+    "harness_section": "§34"
+  }
+}

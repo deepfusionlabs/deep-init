@@ -1,0 +1,43 @@
+{
+  "schema": "deepinit-validation/precision-record/v1",
+  "program": "DeepInit in the Wild",
+  "track": "1 — precision (naive-vs-guarded FP + census-signal correctness)",
+  "recorded": "2026-06-10",
+  "test_plan_run": "",
+  "repo": {
+    "name": "fossasia/visdom",
+    "url": "https://github.com/fossasia/visdom",
+    "branch": "dev",
+    "pinned_sha": "abb6904adeca8ae77d4a6925cd0caeca34761000",
+    "pinned_sha_date": "2026-06-10T19:11:41Z",
+    "sha_provenance": "default-branch (dev) HEAD at or before the 2026-06-10 validation date, resolved via GitHub API 2026-06-11 (the validation clone was not retained; the file:line citations below are the durable anchors and are SHA-robust because they describe structural conformance to a slow-changing documented rule).",
+    "license": "Apache-2.0",
+    "stack": "Python / Tornado"
+  },
+  "documented_rule": "\"All handlers must use `@check_auth` decorator\" — .agents/skills/websocket-flow/SKILL.md:44 (under the '## Guardrails' bullet list); reinforced at .agents/skills/websocket-flow/SKILL.md:31 ('Implement post() with @check_auth decorator' in the 'Adding a New API Endpoint' how-to).",
+  "rule_hardness": "hard-deontic",
+  "rule_location_kind": "other (skill-guardrail how-to doc, not a formal ADR)",
+  "census": {
+    "class_selector": "HTTP request-handler method entry points (def get|post on route-registered handler classes in py/visdom/server/handlers/web_handlers.py); excludes the abstract BaseHandler/BaseWebSocketHandler and WebSocket on_message/open handlers (which auth via a different mechanism). No test/generated/vendored files in scope.",
+    "conformance_check": "the @check_auth decorator is present immediately above the get/post method (structural fact: decorator token on the line(s) preceding the def).",
+    "N": 18,
+    "conformers_k": 13,
+    "deviants_sample": [
+      "py/visdom/server/handlers/web_handlers.py:652 (IndexHandler.post — the LOGIN endpoint; cannot require auth to authenticate)",
+      "py/visdom/server/handlers/web_handlers.py:628 (IndexHandler.get — serves login.html / index, does its own login_enabled/current_user check inline)",
+      "py/visdom/server/handlers/web_handlers.py:693 (HealthHandler.get — health probe; registered in app.py:123 WITHOUT an app dict, intentionally unauthenticated)",
+      "py/visdom/server/handlers/web_handlers.py:670 (UserSettingsHandler.get — serves static style.css)",
+      "py/visdom/server/handlers/web_handlers.py:678 (ErrorHandler.get — error-page renderer)"
+    ],
+    "signal": "CORROBORATE",
+    "signal_is_correct": true,
+    "signal_reason": "Rule is HARD ('must'). k=13 >= ceil(2N/3)=ceil(36/3)=12 AND k=13 > N-k=5, so the math yields CORROBORATE (strong majority conforms; deviants stand out structurally). The signal is arithmetically correct as a rule-health/outlier flag. CRITICAL CAVEAT for downstream judgment: although the 5 deviants are real structural non-conformers, every one is a LEGITIMATELY-unauthenticated endpoint (login form+handler, static CSS, error page, health probe), not a defect — so CORROBORATE correctly identifies outliers but those outliers must NOT be auto-judged as violations. This is exactly why CORROBORATE is an overlay signal, not an auto-finding."
+  },
+  "naive_vs_guarded": {
+    "naive_detector_false_positives": 5,
+    "guarded_detector_avoids_them": true,
+    "genuine_deviation_found": "none — clean repo. All 5 structural deviants are by-design unauthenticated endpoints, not violations: IndexHandler.post (web_handlers.py:652) is the login endpoint itself (auth-to-login is impossible); IndexHandler.get (:628) gates on login_enabled/current_user inline and renders login.html; HealthHandler.get (:693) is a health probe registered without an app dict (app.py:123); UserSettingsHandler.get (:670) serves static style.css; ErrorHandler.get (:678) renders the error page. There is no hard-rule, majority-followed convention with a lone defect-outlier here."
+  },
+  "honest_assessment": "The witness IS a hard, class-ranging deontic ('All handlers MUST use @check_auth'), but it lives in a how-to skill guardrail (.agents/skills/websocket-flow/SKILL.md), not a formal ADR — and it carries IMPLICIT inherent exceptions the prose doesn't enumerate. Census math is sound: N=18 method entry points, k=13 with @check_auth, 5 deviants -> CORROBORATE (13 >= 12 and 13 > 5). At the class-level framing it is N=15 classes / k=11 / 4 deviant classes -> still CORROBORATE. Either way the signal is a correct OUTLIER/rule-health flag, but it is NOT a defect list: a NAIVE detector that emitted 'missing @check_auth = violation' would fire 5 FALSE POSITIVES, all of them endpoints that MUST be unauthenticated (you cannot require auth to reach the login endpoint; a health probe and static CSS are intentionally open). The guarded IF-4 correctly stays silent: the rule has documented/inherent exceptions and the deviants diverge by-design rather than contradict, so precision-first suppression is right. Net: this validates the scope-honesty claim — a hard class-ranging deontic exists, but its 'deviants' are exceptions, not bugs; the value here is the rule-health overlay (CORROBORATE that the convention is real + near-universal), not an auto-finding. Recall: zero genuine defects to surface — the repo is clean against this rule.",
+  "verdict": "CORROBORATE — clean repo; 5 naive false-positives avoided; 0 false defects emitted; census signal correct."
+}

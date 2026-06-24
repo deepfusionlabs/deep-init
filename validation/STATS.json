@@ -1,0 +1,650 @@
+{
+  "cost": {
+    "available": true,
+    "by_ledger": [
+      {
+        "est_usd_high": 8.25,
+        "est_usd_low": 1.28,
+        "ledger": "kemalcr-kemal",
+        "publishable": "indicative",
+        "tier": "S",
+        "token_source": "session_usage"
+      }
+    ],
+    "est_usd_range": [
+      1.28,
+      8.25
+    ],
+    "ledgers": 1,
+    "note": "INDICATIVE — tier-S only, session_usage proxy; no published $ until a clean api_usage S/M/L run (page cost slot stays blank).",
+    "publishable_figure_ready": false
+  },
+  "cost_model": {
+    "available": true,
+    "calibration": {
+      "kemal_actual_over_base": 14.32,
+      "kemal_graphify_discount": 1.0,
+      "kemal_single_engine_in_out_ratio": 7.154,
+      "matrix_measured_actual_over_base_median": 5.1,
+      "matrix_measured_actual_over_base_range": [
+        1.46,
+        106.28
+      ],
+      "note": "actual/base uses the detection.md forecast base (graphify_discount 0.6 for the parseable matrix repos). A high ratio means the bare LOC×1.2×effort×0.6 formula UNDER-forecasts a real single-engine pass (it reads refs + reasons + re-reads). The forecast stays the source of truth, CALIBRATED by this factor."
+    },
+    "caveat": "INDICATIVE — output measured, input/$ estimated; a published $ needs a clean api_usage S/M/L run.",
+    "model": "claude-opus-4-8",
+    "price_as_of_date": "2026-06-04",
+    "tier_table": {
+      "L": {
+        "actual_over_base_range": {
+          "max": 1.46,
+          "median": 1.5,
+          "min": 1.46,
+          "n": 1
+        },
+        "est_total_tokens_range": {
+          "max": 198803,
+          "median": 198803,
+          "min": 198803,
+          "n": 1
+        },
+        "est_usd_range": {
+          "max": 1.48,
+          "median": 1.5,
+          "min": 1.48,
+          "n": 1
+        },
+        "measured_n": 1,
+        "output_tokens_range": {
+          "max": 24381,
+          "median": 24381,
+          "min": 24381,
+          "n": 1
+        },
+        "repos": [
+          "pyccel/pyccel"
+        ],
+        "source_loc_range": {
+          "max": 105175,
+          "median": 105175,
+          "min": 105175,
+          "n": 1
+        }
+      },
+      "M": {
+        "actual_over_base_range": {
+          "max": 9.25,
+          "median": 4.5,
+          "min": 1.9,
+          "n": 6
+        },
+        "est_total_tokens_range": {
+          "max": 233449,
+          "median": 138422.0,
+          "min": 81622,
+          "n": 6
+        },
+        "est_usd_range": {
+          "max": 1.74,
+          "median": 1.0,
+          "min": 0.61,
+          "n": 6
+        },
+        "measured_n": 6,
+        "output_tokens_range": {
+          "max": 28630,
+          "median": 16976.0,
+          "min": 10010,
+          "n": 6
+        },
+        "repos": [
+          "expressjs/express",
+          "fmtlib/fmt",
+          "gin-gonic/gin",
+          "pallets/click",
+          "phoenixframework/phoenix",
+          "sinatra/sinatra"
+        ],
+        "source_loc_range": {
+          "max": 57900,
+          "median": 19605.5,
+          "min": 15882,
+          "n": 6
+        }
+      },
+      "S": {
+        "actual_over_base_range": {
+          "max": 106.28,
+          "median": 63.9,
+          "min": 21.5,
+          "n": 2
+        },
+        "est_total_tokens_range": {
+          "max": 162199,
+          "median": 156503.5,
+          "min": 150808,
+          "n": 2
+        },
+        "est_usd_range": {
+          "max": 1.21,
+          "median": 1.2,
+          "min": 1.12,
+          "n": 2
+        },
+        "measured_n": 2,
+        "output_tokens_range": {
+          "max": 19892,
+          "median": 19193.5,
+          "min": 18495,
+          "n": 2
+        },
+        "repos": [
+          "gorilla/mux",
+          "pallets/itsdangerous"
+        ],
+        "source_loc_range": {
+          "max": 5820,
+          "median": 3457.5,
+          "min": 1095,
+          "n": 2
+        }
+      }
+    }
+  },
+  "generated_by": "tools/build_stats.py",
+  "harness": {
+    "available": true,
+    "mutation_count": 159,
+    "oracle": {
+      "metamorphic_fp": 0,
+      "per_family": {
+        "IF-1": "9/10",
+        "IF-3a": "0/1",
+        "IF-4": "1/3",
+        "IF-6": "1/1",
+        "IF-7": "1/2",
+        "IF-8": "2/5"
+      },
+      "recall_d": 22,
+      "recall_n": 14,
+      "recall_pct": 0.6364,
+      "wilson95_lb": 0.4295
+    },
+    "pass": 443,
+    "sections": 99,
+    "total": 443
+  },
+  "integration": {
+    "available": false,
+    "reason": "no integration-run-records committed yet (metered runs land them)"
+  },
+  "marketing_evidence": {
+    "available": false
+  },
+  "matrix": {
+    "available": true,
+    "graphify_parseable_count": 15,
+    "language_count": 13,
+    "languages": [
+      "C",
+      "C++",
+      "Crystal",
+      "Elixir",
+      "Go",
+      "Java",
+      "JavaScript",
+      "Kotlin",
+      "PHP",
+      "Python",
+      "Ruby",
+      "Rust",
+      "TypeScript"
+    ],
+    "repo_count": 16,
+    "tier_counts": {
+      "L": 5,
+      "M": 8,
+      "S": 3
+    }
+  },
+  "mirror": {
+    "available": true,
+    "caveats": [
+      "INDICATIVE — small-n, below any ship-gate",
+      "§18 (9/9, FP 0) stays the product headline"
+    ],
+    "held_out": {
+      "beyond_doc_total": 482,
+      "coverage": {
+        "d": 192,
+        "n": 126,
+        "pct": 0.6562,
+        "wilson95_lb": 0.5866
+      },
+      "coverage_by_kind": {
+        "boundary-rule": {
+          "d": 28,
+          "n": 9,
+          "pct": 0.3214
+        },
+        "component-exists": {
+          "d": 44,
+          "n": 36,
+          "pct": 0.8182
+        },
+        "component-role": {
+          "d": 43,
+          "n": 36,
+          "pct": 0.8372
+        },
+        "data-store": {
+          "d": 4,
+          "n": 3,
+          "pct": 0.75
+        },
+        "dependency-edge": {
+          "d": 15,
+          "n": 11,
+          "pct": 0.7333
+        },
+        "entry-point": {
+          "d": 8,
+          "n": 7,
+          "pct": 0.875
+        },
+        "key-invariant": {
+          "d": 28,
+          "n": 8,
+          "pct": 0.2857
+        },
+        "technology-choice": {
+          "d": 22,
+          "n": 16,
+          "pct": 0.7273
+        }
+      },
+      "deepinit_wrong_high_total": 0,
+      "faithfulness": {
+        "d": 147,
+        "n": 144,
+        "pct": 0.9796,
+        "wilson95_lb": 0.9417
+      },
+      "repos": [
+        "commercetools-sync-java",
+        "eabe",
+        "helix",
+        "kagent",
+        "kotlinx-schema",
+        "saluki",
+        "scrapy",
+        "uniffi-rs"
+      ]
+    },
+    "held_out_by_contamination": {
+      "moderate": {
+        "coverage": {
+          "d": 46,
+          "n": 14,
+          "pct": 0.3043,
+          "wilson95_lb": 0.1908
+        },
+        "repos": [
+          "kagent",
+          "uniffi-rs"
+        ]
+      },
+      "obscure": {
+        "coverage": {
+          "d": 91,
+          "n": 67,
+          "pct": 0.7363,
+          "wilson95_lb": 0.6375
+        },
+        "repos": [
+          "commercetools-sync-java",
+          "eabe",
+          "kotlinx-schema",
+          "saluki"
+        ]
+      },
+      "popular": {
+        "coverage": {
+          "d": 55,
+          "n": 45,
+          "pct": 0.8182,
+          "wilson95_lb": 0.6967
+        },
+        "repos": [
+          "helix",
+          "scrapy"
+        ]
+      }
+    },
+    "per_repo": {
+      "commercetools-sync-java": {
+        "beyond_doc": 29,
+        "contamination": "obscure",
+        "coverage_d": 11,
+        "coverage_n": 2,
+        "coverage_pct": 0.1818,
+        "deepinit_wrong_high": 0,
+        "faithfulness_d": 3,
+        "faithfulness_n": 3,
+        "split": "held-out"
+      },
+      "eabe": {
+        "beyond_doc": 43,
+        "contamination": "obscure",
+        "coverage_d": 33,
+        "coverage_n": 26,
+        "coverage_pct": 0.7879,
+        "deepinit_wrong_high": 0,
+        "faithfulness_d": 27,
+        "faithfulness_n": 26,
+        "split": "held-out"
+      },
+      "excalidraw": {
+        "beyond_doc": 21,
+        "contamination": "popular",
+        "coverage_d": 14,
+        "coverage_n": 11,
+        "coverage_pct": 0.7857,
+        "deepinit_wrong_high": 0,
+        "faithfulness_d": 9,
+        "faithfulness_n": 9,
+        "split": "tune"
+      },
+      "helix": {
+        "beyond_doc": 148,
+        "contamination": "popular",
+        "coverage_d": 31,
+        "coverage_n": 22,
+        "coverage_pct": 0.7097,
+        "deepinit_wrong_high": 0,
+        "faithfulness_d": 24,
+        "faithfulness_n": 23,
+        "split": "held-out"
+      },
+      "kagent": {
+        "beyond_doc": 19,
+        "contamination": "moderate",
+        "coverage_d": 36,
+        "coverage_n": 7,
+        "coverage_pct": 0.1944,
+        "deepinit_wrong_high": 0,
+        "faithfulness_d": 13,
+        "faithfulness_n": 13,
+        "split": "held-out"
+      },
+      "kotlinx-schema": {
+        "beyond_doc": 20,
+        "contamination": "obscure",
+        "coverage_d": 32,
+        "coverage_n": 30,
+        "coverage_pct": 0.9375,
+        "deepinit_wrong_high": 0,
+        "faithfulness_d": 27,
+        "faithfulness_n": 27,
+        "split": "held-out"
+      },
+      "otelcol": {
+        "beyond_doc": 169,
+        "contamination": "popular",
+        "coverage_d": 29,
+        "coverage_n": 26,
+        "coverage_pct": 0.8966,
+        "deepinit_wrong_high": 0,
+        "faithfulness_d": 26,
+        "faithfulness_n": 26,
+        "split": "tune"
+      },
+      "saluki": {
+        "beyond_doc": 25,
+        "contamination": "obscure",
+        "coverage_d": 15,
+        "coverage_n": 9,
+        "coverage_pct": 0.6,
+        "deepinit_wrong_high": 0,
+        "faithfulness_d": 7,
+        "faithfulness_n": 7,
+        "split": "held-out"
+      },
+      "scrapy": {
+        "beyond_doc": 168,
+        "contamination": "popular",
+        "coverage_d": 24,
+        "coverage_n": 23,
+        "coverage_pct": 0.9583,
+        "deepinit_wrong_high": 0,
+        "faithfulness_d": 24,
+        "faithfulness_n": 23,
+        "split": "held-out"
+      },
+      "uniffi-rs": {
+        "beyond_doc": 30,
+        "contamination": "moderate",
+        "coverage_d": 10,
+        "coverage_n": 7,
+        "coverage_pct": 0.7,
+        "deepinit_wrong_high": 0,
+        "faithfulness_d": 22,
+        "faithfulness_n": 22,
+        "split": "held-out"
+      }
+    },
+    "tune": {
+      "beyond_doc_total": 190,
+      "coverage": {
+        "d": 43,
+        "n": 37,
+        "pct": 0.8605,
+        "wilson95_lb": 0.7274
+      },
+      "coverage_by_kind": {
+        "boundary-rule": {
+          "d": 5,
+          "n": 3,
+          "pct": 0.6
+        },
+        "component-exists": {
+          "d": 17,
+          "n": 16,
+          "pct": 0.9412
+        },
+        "component-role": {
+          "d": 8,
+          "n": 7,
+          "pct": 0.875
+        },
+        "data-store": {
+          "d": 0,
+          "n": 0,
+          "pct": 0.0
+        },
+        "dependency-edge": {
+          "d": 4,
+          "n": 4,
+          "pct": 1.0
+        },
+        "entry-point": {
+          "d": 1,
+          "n": 0,
+          "pct": 0.0
+        },
+        "key-invariant": {
+          "d": 2,
+          "n": 2,
+          "pct": 1.0
+        },
+        "technology-choice": {
+          "d": 6,
+          "n": 5,
+          "pct": 0.8333
+        }
+      },
+      "deepinit_wrong_high_total": 0,
+      "faithfulness": {
+        "d": 35,
+        "n": 35,
+        "pct": 1.0,
+        "wilson95_lb": 0.9011
+      },
+      "repos": [
+        "excalidraw",
+        "otelcol"
+      ]
+    }
+  },
+  "note": "Every figure derives from a committed validation record or the harness summary. Byte-stable (no timestamps). Regenerate: python tools/build_stats.py",
+  "precision": {
+    "available": true,
+    "by_repo": [
+      {
+        "census_N": 95,
+        "conformers_k": 33,
+        "false_defect": false,
+        "naive_fp_avoided": 62,
+        "repo": "evolutionary-architecture/evolutionary-architecture-by-example",
+        "signal": "DEGRADE"
+      },
+      {
+        "census_N": 18,
+        "conformers_k": 13,
+        "false_defect": false,
+        "naive_fp_avoided": 5,
+        "repo": "fossasia/visdom",
+        "signal": "CORROBORATE"
+      },
+      {
+        "census_N": 12,
+        "conformers_k": 0,
+        "false_defect": false,
+        "naive_fp_avoided": 12,
+        "repo": "kemalcr/kemal",
+        "signal": "STALE"
+      },
+      {
+        "census_N": 114,
+        "conformers_k": 103,
+        "false_defect": false,
+        "naive_fp_avoided": 11,
+        "repo": "pyccel/pyccel",
+        "signal": "DEGRADE"
+      }
+    ],
+    "false_defects_total": 0,
+    "naive_fp_avoided_total": 90,
+    "records": 4
+  },
+  "schema": "deepinit-validation/stats/v1",
+  "stacks": {
+    "available": true,
+    "count": 15,
+    "stacks": [
+      {
+        "repo": "BurntSushi/ripgrep",
+        "stack": "Rust"
+      },
+      {
+        "repo": "apple/swift-nio",
+        "stack": "Swift"
+      },
+      {
+        "repo": "caddyserver/caddy",
+        "stack": "Go"
+      },
+      {
+        "repo": "discourse/discourse",
+        "stack": "Ruby on Rails"
+      },
+      {
+        "repo": "excalidraw/excalidraw",
+        "stack": "TypeScript / React"
+      },
+      {
+        "repo": "jellyfin/jellyfin",
+        "stack": "C#/.NET"
+      },
+      {
+        "repo": "kemalcr/kemal",
+        "stack": "Crystal"
+      },
+      {
+        "repo": "laravel/framework",
+        "stack": "PHP"
+      },
+      {
+        "repo": "nginx/nginx",
+        "stack": "C"
+      },
+      {
+        "repo": "ocaml/dune",
+        "stack": "OCaml"
+      },
+      {
+        "repo": "phoenixframework/phoenix",
+        "stack": "Elixir"
+      },
+      {
+        "repo": "pocoproject/poco",
+        "stack": "C++"
+      },
+      {
+        "repo": "pyccel/pyccel",
+        "stack": "Python"
+      },
+      {
+        "repo": "signalapp/Signal-Server",
+        "stack": "Java 21"
+      },
+      {
+        "repo": "square/okhttp",
+        "stack": "Kotlin"
+      }
+    ]
+  },
+  "timing": {
+    "available": false,
+    "reason": "no cost.processing timing blocks committed yet (metered runs land them)"
+  },
+  "understanding_matters": {
+    "available": true,
+    "by_mode": {
+      "full": {
+        "dep_edge_precision_pct_mean": 100,
+        "dep_edge_recall_pct_mean": 57.5,
+        "faithfulness_pct_mean": 98.9,
+        "grounding_pct_mean": 98.9,
+        "grounding_pct_min": 96.6,
+        "issues_fabricated_total": 0,
+        "issues_real_total": 5
+      },
+      "graphify_off": {
+        "dep_edge_precision_pct_mean": 100,
+        "dep_edge_recall_pct_mean": 60.8,
+        "faithfulness_pct_mean": 100,
+        "grounding_pct_mean": 100,
+        "grounding_pct_min": 100,
+        "issues_fabricated_total": 0,
+        "issues_real_total": 5
+      },
+      "naive": {
+        "dep_edge_precision_pct_mean": 92.6,
+        "dep_edge_recall_pct_mean": 43.1,
+        "faithfulness_pct_mean": 100,
+        "grounding_pct_mean": 43.5,
+        "grounding_pct_min": 0,
+        "issues_fabricated_total": 0,
+        "issues_real_total": 6
+      }
+    },
+    "caveat": "INDICATIVE — 3 repos x 3 modes, famous M-tier; the verified-vs-naive delta is mainly grounding + issue-discovery (faithfulness is high for all modes on famous repos).",
+    "repos": [
+      "gin-gonic/gin",
+      "pallets/click",
+      "expressjs/express"
+    ]
+  }
+}

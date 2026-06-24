@@ -1,0 +1,43 @@
+# Python (validation harness)
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# DeepInit backups: the transient single `.bak` is ignored, but the B2 DATED, reversible backups
+# (`<name>.<YYYY-MM-DDThhmm>.bak`) are COMMITTED/VISIBLE — visibility = trust (a user can SEE the
+# change is reversible). Un-ignore the dated form so a blanket `*.bak` rule doesn't hide them.
+*.bak
+!*.[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]T[0-9][0-9][0-9][0-9].bak
+
+# DeepInit-in-the-Wild scratch clones (bulky; the committed evidence is validation/results/*.json)
+validation/_clones/
+validation/_scratch/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+.vscode/
+
+# Node (oss-kit toolchain: Husky + commitlint)
+node_modules/
+
+# >>> oss-kit: ignore .oss-kit local state, but SHARE the onboarding config >>>
+.oss-kit/*
+!.oss-kit/config.json
+# <<< oss-kit <<<
+
+# Claude Code local-only state (machine-specific permissions, scheduler lock) — not shared
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
+
+# Graphify AST outputs (regenerable, can be large) — never committed
+graphify-out/
+
+# DeepInit freshness-hook runtime state — local, machine-specific, never committed
+.ai/.deepinit-nudge-state
+.claude/.deepinit-no-nudge

@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "source": "graphify",
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "nodes": [
+    {"id": "api_handler", "label": "handler.py", "source_file": "api/handler.py", "source_location": "L1", "file_type": "code", "_origin": "ast"},
+    {"id": "api_handler_serve", "label": "serve()", "source_file": "api/handler.py", "source_location": "L10", "file_type": "code", "_origin": "ast"},
+    {"id": "core_db", "label": "db.py", "source_file": "core/db.py", "source_location": "L1", "file_type": "code", "_origin": "ast"},
+    {"id": "core_db_connect", "label": "connect()", "source_file": "core/db.py", "source_location": "L5", "file_type": "code", "_origin": "ast"},
+    {"id": "core_models", "label": "models.py", "source_file": "core/models.py", "source_location": "L1", "file_type": "code", "_origin": "ast"},
+    {"id": "core_models_user", "label": "User", "source_file": "core/models.py", "source_location": "L3", "file_type": "code", "_origin": "ast"},
+    {"id": "data_seed", "label": "seed.json", "source_file": "data/seed.json", "source_location": "L1", "file_type": "code", "_origin": "ast"}
+  ],
+  "links": [
+    {"source": "api_handler", "target": "api_handler_serve", "relation": "contains", "confidence": "EXTRACTED", "source_file": "api/handler.py", "source_location": "L10", "weight": 1.0},
+    {"source": "api_handler", "target": "core_db_connect", "relation": "imports", "context": "import", "confidence": "EXTRACTED", "source_file": "api/handler.py", "source_location": "L2", "weight": 1.0},
+    {"source": "api_handler", "target": "core_db", "relation": "imports_from", "context": "import", "confidence": "EXTRACTED", "source_file": "api/handler.py", "source_location": "L2", "weight": 1.0},
+    {"source": "api_handler", "target": "requests", "relation": "imports_from", "context": "import", "confidence": "EXTRACTED", "source_file": "api/handler.py", "source_location": "L1", "weight": 1.0},
+    {"source": "api_handler_serve", "target": "core_db_connect", "relation": "calls", "context": "call", "confidence": "EXTRACTED", "source_file": "api/handler.py", "source_location": "L12", "weight": 1.0},
+    {"source": "core_db", "target": "core_models_user", "relation": "imports", "context": "import", "confidence": "EXTRACTED", "source_file": "core/db.py", "source_location": "L2", "weight": 1.0}
+  ]
+}

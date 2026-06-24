@@ -1,0 +1,66 @@
+{
+  "_fixture": "mini-integration-record — a synthetic, internally-consistent integration-run-record/v1 that exercises every §A1 (§77) machinery invariant on the committed snapshot/ tree. NOT a real measurement. Used by _chat_validation.py §77 to prove the gates pass on a clean record AND to RED-confirm each flips under a one-field mutation; the real metered records land under validation/integration/runs/<repo>/ beside this fixture and are gated by the same §77.",
+  "schema": "deepinit-validation/integration-run-record/v1",
+  "program": "Real-engine integration suite",
+  "repo": { "name": "acme/widget", "pinned_sha": "0123456789abcdef0123456789abcdef01234567", "stack": "Go", "source_files": 20 },
+  "run": {
+    "mode": "blind", "profile": "thorough", "model": "test", "date": "2026-06-14",
+    "engine": "synthetic-fixture (one extractor per component, reads the real references/*.md; blind to the doc)",
+    "workflow_id": "wf_fixture", "graphify_used": false
+  },
+  "timing": { "wall_time_sec": 59.5, "started": "2026-06-14T10:00:00Z", "finished": "2026-06-14T10:01:00Z" },
+  "stages": [
+    { "stage": "detect",       "dt_sec": 5.0,  "tokens": 14000, "tool_uses": 6 },
+    { "stage": "plan",         "dt_sec": 1.0,  "tokens": 2500,  "tool_uses": 1 },
+    { "stage": "extract",      "dt_sec": 30.0, "tokens": 60000, "tool_uses": 40 },
+    { "stage": "review",       "dt_sec": 10.0, "tokens": 18000, "tool_uses": 8 },
+    { "stage": "adr_kl",       "dt_sec": 2.0,  "tokens": 4000,  "tool_uses": 2 },
+    { "stage": "issue_detect", "dt_sec": 4.0,  "tokens": 9000,  "tool_uses": 3 },
+    { "stage": "issue_raise",  "dt_sec": 1.0,  "tokens": 2000,  "tool_uses": 1 },
+    { "stage": "filter",       "dt_sec": 0.5,  "tokens": 800,   "tool_uses": 0 },
+    { "stage": "redact",       "dt_sec": 0.5,  "tokens": 600,   "tool_uses": 0 },
+    { "stage": "verify",       "dt_sec": 3.0,  "tokens": 5000,  "tool_uses": 4 },
+    { "stage": "emit",         "dt_sec": 2.0,  "tokens": 4000,  "tool_uses": 2 },
+    { "stage": "horizontal",   "dt_sec": 0.5,  "tokens": 1500,  "tool_uses": 1 },
+    { "stage": "report",       "dt_sec": 0.0,  "tokens": 0,     "tool_uses": 0 }
+  ],
+  "artifacts": {
+    "snapshot_dir": "tests-fixtures-v1/mini-integration-record/snapshot",
+    "hashes_file": null,
+    "files": {
+      "CLAUDE.md": "13773ca8402a50137bc0ef1869c25ae270096bf4303d92d5d7ceeb2a0446ff4f",
+      "src/sched/scheduler.go": "a5704e4b7c8f8be8b545099fe0b5ac22357be892d30dc542a6c2871fe83909ee"
+    },
+    "manifest_present": false
+  },
+  "pipeline_result": {
+    "components": 3, "verification_checked": 5, "verification_resolved": 5, "verification_refuted": 0,
+    "issues_fired": 0, "suppressions_named": 2
+  },
+  "citation_resolution": {
+    "checked": 1, "resolved": 1, "broken": 0, "rate": 1.0, "shifting_warned": 0,
+    "source": "tools/verify_citations.verify"
+  },
+  "independent_validation": {
+    "validated_by": "tools/audit_integration_run.py (separation of duties — NOT the emitting agent)",
+    "sarif_valid_v210": true, "sarif_refint_ok": true, "sarif_rules": 9, "sarif_results": 0,
+    "dashboard_self_contained": true, "dashboard_external_refs": 0,
+    "agents_md_owned_region": true, "agents_md_issue_leak": false,
+    "manifest_valid": true, "redaction_clean": true
+  },
+  "cost_ref": { "ledger": "validation/cost/_schema-example-ledger.json", "harness_section": "§33" },
+  "coverage_ref": { "record": "validation/coverage/results/_fixture-placeholder.json", "harness_section": "§34" },
+  "expectations": {
+    "coverage_floor_wilson95_lb": 0.20, "faithfulness_floor": 1.0, "citation_resolution_floor": 1.0,
+    "deepinit_wrong_high_max": 0, "components_min": 1
+  },
+  "provenance": {
+    "doc_in_inputs": false, "key_held_out": true, "publishable": "indicative", "harness_section": "§77",
+    "caveats": [
+      "INDICATIVE — small-n, fuzzy truth, below any ship-gate",
+      "attribution-adjudicated — divergences resolved to CODE, not auto-scored",
+      "doc-bounded — agreement with a good human doc, not absolute completeness",
+      "§18 (9/9, FP 0) stays the product headline"
+    ]
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "fixture": "mini-if5-cochange",
+  "purpose": "IF-5 change-coupling: a co-change-only file pair with no structural edge surfaces as hidden coupling; a co-change pair WITH an import edge is suppressed; the co-change-only pair does NOT also emit IF-3a; churn/bus-factor/coverage inputs make the priority ranking testable.",
+  "expected_issues": [
+    {
+      "family": "IF-5",
+      "file": "src/checkout/cart.js",
+      "line": 10,
+      "severity": "High",
+      "certainty": "LOW",
+      "claim": "Possible hidden (change-coupling) dependency: src/checkout/cart.js and src/billing/tax.js co-change in 4 of the last 6 months' commits with no import or structural edge between them — likely an undeclared coupling via the duplicated high-value cutoff (cart.js HIGH_VALUE_ORDER_CENTS = tax.js HIGH_VALUE_CENTS = 25000); changing one without the other may silently break the policy.",
+      "evidence": "Co-change support 4 (>= threshold 3) in cochange.json commits a1,a2,a3,a4; no structural edge in cochange.json structural_edges (neither file requires the other); the synced constant is at src/checkout/cart.js:10 (HIGH_VALUE_ORDER_CENTS = 25000) and src/billing/tax.js:8 (HIGH_VALUE_CENTS = 25000). Blast radius = {checkout, billing}. Severity High because both files are criticality Core; certainty LOW per the flag-don't-assert / suppression-biased polarity (temporal-only signal)."
+    }
+  ],
+  "expected_ranking": {
+    "_note": "IF-5 job 1 — priority = f(severity, criticality[Core up], churn up, bus_factor[low up], coverage[low up]); NOT a churn-only sort. The hidden-coupling issue sits in checkout/billing, both Core, both bus_factor=1, both ~0% coverage, high churn => top priority. Asserts ranking honors criticality x churn x bus-factor x coverage, not churn alone.",
+    "expected_top_priority_zone": ["src/billing/tax.js", "src/checkout/cart.js"],
+    "rationale": "tax.js (Core, churn 142, bus_factor 1, coverage 0%) and cart.js (Core, churn 118, bus_factor 1, coverage 12%) outrank the orders pair (Supporting, lower churn, bus_factor 2, ~80% coverage) even though the orders files also co-change — confirming the rank is not churn-only and weights criticality + bus-factor + coverage."
+  },
+  "must_not_fire": [
+    {
+      "family": "IF-5",
+      "file": "src/orders/order.service.js",
+      "reason": "src/orders/order.service.js and src/orders/order.repository.js co-change in 4 commits (b1-b4, support 4 >= threshold 3) — a naive co-change-only detector WOULD flag them — but there IS a structural import edge (src/orders/order.service.js:8 require('./order.repository')). The spec requires hidden-coupling to fire ONLY when there is NO structural edge; this is legitimate, expected coupling explained by the import, so IF-5 must suppress it."
+    },
+    {
+      "family": "IF-5",
+      "file": "src/catalog/product.service.js",
+      "reason": "src/catalog/product.service.js and src/checkout/cart.js share only 1 commit (c2), below the support threshold of 3, AND have a structural edge (src/checkout/cart.js:6 require('../catalog/product.service')). It fails the co-change threshold and is structurally connected, so it must not be raised as hidden coupling."
+    },
+    {
+      "family": "IF-3a",
+      "file": "src/checkout/cart.js",
+      "reason": "The cart.js<->tax.js pair is co-change-only (temporal). IF-3a fires only on a NAMED shared resource (a DB table / global / singleton / file / queue) read or written by >=2 components with no interface. These two files share only a duplicated literal value (25000), not a named shared resource — there is no shared table, module, global, or queue. Per the IF-5/IF-3a non-double-emit guard, a co-change-only pair with no shared resource surfaces as IF-5 ONLY and must NOT also emit IF-3a."
+    }
+  ]
+}

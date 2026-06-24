@@ -1,0 +1,17 @@
+{
+  "name": "mini-if3a-coupling",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Fixture: two components silently coupled through a shared DB table",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.10.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.10.0",
+    "typescript": "^5.4.0"
+  }
+}

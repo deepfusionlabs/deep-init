@@ -1,0 +1,601 @@
+{
+  "schema": "deepinit-validation/coverage-record/v1",
+  "program": " —  (Mirror held-out scale-up: obscure + stack-diverse, Graphify path)",
+  "milestone": "/B2 held-out datapoint",
+  "test_plan_run": "",
+  "scored_date": "2026-06-13",
+  "repo": {
+    "name": "mozilla/uniffi-rs",
+    "url": "https://github.com/mozilla/uniffi-rs",
+    "pinned_sha": "c6c518fd49525a2fb69e2b7e2f181d877ee6a570",
+    "stack": "Rust (FFI bindings generator)",
+    "license": "see repo"
+  },
+  "run": {
+    "engine_proxy": "isolated-subagent workflow (curator ≠ blind-engine ≠ scorer; )",
+    "graphify_path": true,
+    "m5_fix_injected": true,
+    "split": "held-out"
+  },
+  "identity": {
+    "split": "held-out",
+    "contamination": "moderate"
+  },
+  "reference_doc": {
+    "path": "docs/adr/",
+    "type": "numbered-ADRs",
+    "currency_score": 1
+  },
+  "reference_key": {
+    "key_path": "validation/coverage/_reference_keys/uniffi-rs.json",
+    "key_sha256": "301ab8e8f822fbecdd11f9d1a94224bb71ccdb8e6e9df1a3e0b2ca948d4841ac",
+    "held_out": true,
+    "rc_total_extracted": 11,
+    "rc_current": 10,
+    "rc_stale_dropped": 0,
+    "rc_unverifiable_dropped": 1
+  },
+  "reference_claims": [
+    {
+      "rc_id": "RC-001",
+      "kind": "technology-choice",
+      "text": "uniffi is a custom-built tool (Option D, not SWIG/Djinni/wasm-bindgen) that auto-generates the FFI layer and foreign-language bindings for Rust components, rather than hand-writing them.",
+      "code_anchor": "uniffi_bindgen/src/lib.rs:1 (crate doc: 'a multi-language bindings generator for rust'); uniffi_bindgen/src/lib.rs:320 (generate_external_bindings)",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-002",
+      "kind": "technology-choice",
+      "text": "The interface/API is described using WebIDL-derived UDL, parsed with the weedle WebIDL parser crate.",
+      "code_anchor": "uniffi_udl/src/lib.rs:25 (pub fn parse_udl); uniffi_udl/Cargo.toml:15 (weedle2 = { version = \"5.0.0\", path = \"../weedle2\" }); weedle2/src/lib.rs",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-003",
+      "kind": "entry-point",
+      "text": "Developers run a manual command-line tool, uniffi-bindgen, to generate bindings (Option E: a tool you run by hand, not deep build-script integration).",
+      "code_anchor": "uniffi/src/cli/uniffi_bindgen.rs:51 (#[clap(name = \"uniffi-bindgen\")]); uniffi/src/cli/uniffi_bindgen.rs:168 (pub fn run_main); uniffi/src/cli/mod.rs:8 (pub fn uniffi_bindgen_main)",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-004",
+      "kind": "key-invariant",
+      "text": "Complex datatypes are passed across the FFI by serializing them into a byte buffer (RustBuffer) using a simple direct serialization scheme, rather than passing #[repr(C)] structs directly or using Protocol Buffers.",
+      "code_anchor": "uniffi_core/src/ffi/rustbuffer.rs:53 (pub struct RustBuffer); uniffi_core/src/ffi_converter_traits.rs:82 (doc: 'we currently recommend using RustBuffer and serializing the data for transfer'); uniffi_core/src/ffi_converter_traits.rs:118 (fn write), :132 (fn try_read)",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-005",
+      "kind": "key-invariant",
+      "text": "Every Rust struct/object wrapped by uniffi must be Send+Sync; uniffi no longer adds a hidden mutex to make non-Send+Sync interfaces threadsafe (the [Threadsafe] opt-in attribute was made the default and then removed).",
+      "code_anchor": "uniffi_core/src/ffi_converter_traits.rs:155 (pub unsafe trait FfiConverterArc<UT>: Send + Sync); grep: 'Threadsafe' absent from all source crates (uniffi_udl/src, uniffi_bindgen/src, uniffi_macros/src, uniffi_core/src, uniffi_meta/src)",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-006",
+      "kind": "boundary-rule",
+      "text": "Object instances are passed across the FFI as raw pointers to Rust's standard-library Arc<T> (via Arc::into_raw / Arc::from_raw), replacing the previous ffi-support HandleMap object store.",
+      "code_anchor": "uniffi_core/src/ffi/handle.rs:60 (from_arc -> Arc::into_raw), :71 (into_arc -> Arc::from_raw); uniffi_core/src/ffi_converter_traits.rs:183 (unsafe impl FfiConverter for Arc<T>); grep: 'ffi-support'/'HandleMap' absent from uniffi_core & uniffi crate object store",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-007",
+      "kind": "component-role",
+      "text": "FFI conversion is handled by a generic FfiConverter<UT> trait (with a per-consumer-crate UniFfiTag generic parameter) implemented in Rust, replacing the old non-generic ViaFfi trait and eliminating the lift_rs/lower_rs/read_rs/write_rs template filter functions.",
+      "code_anchor": "uniffi_core/src/ffi_converter_traits.rs:76 (pub unsafe trait FfiConverter<UT>); uniffi_core/src/ffi_converter_traits.rs:39 (doc: 'FfiConverter has a generic parameter, that's filled in with a type local to the UniFFI consumer crate'); grep: 'trait ViaFfi' absent from uniffi_core/uniffi_bindgen Rust traits",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-008",
+      "kind": "boundary-rule",
+      "text": "Binding generators can be implemented in separate/third-party crates via a public BindingGenerator trait (with an associated Config type and a write_bindings method) and the generate_external_bindings entry point, while the core kotlin/python/ruby/swift bindings still live in uniffi_bindgen.",
+      "code_anchor": "uniffi_bindgen/src/lib.rs:150 (pub trait BindingGenerator { type Config; ... fn write_bindings }); uniffi_bindgen/src/lib.rs:320 (pub fn generate_external_bindings<T: BindingGenerator>); uniffi_bindgen/src/bindings/mod.rs:16-19 (kotlin/python/ruby/swift)",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-010",
+      "kind": "component-role",
+      "text": "Remote types (types defined in 3rd-party crates) are exposed to uniffi via the #[uniffi::remote(<kind>)] attribute proc-macro, which generates the same FFI scaffolding a #[derive(uniffi::Kind)] would but for a type the user cannot annotate directly (Option 1).",
+      "code_anchor": "uniffi_macros/src/lib.rs:170 (pub fn remote attribute macro); uniffi_macros/src/lib.rs:161-167 (doc: 'remote() generates the same code that #[derive(uniffi::<kind>)] would ... Use this to wrap the definition of an item defined in a remote crate')",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-011",
+      "kind": "component-exists",
+      "text": "There are two co-equal API-definition paths into uniffi: the external UDL file (parsed to metadata) and proc-macros that annotate the Rust code directly; both feed a shared ComponentInterface built from metadata.",
+      "code_anchor": "uniffi_udl/src/lib.rs:25 (parse_udl -> MetadataGroup); uniffi_bindgen/src/macro_metadata/mod.rs (proc-macro metadata extraction); uniffi_bindgen/src/lib.rs:521 (ComponentInterface::from_metadata(group))",
+      "currency": "CURRENT",
+      "load_bearing": true
+    }
+  ],
+  "emitted_claims": [
+    {
+      "ec_id": "EC-01",
+      "kind": "technology-choice",
+      "claim": "The project is a Rust Cargo workspace (multi-crate) that generates foreign-language FFI bindings (Kotlin, Swift, Python, Ruby) for Rust components; the umbrella crate re-exports the other crates behind cargo features.",
+      "code_anchor": "uniffi/src/lib.rs:6"
+    },
+    {
+      "ec_id": "EC-02",
+      "kind": "component-exists",
+      "claim": "`uniffi` is the umbrella/facade crate that consumers depend on; it re-exports uniffi_core, uniffi_macros, and (feature-gated) uniffi_bindgen, uniffi_build and the CLI.",
+      "code_anchor": "uniffi/src/lib.rs:6"
+    },
+    {
+      "ec_id": "EC-03",
+      "kind": "component-role",
+      "claim": "`uniffi` aggregates the runtime, proc-macros, build helper, and bindings generator into one public surface; `pub use uniffi_core::*` and `pub use uniffi_macros::*` plus feature-gated `pub use uniffi_bindgen::...` make it the single dependency for component authors.",
+      "code_anchor": "uniffi/src/lib.rs:6"
+    },
+    {
+      "ec_id": "EC-04",
+      "kind": "component-exists",
+      "claim": "`uniffi_bindgen` is the binding-generator crate: it parses the interface, builds a ComponentInterface, and emits foreign-language source for each target language.",
+      "code_anchor": "uniffi_bindgen/src/lib.rs:105"
+    },
+    {
+      "ec_id": "EC-05",
+      "kind": "component-role",
+      "claim": "`uniffi_bindgen` orchestrates the full bindgen pipeline (parse UDL / extract library metadata -> ComponentInterface -> per-language code generation); the public `generate` dispatches to the Kotlin/Swift/Python/Ruby backends under bindings/.",
+      "code_anchor": "uniffi_bindgen/src/bindings/mod.rs:47"
+    },
+    {
+      "ec_id": "EC-06",
+      "kind": "component-exists",
+      "claim": "`uniffi_core` is the runtime support crate linked into every generated component; it provides the data-transfer primitives used across the C-style FFI boundary.",
+      "code_anchor": "uniffi_core/src/lib.rs:5"
+    },
+    {
+      "ec_id": "EC-07",
+      "kind": "component-role",
+      "claim": "`uniffi_core` defines the FfiConverter trait family (lower/lift/read/write/lower_return) plus RustBuffer, Handle, and rust-future runtime that the generated scaffolding calls to marshal values over the FFI.",
+      "code_anchor": "uniffi_core/src/ffi_converter_traits.rs:5"
+    },
+    {
+      "ec_id": "EC-08",
+      "kind": "component-exists",
+      "claim": "`uniffi_macros` is the proc-macro crate providing the user-facing attributes/derives (#[export], setup_scaffolding!, derive(Record/Enum/Object/Error), custom types).",
+      "code_anchor": "uniffi_macros/src/lib.rs:52"
+    },
+    {
+      "ec_id": "EC-09",
+      "kind": "component-role",
+      "claim": "`uniffi_macros` expands user annotations into scaffolding: #[export] and the derives generate extern-C functions and encode uniffi_meta::Metadata into exported symbols for later extraction by the bindgen.",
+      "code_anchor": "uniffi_macros/src/lib.rs:76"
+    },
+    {
+      "ec_id": "EC-10",
+      "kind": "component-exists",
+      "claim": "`uniffi_meta` is the shared metadata model crate (Metadata, MetadataGroup, Type, checksums) used by both the macro/runtime side and the bindgen side.",
+      "code_anchor": "uniffi_meta/src/lib.rs:12"
+    },
+    {
+      "ec_id": "EC-11",
+      "kind": "component-role",
+      "claim": "`uniffi_meta` is the canonical interface-metadata representation and serialization/grouping layer: it exposes create_metadata_groups/group_metadata, the metadata reader, the Type model, and the Checksum trait used to fingerprint the interface.",
+      "code_anchor": "uniffi_meta/src/lib.rs:13"
+    },
+    {
+      "ec_id": "EC-12",
+      "kind": "component-exists",
+      "claim": "`uniffi_udl` parses .udl (WebIDL-flavored) interface definition files into a uniffi_meta::MetadataGroup.",
+      "code_anchor": "uniffi_udl/src/lib.rs:25"
+    },
+    {
+      "ec_id": "EC-13",
+      "kind": "component-role",
+      "claim": "`uniffi_udl` is the UDL front-end: its single entry point parse_udl collects weedle WebIDL definitions and converts them into uniffi_meta metadata for the bindgen to consume.",
+      "code_anchor": "uniffi_udl/src/collectors.rs:15"
+    },
+    {
+      "ec_id": "EC-14",
+      "kind": "component-exists",
+      "claim": "`weedle2` is a standalone WebIDL grammar parser (a fork of weedle) producing a Definitions AST.",
+      "code_anchor": "weedle2/src/lib.rs:1"
+    },
+    {
+      "ec_id": "EC-15",
+      "kind": "component-role",
+      "claim": "`weedle2` provides the low-level nom-based WebIDL tokenizer/parser that uniffi_udl builds on to turn .udl text into structured definitions.",
+      "code_anchor": "weedle2/src/lib.rs:24"
+    },
+    {
+      "ec_id": "EC-16",
+      "kind": "component-exists",
+      "claim": "`uniffi_pipeline` provides the generic IR pipeline framework (Pipeline, Node, MapNode, PrintOptions) used to transform interface IR through ordered passes.",
+      "code_anchor": "uniffi_pipeline/src/lib.rs:12"
+    },
+    {
+      "ec_id": "EC-17",
+      "kind": "component-role",
+      "claim": "`uniffi_pipeline` is the pass-based transformation engine: it exposes new_pipeline/Pipeline/PipelineRecorder and re-exports the Node/MapNode derives, driving the staged 'initial -> general -> language' IR lowering used by the Python bindings pipeline.",
+      "code_anchor": "uniffi_pipeline/src/lib.rs:12"
+    },
+    {
+      "ec_id": "EC-18",
+      "kind": "component-exists",
+      "claim": "`uniffi_build` is the thin build-script helper crate consumers call from build.rs to generate Rust scaffolding from a UDL file.",
+      "code_anchor": "uniffi_build/src/lib.rs:22"
+    },
+    {
+      "ec_id": "EC-19",
+      "kind": "component-role",
+      "claim": "`uniffi_build::generate_scaffolding` is the build-time bridge: it emits cargo rerun-if-changed directives and delegates to uniffi_bindgen::generate_component_scaffolding, writing <stem>.uniffi.rs into $OUT_DIR for include!().",
+      "code_anchor": "uniffi_build/src/lib.rs:22"
+    },
+    {
+      "ec_id": "EC-20",
+      "kind": "component-exists",
+      "claim": "`uniffi_internal_macros` is an internal proc-macro crate providing the Checksum, Node, and MapNode derives.",
+      "code_anchor": "uniffi_internal_macros/src/lib.rs:13"
+    },
+    {
+      "ec_id": "EC-21",
+      "kind": "component-role",
+      "claim": "`uniffi_internal_macros` supplies the derive machinery (Checksum for interface fingerprinting, Node/MapNode for pipeline IR nodes) consumed by uniffi_meta and uniffi_pipeline.",
+      "code_anchor": "uniffi_internal_macros/src/lib.rs:18"
+    },
+    {
+      "ec_id": "EC-22",
+      "kind": "component-exists",
+      "claim": "`uniffi_testing` is a support crate for the foreign-language testing harness.",
+      "code_anchor": "uniffi_macros/src/lib.rs:53"
+    },
+    {
+      "ec_id": "EC-23",
+      "kind": "entry-point",
+      "claim": "The `uniffi-bindgen` CLI is the primary developer entry point; its main runs clap-parsed subcommands Generate / Scaffolding / Pipeline.",
+      "code_anchor": "uniffi/src/cli/uniffi_bindgen.rs:168"
+    },
+    {
+      "ec_id": "EC-24",
+      "kind": "entry-point",
+      "claim": "CLI startup: `uniffi_bindgen_main` calls cli::uniffi_bindgen::run_main and exits(1) on error; the binary wires the library's run_main to process exit handling.",
+      "code_anchor": "uniffi/src/cli/mod.rs:8"
+    },
+    {
+      "ec_id": "EC-25",
+      "kind": "entry-point",
+      "claim": "The `Generate` subcommand is the main workflow: it builds GenerateOptions (languages, out_dir, source, crate filter, metadata_no_deps) and calls bindings::generate, requiring at least one --language.",
+      "code_anchor": "uniffi/src/cli/uniffi_bindgen.rs:171"
+    },
+    {
+      "ec_id": "EC-26",
+      "kind": "entry-point",
+      "claim": "Library-mode generation startup-workflow: find_components inspects a built cdylib, extracts uniffi metadata from exported symbols, groups it, loads UDL per crate, and builds one ComponentInterface per crate before code generation.",
+      "code_anchor": "uniffi_bindgen/src/library_mode.rs:121"
+    },
+    {
+      "ec_id": "EC-27",
+      "kind": "dependency-edge",
+      "claim": "`uniffi_bindgen` depends on `uniffi_meta` for the metadata model (create_metadata_groups, group_metadata, Metadata, MetadataGroup, NamespaceMetadata).",
+      "code_anchor": "uniffi_bindgen/src/library_mode.rs:26"
+    },
+    {
+      "ec_id": "EC-28",
+      "kind": "dependency-edge",
+      "claim": "`uniffi_bindgen` depends on `uniffi_udl`: parse_udl is invoked to turn .udl source into a MetadataGroup during both single-file and library-mode generation.",
+      "code_anchor": "uniffi_bindgen/src/lib.rs:520"
+    },
+    {
+      "ec_id": "EC-29",
+      "kind": "dependency-edge",
+      "claim": "`uniffi_udl` depends on `weedle2` (the WebIDL parser); the structural graph's reverse edge (weedle2 imports_from uniffi_udl) is a symbol-attribution artifact — uniffi_udl's collectors consume weedle definitions, not vice versa.",
+      "code_anchor": "uniffi_udl/src/collectors.rs:15"
+    },
+    {
+      "ec_id": "EC-30",
+      "kind": "dependency-edge",
+      "claim": "`uniffi_meta` depends on `uniffi_pipeline` (Node, MapNode) and `uniffi_internal_macros` (Checksum derive), tying the metadata model to the pipeline IR and the checksum machinery.",
+      "code_anchor": "uniffi_meta/src/lib.rs:6"
+    },
+    {
+      "ec_id": "EC-31",
+      "kind": "dependency-edge",
+      "claim": "`uniffi_build` depends on `uniffi_bindgen`: generate_scaffolding delegates straight to uniffi_bindgen::generate_component_scaffolding.",
+      "code_anchor": "uniffi_build/src/lib.rs:27"
+    },
+    {
+      "ec_id": "EC-32",
+      "kind": "dependency-edge",
+      "claim": "`uniffi` (umbrella) depends on and re-exports uniffi_bindgen behind the `bindgen` feature, exposing generate, generate_bindings, library_mode generation, and TargetLanguage.",
+      "code_anchor": "uniffi/src/lib.rs:15"
+    },
+    {
+      "ec_id": "EC-33",
+      "kind": "key-invariant",
+      "claim": "Version contract: the generated scaffolding and the linked runtime MUST be the exact same uniffi version; check_compatible_version does a byte-by-byte equality of PACKAGE_VERSION vs the bindgen version, enforced at compile time, and is hard-capped to versions shorter than 10 bytes (a static_assert backs the unrolled loop).",
+      "code_anchor": "uniffi_core/src/lib.rs:117"
+    },
+    {
+      "ec_id": "EC-34",
+      "kind": "key-invariant",
+      "claim": "UNIFFI_CONTRACT_VERSION (currently 30) is the ABI/metadata contract number that MUST match the minor version of the uniffi crate; it gates compatibility between generated bindings and the metadata reader.",
+      "code_anchor": "uniffi_meta/src/lib.rs:28"
+    },
+    {
+      "ec_id": "EC-35",
+      "kind": "key-invariant",
+      "claim": "Object identity/ownership across the FFI uses opaque u64 Handles with a low-bit tagging invariant: 0 is always invalid, the lowest bit is ALWAYS set for foreign-side handles and NEVER set for Rust handles (Rust handles are leaked, pointer-aligned > 1), so is_foreign() can distinguish ownership.",
+      "code_anchor": "uniffi_core/src/ffi/handle.rs:34"
+    },
+    {
+      "ec_id": "EC-36",
+      "kind": "key-invariant",
+      "claim": "FFI lift/lower must round-trip: try_lift reconstructs a value from a RustBuffer and then asserts the buffer is fully consumed, bailing with 'junk data left in buffer' if any bytes remain — enforcing exact serialization symmetry between Rust and the foreign side.",
+      "code_anchor": "uniffi_core/src/lib.rs:214"
+    },
+    {
+      "ec_id": "EC-37",
+      "kind": "key-invariant",
+      "claim": "FfiConverter and its sub-traits are unsafe to implement: a buggy impl can violate assumptions baked into generated code or desync from the foreign binding, so they are intended only for generated code, not direct use.",
+      "code_anchor": "uniffi_core/src/ffi_converter_traits.rs:44"
+    },
+    {
+      "ec_id": "EC-38",
+      "kind": "key-invariant",
+      "claim": "Only one UDL file is supported per crate: load_udl_metadata bails if more than one UdlFile metadata item is found, and bails if the UDL's module_path does not equal the crate name.",
+      "code_anchor": "uniffi_bindgen/src/library_mode.rs:192"
+    },
+    {
+      "ec_id": "EC-39",
+      "kind": "key-invariant",
+      "claim": "crate_name resolution rule: the lib crate name is taken from Cargo.toml [lib].name, falling back to package.name with hyphens replaced by underscores; this name keys metadata grouping and UDL matching.",
+      "code_anchor": "uniffi_bindgen/src/lib.rs:478"
+    },
+    {
+      "ec_id": "EC-40",
+      "kind": "boundary-rule",
+      "claim": "Each language backend is isolated behind a uniform dispatch boundary: bindings::generate matches TargetLanguage and routes to the per-language swift/kotlin/python/ruby generate function, so backends do not call each other.",
+      "code_anchor": "uniffi_bindgen/src/bindings/mod.rs:72"
+    },
+    {
+      "ec_id": "EC-41",
+      "kind": "boundary-rule",
+      "claim": "A VisitMut trait defines the per-language naming-adjustment boundary: each language oracle implements visit_record/visit_object/visit_enum/etc to apply language-specific naming to a ComponentInterface, keeping language conventions out of the shared interface model.",
+      "code_anchor": "uniffi_bindgen/src/lib.rs:186"
+    },
+    {
+      "ec_id": "EC-42",
+      "kind": "boundary-rule",
+      "claim": "uniffi_core is layered to depend on nothing else in the workspace (no intra-workspace imports) — it is the leaf runtime; the umbrella and bindgen depend on it, never the reverse, keeping the runtime free of generator/parser concerns.",
+      "code_anchor": "uniffi_core/src/lib.rs:79"
+    },
+    {
+      "ec_id": "EC-43",
+      "kind": "data-store",
+      "claim": "There is no database or persistent datastore; the central in-memory data model is ComponentInterface, which holds the complete high-level API (enums, records, functions, objects, custom types, callback interfaces) plus the low-level FFI contract for a component.",
+      "code_anchor": "uniffi_bindgen/src/interface/mod.rs:93"
+    },
+    {
+      "ec_id": "EC-44",
+      "kind": "data-store",
+      "claim": "Interface metadata is persisted by embedding it as encoded bytes inside the compiled library's exported symbols; macro_metadata::extract_from_library reads those symbols back out (ELF/PE/Mach/Archive/COFF) to reconstruct the interface — the library file itself is the metadata store.",
+      "code_anchor": "uniffi_bindgen/src/macro_metadata/extract.rs:23"
+    },
+    {
+      "ec_id": "EC-45",
+      "kind": "technology-choice",
+      "claim": "Foreign code is emitted via askama templates: per-language template files (.kt/.swift/.py/.rb) under each backend's templates/ directory render the bindings, and askama errors are bridged via to_askama_error.",
+      "code_anchor": "uniffi_bindgen/src/lib.rs:592"
+    },
+    {
+      "ec_id": "EC-46",
+      "kind": "technology-choice",
+      "claim": "The CLI is built on clap (derive API) with subcommands and ValueEnum target languages; the bindgen reads config from TOML (uniffi.toml) with a recursive merge_toml override mechanism.",
+      "code_anchor": "uniffi/src/cli/uniffi_bindgen.rs:6"
+    },
+    {
+      "ec_id": "EC-47",
+      "kind": "technology-choice",
+      "claim": "Binary metadata extraction uses the `goblin` crate to parse all major object formats (ELF, PE, Mach-O, Archive, COFF), making library-mode generation cross-platform.",
+      "code_anchor": "uniffi_bindgen/src/macro_metadata/extract.rs:8"
+    },
+    {
+      "ec_id": "EC-48",
+      "kind": "technology-choice",
+      "claim": "A newer pass-based IR pipeline (pipeline/initial + pipeline/general) coexists with the legacy template path; the Pipeline subcommand exposes it but only Python is wired (other languages unimplemented!() in the IR pipeline path).",
+      "code_anchor": "uniffi/src/cli/uniffi_bindgen.rs:226"
+    },
+    {
+      "ec_id": "EC-49",
+      "kind": "key-invariant",
+      "claim": "In library mode every ComponentInterface is given a clone of every other ComponentInterface (including itself) so cross-crate external types can be resolved; the code acknowledges this is O(n^2) copies but accepted for correctness.",
+      "code_anchor": "uniffi_bindgen/src/library_mode.rs:78"
+    },
+    {
+      "ec_id": "EC-50",
+      "kind": "dependency-edge",
+      "claim": "Workspace fixtures/examples depend on uniffi_bindgen (Bindings) to drive generated-binding tests; the graph records fixtures and uniffi importing the `Bindings` symbol from uniffi_bindgen.",
+      "code_anchor": "uniffi_bindgen/src/bindings/mod.rs:5"
+    }
+  ],
+  "adjudication": [
+    {
+      "rc_id": "RC-001",
+      "bucket": "MATCH",
+      "rc_kind": "technology-choice",
+      "ec_id": "EC-01",
+      "ec_kind": "technology-choice",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "Custom bindings/scaffolding-generator tool fact captured by EC-01/04/23 (the repo IS the FFI+bindings generator for Rust components, run via uniffi-bindgen). No third-party-generator confusion. Fact-keyed MATCH."
+    },
+    {
+      "rc_id": "RC-002",
+      "bucket": "MATCH",
+      "rc_kind": "technology-choice",
+      "ec_id": "EC-12",
+      "ec_kind": "technology-choice",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "UDL=WebIDL-flavored parsed via weedle captured by EC-12/13 (uniffi_udl parse_udl) + EC-14/15 (weedle2 = forked WebIDL parser, Definitions AST). Verified parse_udl at uniffi_udl/src/lib.rs:25, weedle2 dep in Cargo.toml:15."
+    },
+    {
+      "rc_id": "RC-003",
+      "bucket": "MATCH",
+      "rc_kind": "entry-point",
+      "ec_id": "EC-23",
+      "ec_kind": "entry-point",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "Manual hand-run uniffi-bindgen CLI captured by EC-23/24/25 (clap-based CLI, run_main, uniffi_bindgen_main, Generate subcommand). Verified clap(name=uniffi-bindgen) + run_main."
+    },
+    {
+      "rc_id": "RC-004",
+      "bucket": "MATCH",
+      "rc_kind": "key-invariant",
+      "ec_id": "EC-36",
+      "ec_kind": "key-invariant",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "Complex types serialized into RustBuffer (vs repr(C)) captured by EC-07 (FfiConverter+RustBuffer marshalling) and EC-36 (try_lift from RustBuffer, write/try_read serialization symmetry, junk-data-left check). Verified FfiConverter doc recommending RustBuffer serialization."
+    },
+    {
+      "rc_id": "RC-005",
+      "bucket": "MISS",
+      "rc_kind": "key-invariant",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": true,
+      "note": "No EC states the Send+Sync requirement on wrapped objects / [Threadsafe]-removed / no-hidden-mutex invariant. EC-37 covers FfiConverter unsafe-to-implement but not the Send+Sync bound. Referent ffi_converter_traits.rs:155 (FfiConverterArc: Send+Sync) WAS in the blind read-set (EC-07 cites :5, EC-37 cites :44) -> miss_referent_read=true."
+    },
+    {
+      "rc_id": "RC-006",
+      "bucket": "MATCH",
+      "rc_kind": "boundary-rule",
+      "ec_id": "EC-35",
+      "ec_kind": "boundary-rule",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "Objects passed as raw Arc pointers captured by EC-35 (opaque u64 Handle, Rust handles = leaked pointer-aligned Arc pointers, is_foreign distinguishes ownership) + EC-07 (Handle). Verified Handle::from_arc->Arc::into_raw / into_arc->Arc::from_raw, FfiConverter for Arc<T>. The historical 'replaced ffi-support HandleMap' detail is absent but the current Arc-pointer-handle fact is captured."
+    },
+    {
+      "rc_id": "RC-007",
+      "bucket": "MATCH",
+      "rc_kind": "component-role",
+      "ec_id": "EC-07",
+      "ec_kind": "component-role",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "FfiConverter<UT> generic trait doing FFI conversion in Rust captured by EC-07 (FfiConverter trait family lower/lift/read/write) + EC-37 (unsafe, generated-code-only). Verified pub unsafe trait FfiConverter<UT> with consumer-local UT param. The 'replaced ViaFfi / no template filter funcs' historical contrast is implied but not stated; the live fact is captured."
+    },
+    {
+      "rc_id": "RC-008",
+      "bucket": "MISS",
+      "rc_kind": "boundary-rule",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": true,
+      "note": "No EC mentions the public BindingGenerator trait or generate_external_bindings / external-third-party-generator extensibility. EC-04/05/40/41 describe only the 4 internal backends + their internal dispatch boundary. Referent uniffi_bindgen/src/lib.rs:150 WAS in the read-set (EC-04 cites :105, EC-28 cites :520) -> miss_referent_read=true."
+    },
+    {
+      "rc_id": "RC-010",
+      "bucket": "MISS",
+      "rc_kind": "component-role",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": true,
+      "note": "No EC names the #[uniffi::remote] attribute / remote-types handling. EC-08 lists derives+attributes (#[export], setup_scaffolding!, derive(Record/Enum/Object/Error), custom types) but not remote(). Referent uniffi_macros/src/lib.rs:170 WAS in the read-set (EC-08 cites :52, EC-09 cites :76) -> miss_referent_read=true."
+    },
+    {
+      "rc_id": "RC-011",
+      "bucket": "MATCH",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-26",
+      "ec_kind": "component-exists",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "Two co-equal API paths (UDL + proc-macros) both feeding a shared ComponentInterface via metadata captured by EC-26 (loads UDL per crate AND extracts uniffi metadata from exported symbols -> ComponentInterface per crate) + EC-12/13 (UDL->MetadataGroup) + EC-09 (macros encode Metadata for bindgen extraction) + EC-44 (library-symbol metadata store). Verified ComponentInterface::from_metadata + macro_metadata/ + parse_udl. Fact-keyed MATCH."
+    }
+  ],
+  "beyond_doc": {
+    "count": 30,
+    "note": "code-groundable ECs absent from the doc (NEUTRAL)"
+  },
+  "scores": {
+    "coverage_overall": {
+      "n": 7,
+      "d": 10,
+      "pct": 0.7,
+      "wilson95_lb": 0.3968
+    },
+    "coverage_by_kind": {
+      "technology-choice": {
+        "n": 2,
+        "d": 2
+      },
+      "entry-point": {
+        "n": 1,
+        "d": 1
+      },
+      "key-invariant": {
+        "n": 1,
+        "d": 2
+      },
+      "boundary-rule": {
+        "n": 1,
+        "d": 2
+      },
+      "component-role": {
+        "n": 1,
+        "d": 2
+      },
+      "component-exists": {
+        "n": 1,
+        "d": 1
+      }
+    },
+    "faithfulness": {
+      "n": 22,
+      "d": 22,
+      "pct": 1.0,
+      "wilson95_lb": 0.8513
+    },
+    "beyond_doc_count": 30,
+    "deepinit_wrong_high": 0
+  },
+  "scoring_provenance": {
+    "separation_of_duties": true,
+    "adversarial_refutation": "every deepinit_wrong refuted; 0 confirmed wrong+HIGH",
+    "fact_keyed": "MATCH ec_kind normalized to rc_kind (matcher authoritative)"
+  },
+  "provenance": {
+    "doc_in_inputs": false,
+    "key_held_out": true,
+    "training_contamination_caveat": true,
+    "publishable": "indicative",
+    "caveats": [
+      "INDICATIVE — small-n, fuzzy truth, below any ship-gate",
+      "attribution-adjudicated — divergences resolved to CODE, not auto-scored",
+      "doc-bounded — agreement with a good human doc, not absolute completeness",
+      "§18 (9/9, FP 0) stays the product headline"
+    ],
+    "tune_or_heldout": "held-out",
+    "harness_section": "§34"
+  },
+  "out_of_scope_rcs": [
+    {
+      "rc_id": "RC-009",
+      "kind": "key-invariant",
+      "text": "uniffi handles releasing the cross-FFI Arc reference automatically when the foreign object is destroyed (via the language's destructor/GC facility), but does NOT auto-implement a generic close()/Closable for resource closing; resource-closing is left to the component author (Option 1).",
+      "reason": "Referent (cross-FFI Arc auto-release on foreign destruction) not provably in the blind read-set → a scope caveat, excluded from the coverage denominator, NOT counted as a MISS ( protocol §2 / §34 G4)."
+    }
+  ]
+}

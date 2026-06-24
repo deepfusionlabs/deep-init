@@ -1,0 +1,43 @@
+{
+  "project": "mini-typescript",
+  "architecture": "Vertical Slices",
+  "tech_stack": ["TypeScript", "Express", "Prisma", "JWT", "bcrypt"],
+  "components": {
+    "auth": { "files": ["src/auth/auth.service.ts", "src/auth/auth.routes.ts"], "type": "domain" },
+    "products": { "files": ["src/products/product.service.ts", "src/products/product.routes.ts"], "type": "domain" },
+    "orders": { "files": ["src/orders/order.service.ts", "src/orders/order.routes.ts"], "type": "domain" },
+    "shared": { "files": ["src/shared/database.ts", "src/shared/middleware.ts", "src/shared/logger.ts"], "type": "infrastructure" }
+  },
+  "dependencies": {
+    "orders": ["auth", "products", "shared"],
+    "products": ["shared"],
+    "auth": ["shared"],
+    "shared": []
+  },
+  "business_rules": [
+    { "id": "BR-1", "rule": "Email must be unique", "file": "src/auth/auth.service.ts" },
+    { "id": "BR-2", "rule": "Password minimum 8 characters", "file": "src/auth/auth.service.ts" },
+    { "id": "BR-3", "rule": "Password hashed with bcrypt 12 rounds", "file": "src/auth/auth.service.ts" },
+    { "id": "BR-4", "rule": "JWT required for authenticated routes", "file": "src/shared/middleware.ts" },
+    { "id": "BR-5", "rule": "JWT expires after 24 hours", "file": "src/shared/middleware.ts" },
+    { "id": "BR-6", "rule": "Only admin can create products", "file": "src/products/product.routes.ts" },
+    { "id": "BR-7", "rule": "Product price must be positive", "file": "src/products/product.service.ts" },
+    { "id": "BR-8", "rule": "Product SKU must be unique", "file": "src/products/product.service.ts" },
+    { "id": "BR-9", "rule": "Stock cannot go below zero", "file": "src/products/product.service.ts" },
+    { "id": "BR-10", "rule": "Order total = sum of item price × quantity", "file": "src/orders/order.service.ts" },
+    { "id": "BR-11", "rule": "Minimum order total $1.00", "file": "src/orders/order.service.ts" },
+    { "id": "BR-12", "rule": "Only order owner can view their orders", "file": "src/orders/order.service.ts" },
+    { "id": "BR-13", "rule": "Rate limiting 100 req per 15 min per IP", "file": "src/index.ts" }
+  ],
+  "workflows": [
+    { "id": "WF-1", "name": "User registration", "steps": ["validate input", "check email unique", "hash password", "create user", "generate JWT"] },
+    { "id": "WF-2", "name": "User login", "steps": ["find by email", "verify password", "generate JWT"] },
+    { "id": "WF-3", "name": "Place order", "steps": ["validate user", "check stock per item", "calculate total", "create order", "deduct stock"] }
+  ],
+  "integration_points": [
+    { "id": "IP-1", "name": "Prisma database", "type": "data persistence", "file": "src/shared/database.ts" },
+    { "id": "IP-2", "name": "JWT library", "type": "authentication", "file": "src/shared/middleware.ts" },
+    { "id": "IP-3", "name": "bcrypt", "type": "password hashing", "file": "src/auth/auth.service.ts" },
+    { "id": "IP-4", "name": "Health check endpoint", "type": "monitoring", "file": "src/index.ts" }
+  ]
+}

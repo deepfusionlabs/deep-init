@@ -1,0 +1,102 @@
+{
+  "schema": "deepinit-validation/discovery-record/v1",
+  "program": "DeepInit in the Wild",
+  "track": "3 — recall/discovery (the NOVEL PARTIAL-BAN IF-8 datapoint: Elixir bans COMPILE-TIME dependency cycles but PERMITS runtime-call cycles → IF-8 silent on the compile-time graph, FIRES on the runtime graph; + a security-relevant IF-6 divergent value-set; + IF-3a ETS/persistent_term couplings)",
+  "shape": "A+B — the richest fired-family set in the batch: IF-8 FIRED (a channel↔socket RUNTIME-call cycle) + IF-6 FIRED (the @invalid_local_url_chars open-redirect/path blocklist diverges between controller and endpoint) + IF-3a FIRED ×2 (a Phoenix.Config ETS table + an Endpoint persistent_term, read directly across components) + IF-10/IF-7c silent. 4 genuine fires (all GATED) + 52 named suppressions / 0 false defects. Elixir is the missing MIDDLE of the IF-8 spectrum: a PARTIAL ban (compile-time cycles structurally impossible, runtime cycles permitted).",
+  "recorded": "2026-06-13",
+  "engine_proxy": "deterministic-detector-sweep (5 read-only agents via the generalized cross-language sweep harness; NOT a full Detect→Emit pipeline; no cost ledger). Build chain:  (5 agents, ~287k tokens). MAIN-LOOP VERIFICATION: the IF-8 compile-time-vs-runtime split was INDEPENDENTLY re-computed by the main loop (separate Tarjan over the agent's classified edge sets) — confirming compile-time graph = 0 SCCs (DAG) and runtime graph = the channel↔socket 2-SCC; the agent's refinement (suppressing the union-5-SCC as a graph-semantics-mixing artifact, since the controller→endpoint `require` lives inside a `defmacro __using__` quote injected into the END-USER's module) was reviewed and adopted. All 5 agents finalized.",
+  "repo": {
+    "name": "phoenixframework/phoenix", "url": "https://github.com/phoenixframework/phoenix", "branch": "main",
+    "pinned_sha": "cd55c239b553e17c2356d8487ab55dcb94f2c72e", "license": "MIT",
+    "stack": "Elixir (the Phoenix web framework) — the NINTH instrumented stack and the FIRST Elixir datapoint AND the first BEAM/dynamic-compile stack",
+    "size": "41,919 Elixir code LOC / 176 files / ~110 modules (whole lib/ swept)"
+  },
+  "analysis_scope": "the whole lib/ tree (~42k LOC / ~110 modules; component = the top-level area under lib/phoenix/ + lib/mix, or a top-level lib/phoenix/*.ex by basename). IF-8 over the cross-component module-reference graph with each edge CLASSIFIED compile-time vs runtime; IF-6/IF-10/IF-7c/IF-3a over the same.",
+  "result_headline": "Track-3 Elixir field sweep over phoenixframework/phoenix@cd55c239: the NOVEL PARTIAL-BAN IF-8 datapoint — the COMPILE-TIME dependency graph is a strict DAG (0 SCCs; only 3 compile-time cross-component edges, structurally enforced because the Elixir compiler cannot order a compile-time cycle → deadlock error), but the RUNTIME-call graph FIRED a channel↔socket 2-node SCC (permitted, like Java). IF-6 FIRED on @invalid_local_url_chars (controller's open-redirect blocklist {\\\\, /%09, /\\t} vs endpoint's path-check copy {\\\\} — the endpoint accepts tab/%09 the controller rejects). IF-3a FIRED ×2 (a named Phoenix.Config ETS table + an Endpoint persistent_term read directly across components). IF-10/IF-7c silent. 4 genuine fires (GATED) + 52 named suppressions / 0 false defects.",
+  "per_family": [
+    {
+      "family": "IF-8", "applicable": true, "fired": 1,
+      "fires": [{
+        "title": "Runtime circular dependency: channel ↔ socket (2-node SCC in the RUNTIME component dependency graph)",
+        "severity": "High", "certainty": "HIGH", "fp_risk": "LOW", "scc_size": 2, "edge_class": "RUNTIME (value-level function calls + struct construction, NOT compile-time)",
+        "cycle_members": ["channel", "socket"],
+        "closing_edges": [
+          "channel → socket: lib/phoenix/channel/server.ex:9 alias Phoenix.Socket.{Broadcast,Message,Reply,PoolSupervisor} → runtime use &PoolSupervisor.start_child/3 (server.ex:20), %Broadcast{}/%Message{}/%Reply{} construction (server.ex:94..262) — real runtime values, not a typespec",
+          "socket → channel: lib/phoenix/socket.ex:712 case Phoenix.Channel.Server.join(socket, channel, message, opts) — a real runtime call into the channel component"
+        ],
+        "language_enforcement": "PERMITTED — Elixir does NOT ban runtime-call cycles (only compile-time cycles). So this is a real, legal, intentional fire (the Java/Ruby no-ban tier), not the Go/Rust hard-ban.",
+        "recorded_disposition": "GATED / reported, not filed. Both directions verified value-level (not typespec-only) by Reading the surrounding code."
+      }],
+      "suppressed_count": 8,
+      "suppressed": [
+        {"category": "the ENTIRE compile-time cross-component dependency graph (all 21 nodes)", "predicate_false_clause": "Tarjan on the COMPILE-TIME-only subgraph = 0 SCCs>=2 (a DAG). LANGUAGE-ENFORCED: the Elixir compiler bans compile-time-dependency cycles (it cannot topologically order mutually-compile-dependent modules → deadlock compile error); Phoenix compiles, so the compile-time graph is necessarily acyclic. Only 3 compile-time cross-component edges exist (router.ex:307 import Controller; controller/pipeline.ex:9 require Endpoint; channel.ex:476 import Socket) and they form a chain, no back-edge. Independently re-verified by the main loop."},
+        {"category": "the UNION 5-node SCC {controller, endpoint, router, token, transports}", "predicate_false_clause": "graph-semantics-mixing artifact: there is NO pure-runtime cycle among these 5 (runtime-only subgraph is acyclic) and NO pure-compile-time cycle (compile graph is a DAG); the SCC closes ONLY when compile-time and runtime edges are MIXED — analogous to caddy's spurious component-SCC. The shipped Elixir method runs Tarjan on the two subgraphs SEPARATELY precisely to avoid this phantom. Moreover the controller→endpoint `require` (pipeline.ex:9) is INSIDE `defmacro __using__`'s quote block → injected into the END-USER's controller module, not a true compile dep of Phoenix.Controller.Pipeline itself."},
+        {"category": "channel→socket `import` inside defmacro __using__ (channel.ex:476)", "predicate_false_clause": "injected into the end-user's channel module at THEIR compile time → not a compile-time dep of Phoenix.Channel on Phoenix.Socket; the compile-time graph stays a DAG"},
+        {"category": "channel→socket via typespec Socket.t() (channel.ex:336, 27 @callback/@type uses)", "predicate_false_clause": "typespec/@callback references do not create a runtime call dependency — the runtime edge is grounded instead on the value-level struct construction in server.ex (recorded so the fire is not mistakenly justified by typespecs)"},
+        {"category": "spurious edges into lib/phoenix.ex from external modules (Phoenix.PubSub/Template/MixProject)", "predicate_false_clause": "external deps (phoenix_pubsub/phoenix_template) + mix.exs, NOT canonical modules under lib/ — a degenerate bare-root `Phoenix`/`Mix` prefix is excluded; with the guard, the spurious 8-node SCC collapses to the real channel↔socket 2-SCC"}
+      ],
+      "elixir_specific_note": "THE NOVEL PARTIAL-BAN datapoint — the missing MIDDLE of the IF-8 spectrum. The Elixir compiler tracks COMPILE-TIME deps (using a module's MACRO at compile time: `use`/`import`-for-macros/`require`/compile-time `@attr`) vs RUNTIME deps (`alias` + `Mod.func()` at runtime). A cycle in the COMPILE-TIME graph is a COMPILE ERROR (deadlock — the compiler cannot order the modules), so the compile-time graph is structurally a DAG (like Go/Rust BUT only for compile-time edges). RUNTIME-call cycles ARE permitted (like Java/Ruby) — and one is present: channel↔socket. So Elixir sits strictly between the hard-ban (Go/Rust: all cross-component cycles impossible) and the no-ban (Java/Ruby/PHP/Kotlin/C#-namespace: all permitted). The detector's discipline of classifying edge kind + running Tarjan on the two subgraphs SEPARATELY is what makes this datapoint correct (and avoids the mixed-edge phantom SCC). Double-verified (agent + main-loop recompute).",
+      "naive_overfire_estimate": 3
+    },
+    {
+      "family": "IF-6", "applicable": true, "fired": 1,
+      "fires": [{
+        "title": "Divergent named value-set @invalid_local_url_chars: the open-redirect blocklist is STRICTER in controller than in endpoint (a security-relevant membership divergence)",
+        "canonical_name": "invalid_local_url_chars", "severity": "High", "certainty": "HIGH", "fp_risk": "LOW",
+        "components": ["controller", "endpoint"],
+        "sites": [
+          "controller: lib/phoenix/controller.ex:507 — @invalid_local_url_chars [\"\\\\\", \"/%09\", \"/\\t\"], consumed at controller.ex:511 String.contains?(to, @invalid_local_url_chars) in validate_local_url(\"/\"<>_) (raises 'unsafe characters detected for local redirect in URL') — open-redirect sanitization of the :to redirect target",
+          "endpoint: lib/phoenix/endpoint/supervisor.ex:286 — @invalid_local_url_chars [\"\\\\\"], consumed at supervisor.ex:293 String.contains?(path, @invalid_local_url_chars) in static_lookup(_, \"/\"<>_) (raises 'unsafe characters …') — static-path safety check"
+        ],
+        "divergence": "symmetric difference {/%09, /\\t} present in controller, ABSENT in endpoint — the same-named blocklist serves the same conceptual purpose (reject unsafe chars in a local URL/path) but the endpoint's copy is WEAKER (it would accept a tab / %09 the controller rejects). A behavioral divergence on a security-sanitization set.",
+        "recorded_disposition": "GATED / reported, not filed (High — a security-relevant divergence; but framed as a business-rule/consistency contradiction, NEVER branded 'security', S-11). The FIRST IF-6 fire in the cross-language batch and one of only two across all field sweeps (excalidraw's Ellipse divergence being the other)."
+      }],
+      "suppressed_count": 12,
+      "suppressed": [{"category": "module-attribute / function-returned literal value-sets bucketed by canonical name across components; the rest are coincidental homonyms (zero-overlap / no entailment) or same-component", "predicate_false_clause": "zero-overlap homonym / same-component / no behavioral entailment"}],
+      "elixir_specific_note": "Elixir value-sets surface almost entirely as module attributes (@statuses [:a,:b]) and function-returned literal lists. Bucketed by exact canonical name across the lib/ components, ONE name (@invalid_local_url_chars) appears in 2 components with a genuine, security-relevant conflicting membership → fired; the other 12 same-named candidates are coincidental homonyms or same-component → suppressed. 1 fire / 12 named suppressions.",
+      "naive_overfire_estimate": 4
+    },
+    {
+      "family": "IF-3a", "applicable": true, "fired": 2,
+      "fires": [
+        {
+          "title": "Phoenix.Config named ETS table read directly across components (config ↔ endpoint, bypassing the public API)",
+          "severity": "Medium", "certainty": "HIGH", "fp_risk": "LOW",
+          "shared_resource": "the per-endpoint named ETS table (:named_table/:public), created in Phoenix.Config.init/1 at lib/phoenix/config.ex:133 (:ets.new(module, [:named_table, :public, read_concurrency: true]))",
+          "coupling": "the documented public interface is Phoenix.Config.{put,cache,permanent,config_change,clear_cache}, but the generated endpoint config/2 reads the table DIRECTLY: lib/phoenix/endpoint.ex:542 case :ets.lookup(__MODULE__, key) — endpoint (a distinct component) couples to config's ETS table without going through the API.",
+          "recorded_disposition": "GATED / reported, not filed (Medium — a named shared mutable store reached across components by a direct :ets.lookup rather than the owning module's API)."
+        },
+        {
+          "title": "{Phoenix.Endpoint, endpoint} persistent_term read directly (supervisor → endpoint)",
+          "severity": "Medium", "certainty": "MEDIUM", "fp_risk": "LOW-MED",
+          "shared_resource": "a named global persistent_term key {Phoenix.Endpoint, endpoint} (URL/host/path map), written by Phoenix.Endpoint.Supervisor.warmup_persistent/1 at lib/phoenix/endpoint/supervisor.ex:380, read at lib/phoenix/endpoint.ex:556 :persistent_term.get({Phoenix.Endpoint, __MODULE__}, nil)",
+          "component_caveat": "under MODULE granularity, Phoenix.Endpoint.Supervisor and Phoenix.Endpoint are distinct modules (cross-module); under the sweep's top-level-AREA component definition both live in the `endpoint` subtree, so this is WITHIN the endpoint component — a weaker/borderline fire. Recorded with the caveat (honest scope note), severity downgraded to MEDIUM/Medium-certainty accordingly.",
+          "recorded_disposition": "GATED / reported, not filed (borderline — flagged for the granularity caveat above)."
+        }
+      ],
+      "suppressed_count": 5,
+      "suppressed": [{"category": "GenServer/Agent state accessed via the module's public API", "predicate_false_clause": "reached through a typed API module (the explicit interface)"}, {"category": "process-dictionary / Application env reads", "predicate_false_clause": "request-scoped or config-read, not a cross-component mutable-resource hazard"}],
+      "elixir_specific_note": "Elixir is immutable, so shared MUTABLE state is EXPLICIT and NAMED — ETS tables, persistent_term, GenServer/Agent processes, the process dictionary. The two fires are named shared stores (a Config ETS table + an Endpoint persistent_term) read DIRECTLY across components rather than through the owning module's API; the cleaner of the two is config↔endpoint (unambiguously cross-component). GenServer state accessed via its API module is correctly suppressed (the typed interface). 2 fires (1 clean cross-component + 1 borderline within-endpoint-subtree) / 5 named suppressions.",
+      "naive_overfire_estimate": 6
+    },
+    {"family": "IF-10", "applicable": true, "fired": 0, "fires": [], "suppressed_count": 9,
+     "suppressed": [{"category": "module attributes @flag used in if/unless", "predicate_false_clause": "the @attr is computed from Application.compile_env/get_env (non-literal RHS) or is not the whole test; a literal @attr true gating a dead branch is absent"}],
+     "elixir_specific_note": "Module attributes @attr ARE compile-time constants (the closest analog to a const), but the near-candidates are computed from Application.compile_env/get_env (runtime/config, non-literal RHS) → 0 fires / 9 named suppressions.", "naive_overfire_estimate": 11},
+    {"family": "IF-7c", "applicable": true, "fired": 0, "fires": [], "suppressed_count": 18,
+     "suppressed": [{"category": "try/rescue + {:error,_} matches across the components; each rescue logs/re-raises or is a documented best-effort, or the {:error,_} is handled/propagated, in a cross-component-consumed function", "predicate_false_clause": "non-empty / re-raises / deliberate error-as-value / not a silent swallow"}],
+     "elixir_specific_note": "Elixir error model = tagged tuples {:ok,_}/{:error,_} + try/rescue + ! raising variants. Phoenix's rescues log or re-raise (non-empty), and {:error,_} is propagated or handled → no silent cross-component swallow. 0 fires / 18 named suppressions.", "naive_overfire_estimate": 9}
+  ],
+  "key_elixir_findings": [
+    "IF-8 / the PARTIAL BAN (the novel datapoint): Elixir bans COMPILE-TIME dependency cycles (the compiler deadlocks → the compile-time graph is a structurally-enforced DAG, like Go/Rust but only for compile-time edges) yet PERMITS runtime-call cycles (like Java/Ruby) — and one is present (channel↔socket runtime). The detector classifies each edge compile-time vs runtime and runs Tarjan SEPARATELY, which both finds the real runtime fire AND suppresses the mixed-edge phantom SCC (the union-5-SCC) — including recognizing that a `require` inside `defmacro __using__` is injected into the consumer, not a real compile dep. Elixir is the missing MIDDLE of the IF-8 spectrum.",
+    "IF-6 / a security-relevant divergence FIRED: @invalid_local_url_chars (the open-redirect/path-safety blocklist) is STRICTER in controller ({\\\\, /%09, /\\t}) than in endpoint ({\\\\}) — the endpoint's copy accepts a tab/%09 the controller rejects. The first IF-6 fire of the cross-language batch (framed as a consistency contradiction, never branded security).",
+    "IF-3a / explicit named shared state: a Phoenix.Config ETS table and an Endpoint persistent_term are read DIRECTLY across components (bypassing the owning module's API) → 2 fires (1 clean cross-component, 1 borderline within the endpoint subtree). GenServer state via its API is suppressed."
+  ],
+  "honest_assessment": "The NINTH stack, first Elixir/BEAM datapoint, and the richest fired-family set in the batch — it supplies the missing MIDDLE of the cross-language IF-8 spectrum: a PARTIAL ban (compile-time cycles structurally impossible because the compiler deadlocks, runtime-call cycles permitted and present as channel↔socket). The detector's edge-classification discipline both finds the real runtime fire and correctly suppresses the mixed-semantics phantom SCC (the agent's recognition that a `require` inside `defmacro __using__` is injected into the consumer, not a true compile dep, is a subtlety the main loop reviewed and adopted). Beyond IF-8 it fired a security-relevant IF-6 divergence (@invalid_local_url_chars stricter in controller than endpoint) and two named-shared-state IF-3a couplings (a Config ETS table + an Endpoint persistent_term read directly across components). 4 genuine GATED fires + 0 false defects + 52 named suppressions; one IF-3a fire honestly flagged as borderline under the top-level-area component granularity.",
+  "totals": {
+    "families": 5, "genuine_fires": 4,
+    "genuine_fire_disposition": "GATED (IF-8 channel↔socket runtime cycle; IF-6 @invalid_local_url_chars divergence; IF-3a Config-ETS + Endpoint-persistent_term) — reported, not filed",
+    "named_suppressions": 52, "per_family_suppressed": "IF-8 8 / IF-6 12 / IF-10 9 / IF-7c 18 / IF-3a 5",
+    "false_defects": 0,
+    "counts_note": "IF-8 compile-vs-runtime split double-verified (agent + main-loop recompute: compile-time DAG / runtime channel↔socket 2-SCC). One IF-3a fire (persistent_term supervisor↔endpoint) flagged borderline under top-level-area granularity."
+  }
+}

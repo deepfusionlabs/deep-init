@@ -1,0 +1,58 @@
+{
+  "schema": "deepinit-validation/discovery-record/v1",
+  "program": "DeepInit in the Wild",
+  "track": "3 — recall/discovery (Shape-A CANDIDATES + Shape-B suppressions on a FAMOUS TS monorepo)",
+  "shape": "A-candidates (structurally verified) + B (named suppressions) — the FIRST sweep where the deterministic detectors FIRED on real structural candidates",
+  "recorded": "2026-06-11",
+  "engine_proxy": "deterministic-detector-sweep (4 read-only Explore agents, component-scoped over the core packages; NOT a full Detect→Emit pipeline; no cost ledger). Build chain: wf w4tvpy18r (4 agents, ~248k tokens, 233 tool-uses). Every fire was then RE-VERIFIED by the main loop reading the cited lines directly.",
+  "repo": {
+    "name": "excalidraw/excalidraw",
+    "url": "https://github.com/excalidraw/excalidraw",
+    "branch": "master",
+    "pinned_sha": "0cf56b19c79a28dda52f0dcb1c5392ed19cb5fcd",
+    "license": "MIT",
+    "stack": "TypeScript / React (canvas/whiteboard monorepo; @excalidraw/* scoped packages)",
+    "size": "536 TS files, ~135k code LOC (scc), L-tier; 6 packages (common, element, excalidraw, fractional-indexing, math, utils)",
+    "contamination": "FAMOUS repo (~125k stars) → HIGH training-contamination caveat. The candidates below rest on STRUCTURAL FACTS the main loop re-verified by reading the live code at the pinned SHA — not on model memory — but novelty/known-status is explicitly UNVERIFIED."
+  },
+  "GATE_STATUS_README": "These are Shape-A CANDIDATES, NOT confirmed bugs and NOT for any upstream filing. The moonshot gate ladder is only PARTIALLY run: Gate 0 (engine fired) ✓, Gate 1 (grounded on the pinned HEAD) ✓, Gate 2 (independently re-verified off the agent by the main loop reading the code) ✓ — but Gate 3 (not already known / intended — NOT checked against excalidraw's issues/PRs/docs), Gate 4 (fresh adversarial refutation), Gate 6 (severity worth maintainer time), and Gate 8 (operator sign-off) are NOT run. Per the BLAST-RADIUS rule, nothing here is published or filed. The IF-8 cycle + IF-6 divergence are plausibly KNOWN artifacts of excalidraw's recent monorepo package-split.",
+  "candidates": [
+    {
+      "family": "IF-8 (circular component dependency)",
+      "verdict": "STRUCTURALLY VERIFIED (real cross-package runtime cycle); intent/known-status UNVERIFIED",
+      "the_cycle": "element ↔ utils (a 2-cycle at the package level)",
+      "evidence": [
+        "packages/element/src/bounds.ts:17 — `import { getCurvePathOps } from \"@excalidraw/utils/shape\";` (element depends on utils, RUNTIME value)",
+        "packages/element/src/linearElementEditor.ts:14 — same `getCurvePathOps` import from utils",
+        "packages/utils/src/shape.ts:37 — `import { getElementAbsoluteCoords } from \"@excalidraw/element\";` (utils depends on element, RUNTIME value)",
+        "packages/utils/src/index.ts:2-3 — `export { elementsOverlappingBBox } / { getCommonBounds } from \"@excalidraw/element\";` (utils re-exports element at runtime)"
+      ],
+      "assessment": "A genuine cross-package RUNTIME import cycle (element imports value functions from utils; utils imports value functions from element). The agent correctly SUPPRESSED type-only cycles (`import type`, erased at compile time) and intra-package cycles — only the runtime-value cycle fired. This is exactly the architectural-erosion smell IF-8 targets; in a JS/TS monorepo a cycle is tolerated by the module system but risks init-order subtleties + breaks clean TS project references. Likely a known monorepo-split artifact (UNVERIFIED). Severity per IF-8 = architectural, not a proven runtime bug.",
+      "structural_confidence": "high"
+    },
+    {
+      "family": "IF-6 (divergent named allowed-value set / type)",
+      "verdict": "STRUCTURALLY VERIFIED (same-named type, conflicting membership, two packages); intent UNVERIFIED",
+      "the_divergence": "`Ellipse<Point extends GlobalPoint | LocalPoint>` defined independently in TWO packages with conflicting members",
+      "evidence": [
+        "packages/math/src/types.ts:154 — `Ellipse<Point> = { center, halfWidth, halfHeight } & { _brand: \"excalimath_ellipse\" }` (HAS _brand, NO angle)",
+        "packages/utils/src/shape.ts:72 — `Ellipse<Point> = { center, angle: Radians, halfWidth, halfHeight }` (HAS angle, NO _brand)"
+      ],
+      "assessment": "Two same-named `Ellipse<Point>` types in different packages with genuinely conflicting structure: math's is nominally branded (`_brand`) and lacks `angle`; utils's adds `angle` and is unbranded. A value of one is not assignable to the other; a reader importing `Ellipse` could get either shape. This is the IF-6 divergent-named-set pattern on real code (the §24 same-name-conflicting-membership slice). May be intentional domain separation (a math-package primitive vs a geometry-shape type) — but the SHARED NAME across packages is a real confusion risk. Intent UNVERIFIED.",
+      "structural_confidence": "high"
+    },
+    {
+      "family": "IF-7(c) (cross-boundary swallowed error)",
+      "verdict": "BORDERLINE / LOW — defensible as deliberate fallback (would likely be SUPPRESSED on a strict read)",
+      "evidence": [
+        "packages/element/src/elementLink.ts:101 — `try { new URL(url); ... } catch {}` then `return null` (a malformed URL → null; a reasonable best-effort parse)",
+        "packages/common/src/utils.ts:1302 — `getFeatureFlag`: `try { localStorage.getItem; JSON.parse } catch {}` then falls back to `DEFAULT_FEATURE_FLAGS` (localStorage/SSR/corrupt-data → defaults; a reasonable degradation)"
+      ],
+      "assessment": "Both empty catches degrade GRACEFULLY to a sensible default (null / DEFAULT_FEATURE_FLAGS), so they read as DELIBERATE best-effort fallbacks rather than silent failures — borderline candidates a strict precision-first pass would likely suppress. Recorded as LOW-confidence, NOT pursued. (20 other swallowing handlers in the sweep were correctly suppressed.)",
+      "structural_confidence": "low"
+    }
+  ],
+  "if10_result": "IF-10: 0 fires, 1 correct suppression — `supportsResizeObserver` (common/constants.ts) is runtime feature-detection (`typeof window ... in window`), NOT a static literal flag, so the cross-module const-fold correctly does not fire. The codebase has no always-off literal feature-flag dead branches (good discipline).",
+  "suppression_total_approx": 28,
+  "honest_assessment": "The FIRST sweep where DeepInit's deterministic detectors FIRED on real structural candidates — on a famous 135k-LOC TS monorepo — rather than staying silent. Two candidates are structurally airtight (re-verified by reading the live code): a real element↔utils cross-package RUNTIME import cycle (IF-8) and a real same-named-conflicting-membership `Ellipse<Point>` divergence across math/utils (IF-6). Two IF-7c empty-catch candidates are borderline (graceful-default fallbacks). IF-10 correctly stayed silent (the one near-candidate is runtime feature-detection). This demonstrates BOTH halves of the thesis at once: (1) the detectors find real structural issues on real famous code (not just precision-silence), and (2) precision-first discipline HOLDS — the candidates are recorded as STRUCTURALLY-VERIFIED-BUT-GATED (the not-already-known / intent / severity / adversarial-refutation / operator-sign-off gates are NOT run), nothing is published or filed, and the borderline IF-7c fires are flagged as likely-suppress. Per the program's BLAST-RADIUS rule and the operator's hard moonshot gate, these stay internal candidates. Across all 3 sweeps (kemal + pyccel + excalidraw, ~196k LOC of real code over Crystal/Python/TypeScript), the deterministic suite produced ~31 named suppressions on clean code + 2 structurally-verified Shape-A candidates on the one famous L-tier repo — with 0 claims published. No cost ledger (a detector sweep is not a representative full Detect→Emit run;  cost stays pending)."
+}

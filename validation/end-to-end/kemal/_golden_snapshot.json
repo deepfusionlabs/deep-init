@@ -1,0 +1,60 @@
+{
+  "schema": "deepinit-validation/golden-snapshot/v1",
+  "archive": "kemal",
+  "note": "Line-ending-normalised (LF) fingerprint of the canonical e2e archive. Regenerate DELIBERATELY (python tools/build_golden_snapshot.py <archive> --write) when a skill spec change intentionally alters the generated output; a drift is otherwise caught by §50.",
+  "file_hashes": {
+    "AGENTS.md": "9481655f59a6207d9d449987681f05ef8912f06cfeacade7b57dc3d59397a08b",
+    ".ai/docs/manifest.json": "0015e50a33c36ace5116da00c795d12ba1625877cac0dae0070f871a4e6f56b6",
+    ".ai/deepinit.sarif": "e9e41aa1a4aa6a99f6ef4632ad982e1593af92f2325d0b379c4d0c273a5a5397",
+    ".ai/docs/issues.md": "145afae5742ef4b46b77dc4db5d90948e2cfc839b908601f569baac46c7e8eba",
+    ".ai/docs/decisions.md": "3f21dd05ad94f854aa1b3af22f3a3fec542b26966ba8e98bc662510cb778dc01"
+  },
+  "structural": {
+    "component_docs": [
+      "core",
+      "ext",
+      "handlers",
+      "helpers",
+      "logging",
+      "router",
+      "websocket"
+    ],
+    "manifest_components": [
+      "core",
+      "ext",
+      "handlers",
+      "helpers",
+      "logging",
+      "router",
+      "websocket"
+    ],
+    "sarif_version": "2.1.0",
+    "sarif_rule_ids": [
+      "deepinit/IF-1",
+      "deepinit/IF-10",
+      "deepinit/IF-2",
+      "deepinit/IF-3a",
+      "deepinit/IF-4",
+      "deepinit/IF-5",
+      "deepinit/IF-6",
+      "deepinit/IF-7",
+      "deepinit/IF-8"
+    ],
+    "sarif_result_count": 0
+  },
+  "viewer_model_sha256": "9de91e2e373f9292cfe28b39c40e849ebc6f4406a9b934b53b378dcc951f5f8a",
+  "viewer_structural": {
+    "components": [
+      "core",
+      "ext",
+      "handlers",
+      "helpers",
+      "logging",
+      "router",
+      "websocket"
+    ],
+    "decisions": 4,
+    "issues": 4,
+    "search_index_len": 39
+  }
+}

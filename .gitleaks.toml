@@ -1,0 +1,11 @@
+[allowlist]
+description = "DFL allowlist"
+paths = [
+  '''\.gitleaks\.toml''',
+  '''CHANGELOG\.md''',
+  '''package-lock\.json''',
+  '''pnpm-lock\.yaml''',
+  '''yarn\.lock''',
+  '''tests/.*/fixtures/''',
+  '''\.env\.example'''
+]

@@ -1,0 +1,43 @@
+{
+  "schema": "deepinit-validation/precision-record/v1",
+  "program": "DeepInit in the Wild",
+  "track": "1 — precision (naive-vs-guarded FP + census-signal correctness)",
+  "recorded": "2026-06-10",
+  "test_plan_run": "",
+  "repo": {
+    "name": "kemalcr/kemal",
+    "url": "https://github.com/kemalcr/kemal",
+    "branch": "master",
+    "pinned_sha": "b73de3d8e6de97541866b6ecdc8c6ee1ef3eb747",
+    "pinned_sha_date": "2026-06-10T12:53:10Z",
+    "sha_provenance": "default-branch (master) HEAD at or before the 2026-06-10 validation date, resolved via GitHub API 2026-06-11 (the validation clone was not retained; the file:line citations below are the durable anchors and are SHA-robust because they describe structural conformance to a slow-changing documented rule).",
+    "license": "MIT",
+    "stack": "Crystal"
+  },
+  "documented_rule": "\"This change requires that all handlers must inherit from `Kemal::Handler`.\" — CHANGELOG.md:509 (echoed verbatim as code comments at src/kemal/handler.cr:44 and :65: 'All handlers must inherit from `Kemal::Handler`.').",
+  "rule_hardness": "hard-deontic",
+  "rule_location_kind": "CHANGELOG",
+  "census": {
+    "class_selector": "Concrete handler classes in src/ (name ~ *Handler or HTTP::Handler implementers), EXCLUDING spec/test fixtures, the base Kemal::Handler itself, and generated/vendored code.",
+    "conformance_check": "Crystal class inheritance literally '< Kemal::Handler' on the class declaration line.",
+    "N": 12,
+    "conformers_k": 0,
+    "deviants_sample": [
+      "src/kemal/exception_handler.cr:3 (ExceptionHandler -> include HTTP::Handler, not < Kemal::Handler)",
+      "src/kemal/route_handler.cr:103 (RouteHandler -> include HTTP::Handler)",
+      "src/kemal/log_handler.cr:4 (LogHandler -> < Kemal::BaseLogHandler)",
+      "src/kemal/static_file_handler.cr:2 (StaticFileHandler -> < HTTP::StaticFileHandler)",
+      "src/kemal/websocket_handler.cr:2 (WebSocketHandler -> include HTTP::Handler)"
+    ],
+    "signal": "STALE",
+    "signal_is_correct": true,
+    "signal_reason": "N=12 >= 4 and k=0 <= floor(N/3)=4, so the census returns STALE — a NEUTRAL rule-health flag, never an auto-judgment. This is correct: the LITERAL structural property '< Kemal::Handler' holds for ZERO shipped handlers; the rule is de-facto stale/mis-stated, not individually violated. Kemal's own handlers conform to the HTTP::Handler *interface* via `include HTTP::Handler` (or inherit BaseLogHandler / HTTP::StaticFileHandler); Kemal::Handler itself is merely a thin convenience class that `include HandlerInterface` (src/kemal/handler.cr:91-93). The only `< Kemal::Handler` inheritors in the whole repo live in spec/ (handler_spec.cr, path_handler_spec.cr), which the rule excludes. A STALE flag correctly hands this to a human rather than auto-flagging 12 'violations'."
+  },
+  "naive_vs_guarded": {
+    "naive_detector_false_positives": 12,
+    "guarded_detector_avoids_them": true,
+    "genuine_deviation_found": "none — clean repo (no lone outlier from a majority-followed convention). The opposite holds: 0/12 shipped handlers literally inherit Kemal::Handler, so there is no single deviant to surface; the whole class diverges, which is a STALE/mis-stated-rule signal (human decides), not a recall-worthy outlier. A correct precision-first detector should surface NOTHING here as a per-site violation."
+  },
+  "honest_assessment": "The CHANGELOG wording is genuinely HARD (\"must inherit\"), and it is class-ranging (\"all handlers\"), so on the surface this looks like a citable hard deontic — a rare witness. But validating it against the real code exposes a TRAP the guards are designed to catch. Taking the rule literally ('< Kemal::Handler' inheritance), the census is N=12 concrete handler classes in src/ with k=0 conformers: every shipped handler instead `include HTTP::Handler` (ExceptionHandler, FilterHandler, HeadRequestHandler, InitHandler, OverrideMethodHandler, PathHandler, RequestLogHandler, RouteHandler, WebSocketHandler) or inherits a different base (LogHandler/NullLogHandler < Kemal::BaseLogHandler; StaticFileHandler < HTTP::StaticFileHandler). The only `< Kemal::Handler` inheritors anywhere are spec/ fixtures (handler_spec.cr, path_handler_spec.cr), which the rule excludes. So the literal structural property is satisfied by 0 of the production class. A NAIVE detector keying on '< Kemal::Handler' would emit 12 false positives — declaring the entire framework non-conformant — which is absurd. The STALE guard (N>=4 AND k<=floor(N/3)) catches exactly this: it returns a NEUTRAL rule-health flag for a human, not 12 auto-judgments. The deeper truth: the rule is about the *capability* (only/exclude/the only_match? helpers), which Kemal delivers through the HandlerInterface module / HTTP::Handler interface, not literal class inheritance; the CHANGELOG sentence over-states a now-internal-refactored requirement (cf. CHANGELOG.md:134 'Move Kemal::Handler logic into separate module #717'). NET: a real, hard, class-ranging deontic exists in a CHANGELOG, but the structural property it names is de-facto unfollowed by the framework's own code — making this a textbook STALE case where the guarded census is correct and a naive one would over-fire 12x. No genuine per-site deviation to recall; clean repo for IF-4 purposes (no ADR contradiction, just a stale informal directive).",
+  "verdict": "STALE — clean repo; 12 naive false-positives avoided; 0 false defects emitted; census signal correct (de-facto-stale rule, handed to a human)."
+}

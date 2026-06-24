@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<!--
+  legacy-stub-template.html — DeepInit deprecation redirect stub (B-phase, ADR-019).
+
+  The standalone docs reader (.ai/docs-viewer.html, C-VIEW) and the issue/metrics
+  dashboard (.ai/dashboard.html, C-DASH) are SUPERSEDED by the unified, co-branded
+  .ai/report.html (C-REPORT — Docs + Insights in one artifact). During the one-minor-
+  version deprecation window the skill emits THIS tiny self-contained stub at the two
+  legacy paths so old bookmarks/links land on the report; the full templates still ship
+  (expand-only) and are removed in a later release.
+
+  Same hard constraints as every DeepInit artifact: one self-contained file, opens from
+  file://, strict CSP default-src 'none', NO off-host refs / no network / no JS sink.
+  The forward link is a RELATIVE sibling href (report.html) — same-origin navigation,
+  not an off-host resource load.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="refresh" content="0; url=report.html">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DeepInit — moved to the unified report</title>
+<style>
+  :root { color-scheme: dark; }
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 2rem;
+         background: #070E1B; color: #C8D4E6; text-align: center;
+         font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .card { max-width: 34rem; }
+  h1 { color: #C4E934; font-size: 1.4rem; margin: 0 0 .75rem; }
+  p { line-height: 1.6; margin: .5rem 0; }
+  a { color: #C4E934; font-weight: 600; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .muted { color: #7D8FAA; font-size: .85rem; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>This view has moved</h1>
+    <p>The DeepInit docs reader and the issue / metrics dashboard are now merged into one
+       co-branded artifact &mdash; the unified <strong>report</strong>.</p>
+    <p><a href="report.html">Open report.html &rarr;</a></p>
+    <p class="muted">Redirecting automatically. This legacy file is a deprecation stub and
+       will be removed in a future release.</p>
+  </div>
+</body>
+</html>

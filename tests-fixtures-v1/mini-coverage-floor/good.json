@@ -1,0 +1,15 @@
+{
+  "fixture": "mini-coverage-floor",
+  "purpose": "§C10 coverage non-regression — a synthetic 'current' held-out scorecard block that CLEARS the frozen validation/_baseline.json coverage_floors. The gate (§88) runs build_scorecard.floor_regressions(this, floors) → []. The paired mutation lowers pooled.pct below floor − tolerance (a spec edit that silently dropped coverage) and the gate must catch it (RED).",
+  "coverage_pooled": { "n": 140, "d": 192, "pct": 0.7292, "wilson95_lb": 0.6615 },
+  "coverage_by_kind_pooled": {
+    "component-exists": { "n": 40, "d": 44, "pct": 0.9091 },
+    "component-role": { "n": 38, "d": 43, "pct": 0.8837 },
+    "dependency-edge": { "n": 13, "d": 15, "pct": 0.8667 },
+    "boundary-rule": { "n": 12, "d": 28, "pct": 0.4286 },
+    "key-invariant": { "n": 10, "d": 28, "pct": 0.3571 },
+    "entry-point": { "n": 7, "d": 8, "pct": 0.875 },
+    "technology-choice": { "n": 18, "d": 22, "pct": 0.8182 },
+    "data-store": { "n": 3, "d": 4, "pct": 0.75 }
+  }
+}

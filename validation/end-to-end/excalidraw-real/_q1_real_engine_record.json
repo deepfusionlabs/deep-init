@@ -1,0 +1,1144 @@
+{
+  "repo": "excalidraw",
+  "path": "validation/_clones/excalidraw",
+  "mode": "real-multi-component-pipeline",
+  "components_extracted": 6,
+  "total_facts": 128,
+  "assembled": {
+    "architecture": "Excalidraw is an ESM-only TypeScript monorepo of layered npm packages (all v0.18.0 except @excalidraw/utils v0.1.2) feeding one publishable React component library. The dependency layering is strict and bottom-up: @excalidraw/math (pure, dependency-free 2D geometry) <- @excalidraw/common (shared constants/utils/url-sanitizer, depends on math) <- @excalidraw/element (the canonical ExcalidrawElement data model, Scene store, Store/undo-redo substrate, binding, fractional-index ordering; runtime-deps only common + math) <- @excalidraw/utils (thin export-to-image/clipboard + geometry façade) and @excalidraw/excalidraw (the App god-component + public API barrel). Every package exposes a single barrel index that re-exports its modules wholesale, and the public API of @excalidraw/excalidraw deliberately AGGREGATES symbols re-exported from the sibling packages. A pervasive but TYPE-ONLY cycle exists: element imports ~35 type-only symbols from its own consumer @excalidraw/excalidraw (AppState/App/etc.), erased at compile time, so it is a layering cycle with zero runtime/bundle edge. The data model is JSON-serializable with no peer-local state so it can be shared between collaboration peers; collaboration/undo-redo is built on per-element version (sequential int) + versionNonce (random tie-breaker) and a Store that emits CaptureUpdateAction-tagged increments.",
+    "components": [
+      {
+        "name": "@excalidraw/math (packages/math)",
+        "role": "Dependency-free 2D geometry primitives: branded point/vector/line/segment/curve/ellipse/polygon/triangle/rectangle/range/angle types plus pure (never-mutating) construction, intersection, distance, rotation and Bezier arc-length functions."
+      },
+      {
+        "name": "@excalidraw/common",
+        "role": "Foundational shared-utilities barrel: app-wide constants/enums (constants.ts), environment detection, AppEventBus/Emitter/Queue, the seeded global PRNG, url sanitization, colors, keys, and feature flags; depends on @excalidraw/math at runtime (not a pure leaf)."
+      },
+      {
+        "name": "@excalidraw/element",
+        "role": "The element-model core: the canonical ExcalidrawElement discriminated union, mutateElement/newElementWith versioning, the in-memory Scene store, the Store/undo-redo+collaboration delta substrate, arrow/text binding, bounds/collision, duplication, and fractional-index ordering."
+      },
+      {
+        "name": "fractional-indexing",
+        "role": "Two-layer z-order system: a vendored (CC0) dependency-free base-62 fractional-indexing algorithm (packages/fractional-indexing) plus the Excalidraw-domain layer (element/src/fractionalIndex.ts) that keeps each element's string index in sync with array order, repairing invalid indices during reconcile/restore."
+      },
+      {
+        "name": "@excalidraw/utils",
+        "role": "Browser-only public package: a thin export-to-image/clipboard orchestration layer over @excalidraw/excalidraw plus a roughjs/element-independent pure-geometry collision toolkit built on @excalidraw/math."
+      },
+      {
+        "name": "@excalidraw/excalidraw",
+        "role": "The publishable React editor component library: owns the public API barrel (index.tsx) and the ~13k-line App god-component that constructs and wires Scene, Store, History, Renderer, ActionManager, Fonts, an isolated Jotai store, and the import/export/collaboration data layer."
+      }
+    ],
+    "critical_to_know": [
+      {
+        "claim": "Undo/redo capture is governed by a CaptureUpdateAction tri-state on EVERY scene mutation: IMMEDIATELY (local edits, undoable), NEVER (remote/collab updates and scene init, never on the undo stack), EVENTUALLY (deferred, the documented default). Mis-tagging a remote update as IMMEDIATELY corrupts the undo stack — the key cross-cutting state-change invariant.",
+        "file_line": "packages/excalidraw/components/App.tsx:4579",
+        "kind": "key-invariant"
+      },
+      {
+        "claim": "Collaboration is deterministically version-based: keep local when actively editing OR local.version > remote.version OR (equal versions) local.versionNonce <= remote.versionNonce — the equal-version tie is broken by the LOWEST versionNonce so all peers converge identically. version is a sequential int, versionNonce a per-change random int.",
+        "file_line": "packages/excalidraw/data/reconcile.ts:38",
+        "kind": "key-invariant"
+      },
+      {
+        "claim": "VALUE-SEMANTICS SPLIT: mutateElement() mutates in place, returns the SAME object, and does NOT trigger a re-render — callers needing a re-render must use scene.mutateElement / ExcalidrawImperativeAPI.mutateElement. newElementWith() is the immutable counterpart (returns a new spread, short-circuits to the original when nothing changed unless force=true).",
+        "file_line": "packages/element/src/mutateElement.ts:34",
+        "kind": "key-invariant"
+      },
+      {
+        "claim": "VERSIONING INVARIANT: a real change via mutateElement bumps element.version, regenerates versionNonce via randomInteger(), and stamps updated — but ONLY when didChange is true; an update equal to the current value is skipped (no version bump). Every element must have version > 0 so getSceneVersion detects new elements (restore coerces version || 1).",
+        "file_line": "packages/element/src/mutateElement.ts:139",
+        "kind": "key-invariant"
+      },
+      {
+        "claim": "ShapeCache is a static WeakMap keyed by element object identity; because mutateElement returns the same reference, mutations must explicitly invalidate it — mutateElement calls ShapeCache.delete(element) whenever height, width, fileId, or points change, and generateElementShape always bypasses+does-not-store the cache when isExporting is true.",
+        "file_line": "packages/element/src/shape.ts:83",
+        "kind": "key-invariant"
+      },
+      {
+        "claim": "DUAL ORDERING INVARIANT: element ordering is held redundantly in BOTH array order AND each element's fractional `index` string, which MUST be kept in sync; the array is a CACHE of the order defined by fractional indices. validateFractionalIndices throws InvalidFractionalIndexError on violation; syncInvalidIndices repairs without altering already-valid indices.",
+        "file_line": "packages/element/src/fractionalIndex.ts:24",
+        "kind": "key-invariant"
+      },
+      {
+        "claim": "App constructs core subsystems in a FIXED, load-bearing order in its constructor: actionManager -> scene(new Scene()) -> renderer(new Renderer(scene)) -> store(new Store(this)) -> history(new History(store)) -> fonts(new Fonts(scene)) — History depends on Store, Renderer/Fonts depend on Scene. Teardown(destroy) runs the matching reverse-ordered release sequence.",
+        "file_line": "packages/excalidraw/components/App.tsx:833",
+        "kind": "ordering/lifecycle"
+      },
+      {
+        "claim": "State flows ONE direction Store -> History: store.onDurableIncrementEmitter drives history.record; History is purely a downstream listener, never the driver. History.record refuses re-entrant capture (early-returns on empty delta or instanceof HistoryDelta) and only clears the redo stack when the delta has non-empty ELEMENT changes (a bare appState change must not wipe redo).",
+        "file_line": "packages/excalidraw/components/App.tsx:3135",
+        "kind": "boundary-rule"
+      },
+      {
+        "claim": "Undo/redo is treated as a NEW user action, not literal time-travel: applying a history delta explicitly EXCLUDES version/versionNonce from restoration (excludedProperties Set), so each undo/redo yields a fresh version for collaboration/sync.",
+        "file_line": "packages/excalidraw/history.ts:33",
+        "kind": "key-invariant"
+      },
+      {
+        "claim": "random.ts holds a MODULE-LEVEL mutable singleton PRNG seeded once from Date.now() at import; randomInteger() draws from it and only reseed(seed) makes it deterministic — a hidden cross-call coupling. randomId() returns sequential ids ('id0','id1',...) in test env and nanoid() otherwise, so id values silently differ test-vs-prod.",
+        "file_line": "packages/common/src/random.ts:6",
+        "kind": "surprising-coupling"
+      },
+      {
+        "claim": "Bundler-injected import.meta.env.MODE is a load-bearing global: isTestEnv/isDevEnv/isProdEnv gate behavior across common (random ids, timestamps, the AppEventBus once-guard). AppEventBus's 'once'-cardinality throw-on-double-emit is enforced ONLY when !isProdEnv() — that safety check is silently DISABLED in production.",
+        "file_line": "packages/common/src/utils.ts:739",
+        "kind": "surprising-coupling"
+      },
+      {
+        "claim": "PRECISION literal trap: 'export const PRECISION = 10e-5' evaluates to 1e-4 (0.0001), NOT 1e-5. It is defined TWICE with the same value — the package-wide tolerance is utils.ts's PRECISION (imported by angle/point/segment/polygon/ellipse); constants.ts's identically-named PRECISION sits by the Legendre-Gauss tables and is NOT the tolerance source.",
+        "file_line": "packages/math/src/utils.ts:1",
+        "kind": "key-invariant"
+      },
+      {
+        "claim": "All @excalidraw/math geometric types are NOMINAL/branded (phantom _brand intersected with the structural shape); a plain number[] cannot be passed where a branded type is expected — values must be built via factory functions (pointFrom, vector, lineSegment). Line, LineSegment and Rectangle are the SAME 2-tuple-of-points at runtime, distinguished only by brand. Every math op returns a new value and never mutates inputs.",
+        "file_line": "packages/math/src/types.ts:34",
+        "kind": "key-invariant"
+      },
+      {
+        "claim": "FONT_FAMILY maps font name to a STABLE integer id and explicitly reserves id 4 as permanently unused (historically Assistant/custom font) — these ids are a persisted/serialization contract, so the gap at 4 is intentional and must not be reused.",
+        "file_line": "packages/common/src/constants.ts:134",
+        "kind": "key-invariant"
+      },
+      {
+        "claim": "@excalidraw/common's barrel re-exports Debug from '../debug' — a sibling file OUTSIDE the src/ tree, so the public surface deliberately reaches one directory up; scanning only src/ misses that Debug is public API. Many common modules also assume a BROWSER runtime (editorInterface reads navigator at module load; utils/colors touch window/document/localStorage), so importing common in a non-DOM context can throw at import time unless guarded.",
+        "file_line": "packages/common/src/index.ts:17",
+        "kind": "boundary-rule"
+      },
+      {
+        "claim": "url.ts is the single security chokepoint for untrusted links: normalizeLink runs @braintree/sanitize-url after escaping double-quotes, and toValidURL returns 'about:blank' for anything that fails URL parsing — sanitize hrefs/iframe src here before render.",
+        "file_line": "packages/common/src/url.ts:21",
+        "kind": "boundary-rule"
+      },
+      {
+        "claim": "BINDING IS BIDIRECTIONAL: a bindable element lists dependents in boundElements ({id,type:'arrow'|'text'}) while arrows hold startBinding/endBinding and text holds containerId; fixBindingsAfterDeletion walks BOTH directions on every deleted element to keep the two-way refs consistent. Duplication assigns a fresh randomId() and runs fixDuplicatedBindingsAfterDuplication so bindings point at copies (original id preserved under an ORIG_ID symbol).",
+        "file_line": "packages/element/src/binding.ts:2061",
+        "kind": "key-invariant"
+      },
+      {
+        "claim": "appState.ts's APP_STATE_STORAGE_CONF is the single source of truth for which AppState fields persist to {browser, export, server}; serializeAsJSON strips per target from it. Adding a new AppState field without an entry here SILENTLY fails to persist (the loop skips keys with no propConfig), and getDefaultAppState must be kept in lock-step by string key with no enforced shared key list.",
+        "file_line": "packages/excalidraw/appState.ts:138",
+        "kind": "surprising-coupling"
+      },
+      {
+        "claim": "The editor uses an ISOLATED Jotai store via jotai-scope createIsolation (editorJotaiStore), NOT the global Jotai store, so multiple Excalidraw instances and the host app's atoms do not collide; index.tsx wraps App in EditorJotaiProvider. The host reaches the running editor via React-context-bridged imperative API (ExcalidrawAPIContext + useExcalidrawAPI), the supported boundary for external control.",
+        "file_line": "packages/excalidraw/editor-jotai.ts:10",
+        "kind": "architecture"
+      },
+      {
+        "claim": "NON-OBVIOUS TYPE-ONLY CYCLE: ~35 @excalidraw/element source files import types from their own consumer @excalidraw/excalidraw (AppState/App/PointerDownState/etc.) — but EVERY such import is `import type` (erased at compile time) with ZERO runtime imports, and package.json declares no app dependency. It is a compile-time layering cycle, invisible to the runtime/bundle graph.",
+        "file_line": "packages/element/src/store.ts:11",
+        "kind": "boundary-rule"
+      },
+      {
+        "claim": "@excalidraw/utils ALWAYS normalizes inbound elements through restoreElements (deleteInvisibleElements:true) + restoreAppState before any export — exporters assume restored, not raw, input. PNG-with-embedded-scene deliberately serializes the ORIGINAL uncloned opts.elements (not the rendered restoredElements) to keep ids stable across the Scene hack — a subtle identity invariant a refactor could break. The package is browser-only (calls document.createElement directly, no env guard).",
+        "file_line": "packages/utils/src/export.ts:149",
+        "kind": "key-invariant"
+      },
+      {
+        "claim": "common's colors.ts carries a documented 'FIXME can't put to utils.ts rn because of circular dependency' that forced a local duplicate of `pick`: constants.ts imports COLOR_PALETTE from colors.ts while colors helpers want utils — a real, acknowledged constants<->colors<->utils cycle. (IF-8 candidate, GATED.)",
+        "file_line": "packages/common/src/colors.ts:120",
+        "kind": "surprising-coupling"
+      },
+      {
+        "claim": "Scene.replaceAllElements is the single funnel for setting scene contents, establishing the order: syncInvalidIndices (validate indices) -> rebuild elementsMap -> derive nonDeleted element/frame collections -> triggerUpdate() notify. fractional indices are repaired on every restore (restore.ts) and are the cross-client ordering authority during reconcile.",
+        "file_line": "packages/element/src/Scene.ts:271",
+        "kind": "ordering/lifecycle"
+      }
+    ]
+  },
+  "extractions": [
+    {
+      "component": "common (@excalidraw/common)",
+      "role": "A foundational shared-utilities package that the rest of the Excalidraw monorepo imports via a single barrel.",
+      "facts": [
+        {
+          "claim": "This is the @excalidraw/common package (v0.18.0); src/index.ts is a barrel that re-exports every public module, so consumers import from the package root, not deep paths.",
+          "file_line": "validation/_clones/excalidraw/packages/common/src/index.ts:1",
+          "certainty": "HIGH",
+          "kind": "component-role"
+        },
+        {
+          "claim": "The barrel's LAST line re-exports `Debug` from `../debug`, i.e. from packages/common/debug.ts which sits OUTSIDE the src/ tree (a sibling file, not a src module) — so the package's public surface deliberately reaches one directory up; a new engineer scanning only src/ would miss that Debug is part of the public API.",
+          "file_line": "validation/_clones/excalidraw/packages/common/src/index.ts:17",
+          "certainty": "HIGH",
+          "kind": "boundary-rule"
+        },
+        {
+          "claim": "constants.ts is the single source of truth for app-wide tunables and enums (thresholds, zoom limits MIN_ZOOM/MAX_ZOOM, FONT_FAMILY id map, MIME_TYPES, THEME, ROUNDNESS, TOOL_TYPE, the EVENT enum, etc.); it is the most-imported module and the de-facto configuration surface for the whole editor.",
+          "file_line": "validation/_clones/excalidraw/packages/common/src/constants.ts:18",
+          "certainty": "HIGH",
+          "kind": "data-store"
+        },
+        {
+          "claim": "FONT_FAMILY maps font name to a STABLE integer id and explicitly reserves id 4 as permanently unused ('leave 4 unused as it was historically used for Assistant ... or custom font') — these ids are a persisted/serialization contract, so the gap at 4 is intentional and must not be reused.",
+          "file_line": "validation/_clones/excalidraw/packages/common/src/constants.ts:134",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "random.ts holds a MODULE-LEVEL MUTABLE singleton `random` seeded once from Date.now() at import time; randomInteger() draws from it and reseed(seed) replaces it. This shared global PRNG is a hidden cross-call coupling — determinism in tests depends entirely on calling reseed(), not on any per-call argument.",
+          "file_line": "validation/_clones/excalidraw/packages/common/src/random.ts:6",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "randomId() returns deterministic sequential ids ('id0','id1',...) in the test env (isTestEnv()) and nanoid() otherwise — so id values silently differ between test and production; snapshot/equality logic that assumes opaque ids can pass in tests yet behave differently in prod.",
+          "file_line": "validation/_clones/excalidraw/packages/common/src/random.ts:16",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        },
+        {
+          "claim": "Environment is detected via import.meta.env.MODE compared against the ENV constants (isTestEnv/isDevEnv/isProdEnv); these gate behavior across the package (random ids, getUpdatedTimestamp, the AppEventBus once-guard), making the bundler-injected MODE a load-bearing global dependency.",
+          "file_line": "validation/_clones/excalidraw/packages/common/src/utils.ts:739",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "AppEventBus enforces 'once' cardinality (throw on a second emit of a once-event) ONLY when !isProdEnv() — the duplicate-emit invariant is a DEV-ONLY assertion that is silently disabled in production, so a double-emit bug can pass prod unnoticed.",
+          "file_line": "validation/_clones/excalidraw/packages/common/src/appEventBus.ts:104",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        },
+        {
+          "claim": "AppEventBus replay='last' delivers the cached payload to a late subscriber asynchronously via queueMicrotask (not synchronously), so a subscriber added after emit() will NOT have run by the time on() returns — an ordering subtlety for code expecting immediate replay.",
+          "file_line": "validation/_clones/excalidraw/packages/common/src/appEventBus.ts:73",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        },
+        {
+          "claim": "Queue serializes async jobs strictly: a `running` boolean guard makes tick() a no-op while a job is in flight, and each job re-triggers tick() in its .finally() — jobs run one-at-a-time in FIFO push order regardless of how fast their promises settle.",
+          "file_line": "validation/_clones/excalidraw/packages/common/src/queue.ts:19",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "VersionedSnapshotStore.set() is a no-op (returns false, no version bump, no notify) when isEqual(prev,next) holds (default Object.is); on a real change it increments version and notifies subscribers, then drains-and-CLEARS the one-shot `waiters` set used by pull() — so pull() waiters fire exactly once per change while subscribe() listeners persist.",
+          "file_line": "validation/_clones/excalidraw/packages/common/src/versionedSnapshotStore.ts:27",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "VersionedSnapshotStore.pull(sinceVersion) resolves immediately if the current version differs from sinceVersion, otherwise parks the resolver in `waiters` until the next set() — a version-gated long-poll. The sinceVersion default of -1 means an initial pull resolves immediately (version starts at 0).",
+          "file_line": "validation/_clones/excalidraw/packages/common/src/versionedSnapshotStore.ts:61",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        },
+        {
+          "claim": "colors.ts contains an explicit 'FIXME can't put to utils.ts rn because of circular dependency' on a local `pick` helper — a documented workaround acknowledging a constants<->colors<->utils cycle; constants.ts imports COLOR_PALETTE from colors.ts while colors helpers want utils, so the helper was duplicated locally instead.",
+          "file_line": "validation/_clones/excalidraw/packages/common/src/colors.ts:120",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        },
+        {
+          "claim": "The dark-mode color cache (DARK_MODE_COLORS_CACHE) is intentionally null when `window` is undefined ('Browser-only cache to avoid memory leaks on server'); applyDarkModeFilter must therefore tolerate a null cache and recompute every call in SSR/server contexts.",
+          "file_line": "validation/_clones/excalidraw/packages/common/src/colors.ts:13",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "Many modules assume a BROWSER runtime: editorInterface.ts reads navigator.platform/userAgent at MODULE LOAD time (isDarwin/isWindows/etc. are evaluated on import), utils.ts touches window/document/localStorage, colors uses window. Importing common in a non-DOM context can throw at import time unless guarded — a hard environment boundary rule.",
+          "file_line": "validation/_clones/excalidraw/packages/common/src/editorInterface.ts:37",
+          "certainty": "HIGH",
+          "kind": "boundary-rule"
+        },
+        {
+          "claim": "KEYS.CTRL_OR_CMD is resolved ONCE at import time to 'metaKey' or 'ctrlKey' based on isDarwin (from editorInterface) — keys.ts depends on editorInterface.ts, and the platform branch is frozen at load, not re-evaluated per event.",
+          "file_line": "validation/_clones/excalidraw/packages/common/src/keys.ts:39",
+          "certainty": "HIGH",
+          "kind": "dependency-edge"
+        },
+        {
+          "claim": "matchKey() implements a deliberate key-vs-code fallback for non-Latin keyboard layouts: it matches event.key when Latin, else falls back to event.code via KeyCodeMap (currently only Z and Y) — a non-obvious correctness rule documented with a per-layout table; naive event.key comparison would break on Cyrillic/Greek/CJK layouts.",
+          "file_line": "validation/_clones/excalidraw/packages/common/src/keys.ts:123",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        },
+        {
+          "claim": "url.ts is the security boundary for untrusted links: normalizeLink runs @braintree/sanitize-url after escaping double-quotes, and toValidURL returns 'about:blank' for anything that fails to parse as a URL — the intended single chokepoint for sanitizing hrefs/iframe src before render.",
+          "file_line": "validation/_clones/excalidraw/packages/common/src/url.ts:21",
+          "certainty": "HIGH",
+          "kind": "boundary-rule"
+        },
+        {
+          "claim": "common imports types and runtime helpers from sibling monorepo packages @excalidraw/math (average, clamp, degreesToRadians, pointFromPair, point types) and type-only from @excalidraw/element/types and @excalidraw/excalidraw/types — so 'common' is NOT a pure leaf: it has a runtime dependency edge to @excalidraw/math.",
+          "file_line": "validation/_clones/excalidraw/packages/common/src/colors.ts:3",
+          "certainty": "HIGH",
+          "kind": "dependency-edge"
+        },
+        {
+          "claim": "queue.ts imports promiseTry/resolvablePromise/ResolvablePromise from '.' (the index barrel) rather than directly from './utils' — an intra-package edge that routes through the barrel, a self-import pattern that can aggravate module-init ordering / circular-dependency issues.",
+          "file_line": "validation/_clones/excalidraw/packages/common/src/queue.ts:1",
+          "certainty": "HIGH",
+          "kind": "dependency-edge"
+        },
+        {
+          "claim": "FONT_METADATA lookups (getVerticalOffset/getLineHeight) fall back to FONT_FAMILY.Excalifont's metrics for any unknown fontFamily id — there is no error on a missing font; the Excalifont default is the never-throws invariant for font math.",
+          "file_line": "validation/_clones/excalidraw/packages/common/src/font-metadata.ts:160",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "Feature flags are read lazily from localStorage once and memoized in a module-level `featureFlags` var (default {COMPLEX_BINDINGS:false}); getFeatureFlag swallows localStorage errors silently and setFeatureFlag persists JSON — a hidden global mutable cache that does not refresh after first read within a session.",
+          "file_line": "validation/_clones/excalidraw/packages/common/src/utils.ts:1290",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        },
+        {
+          "claim": "isShallowEqual treats two empty arrays (and empty objects, top- or second-level) as EQUAL via _defaultIsShallowComparatorFallback — a deliberate non-standard equality used by updateStable/updateObject; equality here is NOT plain ===, which is easy to overlook when reasoning about React-style change detection.",
+          "file_line": "validation/_clones/excalidraw/packages/common/src/utils.ts:827",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        },
+        {
+          "claim": "Emitter.once() works by appending a self-detaching handler (() => detach()) to the subscriber list, so the auto-unsubscribe fires AFTER the user handlers in the same trigger pass; AppEventBus.on()'s promise form is built on this once() behavior.",
+          "file_line": "validation/_clones/excalidraw/packages/common/src/emitter.ts:23",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        }
+      ],
+      "candidate_issues": [
+        {
+          "family": "IF-8",
+          "claim": "Documented circular dependency among constants <-> colors <-> utils: constants.ts imports COLOR_PALETTE from colors.ts (constants.ts:7), while colors.ts carries a 'FIXME can't put to utils.ts rn because of circular dependency' that forced a local duplicate of `pick`. The cycle is real and acknowledged in-source (a structurally-grounded Shape-A candidate, not a fabrication).",
+          "file_line": "validation/_clones/excalidraw/packages/common/src/colors.ts:120",
+          "severity": "LOW"
+        },
+        {
+          "family": "IF-3a",
+          "claim": "Magic-string localStorage keys are scattered across modules with no shared registry: 'excalidraw-feature-flags' (utils.ts:1286) and 'excalidraw.desktopUIMode' (editorInterface.ts:16), plus the EDITOR_LS_KEYS object in constants.ts:467 — the two former keys live outside EDITOR_LS_KEYS, a cross-module string-coupling/inconsistency where some LS keys are centralized and some are inline literals.",
+          "file_line": "validation/_clones/excalidraw/packages/common/src/utils.ts:1286",
+          "severity": "LOW"
+        },
+        {
+          "family": "IF-7",
+          "claim": "BinaryHeap.bubbleUp has an asymmetry: when checking the right child it updates smallestIdx but NOT smallestScore (binary-heap.ts:43-47), unlike the left-child branch which updates both (lines 35-39). If both children are smaller than the node, the right child is selected without comparing its score against the left child's — a possible heap-property correctness bug. Grounded as a structural anomaly; recorded GATED, not asserted as a defect without an oracle.",
+          "file_line": "validation/_clones/excalidraw/packages/common/src/binary-heap.ts:43",
+          "severity": "MEDIUM"
+        },
+        {
+          "family": "IF-7",
+          "claim": "AppEventBus's once-cardinality 'can only be emitted once' invariant is enforced only behind !isProdEnv() (appEventBus.ts:104), so the safety check that prevents a double-emit is absent in production — a guarded error path that does not run where it matters most. Recorded GATED.",
+          "file_line": "validation/_clones/excalidraw/packages/common/src/appEventBus.ts:104",
+          "severity": "LOW"
+        }
+      ]
+    },
+    {
+      "component": "element (@excalidraw/element)",
+      "role": "The element-model core of Excalidraw — owns the canonical ExcalidrawElement data model plus all element-level logic (mutation/versioning, the in-memory Scene store, arrow/text binding, bounds, collision, dragging, resizing, fractional-index ordering, shape generation).",
+      "facts": [
+        {
+          "claim": "The package is a standalone npm package @excalidraw/element (v0.18.0, MIT, ESM-only) whose declared runtime dependencies are ONLY @excalidraw/common and @excalidraw/math — it does NOT declare a dependency on the consuming @excalidraw/excalidraw app package.",
+          "file_line": "validation/_clones/excalidraw/packages/element/package.json:65",
+          "certainty": "HIGH",
+          "kind": "technology-choice"
+        },
+        {
+          "claim": "index.ts is the public barrel entry point: it re-exports (export *) every module in the package plus a handful of locally-defined helpers (getSceneVersion, hashElementsVersion, hashString, getVisibleElements, getNonDeletedElements, isNonDeletedElement), so the package surface is effectively every exported symbol of all 49 source files.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/index.ts:57",
+          "certainty": "HIGH",
+          "kind": "entry-point"
+        },
+        {
+          "claim": "NON-OBVIOUS BOUNDARY/CYCLE: the element package pervasively imports types from its OWN consumer, the @excalidraw/excalidraw app (AppState, App, ExcalidrawProps, PointerDownState, ObservedAppState, etc.) across ~35 files — but EVERY such import is `import type` (type-only, erased at compile time) and there are ZERO value/runtime imports from the app. This is a deliberate type-only architectural cycle (element <-> app) that does not exist in the runtime/bundle graph and is invisible to package.json deps.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/store.ts:11",
+          "certainty": "HIGH",
+          "kind": "boundary-rule"
+        },
+        {
+          "claim": "VALUE-SEMANTICS SPLIT (key invariant): mutateElement() MUTATES the element in place and returns the same object, and its doc WARNING states it does NOT trigger a component re-render — callers needing a re-render must use scene.mutateElement or ExcalidrawImperativeAPI.mutateElement instead.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/mutateElement.ts:34",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "newElementWith() is the immutable counterpart to mutateElement: it returns a NEW spread object {...element, ...updates} (never mutating the input) and short-circuits to the original element when nothing changed unless force=true is passed.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/mutateElement.ts:146",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "VERSIONING INVARIANT: any real change via mutateElement bumps element.version (or uses the supplied updates.version), regenerates element.versionNonce via randomInteger(), and stamps element.updated — but ONLY when didChange is true (an update equal to the current value is skipped and returns the element unchanged, no version bump).",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/mutateElement.ts:139",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "version is a sequentially-incremented integer and versionNonce is a per-change random integer; both exist for collaboration reconciliation — version reconciles elements across peers/saves, versionNonce deterministically breaks ties when versions are identical (documented on the base element type).",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/types.ts:58",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "ShapeCache is a static WeakMap keyed by element object identity (mapping element -> {shape, theme}); because mutateElement returns the same object reference, mutations must explicitly invalidate it. mutateElement calls ShapeCache.delete(element) whenever height, width, fileId, or points change.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/shape.ts:83",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "ShapeCache.generateElementShape ALWAYS regenerates (bypasses the cache) when renderConfig.isExporting is true, to guarantee the latest shape at export time, and never stores the export-time shape back into the cache.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/shape.ts:129",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        },
+        {
+          "claim": "ELBOW-ARROW SPECIAL CASE (ordering/lifecycle invariant): mutateElement, when the element is an elbow arrow AND (updates is empty | points changed | fixedSegments changed), forces angle:0 and routes the update through updateElbowArrowPoints() before applying — so elbow arrows are re-routed/normalized inside the generic mutate path, not by callers.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/mutateElement.ts:53",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        },
+        {
+          "claim": "DUAL ORDERING INVARIANT: element ordering is held redundantly in BOTH the array order AND each element's fractional `index` (string), and the two MUST be kept in sync; syncInvalidIndices/syncMovedIndices reconcile them and validateFractionalIndices throws InvalidFractionalIndexError when the invariant is violated. The array is documented as a cache of the order defined by fractional indices.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/fractionalIndex.ts:24",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "Scene.replaceAllElements is the single funnel for setting scene contents: it runs syncInvalidIndices, rebuilds elementsMap, derives the nonDeleted element/frame collections, and calls triggerUpdate() — establishing the lifecycle order (validate indices -> sync -> rebuild derived maps -> notify callbacks).",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/Scene.ts:271",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        },
+        {
+          "claim": "Scene is the in-memory element store: it holds elements/elementsMap/nonDeletedElements plus a selectedElements cache and a sceneNonce (a render-cache-invalidation random int, explicitly documented as UNRELATED to element versions), and notifies subscribers via a Set<callback> through triggerUpdate().",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/Scene.ts:108",
+          "certainty": "HIGH",
+          "kind": "data-store"
+        },
+        {
+          "claim": "Scene.mutateElement is the React-aware wrapper over the free mutateElement function: it only calls triggerUpdate() when the element is actually in the scene's elementsMap, the version changed (prevVersion !== nextVersion), and options.informMutation is true.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/Scene.ts:411",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        },
+        {
+          "claim": "Store captures observed scene changes and emits StoreIncrement events; CaptureUpdateAction is a const enum (IMMEDIATELY / NEVER / EVENTUALLY) that controls whether an update is recorded onto the undo/redo stacks — NEVER is used for remote updates and scene init, EVENTUALLY for ephemeral multi-step async ops. This is the undo/redo + collaboration delta substrate.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/store.ts:38",
+          "certainty": "HIGH",
+          "kind": "data-store"
+        },
+        {
+          "claim": "DUPLICATION INTEGRITY INVARIANT: duplicateElement deep-copies the element (deepCopyElement), assigns a fresh copy.id = randomId(), and the duplication flow later calls fixDuplicatedBindingsAfterDuplication so that arrow/text/frame bindings (boundElements, startBinding/endBinding, containerId) point at the new copies rather than the originals; the original id is preserved under an ORIG_ID symbol key.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/duplicate.ts:73",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "BINDING IS BIDIRECTIONAL: a bindable element records its dependents in boundElements ([] of {id,type:'arrow'|'text'}) while arrows hold startBinding/endBinding and text holds containerId; fixBindingsAfterDeletion walks both directions (BoundElement.unbindAffected + BindableElement.unbindAffected) on every deleted element to keep the two-way references consistent after deletion.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/binding.ts:2061",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "updateBoundElements re-routes bound arrows when a bindable element changes, guarded by doesNeedUpdate (skips stale boundElements) and by simultaneouslyUpdatedElementIds (skips arrows already being moved/scaled), then applies point updates via LinearElementEditor.movePoints — i.e. binding propagation is the cross-element coupling triggered by element geometry changes.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/binding.ts:1104",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        },
+        {
+          "claim": "ExcalidrawElement is a discriminated union over a string `type` field (selection/rectangle/diamond/ellipse/text/line/arrow/freedraw/image/frame/magicframe/iframe/embeddable), and the entire model is documented as JSON-serializable with NO computed/peer-local state, so the element list is shareable between collaboration peers.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/types.ts:201",
+          "certainty": "HIGH",
+          "kind": "architecture"
+        },
+        {
+          "claim": "All element types are built on a Readonly base type _ExcalidrawElementBase, so element shape is immutable-typed; mutation is only possible via the explicit Mutable<> casts used in mutateElement/bumpVersion — the type system steers callers away from ad-hoc field assignment.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/types.ts:40",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "Geometry/rendering is delegated to roughjs (RoughGenerator) for hand-drawn shape generation; the package depends on @excalidraw/math for all point/vector/radian primitives (headings, e.g., are quantized to one of four unit vectors HEADING_RIGHT/DOWN/LEFT/UP).",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/shape.ts:82",
+          "certainty": "HIGH",
+          "kind": "technology-choice"
+        },
+        {
+          "claim": "Scene.getSelectedElements is memoized via selectedElementsCache keyed by a SelectionHash built from selectedElementIds + the boolean options (includeBoundTextElement/includeElementsInFrames); the cache is bypassed (and not populated) when caller passes custom `elements`, and cleared when operating on stale latest-scene elements.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/Scene.ts:178",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        },
+        {
+          "claim": "isInvisiblySmallElement (used by getVisibleElements) treats linear/freedraw elements with <2 points, or 2-point arrows whose endpoints are within INVISIBLY_SMALL_ELEMENT_SIZE (0.1) of each other, as invisible — a load-bearing visibility rule for rendering and the open TODO notes such elements are not yet consistently excluded from store/export/broadcast/persist.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/sizeHelpers.ts:30",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        },
+        {
+          "claim": "INTERNAL DEPENDENCY EDGES: mutateElement depends on shape.ts (ShapeCache), elbowArrow.ts (updateElbowArrowPoints) and typeChecks.ts (isElbowArrow); Scene.ts depends on the package barrel @excalidraw/element (a self-package import) for predicates/index-sync/selection helpers — so the package imports its own public surface internally.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/Scene.ts:11",
+          "certainty": "HIGH",
+          "kind": "dependency-edge"
+        }
+      ],
+      "candidate_issues": [
+        {
+          "family": "IF-8 (circular dependency)",
+          "claim": "Type-only cyclic coupling element <-> @excalidraw/excalidraw: ~35 element source files import types from the consuming app package (its own dependent), and Scene.ts imports the app via a deep relative path (../../excalidraw/types) while every other file uses the @excalidraw/excalidraw/* alias. All imports are `import type` (erased at runtime) and package.json declares no app dependency, so this is a compile-time-only cycle, not a runtime import cycle — structurally real but does NOT produce a runtime/bundle cycle. GATED: report as a layering observation, not a runtime defect.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/store.ts:11",
+          "severity": "LOW"
+        },
+        {
+          "family": "IF-3a (magic-string / cross-module coupling)",
+          "claim": "Scene.ts reaches the app package via the raw relative path \"../../excalidraw/types\" (line 43) whereas the rest of the package consistently uses the package alias \"@excalidraw/excalidraw/types\" — an inconsistent import convention for the same target; refactor-rename risk and a divergence from the codebase's own pattern. Type-only so no runtime impact. GATED.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/Scene.ts:43",
+          "severity": "LOW"
+        },
+        {
+          "family": "IF-5 / tech-debt",
+          "claim": "getSceneVersion is exported and explicitly @deprecated ('unsafe, use hashElementsVersion instead') yet remains part of the public barrel surface (export * from ./index helpers), so consumers can still pick it up. Documented dead-ish API retained for back-compat; flag as a tech-debt/legacy-warning, not a defect.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/index.ts:13",
+          "severity": "LOW"
+        }
+      ]
+    },
+    {
+      "component": "@excalidraw/math (packages/math/src)",
+      "role": "A dependency-free 2D computational-geometry primitives library: branded coordinate/shape types (point, vector, line, segment, curve, ellipse, polygon, triangle, rectangle, range, angle) plus pure functions for construction, intersection, distance, rotation, and Bezier arc-length, consumed by the rest of the Excalidraw editor.",
+      "facts": [
+        {
+          "claim": "The package is a pure, near-self-contained geometry primitives library: 15 source modules under src/ exposing point/vector/line/segment/curve/ellipse/polygon/triangle/rectangle/range/angle operations; no React, no I/O, no state.",
+          "file_line": "packages/math/src/index.ts:1",
+          "certainty": "HIGH",
+          "kind": "component-role"
+        },
+        {
+          "claim": "index.ts is the single public barrel entry point; it re-exports every module wholesale via 'export * from', so the public surface is the union of all module exports (there is no curated/hidden surface).",
+          "file_line": "packages/math/src/index.ts:1",
+          "certainty": "HIGH",
+          "kind": "entry-point"
+        },
+        {
+          "claim": "All geometric types are NOMINAL/branded: a structural tuple or object intersected with a phantom '_brand' literal (e.g. GlobalPoint = [x,y] & {_brand:'excalimath__globalpoint'}). A plain number[] cannot be passed where a branded type is expected — values must be constructed/cast through the factory functions (pointFrom, vector, lineSegment, etc.). The brand is compile-time only; at runtime the value is just the underlying array/object.",
+          "file_line": "packages/math/src/types.ts:34",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "Points and vectors are represented as 2-element tuples [x,y]/[u,v], NOT objects; the legacy {x,y} object forms (GlobalCoord/LocalCoord) are explicitly marked TODO-to-remove. New code is expected to use the tuple forms — mixing the two is a known migration hazard.",
+          "file_line": "packages/math/src/types.ts:42",
+          "certainty": "HIGH",
+          "kind": "boundary-rule"
+        },
+        {
+          "claim": "VALUE SEMANTICS / IMMUTABILITY: every operation returns a NEW array/object and never mutates its inputs — e.g. pointTranslate, vectorAdd, vectorSubtract, lineSegmentRotate all build a fresh tuple. Callers can safely share inputs; no operation is in-place.",
+          "file_line": "packages/math/src/point.ts:174",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "A single shared tolerance PRECISION governs every 'closeness'/'equality' comparison in the package (pointsEqual, isCloseTo, pointOnLineSegment, pointOnPolygon, ellipseTouchesPoint all default to it). Geometric equality here is approximate, never exact float equality.",
+          "file_line": "packages/math/src/utils.ts:32",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "PRECISION literal trap: 'export const PRECISION = 10e-5' evaluates to 1e-4 (0.0001), NOT 1e-5 — '10e-5' is 10 x 10^-5. A reader expecting 1e-5 would be off by a factor of 10 on the default tolerance used across the whole package.",
+          "file_line": "packages/math/src/constants.ts:1",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "PRECISION is defined TWICE under two different names with the SAME value: 'PRECISION = 10e-5' in constants.ts AND 'PRECISION = 10e-5' in utils.ts. utils.ts's PRECISION is the one imported by angle/point/segment/polygon/ellipse; constants.ts's PRECISION sits next to the Legendre-Gauss tables and is not the package-wide tolerance source.",
+          "file_line": "packages/math/src/utils.ts:1",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "Angle units are encoded in the type system (Radians vs Degrees brands) and the CONVENTION is radians-internal: rotation/normalization/right-angle logic all operate on Radians (pointRotateRads, normalizeRadians, isRightAngleRads); the *Degs variants are thin adapters that convert via degreesToRadians first. Callers must pass radians to the core paths.",
+          "file_line": "packages/math/src/angle.ts:11",
+          "certainty": "HIGH",
+          "kind": "boundary-rule"
+        },
+        {
+          "claim": "normalizeRadians always returns an angle in [0, 2*PI): for negative input it adds 2*PI after the modulo, guaranteeing a non-negative result. radiansBetweenAngles relies on this and explicitly handles ranges that wrap across the 0 angle (min > max).",
+          "file_line": "packages/math/src/angle.ts:11",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "Bezier work uses fixed-order n=24 Legendre-Gauss quadrature: curveLength/curveLengthAtParameter integrate the tangent magnitude over the 24 precomputed abscissae/weights in constants.ts (LegendreGaussN24TValues / LegendreGaussN24CValues). The two arrays are paired by index and must stay length-24 and aligned.",
+          "file_line": "packages/math/src/curve.ts:453",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        },
+        {
+          "claim": "curveIntersectLineSegment returns at most ONE intersection point, not all of them: it tries three hard-coded Newton-Raphson initial guesses (0.5/0.2/0.8) in order and returns the first that converges inside [0,1]x[0,1]; an empty array means no guess converged, which is not the same as 'no geometric intersection exists'.",
+          "file_line": "packages/math/src/curve.ts:130",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        },
+        {
+          "claim": "curvePointAtLength/curveLengthAtParameter are numerical approximations gated by parameter clamps (percent<=0 returns endpoint t=0, >=1 returns t=1) and a 20-iteration binary search with tolerance = totalLength*0.0001 — results near the ends are exact endpoints, interior results are approximate.",
+          "file_line": "packages/math/src/curve.ts:513",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        },
+        {
+          "claim": "polygon()/polygonFromPoints() auto-CLOSE the polygon: polygonClose appends a copy of the first point if the last point isn't already equal to it (closure tested via pointsEqual, i.e. within PRECISION). So a constructed Polygon always satisfies first==last; callers passing an already-closed ring won't get a duplicate.",
+          "file_line": "packages/math/src/polygon.ts:89",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "The only outbound cross-package dependency is range.ts importing toBrandedType from '@excalidraw/common' (pinned to 0.18.0 in package.json). Every other src module depends only on sibling files inside this package — math is otherwise dependency-free.",
+          "file_line": "packages/math/src/range.ts:1",
+          "certainty": "HIGH",
+          "kind": "dependency-edge"
+        },
+        {
+          "claim": "Internal module dependency direction is types <- vector <- point <- {segment, ellipse, curve, polygon, rectangle}, with segment also depending on line. point.ts imports angle/utils/vector and is the most-imported sibling; vector.ts is a leaf (imports only types).",
+          "file_line": "packages/math/src/point.ts:1",
+          "certainty": "HIGH",
+          "kind": "architecture"
+        },
+        {
+          "claim": "Two coexisting point-in-polygon algorithms with DIFFERENT edge semantics: polygonIncludesPoint uses an even-odd ray cast over a closed ring (i from 0, j = i-1 wrap), while polygonIncludesPointNonZero uses the nonzero winding rule over j=(i+1)%length and operates on raw [number,number] (not the branded Polygon). They can disagree on self-intersecting polygons — pick deliberately.",
+          "file_line": "packages/math/src/polygon.ts:19",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        },
+        {
+          "claim": "pointRotateRads short-circuits on a FALSY angle: 'if (!angle) return point' returns the SAME reference (not a copy) when angle is 0. Because angle is 0-checked via falsiness, a 0 rotation is a no-op identity return; non-zero angles return a fresh point.",
+          "file_line": "packages/math/src/point.ts:130",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        },
+        {
+          "claim": "pointTranslate carries a loud WARNING comment: it is NOT for translating Excalidraw element points because it does not account for element rotation; callers are told to use an element-aware translate instead. This is a deliberate boundary between the pure-math layer and element-aware higher layers.",
+          "file_line": "packages/math/src/point.ts:160",
+          "certainty": "HIGH",
+          "kind": "boundary-rule"
+        },
+        {
+          "claim": "Distance has paired squared variants intended for comparison-only fast paths: pointDistanceSq and vectorMagnitudeSq skip the sqrt and are documented 'use this if you only compare distances'. Mixing a squared value into an absolute-distance comparison is a latent unit error.",
+          "file_line": "packages/math/src/point.ts:205",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "Three distinct conceptual primitives are encoded as the SAME 2-tuple-of-points shape and distinguished only by brand: Line<P> ([p,q], infinite line), LineSegment<P> ([a,b], bounded), and Rectangle<P> ([topLeft,bottomRight], two opposite corners). They are structurally indistinguishable at runtime — the brand is the only thing preventing passing one where another is expected.",
+          "file_line": "packages/math/src/types.ts:71",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "Ellipse is an axis-aligned, NON-rotated model at the type level: Ellipse<P> stores only {center, halfWidth, halfHeight} with no angle field, even though ellipse()'s JSDoc describes an 'angle' parameter. All ellipse math (ellipseIncludesPoint, ellipseDistanceFromPoint, intersections) assumes axis alignment; the JSDoc angle is stale relative to the type/signature.",
+          "file_line": "packages/math/src/types.ts:154",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "TypeScript with strict branded (phantom-type) discipline is the deliberate technology choice for compile-time geometric type safety (coordinate-space and unit confusion are caught by the type checker via _brand intersections), at the cost of always needing factory constructors.",
+          "file_line": "packages/math/src/types.ts:9",
+          "certainty": "HIGH",
+          "kind": "technology-choice"
+        },
+        {
+          "claim": "vectorFromPoint has a guard mode: when called with a positive 'threshold', vectors whose squared magnitude is below threshold^2 are replaced by a default unit vector [0,1] rather than returned as-is — a built-in degenerate/near-zero-vector fallback that callers may not expect when passing a threshold.",
+          "file_line": "packages/math/src/vector.ts:28",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        }
+      ],
+      "candidate_issues": [
+        {
+          "family": "IF-6",
+          "claim": "Brand collision: InclusiveRange is branded '_brand: \"excalimath_degree\"' (the SAME brand string as Degrees), not a range-specific brand. Copy-paste artifact — it weakens nominal typing because an InclusiveRange and a Degrees value become brand-indistinguishable, partially defeating the branding scheme this package relies on.",
+          "file_line": "packages/math/src/types.ts:24",
+          "severity": "LOW"
+        },
+        {
+          "family": "IF-10",
+          "claim": "rangesOverlap has a logically dead branch: after 'if (a0 <= b0) return ...', the subsequent 'if (a0 >= b0)' can only be reached when a0 > b0, so its '>=' equality case is already handled by the first branch and the trailing 'return false' is unreachable for numeric inputs. The function is correct but contains dead code that can mislead a maintainer.",
+          "file_line": "packages/math/src/range.ts:34",
+          "severity": "LOW"
+        },
+        {
+          "family": "IF-7c",
+          "claim": "curveClosestPoint can return/propagate an undefined parameter: localMinimum declares 'k' uninitialized and only assigns it inside the while loop; if 'n - m > e' is false on entry the loop body never runs and 'k' (undefined) is returned, then passed as t to bezierEquation — producing NaN coordinates rather than a clean null. The '!solution' guard does not catch undefined-from-no-iteration.",
+          "file_line": "packages/math/src/curve.ts:240",
+          "severity": "MEDIUM"
+        },
+        {
+          "family": "IF-7c",
+          "claim": "segmentsIntersectAt returns null when u === 0 BEFORE computing the intersection point, dropping a valid intersection that lands exactly at segment b's start endpoint. Combined with the asymmetric bounds 't >= 0 && t < 1 && u >= 0 && u < 1' (inclusive low / exclusive high), endpoint-coincident intersections are treated inconsistently between the two segments.",
+          "file_line": "packages/math/src/segment.ts:89",
+          "severity": "LOW"
+        },
+        {
+          "family": "IF-3a",
+          "claim": "Magic-tolerance coupling with no single source of truth: curve.ts embeds several unrelated literal tolerances (solver 1e-3, calculate 1e-2 / iterLimit 4, Jacobian det epsilon 1e-12, curveClosestPoint 1e-3, curvePointAtLength totalLength*0.0001), none tied to the package-wide PRECISION (1e-4). A reader cannot tell which tolerance governs a given closeness check, and changing precision policy requires editing many disconnected sites.",
+          "file_line": "packages/math/src/curve.ts:29",
+          "severity": "LOW"
+        },
+        {
+          "family": "IF-6",
+          "claim": "Two same-purpose point-in-polygon predicates with divergent semantics coexist (polygonIncludesPoint = even-odd ray cast; polygonIncludesPointNonZero = nonzero winding) and operate on different types (branded Polygon vs raw [number,number][]). Choosing the wrong one for self-intersecting / hole-containing polygons silently flips membership results.",
+          "file_line": "packages/math/src/polygon.ts:44",
+          "severity": "LOW"
+        }
+      ]
+    },
+    {
+      "component": "utils",
+      "role": "A small, browser-targeted public utility package (@excalidraw/utils) that re-exports a stable export-to-image/clipboard API and a pure geometry/collision toolkit, both built as thin wrappers over the internal excalidraw, element, and math packages.",
+      "facts": [
+        {
+          "claim": "utils is the public npm package @excalidraw/utils (v0.1.2), an ES-module ('type':'module') published as a UMD/global ExcalidrawUtils for browser use; its purpose is to expose a curated subset of internal functionality (export + geometry) as a stable external API, not to hold core app logic.",
+          "file_line": "validation/_clones/excalidraw/packages/utils/package.json:2",
+          "certainty": "HIGH",
+          "kind": "component-role"
+        },
+        {
+          "claim": "The package public surface is the barrel index.ts which re-exports everything from export.ts plus two element-package functions (elementsOverlappingBBox, getCommonBounds); shape.ts geometry helpers are NOT re-exported through the barrel, so the geometry toolkit is an internal/secondary surface reached via subpath, not the main published API.",
+          "file_line": "validation/_clones/excalidraw/packages/utils/src/index.ts:1",
+          "certainty": "HIGH",
+          "kind": "entry-point"
+        },
+        {
+          "claim": "export.ts is a thin orchestration layer, not an implementation: every export entry point (exportToCanvas/exportToBlob/exportToSvg/exportToClipboard) delegates to functions imported from @excalidraw/excalidraw (scene/export, data/restore, data/json, data/image, clipboard, appState) — utils contributes only argument shaping and option defaults.",
+          "file_line": "validation/_clones/excalidraw/packages/utils/src/export.ts:3",
+          "certainty": "HIGH",
+          "kind": "architecture"
+        },
+        {
+          "claim": "Inbound element/appState data is ALWAYS normalized through restoreElements (with deleteInvisibleElements:true) and restoreAppState before any export; this is a load-bearing precondition repeated identically in both exportToCanvas and exportToSvg, so exporters assume restored (not raw) input.",
+          "file_line": "validation/_clones/excalidraw/packages/utils/src/export.ts:51",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "exportToBlob carries a non-obvious mimeType-coercion rule: the literal 'image/jpg' is silently rewritten to MIME_TYPES.jpg (the correct 'image/jpeg'), so callers passing the common 'image/jpg' typo are tolerated rather than rejected.",
+          "file_line": "validation/_clones/excalidraw/packages/utils/src/export.ts:116",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        },
+        {
+          "claim": "exportToBlob force-overrides appState.exportBackground to true for JPEG output (JPEG has no transparency) and only emits a console.warn — a silent behavioral coupling where the requested appState is mutated for correctness.",
+          "file_line": "validation/_clones/excalidraw/packages/utils/src/export.ts:120",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        },
+        {
+          "claim": "PNG-with-embedded-scene export deliberately serializes opts.elements (the ORIGINAL, uncloned elements) rather than the restoredElements actually rendered, with an inline NOTE that this keeps element ids stable across the Scene hack — a subtle ordering/identity invariant a refactor could easily break.",
+          "file_line": "validation/_clones/excalidraw/packages/utils/src/export.ts:149",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "exportToClipboard dispatches on opts.type ('svg'|'png'|'json') and throws 'Invalid export type' on any other value — the type string, not the mimeType, is the routing key, and the three branches use three different clipboard primitives.",
+          "file_line": "validation/_clones/excalidraw/packages/utils/src/export.ts:206",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        },
+        {
+          "claim": "shape.ts intentionally defines a roughjs/element-INDEPENDENT pure-geometry layer ('pure shapes so we can provide collision and other geometric methods not depending on the specifics of roughjs or elements in Excalidraw') — a deliberate boundary decoupling geometry from element/render concerns, with conversion adapters living at the edge of this file.",
+          "file_line": "validation/_clones/excalidraw/packages/utils/src/shape.ts:8",
+          "certainty": "HIGH",
+          "kind": "boundary-rule"
+        },
+        {
+          "claim": "shape.ts geometry is generic over a Point type parameter constrained to GlobalPoint | LocalPoint and an Ellipse models the rotated ellipse as {center, angle, halfWidth, halfHeight} (half-extents, deliberately NOT semi-major/minor) — the load-bearing data shape every ellipse function (pointInEllipse, ellipseAxes, distanceToEllipse) consumes.",
+          "file_line": "validation/_clones/excalidraw/packages/utils/src/shape.ts:72",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "The geometry layer depends entirely on @excalidraw/math for its point/vector/polygon primitives (pointFrom, pointRotateRads, vectorAdd, segmentsIntersectAt, polygon, curve, PRECISION, etc.) and on @excalidraw/element for getElementAbsoluteCoords/types — utils does not implement its own linear algebra.",
+          "file_line": "validation/_clones/excalidraw/packages/utils/src/shape.ts:17",
+          "certainty": "HIGH",
+          "kind": "dependency-edge"
+        },
+        {
+          "claim": "distanceToEllipse computes nearest-point distance with a FIXED 3-iteration Newton-style refinement seeded at tx=ty=0.707 (cos/sin 45 degrees) — an approximation with a hardcoded iteration budget, so pointOnEllipse/threshold tests are approximate, not exact, by design.",
+          "file_line": "validation/_clones/excalidraw/packages/utils/src/shape.ts:425",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        },
+        {
+          "claim": "getClosedCurveShape extracts polygon vertices from the roughjs Drawable by walking ops and toggling an 'odd' flag (taking only odd move-segments), because roughjs sketchy rendering produces doubled/overlapping stroke paths — a non-obvious workaround for the sketch backend's duplicated geometry.",
+          "file_line": "validation/_clones/excalidraw/packages/utils/src/shape.ts:322",
+          "certainty": "MEDIUM",
+          "kind": "behavioral-fact"
+        },
+        {
+          "claim": "perfect-freehand (package.json dependency) maps to the freedraw geometry: getFreedrawShape converts element.points to a polyline or, when isClosed, to a polygon — the only shape builder gated on a closed/open flag.",
+          "file_line": "validation/_clones/excalidraw/packages/utils/src/shape.ts:265",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        },
+        {
+          "claim": "Test coverage is asymmetric and thin: the package ships 3 test files (export.test.ts, geometry.test.ts, utils.unmocked.test.ts) for 4 source files; the geometry test exercises only a subset of shape.ts's ~20 exported functions, so much of the ellipse/curve math is unverified by the package's own suite.",
+          "file_line": "validation/_clones/excalidraw/packages/utils/tests/geometry.test.ts:1",
+          "certainty": "MEDIUM",
+          "kind": "behavioral-fact"
+        },
+        {
+          "claim": "test-utils.ts is not production code: it registers a custom Jest matcher (toCloselyEqualPoints) for approximate point-array comparison, reflecting that geometry assertions are tolerance-based (default precision 2 -> ~0.01) rather than exact-equality.",
+          "file_line": "validation/_clones/excalidraw/packages/utils/src/test-utils.ts:4",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        },
+        {
+          "claim": "The package targets browsers only and assumes DOM globals: exportToCanvas calls document.createElement('canvas') directly with no environment guard, so these utilities cannot run in a bare Node context — a hard runtime boundary.",
+          "file_line": "validation/_clones/excalidraw/packages/utils/src/export.ts:63",
+          "certainty": "HIGH",
+          "kind": "boundary-rule"
+        },
+        {
+          "claim": "Runtime image/clipboard dependencies are declared in package.json: pako (compression), png-chunk-text + png-chunks-encode/extract (PNG metadata embedding), @braintree/sanitize-url, browser-fs-access, roughjs, points-on-curve, perfect-freehand — the export+geometry feature set is built on these third-party libs.",
+          "file_line": "validation/_clones/excalidraw/packages/utils/package.json:50",
+          "certainty": "HIGH",
+          "kind": "technology-choice"
+        }
+      ],
+      "candidate_issues": [
+        {
+          "family": "IF-7 (cross-boundary swallowed/unhandled error path)",
+          "claim": "getCurvePathOps guards only against a null/undefined Drawable (line 199), then if no 'path' set is found falls through to 'return shape.sets[0].ops' — an unguarded index into shape.sets[0]. A Drawable with a non-null but empty sets array yields undefined.ops and throws a TypeError, defeating the stated 'Temporary fix for extremely large elements' intent (which only handles the falsy-shape case). The empty-sets case is unhandled.",
+          "file_line": "validation/_clones/excalidraw/packages/utils/src/shape.ts:208",
+          "severity": "LOW"
+        },
+        {
+          "family": "IF-4/IF-10 (likely copy-paste defect: duplicated branch where a negation was intended)",
+          "claim": "ellipseExtremes returns 4 vectors; the yMax pair (lines 539-540) is correctly a +/- mirror (vector then vectorScale(...,-1)), but the xMax pair (lines 541-542) is two IDENTICAL entries 'vectorAdd(vector(xMax, yAtXMax), centerVector)' with no negation. By symmetry with the yMax pair, line 542 appears to have been intended as vectorScale(...,-1), so one extreme point is duplicated and the opposite x-extreme is never emitted.",
+          "file_line": "validation/_clones/excalidraw/packages/utils/src/shape.ts:542",
+          "severity": "MEDIUM"
+        }
+      ]
+    },
+    {
+      "component": "fractional-indexing",
+      "role": "Maintains a stable, collaboration-safe z-order for scene elements by keeping each element's string \"fractional index\" in sync with the array order, detecting/repairing invalid indices, and re-sorting elements by index during reconciliation and restore.",
+      "facts": [
+        {
+          "claim": "Two distinct layers: packages/fractional-indexing is a vendored, dependency-free base-62 fractional-indexing algorithm (generateKeyBetween/generateNKeysBetween/validateOrderKey), and packages/element/src/fractionalIndex.ts is the Excalidraw-domain layer that applies it to ExcalidrawElement arrays (validate/order/sync).",
+          "file_line": "validation/_clones/excalidraw/packages/fractional-indexing/src/index.ts:1",
+          "certainty": "HIGH",
+          "kind": "component-role"
+        },
+        {
+          "claim": "The base algorithm is vendored from the npm 'fractional-indexing' package under CC0, itself based on David Greenspan's 'Implementing Fractional Indexing' — a deliberate copy, not a runtime dependency, so it can be modified/audited in-tree.",
+          "file_line": "validation/_clones/excalidraw/packages/fractional-indexing/src/index.ts:1",
+          "certainty": "HIGH",
+          "kind": "technology-choice"
+        },
+        {
+          "claim": "Indices are base-62 strings ('0-9A-Za-z', digits in strict ascending char-code order) compared LEXICOGRAPHICALLY; a new key between two siblings is the string midpoint, so the order is a total order over strings and insertion never requires renumbering neighbors.",
+          "file_line": "validation/_clones/excalidraw/packages/fractional-indexing/src/index.ts:5",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "FractionalIndex is a branded string type (string & { _brand: 'franctionalIndex' }) — a nominal type to prevent passing arbitrary strings as indices; note the brand literal is misspelled ('franctionalIndex'), which is load-bearing because branded-type compatibility is by exact literal.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/types.ts:33",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "Core dual-structure invariant: the element array is the source-of-truth ordering CACHE and the fractional index encoded on each element must always be kept in sync with that array order; elements with invalid indices are detected and re-synced WITHOUT altering already-valid indices.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/fractionalIndex.ts:25",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "Validity of an element's index is positional, not absolute: isValidFractionalIndex requires predecessor < index < successor (lexicographically) against its array neighbors, plus a format check via validateOrderKey; a null/empty index is always invalid.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/fractionalIndex.ts:379",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "Tie-break rule for ordering: when two elements have IDENTICAL fractional indices, ties are broken by element id (a.id < b.id); when one element lacks an index, the array order is defensively preserved (sort comparator returns 1).",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/fractionalIndex.ts:128",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        },
+        {
+          "claim": "syncInvalidIndices MUTATES the passed elements in place (via mutateElement), whereas syncInvalidIndicesImmutable produces NEW element instances (via newElementWith) into a fresh map — two value-semantics variants for the same repair, the immutable one for store/delta paths.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/fractionalIndex.ts:206",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "Documented WARN: sync from the array can only GUESS which elements moved, so in edge cases syncInvalidIndices may rewrite the index of elements that were not actually moved — an accepted correctness/precision trade-off.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/fractionalIndex.ts:201",
+          "certainty": "HIGH",
+          "kind": "boundary-rule"
+        },
+        {
+          "claim": "syncMovedIndices is the precise/optimistic path with a validate-before-commit guard: it generates candidate indices, runs validateFractionalIndices(shouldThrow:true) on the candidates BEFORE any mutation, splits mutation so it never leaves a half-updated inconsistent state, and on ANY throw falls back to the broad syncInvalidIndices.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/fractionalIndex.ts:154",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        },
+        {
+          "claim": "Bound-text invariant: a bound text element's index must be strictly GREATER than its container's index (text.index > container.index), but this is validated only when includeBoundTextValidation is opt-in and is deliberately NOT auto-fixed by the sync functions.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/fractionalIndex.ts:82",
+          "certainty": "HIGH",
+          "kind": "boundary-rule"
+        },
+        {
+          "claim": "validateOrderKey rejects the reserved key 'A' + 26 zeros (A0000...0) as invalid and rejects any key whose fractional part ends in a zero digit ('no trailing zeros') — these reserved/forbidden forms are why a syntactically base-62 string can still be an invalid index.",
+          "file_line": "validation/_clones/excalidraw/packages/fractional-indexing/src/index.ts:109",
+          "certainty": "HIGH",
+          "kind": "boundary-rule"
+        },
+        {
+          "claim": "Repair works on CONTIGUOUS GROUPS bounded by valid lower/upper neighbors: getInvalidIndicesGroups/getMovedIndicesGroups emit groups whose first and last entries are the bounding indices, then generateIndices calls generateNKeysBetween(lowerBound.index, upperBound.index, n) to fill the interior — so a run of invalid elements is renumbered between the nearest valid anchors in one batch.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/fractionalIndex.ts:413",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        },
+        {
+          "claim": "orderByFractionalIndex sorts IN PLACE via Array.prototype.sort (mutates the input array), not returning a new array — a value-semantics gotcha for callers expecting immutability.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/fractionalIndex.ts:133",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "Public surface (re-exported from the @excalidraw/element barrel): validateFractionalIndices, orderByFractionalIndex, syncMovedIndices, syncInvalidIndices, syncInvalidIndicesImmutable, and the InvalidFractionalIndexError class (code 'ELEMENT_HAS_INVALID_INDEX').",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/index.ts:74",
+          "certainty": "HIGH",
+          "kind": "entry-point"
+        },
+        {
+          "claim": "Reconciliation pipeline is the primary consumer: reconcile.ts syncs invalid indices on local+remote, validates them (shouldThrow with reconciliationContext for diagnostics), then orderByFractionalIndex on the reconciled set and re-syncs — i.e. fractional indices are the cross-client ordering authority for multiplayer.",
+          "file_line": "validation/_clones/excalidraw/packages/excalidraw/data/reconcile.ts:6",
+          "certainty": "HIGH",
+          "kind": "dependency-edge"
+        },
+        {
+          "claim": "restore.ts calls syncInvalidIndices when loading scenes — fractional indices are repaired on every restore for backwards compatibility with old scenes/libraries that predate the index field (index may be null for not-yet-assigned elements).",
+          "file_line": "validation/_clones/excalidraw/packages/excalidraw/data/restore.ts:783",
+          "certainty": "HIGH",
+          "kind": "dependency-edge"
+        },
+        {
+          "claim": "Scene.replaceAllElements uses syncInvalidIndices and Scene.insertElementsAtIndex uses syncMovedIndices, with validateFractionalIndices guarding scene mutations — the Scene is the runtime owner that keeps the live element array index-consistent.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/Scene.ts:285",
+          "certainty": "HIGH",
+          "kind": "dependency-edge"
+        },
+        {
+          "claim": "The domain layer depends on mutateElement/newElementWith (./mutateElement), getBoundTextElement (./textElement), hasBoundTextElement (./typeChecks), arrayToMap (@excalidraw/common), and validateOrderKey/generateNKeysBetween (@excalidraw/fractional-indexing) — a one-directional dependency on the vendored algorithm package.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/fractionalIndex.ts:1",
+          "certainty": "HIGH",
+          "kind": "dependency-edge"
+        },
+        {
+          "claim": "isOrderedElement classifies an element as 'ordered' purely by the PRESENCE of an index (element.index truthy), explicitly NOT by validity — a deliberately weak predicate meaning 'was ordered at some point', used to decide whether to apply index-based comparison vs. preserve array order.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/fractionalIndex.ts:444",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        }
+      ],
+      "candidate_issues": [
+        {
+          "family": "IF-7 (swallowed/broad error handling)",
+          "claim": "syncMovedIndices wraps the entire optimistic path in a try/catch whose catch (e) silently discards the error 'e' and falls back to syncInvalidIndices with no logging — a validation failure during a move is swallowed with no diagnostic, masking systematic index-generation bugs. (The deeper syncInvalidIndices path then runs with ignoreLogs unset, so it is not fully silent, but the moved-path error itself is dropped.)",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/fractionalIndex.ts:193",
+          "severity": "LOW"
+        },
+        {
+          "family": "IF-3a (magic-string / cross-module coupling)",
+          "claim": "stringifyElement uses the non-null assertion on text.index!/container.index! while the comparison logic and isValidFractionalIndex elsewhere treat index as possibly null/empty; the bound-text check (text.index! <= container.index!) coerces possibly-null indices, which is an unsound spot if a bound element has a null index.",
+          "file_line": "validation/_clones/excalidraw/packages/element/src/fractionalIndex.ts:87",
+          "severity": "LOW"
+        },
+        {
+          "family": "IF-8 (build-hygiene / stale artifact in tree)",
+          "claim": "A pre-generated Graphify output graph.json sits inside the packages tree (packages/graphify-out/graph.json) and references fractionalIndex; per the project's own gotcha note this stray artifact can mis-tier the repo and pollute structural analysis — it should not be committed under packages/. (GATED — recorded, not a code defect in this component.)",
+          "file_line": "validation/_clones/excalidraw/packages/graphify-out/graph.json:1",
+          "severity": "LOW"
+        }
+      ]
+    },
+    {
+      "component": "excalidraw (packages/excalidraw — the @excalidraw/excalidraw React component library)",
+      "role": "The publishable React editor component library: it owns the public npm API barrel and the App god-component that wires together the in-memory Scene, the undo/redo History, the durable Store, an isolated Jotai state store, and the import/export/collaboration data layer.",
+      "facts": [
+        {
+          "claim": "This component is the npm package @excalidraw/excalidraw v0.18.0, an MIT-licensed React component library (its prod entry is dist/prod/index.js, types from excalidraw/index.d.ts); react/react-dom are peerDependencies (17/18/19), so the host app supplies React.",
+          "file_line": "validation/_clones/excalidraw/packages/excalidraw/package.json:2",
+          "certainty": "HIGH",
+          "kind": "technology-choice"
+        },
+        {
+          "claim": "index.tsx is the public API surface: it defines the memoized <Excalidraw> component and is a large re-export barrel that re-exports both local modules (i18n, data/restore, data/json, data/blob, data/library, charts) AND symbols from sibling packages @excalidraw/element, @excalidraw/common, @excalidraw/utils — so the package's public API is an aggregation across the monorepo, not just its own code.",
+          "file_line": "validation/_clones/excalidraw/packages/excalidraw/index.tsx:310",
+          "certainty": "HIGH",
+          "kind": "entry-point"
+        },
+        {
+          "claim": "components/App.tsx is the central god-component (~13,054 lines) — by far the largest file; it is the runtime heart that constructs and owns Scene, Store, History, Renderer, ActionManager and Fonts and mediates nearly all editor behavior.",
+          "file_line": "validation/_clones/excalidraw/packages/excalidraw/components/App.tsx:826",
+          "certainty": "HIGH",
+          "kind": "component-role"
+        },
+        {
+          "claim": "App constructs the core subsystems in a fixed order in its constructor: actionManager -> scene (new Scene()) -> canvas/renderer (new Renderer(scene)) -> store (new Store(this)) -> history (new History(store)) -> fonts (new Fonts(scene)); History depends on Store and Renderer/Fonts depend on Scene, so this construction order is load-bearing.",
+          "file_line": "validation/_clones/excalidraw/packages/excalidraw/components/App.tsx:833",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "Editor state changes flow through the Store as the single source of increments, and History only subscribes to the Store: store.onDurableIncrementEmitter.on((increment) => this.history.record(increment.delta)). History is therefore a downstream listener of Store, never the driver — the boundary rule is Store -> History (one direction).",
+          "file_line": "validation/_clones/excalidraw/packages/excalidraw/components/App.tsx:3135",
+          "certainty": "HIGH",
+          "kind": "boundary-rule"
+        },
+        {
+          "claim": "Undo/redo capture is governed by a CaptureUpdateAction tri-state passed to store on every scene mutation: IMMEDIATELY (immediately undoable, most local edits), NEVER (remote updates / scene initialization, never on undo stack), EVENTUALLY (deferred capture; the documented @default). Mis-tagging an update (e.g. a remote/collab update as IMMEDIATELY) would corrupt the undo stack — this is the key cross-cutting invariant for state changes.",
+          "file_line": "validation/_clones/excalidraw/packages/excalidraw/components/App.tsx:4579",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "History.record explicitly refuses to re-record entries that are already history-originated: it returns early if the delta isEmpty() OR is an instanceof HistoryDelta, preventing an undo/redo replay from being captured as a new undoable action (a re-entrancy guard).",
+          "file_line": "validation/_clones/excalidraw/packages/excalidraw/history.ts:118",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "History deliberately does NOT reset the redo stack on appState-only changes: it only clears redoStack when the recorded delta contains non-empty ELEMENT changes (if (!historyDelta.elements.isEmpty())), because a bare click/unselect (an appState change) must not wipe redo history. Subtle, non-obvious ordering/lifecycle rule.",
+          "file_line": "validation/_clones/excalidraw/packages/excalidraw/history.ts:127",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "When applying a history delta, the version/versionNonce properties are explicitly EXCLUDED from being restored (excludedProperties: new Set(['version','versionNonce'])) so that every undo/redo yields a NEW version — undo/redo is treated as a new user action for collaboration/sync purposes, not a literal time-travel restore.",
+          "file_line": "validation/_clones/excalidraw/packages/excalidraw/history.ts:33",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "Element versioning invariant: every element must have version > 0 so getSceneVersion() detects newly added elements — restore coerces version to (element.version || 1) and versionNonce to (?? 0). Code comment states the rationale directly.",
+          "file_line": "validation/_clones/excalidraw/packages/excalidraw/data/restore.ts:348",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "Collaboration conflict resolution is deterministic and version-based: reconcileElements/shouldDiscardRemoteElement keep the local element when local is being actively edited (editingTextElement/resizingElement/newElement id match), OR local.version > remote.version, OR (equal versions) local.versionNonce <= remote.versionNonce — the equal-version tie is broken by the LOWEST versionNonce so all peers converge identically.",
+          "file_line": "validation/_clones/excalidraw/packages/excalidraw/data/reconcile.ts:38",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "appState.ts defines APP_STATE_STORAGE_CONF — a per-field matrix declaring, for every AppState key, whether it is persisted to {browser, export, server}. This is the single source of truth for what AppState gets stripped per storage target; serializeAsJSON selects cleanAppStateForExport vs clearAppStateForDatabase based on it. Adding a new AppState field without an entry here silently fails to persist (the loop skips keys with no propConfig).",
+          "file_line": "validation/_clones/excalidraw/packages/excalidraw/appState.ts:138",
+          "certainty": "HIGH",
+          "kind": "key-invariant"
+        },
+        {
+          "claim": "The editor uses an ISOLATED Jotai store (editorJotaiStore via jotai-scope createIsolation), not the global Jotai store — editor-jotai.ts wraps jotai with createIsolation() and exports a scoped Provider + a dedicated createStore(), so multiple Excalidraw instances and the host app's own Jotai atoms do not collide. index.tsx wraps App in <EditorJotaiProvider store={editorJotaiStore}>.",
+          "file_line": "validation/_clones/excalidraw/packages/excalidraw/editor-jotai.ts:10",
+          "certainty": "HIGH",
+          "kind": "architecture"
+        },
+        {
+          "claim": "The host app reaches the running editor through React-context-bridged imperative API: ExcalidrawAPIContext / ExcalidrawAPISetContext (defined in App) + the ExcalidrawAPIProvider in index.tsx let useExcalidrawAPI()/useAppStateValue() work OUTSIDE the <Excalidraw> tree. This context-bridge is the supported boundary for external control of the editor.",
+          "file_line": "validation/_clones/excalidraw/packages/excalidraw/index.tsx:51",
+          "certainty": "HIGH",
+          "kind": "boundary-rule"
+        },
+        {
+          "claim": "Persistence to browser localStorage is centralized in the EditorLocalStorage class with keys typed to EDITOR_LS_KEYS, and every get/set/has/delete is wrapped in try/catch that console.warns and returns a safe fallback (false/null) — localStorage failures (quota, privacy mode) are swallowed, never thrown, so the editor degrades rather than crashing.",
+          "file_line": "validation/_clones/excalidraw/packages/excalidraw/data/EditorLocalStorage.ts:7",
+          "certainty": "HIGH",
+          "kind": "data-store"
+        },
+        {
+          "claim": "This component depends on sibling monorepo packages @excalidraw/element (Scene/Store/StoreDelta/CaptureUpdateAction/element mutation), @excalidraw/common (constants, Emitter, helpers), @excalidraw/math, and @excalidraw/utils — e.g. history.ts imports CaptureUpdateAction/StoreChange/StoreDelta and the Store/StoreSnapshot types from @excalidraw/element; the Store and Scene CLASSES live in @excalidraw/element, not in this package.",
+          "file_line": "validation/_clones/excalidraw/packages/excalidraw/history.ts:3",
+          "certainty": "HIGH",
+          "kind": "dependency-edge"
+        },
+        {
+          "claim": "Component teardown (destroy) re-creates a fresh Scene/Renderer/Fonts and clears the store emitters in a fixed ordered sequence (renderer.destroy -> scene.destroy -> new Scene -> new Fonts -> new Renderer -> clear files/imageCache -> disconnect observers -> store.*Emitter.clear) — a defined lifecycle teardown order that must release the old graph before rebinding.",
+          "file_line": "validation/_clones/excalidraw/packages/excalidraw/components/App.tsx:3213",
+          "certainty": "HIGH",
+          "kind": "behavioral-fact"
+        },
+        {
+          "claim": "index-node.ts is a separate Node/SSR-oriented entry that bypasses the React component entirely and calls exportToCanvas directly with node-canvas (require('canvas'), registerFont) — distinct from the browser index.tsx entry, demonstrating the export pipeline is usable headless.",
+          "file_line": "validation/_clones/excalidraw/packages/excalidraw/index-node.ts:62",
+          "certainty": "HIGH",
+          "kind": "entry-point"
+        }
+      ],
+      "candidate_issues": [
+        {
+          "family": "IF-8 (circular dependency / import cycle)",
+          "claim": "index.tsx (the public barrel) imports App from ./components/App, while components/App.tsx imports many sibling modules of the package; the public surface and the god-component are tightly coupled in a way that risks an import cycle between index.tsx <-> components/App.tsx <-> the re-exported local modules (data/*, charts, components/*). TypeScript/esbuild permit module cycles (no compile-time ban like Go/Rust), so this is structurally possible but I did NOT confirm an actual back-edge cycle from App.tsx back to index.tsx within this read — GATED, candidate only.",
+          "file_line": "validation/_clones/excalidraw/packages/excalidraw/index.tsx:16",
+          "severity": "LOW"
+        },
+        {
+          "family": "IF-3a (magic-string / shared-key coupling without a shared constant)",
+          "claim": "appState.ts maintains TWO parallel structures keyed by the same AppState field names — getDefaultAppState() (the default values) and APP_STATE_STORAGE_CONF (the per-field persistence matrix). They must stay in lock-step by string key, but there is no single shared key list enforcing it; a new field added to one and not the other compiles (the storage loop simply skips keys with no propConfig, silently not persisting). Cross-structure coupling by field-name with no shared source of truth.",
+          "file_line": "validation/_clones/excalidraw/packages/excalidraw/appState.ts:26",
+          "severity": "LOW"
+        },
+        {
+          "family": "IF-7 (potential dead / redundant code)",
+          "claim": "App's constructor assigns this.history = new History(this.store) twice — once at line 834 and again identically at line 842 with no intervening reassignment of this.store; the second assignment appears redundant (the first History instance is discarded). Grounded as a candidate; could be intentional defensive ordering but reads as dead/duplicate initialization.",
+          "file_line": "validation/_clones/excalidraw/packages/excalidraw/components/App.tsx:842",
+          "severity": "LOW"
+        }
+      ]
+    }
+  ],
+  "score": {
+    "coverage_matched": 7,
+    "coverage_total": 14,
+    "faithfulness_correct": 7,
+    "faithfulness_total": 7,
+    "deepinit_wrong_high": 0,
+    "matched_rc_ids": [
+      "RC-002",
+      "RC-003",
+      "RC-006",
+      "RC-007",
+      "RC-008",
+      "RC-009",
+      "RC-014"
+    ],
+    "missed_rc_ids": [
+      "RC-001",
+      "RC-004",
+      "RC-005",
+      "RC-010",
+      "RC-011",
+      "RC-012",
+      "RC-013"
+    ],
+    "notes": "DOC-COVERAGE 7/14 (50%). All 14 reference claims independently verified as CURRENT against the cloned repo at validation/_clones/excalidraw (anchors all accurate: root package.json yarn workspaces, esbuild in scripts/buildBase.js, vite in excalidraw-app, vitest.config.mts aliases, tsconfig strict:true, examples/with-nextjs + with-script-in-browser, all package names).\n\nCOVERED WELL — the published-package skeleton. Matched all 5 core component-exists claims for the published packages (@excalidraw/excalidraw RC-002, common RC-006, element RC-007, math RC-008, utils RC-009), the npm-publish technology-choice (RC-003: 'one publishable React component library' = @excalidraw/excalidraw), and TypeScript-throughout (RC-014, explicitly 'an ESM-only TypeScript monorepo' + corroborated by the branded-nominal-type/import-type erasure discussion). The understanding goes FAR DEEPER than the thin reference on these packages (24 key-invariant/boundary/coupling facts on undo-redo, versioning, binding, etc.), but those have no reference counterpart so they neither add nor subtract coverage.\n\nMISSED — two whole layers the reference documents and the understanding (package-centric, blind to the doc) omitted: (1) the BUILD/TEST TOOLING technology-choices — Yarn workspaces (RC-001; understanding says 'monorepo' but never names the workspace tool — no near-miss credit on the tech-choice distinguisher), esbuild (RC-012), Vite (RC-013), and the vitest.config.mts path-alias boundary-rule (RC-011); (2) the APPLICATION/EXAMPLES layer — excalidraw-app/ (RC-004, a private:true app, which is exactly why a package-only framing dropped it), its dependency edge excalidraw-app -> @excalidraw/excalidraw (RC-005), and examples/ (RC-010). Per-kind: component-exists 5/7, technology-choice 2/4, dependency-edge 0/1, boundary-rule 0/1.\n\nDOC-FAITHFULNESS 7/7 (100%). Of the understanding facts overlapping a reference topic (the TS monorepo framing, the publishable @excalidraw/excalidraw library, and the 5 packages' existence/roles), every one is correct and verified against code: ESM-only confirmed (all packages \"type\":\"module\"), element runtime deps = common+math (+vendored fractional-indexing the understanding correctly splits out), publishable React component library confirmed. Nothing in the understanding contradicts the reference or the code.\n\ndeepinit_wrong_high = 0 — HARD GATE PASSES. No HIGH-certainty fact is refuted by the reference or code. The understanding's omissions are pure coverage gaps (it stayed within the published-package boundary it could ground), never confident errors."
+  },
+  "coverage_pct": 0.5,
+  "faithfulness_pct": 1,
+  "proxy_baseline": {
+    "coverage": "11/14",
+    "pct": 0.786,
+    "source": "validation/coverage/results/excalidraw.json"
+  },
+  "_meta": {
+    "workflow": "",
+    "agents": 8,
+    "subagent_tokens": 671605,
+    "duration_ms": 549954,
+    "date": "2026-06-14",
+    "run": "",
+    "logs": [
+      "extracted 6/6 components; 128 grounded facts",
+      "assembled: 6 components, 23 critical facts",
+      "REAL-ENGINE: coverage 7/14 = 50.0% · faithfulness 7/7 · wrong_high 0",
+      "PROXY baseline (committed excalidraw.json) was 11/14 = 78.6% — compare for the proxy-vs-real delta"
+    ]
+  }
+}

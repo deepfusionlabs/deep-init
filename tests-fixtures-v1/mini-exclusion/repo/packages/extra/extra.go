@@ -1,0 +1,2 @@
+package extra
+func Extra() {}

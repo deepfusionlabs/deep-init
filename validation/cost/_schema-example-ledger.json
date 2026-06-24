@@ -1,0 +1,80 @@
+{
+  "_note": "ILLUSTRATIVE schema-conformance fixture for harness §33 — the synthetic worked example from docs/deepinit-instrumentation-schema.md. NOT a measured run: cost numbers are synthetic placeholders (internally consistent: est_usd = 318400×5 + 41200×25 per million = 2.62). Real cost ledgers from   land beside this file and are gated by the same §33. Prices are illustrative — verify the real [1m]-tier list price at publish time.",
+  "schema": "deepinit-instrumentation/run-record/v1",
+  "run": {
+    "fixture": null, "repo": "fossasia/visdom", "run_kind": "precision_validation",
+    "commit": "abb6904adeca8ae77d4a6925cd0caeca34761000", "model": "claude-opus-4-8",
+    "depth": "deep", "review": "aggressive", "issues_flag": "on", "issues_families": "IF-4",
+    "date": "2026-06-10", "engine_proxy": "deep_blind_pass"
+  },
+  "identity": {
+    "loc": 8742, "file_count": 63,
+    "languages": [{"lang": "Python", "loc": 6120, "pct": 70.0}, {"lang": "JavaScript", "loc": 1980, "pct": 22.6}, {"lang": "CSS", "loc": 642, "pct": 7.4}],
+    "component_count": 7, "avg_component_loc": 1248.9, "size_tier": "S", "size_source": "scc",
+    "metamorphic_child_sha": null
+  },
+  "cost": {
+    "wall_time_sec": 412.6, "input_tokens": 318400, "output_tokens": 41200, "cache_read_tokens": null,
+    "base_tokens": 18883, "issue_pass_tokens": 44100, "llm_passes": 9, "subagents": 7,
+    "effort_multiplier": 1.8, "graphify_discount": 1.0, "est_usd": 2.62,
+    "price_as_of_date": "2026-06-04", "price_input_per_mtok": 5.00, "price_output_per_mtok": 25.00,
+    "cost_basis": "estimate_list_price", "token_source": "session_usage",
+    "processing": {
+      "schema": "deepinit-instrumentation/processing/v1",
+      "measured_at": "2026-06-14", "time_source": "external_metered",
+      "env": {"machine": "synthetic-fixture", "api_latency_class": "interactive", "wall_clock_note": "environment-dependent; lead with tokens, not time"},
+      "stages": [
+        {"name": "detect",       "duration_sec": 18.0,  "tokens_in": 12000,  "tokens_out": 1500, "llm_passes": 1, "subagents": 1},
+        {"name": "plan",         "duration_sec": 4.0,   "tokens_in": 2000,   "tokens_out": 500,  "llm_passes": 0, "subagents": 0},
+        {"name": "extract",      "duration_sec": 120.4, "tokens_in": 180000, "tokens_out": 22000,"llm_passes": 7, "subagents": 7},
+        {"name": "review",       "duration_sec": 95.0,  "tokens_in": 60000,  "tokens_out": 8000, "llm_passes": 2, "subagents": 0},
+        {"name": "adr_kl",       "duration_sec": 22.0,  "tokens_in": 9000,   "tokens_out": 2000, "llm_passes": 1, "subagents": 0},
+        {"name": "issue_detect", "duration_sec": 70.0,  "tokens_in": 30000,  "tokens_out": 4000, "llm_passes": 1, "subagents": 0},
+        {"name": "issue_raise",  "duration_sec": 14.0,  "tokens_in": 8000,   "tokens_out": 1500, "llm_passes": 0, "subagents": 0},
+        {"name": "filter",       "duration_sec": 5.0,   "tokens_in": 2000,   "tokens_out": 400,  "llm_passes": 0, "subagents": 0},
+        {"name": "redact",       "duration_sec": 3.0,   "tokens_in": 1000,   "tokens_out": 200,  "llm_passes": 0, "subagents": 0},
+        {"name": "verify",       "duration_sec": 28.0,  "tokens_in": 6000,   "tokens_out": 1000, "llm_passes": 1, "subagents": 0},
+        {"name": "emit",         "duration_sec": 20.0,  "tokens_in": 6000,   "tokens_out": 100,  "llm_passes": 0, "subagents": 0},
+        {"name": "horizontal",   "duration_sec": 12.0,  "tokens_in": 2200,   "tokens_out": 0,    "llm_passes": 0, "subagents": 0},
+        {"name": "report",       "duration_sec": 1.2,   "tokens_in": 200,    "tokens_out": 0,    "llm_passes": 0, "subagents": 0}
+      ],
+      "per_component": [
+        {"component": "server",   "duration_sec": 80.0, "loc": 1400, "tokens_out": 4000, "wave": "2a"},
+        {"component": "handlers", "duration_sec": 75.0, "loc": 1200, "tokens_out": 3500, "wave": "2a"},
+        {"component": "data",     "duration_sec": 70.0, "loc": 1100, "tokens_out": 3000, "wave": "2a"},
+        {"component": "api",      "duration_sec": 90.0, "loc": 1600, "tokens_out": 4200, "wave": "2a"},
+        {"component": "viz",      "duration_sec": 85.0, "loc": 1500, "tokens_out": 4100, "wave": "2a"},
+        {"component": "store",    "duration_sec": 72.0, "loc": 1000, "tokens_out": 1900, "wave": "2a"},
+        {"component": "util",     "duration_sec": 68.0, "loc": 942,  "tokens_out": 1300, "wave": "2a"}
+      ],
+      "throughput": {"loc_per_sec": 21.19, "components_per_min": 1.02, "tokens_per_loc": 41.13, "languages_per_min": 0.44},
+      "parallelism": {"wave_2a_parallel_n": 7, "wave_2a_wall_sec": 120.4, "wave_2a_serial_sum_sec": 540.0, "wave_2a_speedup": 4.49, "wave_2a_efficiency": 0.64}
+    }
+  },
+  "coverage": {
+    "detectors": [
+      {"family": "IF-4", "status": "full", "degrade_reason": null, "fires": 0},
+      {"family": "IF-2", "status": "degraded", "degrade_reason": "no-DB-IF-2-static-only", "fires": 0}
+    ],
+    "extraction_ladder": {"graphify": 0, "ctags": 58, "grep": 4, "llm_only": 1, "skipped": 0},
+    "skipped_files": [], "db_status": "static_only", "adr_corpus_present": true,
+    "census_overlay": [
+      {"host_iss_id": "ISS-handlers:001", "host_family": "IF-4", "rule_class": "all Tornado handlers must use @check_auth",
+       "N": 18, "k": 13, "deviants": 5, "signal": "CORROBORATE", "degrade_reason": null, "naive_fp_avoided": 5}
+    ]
+  },
+  "findings": {
+    "by_family": {"IF-4": {"raised": 0, "verified": 0, "unverified": 0}},
+    "recall": null, "metamorphic_fp": null,
+    "naive_vs_guarded": {"naive_fp": 5, "guarded_fp": 0, "fp_avoided": 5}
+  },
+  "issues": [],
+  "suppressed": [
+    {"family": "IF-4", "file": "py/visdom/server/handlers/web_handlers.py", "line": 652,
+     "reason": "IndexHandler.post is the login endpoint (by-design unauthenticated); rule-class exception, not a contradiction"}
+  ],
+  "provenance": {
+    "training_contamination_caveat": true, "key_held_out": true,
+    "harness_section": "sec31", "publishable": "indicative"
+  }
+}

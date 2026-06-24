@@ -1,0 +1,393 @@
+{
+  "calibration": {
+    "kemal_actual_over_base": 14.32,
+    "kemal_graphify_discount": 1.0,
+    "kemal_single_engine_in_out_ratio": 7.154,
+    "matrix_measured_actual_over_base_median": 5.1,
+    "matrix_measured_actual_over_base_range": [
+      1.46,
+      106.28
+    ],
+    "note": "actual/base uses the detection.md forecast base (graphify_discount 0.6 for the parseable matrix repos). A high ratio means the bare LOC×1.2×effort×0.6 formula UNDER-forecasts a real single-engine pass (it reads refs + reasons + re-reads). The forecast stays the source of truth, CALIBRATED by this factor."
+  },
+  "cost_basis": "estimate_list_price",
+  "effort_multiplier": 1.8,
+  "line_factor": 1.2,
+  "method": "deterministic detection.md forecast across the full matrix + measured single-engine output-token cost on the run subset, input estimated via the kemal in/out ratio. token_source=count_tokens_estimate; publishable=INDICATIVE. A published $ still needs a clean api_usage S/M/L run.",
+  "model": "claude-opus-4-8",
+  "no_long_context_premium": true,
+  "per_repo": {
+    "click": {
+      "forecast_base_tokens": 26368,
+      "graphify_discount": 0.6,
+      "graphify_parseable": true,
+      "lang": "Python",
+      "measured": {
+        "actual_total_over_base": 5.1,
+        "components": 17,
+        "est_input_tokens": 118098,
+        "est_total_tokens": 134606,
+        "est_usd": 1.0,
+        "files_read": null,
+        "issues_fired": 3,
+        "output_tokens": 16508,
+        "suppressions": null,
+        "token_source": "count_tokens_estimate (output measured, input via kemal in/out ratio)"
+      },
+      "repo": "pallets/click",
+      "source_loc": 20346,
+      "tier": "M"
+    },
+    "commercetools-sync-java": {
+      "forecast_base_tokens": 136220,
+      "graphify_discount": 0.6,
+      "graphify_parseable": true,
+      "lang": "Java",
+      "repo": "commercetools/commercetools-sync-java",
+      "source_loc": 105108,
+      "tier": "L"
+    },
+    "excalidraw": {
+      "forecast_base_tokens": 203740,
+      "graphify_discount": 0.6,
+      "graphify_parseable": true,
+      "lang": "TypeScript",
+      "repo": "excalidraw/excalidraw",
+      "source_loc": 157207,
+      "tier": "L"
+    },
+    "express": {
+      "forecast_base_tokens": 20583,
+      "graphify_discount": 0.6,
+      "graphify_parseable": true,
+      "lang": "JavaScript",
+      "measured": {
+        "actual_total_over_base": 3.97,
+        "components": 7,
+        "est_input_tokens": 71612,
+        "est_total_tokens": 81622,
+        "est_usd": 0.61,
+        "files_read": null,
+        "issues_fired": 0,
+        "output_tokens": 10010,
+        "suppressions": null,
+        "token_source": "count_tokens_estimate (output measured, input via kemal in/out ratio)"
+      },
+      "repo": "expressjs/express",
+      "source_loc": 15882,
+      "tier": "M"
+    },
+    "fmt": {
+      "forecast_base_tokens": 64545,
+      "graphify_discount": 0.6,
+      "graphify_parseable": true,
+      "lang": "C++",
+      "measured": {
+        "actual_total_over_base": 1.9,
+        "components": 14,
+        "est_input_tokens": 107696,
+        "est_total_tokens": 122750,
+        "est_usd": 0.91,
+        "files_read": 13,
+        "issues_fired": 1,
+        "output_tokens": 15054,
+        "suppressions": 10,
+        "token_source": "count_tokens_estimate (output measured, input via kemal in/out ratio)"
+      },
+      "repo": "fmtlib/fmt",
+      "source_loc": 49803,
+      "tier": "M"
+    },
+    "gin": {
+      "forecast_base_tokens": 23780,
+      "graphify_discount": 0.6,
+      "graphify_parseable": true,
+      "lang": "Go",
+      "measured": {
+        "actual_total_over_base": 5.98,
+        "components": 11,
+        "est_input_tokens": 124794,
+        "est_total_tokens": 142238,
+        "est_usd": 1.06,
+        "files_read": null,
+        "issues_fired": 2,
+        "output_tokens": 17444,
+        "suppressions": null,
+        "token_source": "count_tokens_estimate (output measured, input via kemal in/out ratio)"
+      },
+      "repo": "gin-gonic/gin",
+      "source_loc": 18349,
+      "tier": "M"
+    },
+    "gorilla-mux": {
+      "forecast_base_tokens": 7543,
+      "graphify_discount": 0.6,
+      "graphify_parseable": true,
+      "lang": "Go",
+      "measured": {
+        "actual_total_over_base": 21.5,
+        "components": 4,
+        "est_input_tokens": 142307,
+        "est_total_tokens": 162199,
+        "est_usd": 1.21,
+        "files_read": 7,
+        "issues_fired": 0,
+        "output_tokens": 19892,
+        "suppressions": 9,
+        "token_source": "count_tokens_estimate (output measured, input via kemal in/out ratio)"
+      },
+      "repo": "gorilla/mux",
+      "source_loc": 5820,
+      "tier": "S"
+    },
+    "itsdangerous": {
+      "forecast_base_tokens": 1419,
+      "graphify_discount": 0.6,
+      "graphify_parseable": true,
+      "lang": "Python",
+      "measured": {
+        "actual_total_over_base": 106.28,
+        "components": 8,
+        "est_input_tokens": 132313,
+        "est_total_tokens": 150808,
+        "est_usd": 1.12,
+        "files_read": 12,
+        "issues_fired": 0,
+        "output_tokens": 18495,
+        "suppressions": 9,
+        "token_source": "count_tokens_estimate (output measured, input via kemal in/out ratio)"
+      },
+      "repo": "pallets/itsdangerous",
+      "source_loc": 1095,
+      "tier": "S"
+    },
+    "kemal": {
+      "forecast_base_tokens": 11949,
+      "graphify_discount": 1.0,
+      "graphify_parseable": false,
+      "lang": "Crystal",
+      "repo": "kemalcr/kemal",
+      "source_loc": 5532,
+      "tier": "S"
+    },
+    "kotlinx-schema": {
+      "forecast_base_tokens": 32518,
+      "graphify_discount": 0.6,
+      "graphify_parseable": true,
+      "lang": "Kotlin",
+      "repo": "Kotlin/kotlinx-serialization-json-schema",
+      "source_loc": 25091,
+      "tier": "M"
+    },
+    "laravel-framework": {
+      "forecast_base_tokens": 427558,
+      "graphify_discount": 0.6,
+      "graphify_parseable": true,
+      "lang": "PHP",
+      "repo": "laravel/framework",
+      "source_loc": 329906,
+      "tier": "L"
+    },
+    "phoenix": {
+      "forecast_base_tokens": 75038,
+      "graphify_discount": 0.6,
+      "graphify_parseable": true,
+      "lang": "Elixir",
+      "measured": {
+        "actual_total_over_base": 3.11,
+        "components": 17,
+        "est_input_tokens": 204819,
+        "est_total_tokens": 233449,
+        "est_usd": 1.74,
+        "files_read": 18,
+        "issues_fired": 4,
+        "output_tokens": 28630,
+        "suppressions": 7,
+        "token_source": "count_tokens_estimate (output measured, input via kemal in/out ratio)"
+      },
+      "repo": "phoenixframework/phoenix",
+      "source_loc": 57900,
+      "tier": "M"
+    },
+    "pyccel": {
+      "forecast_base_tokens": 136307,
+      "graphify_discount": 0.6,
+      "graphify_parseable": true,
+      "lang": "Python",
+      "measured": {
+        "actual_total_over_base": 1.46,
+        "components": 12,
+        "est_input_tokens": 174422,
+        "est_total_tokens": 198803,
+        "est_usd": 1.48,
+        "files_read": 22,
+        "issues_fired": 2,
+        "output_tokens": 24381,
+        "suppressions": 6,
+        "token_source": "count_tokens_estimate (output measured, input via kemal in/out ratio)"
+      },
+      "repo": "pyccel/pyccel",
+      "source_loc": 105175,
+      "tier": "L"
+    },
+    "redis": {
+      "forecast_base_tokens": 448119,
+      "graphify_discount": 0.6,
+      "graphify_parseable": true,
+      "lang": "C",
+      "repo": "redis/redis",
+      "source_loc": 345771,
+      "tier": "L"
+    },
+    "sinatra": {
+      "forecast_base_tokens": 24449,
+      "graphify_discount": 0.6,
+      "graphify_parseable": true,
+      "lang": "Ruby",
+      "measured": {
+        "actual_total_over_base": 9.25,
+        "components": 3,
+        "est_input_tokens": 198438,
+        "est_total_tokens": 226176,
+        "est_usd": 1.69,
+        "files_read": 11,
+        "issues_fired": 0,
+        "output_tokens": 27738,
+        "suppressions": 8,
+        "token_source": "count_tokens_estimate (output measured, input via kemal in/out ratio)"
+      },
+      "repo": "sinatra/sinatra",
+      "source_loc": 18865,
+      "tier": "M"
+    },
+    "uniffi-rs": {
+      "forecast_base_tokens": 83819,
+      "graphify_discount": 0.6,
+      "graphify_parseable": true,
+      "lang": "Rust",
+      "repo": "mozilla/uniffi-rs",
+      "source_loc": 64675,
+      "tier": "M"
+    }
+  },
+  "price_as_of_date": "2026-06-04",
+  "price_input_per_mtok": 5.0,
+  "price_output_per_mtok": 25.0,
+  "schema": "deepinit-validation/cost-model/v1",
+  "tier_table": {
+    "L": {
+      "actual_over_base_range": {
+        "max": 1.46,
+        "median": 1.5,
+        "min": 1.46,
+        "n": 1
+      },
+      "est_total_tokens_range": {
+        "max": 198803,
+        "median": 198803,
+        "min": 198803,
+        "n": 1
+      },
+      "est_usd_range": {
+        "max": 1.48,
+        "median": 1.5,
+        "min": 1.48,
+        "n": 1
+      },
+      "measured_n": 1,
+      "output_tokens_range": {
+        "max": 24381,
+        "median": 24381,
+        "min": 24381,
+        "n": 1
+      },
+      "repos": [
+        "pyccel/pyccel"
+      ],
+      "source_loc_range": {
+        "max": 105175,
+        "median": 105175,
+        "min": 105175,
+        "n": 1
+      }
+    },
+    "M": {
+      "actual_over_base_range": {
+        "max": 9.25,
+        "median": 4.5,
+        "min": 1.9,
+        "n": 6
+      },
+      "est_total_tokens_range": {
+        "max": 233449,
+        "median": 138422.0,
+        "min": 81622,
+        "n": 6
+      },
+      "est_usd_range": {
+        "max": 1.74,
+        "median": 1.0,
+        "min": 0.61,
+        "n": 6
+      },
+      "measured_n": 6,
+      "output_tokens_range": {
+        "max": 28630,
+        "median": 16976.0,
+        "min": 10010,
+        "n": 6
+      },
+      "repos": [
+        "expressjs/express",
+        "fmtlib/fmt",
+        "gin-gonic/gin",
+        "pallets/click",
+        "phoenixframework/phoenix",
+        "sinatra/sinatra"
+      ],
+      "source_loc_range": {
+        "max": 57900,
+        "median": 19605.5,
+        "min": 15882,
+        "n": 6
+      }
+    },
+    "S": {
+      "actual_over_base_range": {
+        "max": 106.28,
+        "median": 63.9,
+        "min": 21.5,
+        "n": 2
+      },
+      "est_total_tokens_range": {
+        "max": 162199,
+        "median": 156503.5,
+        "min": 150808,
+        "n": 2
+      },
+      "est_usd_range": {
+        "max": 1.21,
+        "median": 1.2,
+        "min": 1.12,
+        "n": 2
+      },
+      "measured_n": 2,
+      "output_tokens_range": {
+        "max": 19892,
+        "median": 19193.5,
+        "min": 18495,
+        "n": 2
+      },
+      "repos": [
+        "gorilla/mux",
+        "pallets/itsdangerous"
+      ],
+      "source_loc_range": {
+        "max": 5820,
+        "median": 3457.5,
+        "min": 1095,
+        "n": 2
+      }
+    }
+  }
+}

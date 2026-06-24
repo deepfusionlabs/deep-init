@@ -1,0 +1,109 @@
+{
+  "schema": "deepinit-validation/discovery-record/v1",
+  "program": "DeepInit in the Wild",
+  "track": "3 — recall/discovery (M4c: the FUNCTIONAL/ML datapoint — hard-ban IF-8 via the build-manifest + a muted-by-purity IF-3a with one mechanism-distinct escape)",
+  "shape": "A-structurally-verified ×1 (one grounded IF-3a global-mutable-refs coupling — the Clflags singleton — recorded GATED / not filed) + a clean Shape-B across the other four families / 0 false defects",
+  "recorded": "2026-06-13",
+  "engine_proxy": "deterministic-detector-sweep (5 read-only agents — IF-8 / IF-6 / IF-10 / IF-7c / IF-3a — applying the SHIPPED deterministic predicates directly to real OCaml source; NOT a full Detect→Emit pipeline; no cost ledger). Build chain:  (5 agents, ~342k tokens, 122 tool-uses). The IF-8 headline (build-manifest DAG) and the IF-3a fire (Clflags) were INDEPENDENTLY re-verified by the main loop (a second library-graph Tarjan over the dune files + a re-grep of the Clflags .mli ref exposures and cross-lib reads).",
+  "repo": {
+    "name": "ocaml/dune",
+    "url": "https://github.com/ocaml/dune",
+    "branch": "main",
+    "pinned_sha": "bef216d3b6eaa0c87c27cc5410684f285afbcb9f",
+    "pinned_sha_note": "shallow-clone HEAD at 2026-06-13; the file:line citations are the durable anchors.",
+    "license": "MIT",
+    "stack": "OCaml (the Dune build system) — the FIRST OCaml / functional-ML datapoint; hard-ban IF-8 via a NEW enforcement mechanism (explicitly-declared build-manifest deps, the same MANIFEST-DAG class as Swift/SPM) + immutability-muted IF-3a (the opposite end of the spectrum from C/nginx's richest substrate).",
+    "size": "34 src/ sub-libraries (35 component nodes incl. the src/lev sub-lib) / 1049 .ml+.mli files; core libs dune_engine, dune_rules, stdune, memo, fiber, dag, dune_lang, dune_util"
+  },
+  "analysis_scope": "IF-8 over the whole src/ inter-library graph (35 component nodes / 141 in-repo edges, built from each src/<lib>/dune file's (libraries ...) stanza); the deep families over the 8 core libs (src/{dune_engine,dune_rules,memo,fiber,dag,dune_lang,dune_util} + otherlibs/stdune/src).",
+  "result_headline": "Across five families on dune@bef216d3 (34 src libs / ~1049 OCaml files), the guarded sweep produced exactly 1 fire — an IF-3a global-mutable-state coupling via Dune_engine.Clflags (a singleton of ~11 raw `ref` cells EXPOSED in the .mli, read/written across ≥4 distinct libs with no get/set accessor) — against 42 named suppressions (IF-8 4 / IF-6 9 / IF-10 7 / IF-7c 8 / IF-3a 14) and 0 false defects. IF-8 is HARD-BAN (a strict 35-node / 141-edge DAG, build-enforced by dune's (libraries) manifest — same enforcement class as Swift/SPM), confirmed by TWO independent algorithms (Tarjan SCC all-singletons + a Kahn topological sort consuming all 35 nodes), with the maintainer-flagged `dune_lang→dune_engine` near-cycle (a `;; temporarily here` TODO) correctly suppressed (no back-edge). IF-3a is MUTED-BY-PURITY but not empty — the one escape is mechanism-distinct from every prior stack.",
+  "per_family": [
+    {
+      "family": "IF-8",
+      "applicable": true,
+      "fired": 0,
+      "fires": [],
+      "suppressed_count": 4,
+      "regime": "HARD-BAN — build-enforced DAG via the dune (libraries) manifest",
+      "key_suppressions": [
+        "dune_lang → dune_engine (THE headline near-miss): a REAL edge the maintainers themselves flagged `;; temporarily here` (src/dune_lang/dune:14-15) — a layering smell — but dune_engine's (libraries) lists ONLY strictly-lower libs and does NOT list dune_lang back (grep 'dune_lang' src/dune_engine/dune = no match) → acyclic chain, no closing edge → correctly silent. The textbook TODO-shaped almost-cycle a naive detector over-fires on.",
+        "action_plugin vs otherlibs/dune_action_plugin name-collision: dune_engine requires `dune_action_plugin` (src/dune_engine/dune:17 → otherlibs/dune-action-plugin), a DISTINCT library from the in-src `action_plugin` — exact (name…)→directory resolution keeps them as separate nodes (a substring/fuzzy matcher would fabricate a 2-cycle).",
+        "14 high-level libs depend on the dune_engine spine (dune_rules/source/dune_vcs/… → dune_engine) but dune_engine reciprocates NONE → a pure DAG sink, not a cycle (a naive 'core lib must be in a cycle' heuristic over-fires).",
+        "intra-component test→main edges (fiber/test→fiber, lev/test→lev, dune_scheduler/bin→dune_scheduler) map to the SAME src/<lib> component → dropped as self-loops (selfloops=[])."
+      ],
+      "language_specific_note": "THE FUNCTIONAL/ML CASE — HARD-BAN IF-8 via a NEW enforcement mechanism (explicitly-DECLARED build-manifest deps, not inferred imports). Each src/<lib>/dune file's `(library (name X) (libraries ...))` S-expression declares the inter-library edges; dune/OCaml BANS library-dependency cycles (hard build error 'Dependency cycle between …'), so a buildable tree's library graph is a structural DAG — the same hard-ban regime as Go-package/Rust-crate/C#-project/Java-module, but via a manifest declaration (the MANIFEST-DAG mechanism shared with Swift/SPM). 35 nodes / 141 in-repo edges / 35 SCCs all size 1 / 0 cycles, confirmed by BOTH Tarjan and a Kahn topological sort. Resolution subtleties handled: library NAME≠dir (blake3_mini=src/ocaml-blake3-mini, ocaml_config=src/ocaml-config) via an exact repo-wide name→dir map; `(re_export X)` unwrapped; otherlibs/vendor/stdlib deps dropped as out-of-src external edges. SECOND hard-ban layer recorded (not exercised — it is intra-lib): WITHIN a library OCaml requires a topological module compile order (no cross-file mutual recursion without `module rec`). Independently main-loop-verified (a second library-graph Tarjan converged on the DAG).",
+      "naive_overfire_estimate": 3
+    },
+    {
+      "family": "IF-6",
+      "applicable": true,
+      "fired": 0,
+      "fires": [],
+      "suppressed_count": 9,
+      "language_specific_note": "Clean. OCaml value-sets = variant types (`type t = A | B | C`), polymorphic-variant sets, literal lists. Defined ONCE in a types module and used elsewhere (single-definition); no same-canonical-name variant set re-defined with conflicting membership across ≥2 libs. 0 fires / 9 named suppressions.",
+      "naive_overfire_estimate": 9
+    },
+    {
+      "family": "IF-10",
+      "applicable": true,
+      "fired": 0,
+      "fires": [],
+      "suppressed_count": 7,
+      "language_specific_note": "Muted (0 fires). Three structural reasons IF-10 starves on OCaml: (1) OCaml has NO C-preprocessor (no `#if FLAG` substrate at all); (2) compile-time const = a top-level `let flag = false` — but dune's flags are runtime (`Clflags` refs, `Sys.getenv`, config records), never a literal-bound whole-`if` test; (3) the `if false then` dead branch the compiler folds is not expressed via a module-level literal const here. 0 fires / 7 named suppressions.",
+      "naive_overfire_estimate": 7
+    },
+    {
+      "family": "IF-7c",
+      "applicable": true,
+      "fired": 0,
+      "fires": [],
+      "suppressed_count": 8,
+      "language_specific_note": "Clean. OCaml error model = exceptions (`try ... with`) + the idiomatic `result`/`option` channels. METHODOLOGY NUANCE (recorded, like the Ruby Windows-path catch): the naive single-line swallow grep (`with _ -> ()`) returns 0 because dune formats the handler as `with` (line N) then `| _ -> ()` (line N+1) — the real form is multi-line plus the `match … with | exception _ -> …` capture form, so the brace/clause analysis had to span lines. Two language facts collapse it to Shape-B: the `option`/`result` idiom (a catch-all returning `None`/a typed default is error-as-value, not a swallow) and deliberate re-raise/cleanup handlers. 0 fires / 8 named suppressions.",
+      "naive_overfire_estimate": 8
+    },
+    {
+      "family": "IF-3a",
+      "applicable": true,
+      "fired": 1,
+      "fires": [
+        {
+          "title": "Silent cross-component coupling via the global mutable Dune_engine.Clflags singleton (raw refs exposed in the .mli, read/written across ≥4 libs)",
+          "resource": "Dune_engine.Clflags — a global mutable command-line-flag singleton: a module of ~11 top-level `ref` cells (display, force, stop_on_first_error, capture_outputs, promote, always_show_command_line, can_go_in_shared_cache_default, diff_command, …), defined src/dune_engine/clflags.ml and EXPOSED RAW in src/dune_engine/clflags.mli:4,6,9,12,27,30,33,36,39,42 (`val display : Display.t ref`, `val force : bool ref`, …) — the .mli exposes the bare `ref` cells, NOT getter/setter functions.",
+          "coupled_components": ["dune_engine", "dune_rules", "source", "dune_pkg", "dune_config_file", "action_plugin"],
+          "mechanism": "Because the .mli exposes the raw `ref`, ANY importer reads AND writes the global directly (`Clflags.force := true`) with no mediating accessor — bypassing the OCaml module-encapsulation norm (a private ref mutated only through exposed functions). Read/written across ≥4 distinct libs (dune_rules ×12, source ×3, dune_pkg ×3, dune_config_file ×1, action_plugin ×1) beyond its own dune_engine. Main-loop-verified by re-grepping the .mli ref exposures + the cross-lib `Clflags.` references.",
+          "severity": "LOW-MED",
+          "certainty": "HIGH",
+          "fp_risk": "LOW",
+          "gated": true,
+          "filed": false,
+          "note": "Recorded GATED — a known OCaml global-config anti-pattern (inherited from the compiler's own Clflags); the genuine escape from OCaml's otherwise IF-3a-muting purity. Not filed."
+        }
+      ],
+      "suppressed_count": 14,
+      "language_specific_note": "THE FUNCTIONAL/ML IF-3a datapoint = MUTED-BY-PURITY but NOT empty, and the ONE fire is mechanism-distinct from every prior stack. OCaml immutability + the module-encapsulation norm (a private `ref` mutated only through the module's functions, the .mli HIDING the cell) suppresses the overwhelming majority of mutable-shared-state shapes (of ~15 surveyed global refs/Tables — stdune Console/Temp/Global_lock/Config, memo Run/Caches, … — all are encapsulated behind a function API → mediated → suppress). The lone escape is Clflags, which deliberately EXPOSES its raw refs in the .mli — the opposite end of the IF-3a spectrum from C/nginx (the richest flat-namespace substrate): here purity + encapsulation starve the predicate to a single, well-grounded anti-pattern. 1 fire / 14 named suppressions.",
+      "naive_overfire_estimate": 15
+    }
+  ],
+  "naive_vs_guarded_illustrative": {
+    "naive_overfires_approx": 42,
+    "guarded_fires": 1,
+    "false_defects": 0,
+    "note": "A naive surface detector would over-fire on ~42 candidates (IF-8 ~3 incl. the dune_lang→dune_engine TODO near-cycle + the action_plugin name-collision + the dune_engine fan-in hub; IF-6 ~9; IF-10 ~7; IF-7c ~8 multi-line catch-alls that are result/option/re-raise; IF-3a ~15 global refs/Tables that are module-encapsulated). The guarded predicate fired exactly once (the Clflags raw-ref exposure), LOW-MED, GATED, 0 false defects."
+  },
+  "key_ocaml_findings": [
+    "IF-8 / HARD-BAN via the build-manifest: dune's (libraries) stanzas declare the inter-library graph, and dune bans dependency cycles (build error) → a structural 35-node / 141-edge DAG, confirmed by BOTH Tarjan and a Kahn topological sort. The MANIFEST-DAG enforcement mechanism (explicitly-declared deps) is shared with Swift/SPM and distinct from a compiler import-check (Go/Rust) or module system (Java/C#).",
+    "The precision win: the maintainer-flagged `dune_lang→dune_engine` edge (a `;; temporarily here` TODO layering smell) does NOT fire because dune_engine has no back-edge to dune_lang — a TODO-shaped almost-cycle on a core lib, correctly suppressed by the absent closing edge.",
+    "IF-3a is MUTED-BY-PURITY (the opposite end from C/nginx): OCaml immutability + module encapsulation (refs hidden behind the .mli) suppress ~14 candidates; the ONE escape is Dune_engine.Clflags, which exposes its raw `ref` cells in the .mli and is read/written across ≥4 libs — a mechanism distinct from every prior stack's IF-3a fire.",
+    "A methodology nuance recorded (like Ruby's Windows-path catch): OCaml's multi-line handler formatting (`with` / `| _ -> ()` on separate lines) means the naive single-line swallow grep returns 0 — the IF-7c analysis had to span lines; the handlers are deliberate result/option/re-raise (clean)."
+  ],
+  "honest_assessment": "The first OCaml / functional-ML datapoint, on the Dune build system. IF-8 is HARD-BAN — a build-manifest-enforced DAG (dune bans (libraries) cycles), independently confirmed by two algorithms, and the comprehension shows in suppressing the maintainer's own `;; temporarily here` near-cycle because the closing edge is genuinely absent. IF-3a is the instructive contrast with C/nginx: where C's flat global namespace made IF-3a the richest substrate in the corpus, OCaml's immutability + module encapsulation make it the most muted — yet the suite still finds the one genuine escape (Clflags' raw-ref .mli exposure), grounded across ≥4 libs. IF-6/IF-10/IF-7c are clean Shape-B, with an honest methodology note on OCaml's multi-line handler formatting. Recorded GATED (training-contamination caveat; facts rest on the live code at the pinned SHA).",
+  "totals": {
+    "families": 5,
+    "genuine_fires": 1,
+    "fires_severity": "1 LOW-MED (IF-3a Dune_engine.Clflags global-refs coupling), GATED / not filed",
+    "named_suppressions": 42,
+    "false_defects": 0,
+    "naive_overfire_surface": 42
+  },
+  "counts_note": "Authoritative counts are the structured suppressed[] arrays: 42 named suppressions (IF-8 4 / IF-6 9 / IF-10 7 / IF-7c 8 / IF-3a 14) + 1 LOW-MED IF-3a fire, 0 false defects."
+}

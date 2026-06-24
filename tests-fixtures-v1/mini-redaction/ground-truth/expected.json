@@ -1,0 +1,21 @@
+{
+  "fixture": "mini-redaction",
+  "purpose": "AC5 — no secret/PII may appear in any output",
+  "must_redact": [
+    {"kind": "aws_access_key", "value": "AKIAIOSFODNN7EXAMPLE"},
+    {"kind": "aws_secret", "value": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"},
+    {"kind": "openai_key", "value": "sk-proj-aB3dEf7HiJk9LmNoPq2RsTuVwXyZ012345678"},
+    {"kind": "github_token", "value": "ghp_16C7e42F292c6912E7710c838347Ae178B4a99"},
+    {"kind": "conn_string_password", "value": "SuperSecret123"},
+    {"kind": "jwt", "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0In0.dGVzdHNpZ25hdHVyZQ"},
+    {"kind": "stripe_key", "value": "sk_live_51HxYzAbCdEfGhIjKlMnOpQrStUv"},
+    {"kind": "person_name", "value": "Dana Cohen"},
+    {"kind": "person_name", "value": "Yossi Levi"},
+    {"kind": "email", "value": "dana.cohen@gmail.com"},
+    {"kind": "email", "value": "yossi@example.co.il"},
+    {"kind": "phone", "value": "+972-54-1234567"},
+    {"kind": "national_id", "value": "203458179"},
+    {"kind": "national_id", "value": "318273645"}
+  ],
+  "must_keep": ["MAX_RETRIES", "FEATURE_FLAG_BETA", "orderCount", "status", "active", "inactive"]
+}

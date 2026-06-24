@@ -1,0 +1,51 @@
+{
+  "schema": "deepinit-validation/discovery-record/v1",
+  "program": "DeepInit in the Wild",
+  "track": "3 — recall/discovery (Shape-B: precision / silence on real MULTI-COMPONENT code)",
+  "shape": "B (precision-silence — 0 defects; the value is the named suppressions across the CROSS-MODULE families kemal could not exercise)",
+  "recorded": "2026-06-11",
+  "engine_proxy": "deterministic-detector-sweep (4 read-only Explore agents, one per family, applying the deterministic IF-8/IF-6/IF-10/IF-7c predicates to the real source — NOT a full Detect→Emit pipeline; no cost ledger recorded, cost stays ). Build chain: wf wlwsejivw (4 agents, ~204k tokens, 286 tool-uses).",
+  "repo": {
+    "name": "pyccel/pyccel",
+    "url": "https://github.com/pyccel/pyccel",
+    "branch": "devel",
+    "pinned_sha": "b559732cd126b771eb0d7d8bf7cc78ceb7cc6070",
+    "license": "MIT",
+    "stack": "Python (AST compiler / transpiler to C & Fortran)",
+    "size": "157 files, ~59k code LOC (scc), ~11 components (ast, codegen, commands, compilers, complexity, errors, extensions, naming, parser, stdlib, utilities)"
+  },
+  "result_headline": "0 fires across all 4 deterministic detectors on a real 59k-LOC MULTI-COMPONENT Python codebase, with ~27 near-candidates suppressed by NAMED structural guards. Exercises the cross-module families (IF-8 module graph / IF-6 cross-module / IF-10 cross-module) that the single-component kemal sweep could not — and the suite stays correctly silent on a mature codebase (comprehension, not keyword-matching).",
+  "per_family": [
+    {
+      "family": "IF-8 (circular component dependency)",
+      "fired": 0,
+      "suppressions": 0,
+      "finding": "Clean acyclic module-level dependency graph across all 11 components — verified by actual module-load testing, zero `TYPE_CHECKING` blocks, no deferred/lazy module-boundary cycles. No strongly-connected component of size ≥2. The first real multi-component test of IF-8: it correctly fires nothing on a genuinely acyclic graph (not vacuously — the agent built and load-tested the full graph)."
+    },
+    {
+      "family": "IF-6 (divergent named allowed-value set, cross-module)",
+      "fired": 0,
+      "suppressions": 5,
+      "finding": "The `keywords` sets in the 4 language name-clash checkers (C / C++ / Fortran / Python at `naming/*nameclashchecker.py`) have genuinely DIFFERENT membership (Fortran adds `allocatable`/`forall`/`pure`; Python is empty) — a naive 'these keyword lists differ → divergence' detector would fire. The guarded detector correctly SUPPRESSES all 5: they are **class attributes in a polymorphic class hierarchy** (base `languagenameclashchecker.keywords = None`, each language subclass overrides), NOT module-level same-name conflicting constants. Per-language intentional overrides, not a divergent-named-set defect. (Comprehension: a class-hierarchy override is by-design variation, not an accidental conflict.)"
+    },
+    {
+      "family": "IF-10 (cross-module const-gated dead branch)",
+      "fired": 0,
+      "suppressions": 3,
+      "finding": "Three `DEBUG = False` module-level literals (`parser/syntax/{headers,openacc,openmp}.py`) each gate a local `if DEBUG:` — but NONE is imported cross-module (verified: only `parse`/exception types are imported from those modules). The cross-module IF-10 §29 slice requires the const to cross a component edge (clause C3), so all 3 are correctly suppressed as local-only. (Note: the in-file IF-10 §25 slice would fire LOW on these as 'parked debug code — statically unreachable, not deletable' — the documented `parked feature vs dead code` framing; the §29 cross-module sweep correctly leaves them to §25.)"
+    },
+    {
+      "family": "IF-7(c) (cross-boundary swallowed error)",
+      "fired": 0,
+      "suppressions": 19,
+      "finding": "~19 swallowing/except-pass handlers examined, EVERY ONE suppressed by a named reason across four categories: (a) **deliberate fallback** — `variable.py:725/779` retain pre-try values on a failed int/step conversion; `library_config.py:526` returns `None` with a downstream guard; `parser/base.py:103` tries shorter module paths in a loop; (b) **`errors.report(severity='fatal')` re-raise** — `ccode.py:1676/1691`, `cwrapper.py:1338`, `extend_tree.py:92` raise a PyccelError (a swallow-then-re-raise, not a swallow); (c) **expected-condition with a documented comment** — `semantic.py:5581/6980` KeyError = a normal not-yet-created / not-in-set state with continuing control flow; (d) **`sys.exit()` termination / entry-point / module-level optional-import fallback** — `pyccel_config.py`, `pyccel_test.py`, `console.py`, `errors.py` (termcolor fallback). A naive `except: pass` linter would over-fire on the 8 bare `except: pass` sites alone."
+    }
+  ],
+  "naive_vs_guarded_illustrative": {
+    "note": "Illustrative across all 4 families (detector-pattern near-misses, not a single rigorously enumerated class). A naive structural linter would over-fire on ~27 sites (5 different-membership keyword sets + 3 DEBUG const-branches + ~19 swallowing handlers); the guarded suite raises 0, each suppression grounded to a file:line + a named reason.",
+    "naive_overfires_approx": 27,
+    "guarded_fires": 0,
+    "false_defects": 0
+  },
+  "honest_assessment": "pyccel is a mature, well-structured multi-component compiler, so 0 raised issues is the correct precision outcome — a Shape-B scope-honesty datapoint, NOT a recall measurement (there is nothing to recall here). The value is that it exercises the CROSS-MODULE deterministic families on real 59k-LOC Python — the IF-8 import graph (built + load-tested, genuinely acyclic), IF-6 cross-module set-diff (correctly distinguishing polymorphic class-attribute overrides from a divergent named set), IF-10 cross-module const-fold (correctly distinguishing local from imported flags), and IF-7c cross-boundary swallow (correctly reading errors.report(fatal) as a re-raise and expected-condition KeyErrors as normal flow) — the families the single-component kemal sweep structurally could not reach. Across the two sweeps (kemal Crystal + pyccel Python), DeepInit's deterministic detector suite ran over ~61k LOC of real off-/non-fixture code and raised ZERO issues, with ~31 near-candidates each suppressed by a NAMED structural guard and 0 false defects. No cost ledger is recorded (a direct detector sweep is not a representative full Detect→Emit run;  cost still needs a real full-pipeline run)."
+}

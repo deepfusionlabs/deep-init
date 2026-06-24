@@ -1,0 +1,49 @@
+{
+  "fixture": "mini-if6-enumset",
+  "purpose": "IF-6 (roadmap family #4, duplicate/divergent reimplementation) — DETERMINISTIC SLICE: a divergent named allowed-value SET. A named literal set (TS string-literal union / enum / frozen const-collection) defined under the same canonical name in >=2 distinct components with DIFFERENT membership (non-empty symmetric difference) is flagged; identical membership (a clone, not a drift), a same-component redeclare, an explicit derivation, a zero-overlap homonym, and a non-statically-enumerable set are not. The defect is BEHAVIORAL: a value one component produces that another rejects. The cross-component name-keyed set-difference is the moat — it fires precisely where a duplicate detector (jscpd/PMD-CPD/SonarQube) goes silent (the copies have diverged). The fully-semantic IF-6 (same LOGIC reimplemented divergently, no shared symbol name) carries its own future exit-gate.",
+  "expected_issues": [
+    {
+      "family": "IF-6",
+      "subcase": "enum-set (divergent named allowed-value set)",
+      "name": "OrderStatus",
+      "components": ["billing", "payments"],
+      "symmetric_difference": ["refunded"],
+      "severity": "High",
+      "certainty": "HIGH",
+      "claim": "Possible divergent allowed-value set: OrderStatus includes 'refunded' in payments but not in billing — a 'refunded' order produced by payments is a value billing's type cannot represent (a value one component produces that another rejects).",
+      "evidence": "src/payments/status.ts:2 `export type OrderStatus = 'open' | 'paid' | 'shipped' | 'refunded'`; src/billing/status.ts:4 `export type OrderStatus = 'open' | 'paid' | 'shipped'`. Same canonical name across two components, symmetric difference = {'refunded'}, shared members {'open','paid','shipped'} confirm it is the same concept (not a homonym)."
+    }
+  ],
+  "must_not_fire": [
+    {
+      "family": "IF-6",
+      "name": "LogLevel",
+      "file": "src/worker/logging.ts",
+      "reason": "SAME-VALUE clone. LogLevel is defined with IDENTICAL membership {'debug','info','error'} in api and worker — agreed duplication, the polarity-opposite of a divergence. This is exactly what a duplicate detector (jscpd) WOULD flag and IF-6 deliberately does NOT (symmetric difference is empty). Seen (grouped across 2 components) and suppressed."
+    },
+    {
+      "family": "IF-6",
+      "name": "Status",
+      "file": "src/jobs/status.ts",
+      "reason": "HOMONYM, zero overlap. A UI traffic-light Status {'red','green','amber'} and a job-runner Status {'queued','running','done'} share the same name but ZERO members — a coincidental homonym, not a divergent copy of one concept. The >=1-shared-member gate treats them as unrelated. Must not fire."
+    },
+    {
+      "family": "IF-6",
+      "name": "ReportStatus",
+      "file": "src/reporting/types.ts",
+      "reason": "DERIVATION. ReportStatus = OrderStatus | 'archived' references OrderStatus by name — a deliberate widening, not an accidental re-definition. Recognized as a derivation and excluded from grouping (also a different canonical name, so belt-and-suspenders). Must not fire."
+    },
+    {
+      "family": "IF-6",
+      "name": "Roles",
+      "file": "src/access/roles.ts",
+      "reason": "NON-ENUMERABLE degrade (AF-2). access/roles.ts computes Roles = Object.values(roleMap) — membership not statically enumerable. Because one side of the Roles pair is non-enumerable, the WHOLE name degrades; comparing a partial set against the static admin list ['admin','user'] would manufacture a spurious difference. Must not fire."
+    },
+    {
+      "family": "IF-6",
+      "name": "PayMode",
+      "file": "src/legacy/wire.ts",
+      "reason": "SAME-COMPONENT divergence. PayMode is defined twice with conflicting membership ('cash' vs 'wire') but BOTH under the single 'legacy' component — a local no-redeclare concern (DD-1/DD-2 linter territory), not a cross-component divergence. The >=2-distinct-components moat gate (the very thing that distinguishes IF-6 from a local linter) suppresses it. Must not fire."
+    }
+  ]
+}

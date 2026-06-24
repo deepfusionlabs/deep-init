@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "identity": {
+    "copyrightHolder": "Deep Fusion Labs",
+    "brand": "DeepInit",
+    "author": "Deep Fusion Labs",
+    "maintainerName": "Deep Fusion Labs",
+    "securityEmail": "elad@deepfusionlabs.ai",
+    "license": "MIT"
+  },
+  "services": {
+    "snyk": { "intended": false },
+    "socket": { "intended": false },
+    "coderabbit": { "intended": false }
+  },
+  "process": {
+    "releaseTool": "manual",
+    "commitPolicy": "draft-only"
+  },
+  "branding": {},
+  "stage": { "override": null },
+  "meta": {
+    "confirmedAt": "2026-06-08T14:41:57Z",
+    "detectedStage": "S1"
+  }
+}

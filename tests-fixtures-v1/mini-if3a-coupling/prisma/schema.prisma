@@ -1,0 +1,42 @@
+// Datasource + generator for the warehouse service.
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Core resource. The single source of truth for how many units of a SKU
+// are on hand. Owned conceptually by the inventory domain, but (see the
+// coupling) the orders domain writes it directly as well.
+model Stock {
+  id        String   @id @default(cuid())
+  sku       String   @unique
+  onHand    Int      @default(0)
+  reserved  Int      @default(0)
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id        String   @id @default(cuid())
+  userId    String
+  sku       String
+  quantity  Int
+  status    String   @default("pending")
+  total     Int
+  createdAt DateTime @default(now())
+}
+
+// Append-only operational audit trail. Many domains write here on purpose
+// (see ADR-014 / the contract comment in audit-log.ts) — this is a
+// deliberately shared, write-only sink, NOT silent coupling.
+model AuditLog {
+  id        String   @id @default(cuid())
+  actor     String
+  component String
+  action    String
+  detail    String
+  createdAt DateTime @default(now())
+}

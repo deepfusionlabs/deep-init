@@ -1,0 +1,20 @@
+{
+  "schema": "deepinit-validation/coverage-record/v1",
+  "program": "mini-scorecard fixture (§C9) — a synthetic scored run for build_scorecard.score_record",
+  "repo": { "name": "acme/widget", "stack": "Go" },
+  "provenance": { "tune_or_heldout": "held-out", "publishable": "indicative" },
+  "publishable": "indicative",
+  "scores": {
+    "coverage_overall": { "n": 6, "d": 8, "pct": 0.75, "wilson95_lb": 0.4093 },
+    "coverage_by_kind": {
+      "component-exists": { "n": 2, "d": 2 },
+      "component-role": { "n": 2, "d": 3 },
+      "key-invariant": { "n": 1, "d": 2 },
+      "technology-choice": { "n": 1, "d": 1 }
+    },
+    "faithfulness": { "n": 7, "d": 7, "pct": 1.0, "wilson95_lb": 0.6457 },
+    "beyond_doc_count": 3,
+    "deepinit_wrong_high": 0
+  },
+  "_oracle_note": "deepinit_wrong_high MUST be 0. §C9 G2 asserts build_scorecard.score_record(this).deepinit_wrong_high == 0; the paired mutation flips it to a positive value (an injected confident code-refuted fact) and the gate must catch it (RED)."
+}

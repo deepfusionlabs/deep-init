@@ -1,0 +1,36 @@
+{
+  "fixture": "mini-if10-crossmod-go",
+  "purpose": "IF-10 cross-module const-gated dead branch — GO port (§C5). Ports the resolve-to-literal substrate (TS §29 / Python §30) to a corpus language. Go's package-qualified references (pkg.NAME) make the cross-module edge explicit, so the fold resolves a const literal across the package boundary and grounds the dead arm to the origin's file:line. The detector must fire ONLY on a const-literal resolved across a DIFFERENT package, never on a var (non-literal) or a bare intra-package reference.",
+  "expected_issues": [
+    {
+      "family": "IF-10",
+      "file": "checkout/flow.go",
+      "line": 6,
+      "dead_arm": "if-body",
+      "origin": "flags/flags.go:4",
+      "claim": "Dead branch: flags.NewCheckout is const false, so the if-body is unreachable."
+    },
+    {
+      "family": "IF-10",
+      "file": "orders/process.go",
+      "line": 6,
+      "dead_arm": "if-body",
+      "origin": "flags/flags.go:5",
+      "claim": "Dead branch: flags.LegacyMode is const true, so !flags.LegacyMode is always false and the if-body is unreachable."
+    }
+  ],
+  "must_not_fire": [
+    {
+      "family": "IF-10",
+      "file": "gateway/use.go",
+      "line": 6,
+      "reason": "config.DynamicFlag is a VAR (runtime-assigned via computeFlag()), not a const-literal — the value is not statically known, so there is no decidable dead arm; suppress."
+    },
+    {
+      "family": "IF-10",
+      "file": "flags/internal.go",
+      "line": 6,
+      "reason": "NewCheckout here is a BARE same-package reference (not flags.NewCheckout) — intra-component, §25 in-file territory, not a cross-module fire; suppress."
+    }
+  ]
+}

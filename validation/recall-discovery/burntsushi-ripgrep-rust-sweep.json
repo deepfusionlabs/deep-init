@@ -1,0 +1,259 @@
+{
+  "schema": "deepinit-validation/discovery-record/v1",
+  "program": "DeepInit in the Wild",
+  "track": "3 — recall/discovery (Shape-B precision-silence on a new stack: Rust, multi-crate)",
+  "shape": "B (precision-silence — 0 genuine fires across all 5 cross-module families / 33 named suppressions / 0 false defects — a clean Shape-B on real Rust; the value is the named, mechanism-grounded suppressions)",
+  "recorded": "2026-06-12",
+  "engine_proxy": "deterministic-detector-sweep (5 read-only agents — IF-8 / IF-6 / IF-10 / IF-7c / IF-3a — applying the SHIPPED deterministic predicates (§21/§24+§28/§25+§29/§23/AF-1) directly to the real Rust source; NOT a full Detect→Emit pipeline; no cost ledger recorded. Build chain:  (6 agents, ~282k tokens, 83 tool-uses).",
+  "repo": {
+    "name": "BurntSushi/ripgrep",
+    "url": "https://github.com/BurntSushi/ripgrep",
+    "branch": "master",
+    "pinned_sha": "82313cf95849bfe425109ad9506a52154879b1b1",
+    "pinned_sha_note": "shallow-clone HEAD at 2026-06-12; the file:line citations are the durable anchors.",
+    "license": "MIT OR Unlicense",
+    "stack": "Rust (fast grep CLI, multi-crate Cargo workspace) — the FIFTH instrumented stack and the FIRST Rust datapoint (prior: Crystal/kemal, Python/pyccel, TypeScript/excalidraw, Go/caddy)",
+    "size": "100 Rust files, 37,790 Rust code LOC (scc), M-tier; a 10-crate workspace (cli, core[=root bin], globset, grep, ignore, matcher, pcre2, printer, regex, searcher) — 9 member crates in the dependency graph"
+  },
+  "analysis_scope": "whole-repo (all 100 Rust files; IF-8 built the real 9-member cross-crate dependency graph from every Cargo.toml, including the dev-dependency edges Cargo specifically permits to cycle)",
+  "result_headline": "Track-3 RUST field sweep over ripgrep@82313cf9 (100 files / ~37,790 LOC / 10 crates): ZERO genuine fires across all 5 cross-module families (IF-8/IF-6/IF-10/IF-7c/IF-3a — 0 Core, 0 High, 0 Medium, 0 Low), with 33 named structural suppressions — IF-8 5, IF-6 6, IF-10 7, IF-7c 8, IF-3a 7 (counted from suppressed[] array lengths) — a precision-first, fully-scoped CLEAN sweep where every near-candidate is silenced by a named predicate-FALSE clause (comprehension, not keyword-matching).",
+  "per_family": [
+    {
+      "family": "IF-8",
+      "applicable": true,
+      "fired": 0,
+      "fires": [],
+      "suppressed_count": 5,
+      "suppressed": [
+        {
+          "file": "crates/grep/Cargo.toml",
+          "line": 17,
+          "reason": "grep-as-hub near-candidate: the `grep` facade crate fans OUT to 6 workspace crates (cli/matcher/pcre2/printer/regex/searcher, lines 17-22) — a naive 'high-coupling' detector might flag it. Shipped IF-8 predicate FALSE: high out-degree is not a cycle. SCC of `grep` = {grep} (size 1). None of its 6 dependees has a path-dep back to grep (verified: only the root `ripgrep` package depends on grep), so no back-edge closes a strongly-connected component."
+        },
+        {
+          "file": "crates/cli/Cargo.toml",
+          "line": 18,
+          "reason": "cli<->grep apparent-pairing near-candidate: `grep` depends on `cli` (grep/Cargo.toml:17) AND `cli` has its own path-dep (cli->globset, line 18) — looks like the start of a mutual-import. Predicate FALSE: cli depends only on globset, never on grep; the relation is one-directional grep->cli. No reciprocal edge => no 2-node SCC."
+        },
+        {
+          "file": "crates/printer/Cargo.toml",
+          "line": 31,
+          "reason": "dev-dependency back-edge near-candidate: printer->regex (line 31) and searcher->regex (searcher/Cargo.toml:26) are [dev-dependencies], the section most likely to introduce a build-time-only cross-crate cycle. Predicate FALSE: even including dev edges, `regex` depends only on `matcher` (a sink), so printer->regex->matcher and searcher->regex->matcher stay strictly downward — no node points back up. Graph remains a DAG; Cargo also permits dev-dep cycles but none exists here."
+        },
+        {
+          "file": "crates/core/main.rs",
+          "line": 32,
+          "reason": "phantom 10th-component near-candidate: `crates/core/` is in the component list but has NO Cargo.toml — it is the source dir of the ROOT `ripgrep` package binary ([[bin]] path = crates/core/main.rs, root Cargo.toml:32). Treated as the root package, core->{grep (root:55), ignore (root:56)}. Nothing in the workspace depends on core, so it is a strict graph source — cannot lie on any cycle. No fire."
+        },
+        {
+          "file": "crates/matcher/Cargo.toml",
+          "line": 1,
+          "reason": "shared-sink fan-in near-candidate: `grep-matcher` is imported by 6 crates (pcre2:17, printer:23, regex:18, searcher:20, grep:18). High in-degree (a convergence point) is not a cycle. Predicate FALSE: matcher has zero workspace path-deps out (only external memchr), so it is a graph sink — no out-edge can close a cycle back to its importers. SCC = {matcher}, size 1."
+        }
+      ],
+      "rust_specific_note": "Cross-component dependency graph built from the path-deps in all 9 workspace-member Cargo.toml files (component = crate dir; `crates/core/` is NOT a member crate — it is the root `ripgrep` package's binary source, treated as the graph source). Edges: core->{grep,ignore}; cli->globset; grep->{cli,matcher,pcre2,printer,regex,searcher}; ignore->globset; pcre2->matcher; printer->{matcher,searcher,regex(dev)}; regex->matcher; searcher->{matcher,regex(dev)}; globset and matcher are sinks. SCC analysis (including dev-dependency edges): every SCC has size 1 — the graph is a strict DAG with topo order core -> {grep,ignore} -> {cli,printer,pcre2,regex,searcher} -> {globset,matcher}. No strongly-connected component of size >= 2, so IF-8 does NOT fire. RUST STRUCTURAL FACT (the analog of Go's package-cycle ban): Cargo FORBIDS dependency cycles BETWEEN crates for normal [dependencies] — a cycle is a hard `cyclic package dependency` compile error — so a true cross-component (cross-crate) IF-8 cycle is structurally IMPOSSIBLE for this workspace's release/library graph. The detector is still APPLICABLE and meaningfully run (it builds the real graph and confirms acyclicity / surfaces the named over-fire traps), but its positive-fire rate on any compiling Cargo workspace is effectively zero by construction. The one residual theoretical loophole Cargo allows — a cycle THROUGH [dev-dependencies] (dev-deps may form a cycle since they are not part of the normal build graph) — was explicitly checked and is also absent (the only dev path-edges, printer->regex and searcher->regex, both terminate at the matcher sink). Note also: Rust permits MODULE cycles WITHIN a crate, which the shipped IF-8 predicate explicitly scopes OUT (cross-component only; intra-component recursion / module cycles are a non-firing Suppress case), so no intra-crate module graph was walked."
+    },
+    {
+      "family": "IF-6",
+      "applicable": true,
+      "fired": 0,
+      "fires": [],
+      "suppressed_count": 6,
+      "suppressed": [
+        {
+          "file": "crates/globset/src/lib.rs",
+          "line": 167,
+          "reason": "zero-overlap-homonym / coincidental-homonym (the dominant suppression). Three same-named enums collide cross-crate: globset::ErrorKind (lib.rs:167 = {InvalidRecursive,UnclosedClass,InvalidRange,UnopenedAlternates,UnclosedAlternates,NestedAlternates,DanglingEscape,Regex}), pcre2::ErrorKind (error.rs:25 = {Regex}), regex::ErrorKind (error.rs:42 = {Regex,NotAllowed,InvalidLineTerminator,Banned}). They share the variant `Regex` so they do NOT cleanly clear the >=1-shared-member homonym gate on syntax alone, but the IF-6 BEHAVIORAL-ENTAILMENT property is absent: these are three independent, crate-private error taxonomies (glob-parse errors vs a PCRE2 wrapper error vs the grep-regex builder), NOT one conceptual value-SET reimplemented divergently. Verified: globset/pcre2/regex are mutually independent crates (Cargo.toml — none depends on another; only on grep-matcher), no value of one is ever produced where another's copy must represent it, and the `grep` umbrella crate (lib.rs) re-exports them as namespaced types (pcre2::ErrorKind / regex::ErrorKind) that are never merged. `ErrorKind` is the universal idiomatic Rust error-enum name (std convention); the `Regex` overlap is itself coincidental (each crate independently names its regex-parse-failure variant). No behavioral entailment => predicate FALSE."
+        },
+        {
+          "file": "crates/pcre2/src/error.rs",
+          "line": 25,
+          "reason": "Same coincidental-homonym cluster as globset/regex ErrorKind (see crates/globset/src/lib.rs:167). pcre2::ErrorKind = {Regex} only; it is a crate-private single-variant error wrapper with no shared domain-set semantics across crates. Behavioral-entailment absent -> predicate FALSE."
+        },
+        {
+          "file": "crates/regex/src/error.rs",
+          "line": 42,
+          "reason": "Same coincidental-homonym cluster as globset/pcre2 ErrorKind. regex::ErrorKind = {Regex,NotAllowed,InvalidLineTerminator,Banned}; crate-private grep-regex builder error taxonomy, namespaced, no cross-crate value-flow. Behavioral-entailment absent -> predicate FALSE."
+        },
+        {
+          "file": "crates/ignore/src/overrides.rs",
+          "line": 32,
+          "reason": "same-component suppression. enum GlobInner is defined twice — overrides.rs:32 and ignore/src/types.rs:114 — but BOTH definitions live in the single `ignore` crate (one component). IF-6 requires >=2 DISTINCT components (the moat gate); two same-named types in one crate are local no-redeclare / DD-1 linter territory, not a cross-component divergence. Predicate FALSE on the component-count gate."
+        },
+        {
+          "file": "crates/cli/src/decompress.rs",
+          "line": 491,
+          "reason": "non-candidate (not a duplicated named SET across crates). The ARGS_GZIP/ARGS_BZIP/ARGS_XZ/... const &[&str] arrays (decompress.rs:491-498) are each UNIQUELY named and all live in one crate/one fn scope. No same-canonical-name set exists in a second component, so there is no symmetric-difference to compute. Predicate FALSE on the >=2-components-same-name gate."
+        },
+        {
+          "file": "crates/printer/src/json.rs",
+          "line": 908,
+          "reason": "non-set scalar suppression. The cross-crate repeated const `SHERLOCK` (9 sites across printer + searcher) is a test-fixture sample DOCUMENT (a &str/&[u8] scalar), not an enumerable value-SET; likewise repeated `TEMPLATE` (per-shell scalar string), `ROOT` and `IGNORE_FILE` (test path scalars). IF-6 operates on named literal value-SETs (enum / const collection / match-arm set), so a duplicated scalar string is not even a structural candidate. Also several are in tests/ paths (generated/test-path exclusion). Predicate FALSE — not a set."
+        }
+      ],
+      "rust_specific_note": "IF-6 IS structurally applicable to this Rust workspace: enums are the dominant value-set form (48 enum defs across the 10 crates) and there were two real cross-name collisions to adjudicate, so this was a genuine precision exercise rather than N/A. Net result: ZERO genuine fires, 6 named suppressions. Rust-specific structural facts that drove the suppressions: (1) `ErrorKind` is the canonical idiomatic Rust error-enum name (a std-library convention — `std::io::ErrorKind`), so cross-crate `ErrorKind` collisions are EXPECTED and almost always coincidental homonyms, NOT divergent reimplementations of a shared set — the per-crate error taxonomies are deliberately distinct and namespaced (globset::/pcre2::/regex::ErrorKind), reachable only through their crate path. The naive name-keyed set-diff WOULD fire here (3 same-named enums, non-empty symmetric difference, shared `Regex` variant clearing the bare >=1-shared-member homonym test), which is exactly the over-fire the guarded predicate must avoid — the IF-6 behavioral-entailment requirement (a value one component produces that another's copy rejects) is the load-bearing guard: these crates are mutually independent (verified via per-crate Cargo.toml — no inter-dep among globset/pcre2/regex), so no value-flow exists and there is no defect. (2) Rust's module system lets the same enum name `GlobInner` exist twice inside one crate (`ignore`) in different modules without collision — the same-component guard correctly suppresses it. (3) The `grep` umbrella crate is a pure `pub extern crate` re-export facade with zero type definitions of its own, so it introduces no new same-name merges. (4) Cargo's compile-time path resolution means same-named consts/statics (SHERLOCK, TEMPLATE) are scalar test-fixtures, not value-sets — never IF-6 candidates. This is the expected mature/idiomatic-codebase profile: a few real name collisions, all explained by language/std conventions, zero genuine divergent-set defects."
+    },
+    {
+      "family": "IF-10",
+      "applicable": true,
+      "fired": 0,
+      "fires": [],
+      "suppressed_count": 7,
+      "suppressed": [
+        {
+          "file": "crates/searcher/src/searcher/mmap.rs",
+          "line": 73,
+          "reason": "FEATURE-FLAG EXCLUSION (out of the §25/§29 slice): `if cfg!(target_os = \"macos\") {` — cfg!() is a compile-time CONFIGURATION macro (the feature-flag analog), NOT a module-level literal-const fold of a bound name. No `const NAME: bool` indirection exists; the predicate's const-binding clause never matches."
+        },
+        {
+          "file": "crates/core/flags/hiargs.rs",
+          "line": 429,
+          "reason": "FEATURE-FLAG EXCLUSION: `if cfg!(target_pointer_width = \"64\") {` — a compile-time platform config gate via cfg!(), not a literal-const fold. Out of the §25/§29 slice by the same rule as #1."
+        },
+        {
+          "file": "crates/ignore/src/dir.rs",
+          "line": 919,
+          "reason": "MIXED CONDITION + FEATURE-FLAG: `if cfg!(windows) || gipath.exists() {` — the test is not a bound const name alone; a runtime term (gipath.exists()) co-decides, and cfg!() is a config gate. Predicate-FALSE on both the mixed-condition clause and the const-binding clause."
+        },
+        {
+          "file": "crates/core/flags/doc/version.rs",
+          "line": 62,
+          "reason": "MIXED CONDITION + FEATURE-FLAG: `if cfg!(target_pointer_width = \"64\") && pcre2::is_jit_available() {` — a runtime call co-decides the branch (mixed condition) and cfg!() is a config gate, not a literal-const fold."
+        },
+        {
+          "file": "crates/ignore/src/walk.rs",
+          "line": 2079,
+          "reason": "FEATURE-FLAG EXCLUSION: `if cfg!(windows) { ... }` — compile-time config macro, not a module-level literal-const bound name. Out of the §25/§29 slice."
+        },
+        {
+          "file": "crates/core/flags/hiargs.rs",
+          "line": 182,
+          "reason": "MUTABLE/NON-LITERAL BINDING: `if heading {` where `heading` is a runtime-computed local `let` binding (lowercase, derived from args), not a module-level `const NAME = <bool literal>`. Predicate-FALSE on the const-binding + literal-RHS clauses. Representative of all `if <lowercase-local> {` sites repo-wide."
+        },
+        {
+          "file": "crates/core/flags/doc/version.rs",
+          "line": 172,
+          "reason": "MUTABLE/NON-LITERAL BINDING: `if enabled { ... }` where `enabled` is a runtime function parameter, not a compile-time literal const. The literal-const binding the substrate resolves to does not exist; never fires."
+        }
+      ],
+      "rust_specific_note": "IF-10 is structurally applicable (the const+if conditional shape exists in Rust) but produces ZERO fires on ripgrep because the substrate's required anchor — a module-level literal-const bool binding (`const NAME: bool = true|false;`) used as the WHOLE test of an `if` — does not exist anywhere in the 100-file / 37,790-LOC workspace. Verified exhaustively: (a) `const NAME: bool = true|false` => 0 matches; (b) `const NAME = true|false;` (type-inferred) => 0 matches; (c) `static NAME ... = true|false;` => 0 matches; (d) every `= true|false;` in the repo is a `let mut`/struct-field/local mutable assignment (runtime, rebindable — the `let`-analog the predicate suppresses), never a module-level const; (e) `if UPPERCASE_IDENT {` (the §25 anchor shape) => 0 matches. RUST-SPECIFIC CONFIGURATION MECHANISM: ripgrep gates compile-time-variable behavior through Cargo features + `cfg!(...)` macros (5 `if cfg!(...)` sites) and 271 `#[cfg(...)]`/`#[cfg_attr(...)]` attributes across 54 files. Per the task's explicit instruction, these are compile-time CONFIGURATION gates (the feature-flag analog) and are recorded as the feature-flag exclusion — they are NOT a module-level literal-const fold and are correctly out of the §25/§29 slice (a naive `if <const-looking-token>` detector would over-fire on them; the guarded predicate names why it stays silent). The §29 cross-crate slice (`pub const NAME=<lit>` imported across a crate edge and used as a whole `if` test) is likewise empty: there are no exported literal-const bools to resolve. Net: mature idiomatic Rust — dead-branch configuration is expressed via cfg-gating (which the Rust compiler itself eliminates and lints as unreachable), so the linter-silence gap IF-10 targets does not arise here. 0 fires, 7 named structural suppressions (5 cfg feature-flag exclusions + 2 representative mutable/non-literal `if`-binding classes)."
+    },
+    {
+      "family": "IF-7c",
+      "applicable": true,
+      "fired": 0,
+      "fires": [],
+      "suppressed_count": 8,
+      "suppressed": [
+        {
+          "file": "crates/cli/src/decompress.rs",
+          "line": 107,
+          "reason": "DELIBERATE DOCUMENTED IGNORE (predicate-FALSE: not a silent swallow). `let _ = self.try_associate(...)` in `pub fn associate` of DecompressionMatcherBuilder. The cross-crate gate IS met (grep-cli's DecompressionMatcherBuilder is pub and consumed by crates/grep), so a file-granularity detector would fire here. But the discard is the explicit, documented contract: the doc-comment (lines 89-95) states 'If the program could not be resolved, then it is silently ignored and the association is dropped. For this reason, callers should prefer try_associate.' `associate` is the intentionally-infallible convenience wrapper over the fallible `try_associate` (line 125, which returns Result<_,CommandError> for callers who want the error). This is the predicate's 'deliberate error-as-value / documented let _ = ignore', not a silent swallow -> suppress."
+        },
+        {
+          "file": "crates/printer/src/json.rs",
+          "line": 558,
+          "reason": "ERROR PROPAGATED VIA `?` (predicate-FALSE: ?-propagation is explicitly NOT a swallow). `let _ = self.wtr.write(b\"\\n\")?;` -- the trailing `?` propagates any io error up; the `let _ =` only discards the SUCCESS value (the byte count Ok(1), per the inline comment), not the error. Also the enclosing `write_message` is a private `fn` (not pub), so the cross-consumed-export gate is independently FALSE."
+        },
+        {
+          "file": "crates/core/main.rs",
+          "line": 148,
+          "reason": "SAME-CRATE + PRIVATE-FN (two independent predicate-FALSE gates). `let _ = print_stats(...)` inside private `fn search`. crates/core is the `rg` BINARY crate -- no other workspace crate depends on it (confirmed via the Cargo.toml reverse-dep graph), so the cross-component-consumption moat is FALSE; and `search` is a private fn, not a pub export. Linter (clippy) territory at most, never IF-7c."
+        },
+        {
+          "file": "crates/core/main.rs",
+          "line": 225,
+          "reason": "SAME-CRATE + PRIVATE-FN. `let _ = print_stats(...)` inside private `fn search_parallel` in the binary crate (no reverse deps); a final stats-flush discard on the terminating path. Cross-crate gate FALSE + private fn -> suppress."
+        },
+        {
+          "file": "crates/core/main.rs",
+          "line": 226,
+          "reason": "SAME-CRATE + PRIVATE-FN (and broken-pipe-tolerant flush). `let _ = bufwtr.print(&mut wtr);` inside private `fn search_parallel` of the binary crate. The sibling parallel branch (line 204-211) shows the deliberate intent: a print error here is the graceful-termination/broken-pipe case. Cross-crate gate FALSE + private fn -> suppress."
+        },
+        {
+          "file": "crates/cli/src/process.rs",
+          "line": 248,
+          "reason": "NON-EMPTY HANDLER (predicate-FALSE: handler does deliberate work). `if let Err(error) = self.close() { log::warn!(\"{}\", error); }` in the `Drop` impl of CommandReader. The handler is non-empty -- it logs the child-process error to stderr (documented behaviour, lines 214-217). A Drop impl cannot propagate, so log-and-continue is the correct contract. The IF-7c slice keys strictly on an empty/comment-only body; this is a deliberate log handler -> suppress."
+        },
+        {
+          "file": "crates/ignore/src/dir.rs",
+          "line": 200,
+          "reason": "DELIBERATE DOCUMENTED ERROR-AS-VALUE FALLBACK (predicate-FALSE). `Err(_) => { ... return (self.clone(), None); }` on a `canonicalize()` failure, carrying an explicit comment: 'We drop the error to be consistent with our general pattern of ignoring I/O errors when processing ignore files.' The handler does meaningful work (returns the existing matcher) -- a documented fallback contract, the polarity-opposite of a silent swallow -> suppress."
+        },
+        {
+          "file": "crates/cli/src/decompress.rs",
+          "line": 386,
+          "reason": "DELIBERATE ERROR-AS-VALUE FALLBACK (predicate-FALSE). `Err(_) => Ok(())` in `pub fn close` of DecompressionReader: when `self.rdr` is already Err the reader was never constructed, so there is nothing to close and Ok(()) is the correct outcome -- this discards the prior construction error by design, it is not swallowing a NEW fallible result. Deliberate error-as-value -> suppress."
+        }
+      ],
+      "rust_specific_note": "RUST ERROR MODEL drives this sweep: no exceptions -- fallible ops return Result<T,E>, propagated with `?`. A 'swallow' therefore looks like `let _ = fallible();` discarding a #[must_use] Result, `.ok()`/`Err(_) => {}` discarding without action, or an empty `if let Err(_) = .. {}`. CROSS-CRATE BOUNDARY = the workspace dependency graph (read from each crates/*/Cargo.toml): cli(grep-cli)->globset; grep->{cli,matcher,pcre2,printer,regex,searcher}; ignore->globset; pcre2/regex/printer/searcher->matcher; printer/searcher->regex. CRITICAL SCOPE FACT: crates/core is the `rg` BINARY (the [[bin]] in the root Cargo.toml, path crates/core/main.rs), NOT a library -- NO workspace crate depends on it, so every discard in core/main.rs fails IF-7c's cross-component-consumption moat outright (binary-private, linter territory at most). VERDICT: 0 genuine fires, 8 named suppressions. The detector held precision-first against a naive over-firer in exactly the place it mattered: decompress.rs:107 `associate` DOES meet the pub+cross-crate-consumed gate (grep-cli::DecompressionMatcherBuilder is used by crates/grep) -- a file-granularity or moat-only detector WOULD false-fire there -- yet the shipped predicate correctly suppresses it as a deliberate, doc-commented infallible convenience wrapper over the fallible try_associate. Distinct Rust idioms that look like swallows but are NOT, and were each excluded by a named predicate clause: `?`-propagation behind a `let _ =` (json.rs:558 discards only the success value); `drop(tx)`/`drop(stdout)` channel/handle-close lifecycle (not error handling); `.ok()` as a Result->Option VALUE conversion that is then used/returned (interpolate.rs, hyperlink, ast.rs, pathutil.rs); and the pervasive idiomatic `Err(_) => <fallback value/control-flow>` (lossy-UTF8, Data::Bytes, WalkState::Quit, return None/continue) which is deliberate error-as-value, the polarity-opposite of a swallow. Mature, idiomatic codebase as expected -- ~5 `let _ =` total in non-test source, all deliberate; no empty catch-equivalents anywhere."
+    },
+    {
+      "family": "IF-3a",
+      "applicable": true,
+      "fired": 0,
+      "fires": [],
+      "suppressed_count": 7,
+      "suppressed": [
+        {
+          "file": "crates/core/messages.rs",
+          "line": 21,
+          "reason": "GLOBAL-STATE-PRESENT-BUT-CRATE-PRIVATE: MESSAGES/IGNORE_MESSAGES/ERRORED (lines 21/23/25) are the repo's only genuine global mutable singleton (3 AtomicBool, module doc literally says 'light shared mutable state'). But the shipped IF-3a predicate requires the resource be reached by >=2 COMPONENTS (crates) with no interface. All accessors (messages/set_messages/ignore_messages/set_errored, lines 101-139) are pub(crate) — unreachable from other crates by Rust visibility. The macros (message!/err_message!/ignore_message!) are #[macro_export] but expand to crate::messages::* which only resolves inside the core crate. Grep confirms all 6 user files (main.rs, messages.rs, flags/parse.rs, haystack.rs, flags/hiargs.rs, flags/config.rs) are inside crates/core/. NO cross-crate boundary is crossed -> predicate FALSE (shared resource confined to a single component)."
+        },
+        {
+          "file": "crates/ignore/src/lib.rs",
+          "line": 522,
+          "reason": "FUNCTION-LOCAL-STATIC-NOT-SHARED: COUNTER (AtomicUsize) is declared inside the TempDir::new() test-helper fn body; TRIES (line 521) is an immutable usize. Scope is one function, never exported, never read/written by a second component -> not a cross-component shared resource. Suppressed (local mutable counter, idiomatic unique-temp-dir pattern)."
+        },
+        {
+          "file": "crates/core/flags/parse.rs",
+          "line": 182,
+          "reason": "IMMUTABLE-ONCE-CACHE-INTRA-CRATE: P (OnceLock<Parser>) is a fn-local lazy-init cache, write-once-then-read-only, inside crates/core. Not mutable shared state and not cross-crate -> predicate FALSE on both the mutability and the >=2-component arms."
+        },
+        {
+          "file": "crates/ignore/src/gitignore.rs",
+          "line": 636,
+          "reason": "IMMUTABLE-ONCE-CACHE-LOCAL: RE (OnceLock<Regex>) is a fn-local compiled-regex cache, write-once, intra-crate (ignore). Idiomatic lazy static; no second component reaches it -> suppressed."
+        },
+        {
+          "file": "crates/printer/src/util.rs",
+          "line": 292,
+          "reason": "PER-INSTANCE-CELL-NOT-GLOBAL: OnceCell<Option<HyperlinkPath>> is a struct FIELD (per-instance interior-mutability cache), not a global/static singleton; ownership-scoped to its owning value and passed explicitly. Not a shared global resource -> predicate FALSE."
+        },
+        {
+          "file": "crates/core/flags/defs.rs",
+          "line": 2917,
+          "reason": "IMMUTABLE-LAZY-DOC-STRING: DOC/CHOICES/BORROWED (lines 2917/3029/3036) are LazyLock immutable derived constants (help-text/choice lists) intra-crate to core. Read-only after init, single-component -> suppressed (no mutation, no cross-crate share)."
+        },
+        {
+          "file": "crates/core/main.rs",
+          "line": 40,
+          "reason": "ALLOCATOR-REGISTRATION-NOT-COUPLING: ALLOC (#[global_allocator] jemalloc) is a process-wide allocator registration, a sanctioned platform hook with no application read/write API and no inter-component data coupling -> not an IF-3a shared mutable resource."
+        }
+      ],
+      "rust_specific_note": "IF-3a is structurally applicable but fires ZERO on ripgrep@82313cf9 — the expected result for a mature idiomatic Rust workspace. ZERO `static mut`, ZERO `pub static`, ZERO cross-crate global singletons across all 100 Rust files / 10 crates. The ONLY genuine global mutable state is crates/core/messages.rs (3 AtomicBool: MESSAGES/IGNORE_MESSAGES/ERRORED) — and it is the textbook IF-3a near-candidate that the GUARDED predicate correctly suppresses: its accessors are pub(crate) (Rust visibility blocks any other crate from reaching it) and its #[macro_export] macros expand to `crate::messages::*` which resolves only within `core`, so the shared resource never crosses a crate boundary (the >=2-component arm of the predicate is FALSE). A naive `static + Atomic`-pattern detector WOULD over-fire here (7 hits); the shipped predicate names why each stays silent. Rust structural facts that make IF-3a rare: (1) cross-component state is passed by OWNERSHIP via explicit typed APIs / config structs (e.g. ignore<-globset, printer<-matcher/searcher, core<-grep/ignore are all DAG deps with Result/Error-typed boundaries — the ? error model carries failures instead of a shared ERRORED-style flag between crates); (2) `static mut` is unsafe and effectively avoided; (3) the workspace dep graph is an acyclic DAG (Cargo bans cross-crate import cycles structurally, also relevant to IF-8); (4) the OnceLock/OnceCell/LazyLock occurrences found are all either write-once immutable caches (parse.rs:182, gitignore.rs:636, defs.rs) or per-instance struct fields (printer util.rs:292 hyperlink cache) — neither is the `mutable + cross-component` shape IF-3a targets. Net: applicable=true, 0 fires, 7 named suppressions (precision-first discipline holds)."
+    }
+  ],
+  "naive_vs_guarded_illustrative": {
+    "naive_overfires_approx": 26,
+    "guarded_fires": 0,
+    "false_defects": 0,
+    "note": "A naive surface detector would over-fire on ~26 near-candidates across the five families: IF-8 ~3 graph-shaped traps (the grep facade's high out-degree to 6 crates, the apparent cli<->grep pairing, the [dev-dependencies] back-edge), IF-6 ~4 (the 3 same-named cross-crate ErrorKind enums that a bare name-keyed set-diff WOULD fire on given the shared `Regex` variant, plus the twice-defined GlobInner), IF-10 ~7 (all 5 `if cfg!(...)` config gates plus 2 const-looking `if <ident>` tokens), IF-7c ~5 (the decompress.rs:107 `associate` discard that genuinely passes the pub+cross-crate-consumed moat, plus ~4 `let _ =`/`Err(_)=>` discards), and IF-3a ~7 (the static+Atomic singleton in messages.rs plus the OnceLock/OnceCell/LazyLock/global_allocator pattern hits). The guarded predicates resolve all of them to 0 genuine fires and 0 false defects — each suppression names the load-bearing clause (no SCC>=2, behavioral-entailment absent, cfg!=const-fold, ?-propagation/documented-infallible/private-binary-crate, pub(crate) visibility blocking the >=2-component arm)."
+  },
+  "key_rust_findings": [
+    "IF-8 / Cargo cross-crate cycle ban: Cargo FORBIDS dependency cycles between crates (a hard `cyclic package dependency` compile error), so a true cross-component IF-8 cycle is structurally IMPOSSIBLE for any buildable workspace. Verified by building the real 9-member cross-crate graph and running SCC — every SCC is size 1 (strict DAG, topo order core → {grep,ignore} → {cli,printer,pcre2,regex,searcher} → {globset,matcher}). The one loophole Cargo permits — a cycle through [dev-dependencies] — was explicitly checked and is empty. (Rust permits MODULE cycles WITHIN a crate, which the shipped IF-8 predicate scopes OUT — cross-component only.) The analog of Go's package-cycle ban.",
+    "IF-7c / Result-`?` no-exceptions error model: Rust has no exceptions — errors are `Result<T,E>`, so a 'swallow' looks like `let _ = fallible();` / `.ok()` / `if let Err(_) = .. {}`. All 8 near-candidates are DELIBERATE (documented-infallible wrappers, success-value-only discards behind `?`-propagation, or binary-crate-private) → 0 fires.",
+    "IF-10 / cfg! feature gates ≠ const-fold: Rust's `cfg!(...)` / `#[cfg(...)]` (271 cfg attrs / 5 `cfg!` sites) are compile-time CONFIGURATION gates (the feature-flag analog), correctly EXCLUDED from the §25/§29 literal-`const`-fold slice — no `const NAME: bool = <literal>` anchor exists anywhere to gate a dead branch.",
+    "IF-6 / coincidental homonyms with no entailment: 3 cross-crate `ErrorKind` enums (globset/pcre2/regex) share the `Regex` variant — a bare name-keyed set-diff WOULD fire — but they are crate-private, mutually-independent error taxonomies with NO behavioral entailment (no value of one is ever produced where another must represent it; the `grep` umbrella re-exports them namespaced, never merged). `ErrorKind` is the universal idiomatic Rust error-enum name; the overlap is coincidental → correctly suppressed.",
+    "IF-3a / ownership over shared globals: Rust's ownership model passes typed APIs explicitly instead of mutable globals; the only real singleton (messages.rs AtomicBools) is confined to one crate by `pub(crate)` visibility, failing the ≥2-component moat → 0 fires."
+  ],
+  "honest_assessment": "This is the FIFTH instrumented stack and the FIRST Rust datapoint, exercising all five cross-module families on a mature ~38k-LOC idiomatic workspace and surfacing Rust-specific structural facts that each drive a class of suppression: Cargo's hard `cyclic package dependency` ban makes a true cross-crate IF-8 cycle structurally impossible (the workspace is a strict DAG, dev-dep loophole explicitly checked and empty); the Result/`?` no-exceptions error model reshapes IF-7c so \"swallows\" become `let _ =`/`.ok()`/`Err(_)=>` discards, all 8 of which are deliberate (documented-infallible wrappers, success-value-only discards behind `?`, or binary-crate-private); `cfg!`/`#[cfg(...)]` feature gates (271 attrs / 5 `cfg!` sites) are the feature-flag analog correctly excluded from the IF-10 literal-const-fold slice (no `const NAME: bool` anchor exists anywhere); and ownership-passed typed APIs instead of shared globals leave IF-3a's only real singleton (messages.rs AtomicBools) confined to one crate by `pub(crate)` visibility. The suite stayed correctly SILENT in every case — most tellingly where naive detection WOULD fire (the 3 cross-crate `ErrorKind` enums for IF-6, the gate-passing `associate` discard for IF-7c) — demonstrating comprehension of language semantics and the behavioral-entailment/cross-component moats rather than keyword-matching; the clean result with 33 explained suppressions is the expected, honest profile for a mature idiomatic Rust codebase and adds a strong precision (zero-false-defect) datapoint to the Track-3 discovery corpus.",
+  "totals": {
+    "families": 5,
+    "genuine_fires": 0,
+    "named_suppressions": 33,
+    "per_family_suppressed": "IF-8 5 / IF-6 6 / IF-10 7 / IF-7c 8 / IF-3a 7",
+    "false_defects": 0,
+    "counts_note": "Counts are summed from the structured suppressed[] array lengths (authoritative); the synthesis headline matches (33)."
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schemas/devContainer.schema.json",
+  "name": "DeepInit clean-room (Codespaces)",
+  "//": "A FRESH, ephemeral Ubuntu container for testing the MARKETPLACE build of DeepInit in a clean environment — no local ~/.claude, no pre-installed MCP servers, no VM. Node for the Claude Code CLI; Python 3.13 so the deterministic harness can also run here. See docs/TESTING.md > 'Clean-environment real-run (Codespaces)'.",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-20-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/python:1": { "version": "3.13" }
+  },
+  "postCreateCommand": "npm install -g @anthropic-ai/claude-code && python -m pip install --upgrade pip pyyaml && echo 'Ready. Authenticate: set the ANTHROPIC_API_KEY Codespace secret (also exercises the per-use $ path), or run `claude` then /login for subscription auth. Then follow docs/TESTING.md.'",
+  "remoteEnv": {
+    "ANTHROPIC_API_KEY": "${localEnv:ANTHROPIC_API_KEY}",
+    "PYTHONUTF8": "1"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["anthropic.claude-code"]
+    }
+  }
+}

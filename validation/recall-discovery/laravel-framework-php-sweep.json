@@ -1,0 +1,101 @@
+{
+  "schema": "deepinit-validation/discovery-record/v1",
+  "program": "DeepInit in the Wild",
+  "track": "3 — recall/discovery (Java-class IF-8: a no-compile-time-cycle-ban language with EXPLICIT imports → IF-8 FIRES on a big cross-component cycle; + an IF-3a mutable-static coupling; the other families clean)",
+  "shape": "A+B — IF-8 FIRED (a 31-component strongly-connected `use`-import cycle across the Illuminate components) + IF-3a FIRED (a mutable `public static` Worker flag cross-written by Foundation and Queue) + IF-6/IF-10/IF-7c silent. 2 genuine fires (both GATED / not filed) + 31 named suppressions / 0 false defects. PHP is the cleanest 'permitted + VISIBLE' IF-8 datapoint: like Java/Ruby it has no cycle ban, but unlike Ruby's Zeitwerk autoload the cross-component deps are EXPLICIT `use` statements, so the cycle is fully groundable.",
+  "recorded": "2026-06-13",
+  "engine_proxy": "deterministic-detector-sweep (5 read-only agents — IF-8/IF-6/IF-10/IF-7c/IF-3a — applying the SHIPPED predicates to real PHP source via a generalized cross-language sweep harness; NOT a full Detect→Emit pipeline; no cost ledger). Build chain: . MAIN-LOOP VERIFICATION: the IF-8 31-component SCC + 37 mutual-`use` pairs were INDEPENDENTLY re-computed by the main loop (a separate Tarjan over its own grep of `use Illuminate\\X\\…;` edges) and agree EXACTLY with the agent (same 31-member SCC, same 37 pairs); the IF-3a Worker fire was line-verified (the agent ran out of budget pre-finalize, so the main loop completed + verified that adjudication).",
+  "repo": {
+    "name": "laravel/framework",
+    "url": "https://github.com/laravel/framework",
+    "branch": "master",
+    "pinned_sha": "7c851385bceb7c02ac5cf23c7836cd82669b0ec9",
+    "license": "MIT",
+    "stack": "PHP (the Laravel framework — the Illuminate components) — the EIGHTH instrumented stack and the FIRST PHP datapoint",
+    "size": "327,934 PHP code LOC / 2809 files (whole repo); src/Illuminate = 37 components"
+  },
+  "analysis_scope": "IF-8 over the WHOLE src/Illuminate cross-component `use`-import graph (37 components; component = Illuminate/<X>; edge X->Y for each `use Illuminate\\Y\\…;` with Y != X); IF-6/IF-10/IF-7c/IF-3a over the core Illuminate components {Database, Http, Routing, Queue, Auth, Cache, Support, Container, Events, Validation}.",
+  "result_headline": "Track-3 PHP field sweep over laravel/framework@7c851385: IF-8 FIRED on a 31-component strongly-connected `use`-import cycle (Tarjan over 37 components / 222 cross-component edges → one SCC of size 31; 37 minimal 2-node mutual-`use` pairs; Core members Container/Foundation/Database/Routing/Http/Support inside). IF-3a FIRED on `Worker::$pausable`/`$restartable` — mutable `public static` flags declared in Queue, CROSS-WRITTEN by Foundation. IF-6/IF-10/IF-7c stayed silent. 2 genuine fires (GATED) + 31 named suppressions / 0 false defects. The decisive contrast: PHP, like Java, has NO compile-time cycle ban, and unlike Ruby's autoload the cross-component deps are EXPLICIT `use` imports — so the cycle is fully visible and groundable (and even more striking than Java's, because the Illuminate components are PUBLISHED as separate composer packages yet are deeply mutually entangled).",
+  "per_family": [
+    {
+      "family": "IF-8", "applicable": true, "fired": 1,
+      "fires": [{
+        "title": "31-component strongly-connected cycle in the Illuminate cross-component `use`-import graph",
+        "severity": "High", "certainty": "HIGH", "fp_risk": "LOW", "scc_size": 31,
+        "core_members_in_cycle": ["Container", "Foundation", "Database", "Routing", "Http", "Support", "Queue", "Events"],
+        "distinct_2node_mutual_pairs": 37,
+        "representative_concrete_2cycles": [
+          "Bus <-> Queue: Bus/Batch.php:14 (use Queue\\CallQueuedClosure) ↔ Queue/CallQueuedClosure.php:6 (use Bus\\Batchable)",
+          "Http <-> Session: Http/RedirectResponse.php:6 (use Session\\Store) ↔ Session/Middleware/AuthenticateSession.php:10 (use Http\\Request)",
+          "Database <-> Pagination: Database/Concerns/BuildsQueries.php:11 (use Pagination\\Cursor) ↔ Pagination/AbstractCursorPaginator.php:9 (use Database\\Eloquent\\Model)",
+          "Events <-> Queue: Events/CallQueuedListener.php:10 (use Queue\\InteractsWithQueue) ↔ Queue/CallQueuedHandler.php:19 (use Events\\CallQueuedListener)",
+          "Foundation <-> View: Foundation/.../BladeMapper.php:9 (use View\\Compilers\\BladeCompiler) ↔ View/.../CompilesHelpers.php:5 (use Foundation\\Vite)"
+        ],
+        "robustness": "NOT a hub/interface artifact: removing the interface-only Contracts node leaves a 30-component SCC; removing BOTH Contracts and the Support hub still leaves a 23-component SCC (the agent re-ran Tarjan on the pruned graphs; the main loop independently reproduced the full 31-SCC). The cycle is a dense web of CONCRETE class↔class mutual `use` deps, not Contracts-mediated.",
+        "recorded_disposition": "GATED / reported, not filed. A real, deterministic IF-8 fire — PHP has no cycle ban. Reported as ONE finding (one SCC), not 37. A known architectural property of Laravel (the illuminate/* packages are published separately but are not independently usable — they cyclically `use` each other); an architectural smell, not a runtime defect."
+      }],
+      "suppressed_count": 4,
+      "suppressed": [
+        {"category": "6 acyclic singleton components (size-1 SCCs)", "members": ["Collections", "Conditionable", "Hashing", "JsonSchema", "Macroable", "Reflection"], "predicate_false_clause": "SCC size < 2 — in-degree 0 (pure sources), no back-edge"},
+        {"category": "high in-degree hubs (Support in=34, Contracts in=33, Container in=16)", "predicate_false_clause": "high fan-in is NOT a cycle — the predicate fires on strong connectivity, never in-degree (the robustness test removed both hubs and the SCC survived at 23 nodes)"},
+        {"category": "interface-mediated (Contracts-only) cycle hypothesis", "predicate_false_clause": "refuted: removing Contracts leaves a 30-node SCC of concrete↔concrete pairs — the fire does NOT depend on interface-mediated edges"},
+        {"category": "intra-component (self-loop) `use` imports", "predicate_false_clause": "excluded at edge construction (Q==P dropped) — intra-component recursion is not an IF-8 fire"}
+      ],
+      "php_specific_note": "PHP `use Illuminate\\Foo\\Bar;` statements are EXPLICIT cross-component import edges (PSR-4). Like Java (and Ruby), PHP has NO compile-time dependency-cycle ban — UNLIKE Go ('import cycle not allowed') and Rust/Cargo ('cyclic package dependency'). But UNLIKE Ruby's Zeitwerk (implicit constant refs that put cycles below the import substrate), PHP's `use` imports are explicit/visible, so a real SCC is fully groundable — the cleanest 'permitted + VISIBLE' datapoint. The result is even more striking than Java's 33-package SCC: the Illuminate components are PUBLISHED as 37 separate composer packages (illuminate/database, illuminate/http, …) yet form a 31-component cycle, so the 'independent' packages are in fact deeply mutually entangled (a documented Laravel characteristic). Independently double-verified (agent + main-loop Tarjan, same 31-SCC / 37 pairs).",
+      "naive_overfire_estimate": 37
+    },
+    {
+      "family": "IF-3a", "applicable": true, "fired": 1,
+      "fires": [{
+        "title": "Mutable `public static` Worker flags cross-written by Foundation and Queue (silent coupling, no interface)",
+        "severity": "Medium", "certainty": "HIGH", "fp_risk": "LOW",
+        "shared_resource": "Illuminate\\Queue\\Worker::$pausable (declared Queue/Worker.php:161, default true) and Worker::$restartable (Worker.php:154, default true) — mutable `public static` bools",
+        "writers": ["Foundation: Foundation/Cloud/QueueConnector.php:101-102 (Worker::$restartable = false; Worker::$pausable = false;)", "Queue: Queue/QueueManager.php:314-315 (same two writes)"],
+        "readers": ["Queue: Queue/Console/PauseCommand.php:39 (if (! Worker::$pausable) …)"],
+        "coupling": "Foundation reaches CROSS-COMPONENT into Queue's Worker static state to flip the flag, via a direct `public static` property access with NO mediating interface — change Worker's static semantics and Foundation's Cloud integration silently breaks. The textbook IF-3a 'change one, break the other' shape.",
+        "recorded_disposition": "GATED / reported, not filed (LOW-MEDIUM; the fix is a typed setter/interface). Parallel to caddy's Go global-globals fire."
+      }],
+      "suppressed_count": 5,
+      "suppressed": [
+        {"category": "single-component static registries", "examples": ["ServiceProvider::$optimizeCommands / $optimizeClearCommands / $reloadCommands (read only within Foundation)", "Builder::$defaultStringLength (Database-only)"], "predicate_false_clause": "single-component (>=2 distinct components required)"},
+        {"category": "Container-bound singletons accessed via typed Contracts", "predicate_false_clause": "reached through a typed interface — the Container/Contract IS the explicit interface (mediated, not silent)"},
+        {"category": "Laravel Facades (static proxy to a container singleton)", "predicate_false_clause": "mediated by the container resolution + the underlying typed instance"},
+        {"category": "Macroable static $macros registry", "predicate_false_clause": "a registration extension point, not cross-component mutable shared STATE with a read/write hazard"},
+        {"category": "immutable class constants", "predicate_false_clause": "not mutable shared state"}
+      ],
+      "php_specific_note": "PHP is permissive about shared mutable state (`static` class properties, $GLOBALS, static registries), so IF-3a has real substrate — and it surfaced one genuine LOW-MEDIUM cross-component coupling (the Worker statics). The dominant near-candidates are suppressed by the typed-interface clause: Laravel routes almost all shared services through the Container + Contracts (the explicit interface) and Facades (mediated). The lone fire is the rare case where one component pokes another's `public static` property directly. (The IF-3a agent ran out of budget mid-finalize; the main loop completed the adjudication — the Worker fire + the suppression categories — and line-verified the fire sites.)",
+      "naive_overfire_estimate": 12
+    },
+    {
+      "family": "IF-6", "applicable": true, "fired": 0, "fires": [], "suppressed_count": 7,
+      "suppressed": [{"category": "PHP 8.1 backed enums + class const arrays bucketed by canonical name across the Illuminate components; the same-named candidates are coincidental per-component homonyms (zero-overlap / no behavioral entailment) or same-component", "predicate_false_clause": "zero-overlap homonym / same-component / behavioral-entailment absent"}],
+      "php_specific_note": "PHP value-sets surface as PHP 8.1 backed enums, class `const X=[…]`, and literal arrays. Bucketed by exact canonical name across the Illuminate components, no cross-component name carried a conflicting membership with behavioral entailment → 0 fires / 7 named suppressions.",
+      "naive_overfire_estimate": 2
+    },
+    {
+      "family": "IF-10", "applicable": true, "fired": 0, "fires": [], "suppressed_count": 3,
+      "suppressed": [{"category": "all `if CONST` near-candidates resolve to config()/env()/container-bound values (non-literal RHS) — Laravel config is runtime, not a module-level literal-bool const", "predicate_false_clause": "non-literal RHS / mixed condition"}],
+      "php_specific_note": "PHP has truthiness, but the IF-10 shape needs a module-level literal-bool constant used as a whole if-test, never reassigned. Laravel config is uniformly runtime (config()/env()/container bindings), so literal-const dead branches are essentially absent → 0 fires / 3 named suppressions (the ~20 const-looking candidates are all runtime config reads).",
+      "naive_overfire_estimate": 20
+    },
+    {
+      "family": "IF-7c", "applicable": true, "fired": 0, "fires": [], "suppressed_count": 12,
+      "suppressed": [{"category": "empty/typed `catch` blocks across the core; each is either non-empty (catches-and-reports/rethrows — Laravel's dominant idiom), a deliberate typed expected-condition swallow returning a value, in a private method, or not cross-component-consumed", "predicate_false_clause": "non-empty handler / re-raises / private / not-cross-consumed"}],
+      "php_specific_note": "PHP error model = exceptions (try/catch). Laravel overwhelmingly catches-and-reports or catches-and-rethrows (non-empty → §23 error-as-value suppress); the `@` error-suppression operator is a different shape (noted, not a catch). No bare empty cross-component-consumed catch → 0 fires / 12 named suppressions.",
+      "naive_overfire_estimate": 12
+    }
+  ],
+  "key_php_findings": [
+    "IF-8 / no cycle ban + EXPLICIT imports → a 31-component SCC FIRED: PHP (like Java/Ruby) has no compile-time cycle ban, and unlike Ruby's autoload the `use` imports are explicit → the cycle is fully groundable. The Illuminate components form a 31-component SCC (37 mutual-`use` pairs, Core members inside), robustness-tested (survives removing Contracts+Support at 23 nodes), double-verified (agent + main loop). The cleanest permitted+visible datapoint, and a known Laravel property (separately-published packages, cyclically entangled).",
+    "IF-3a / permissive statics → 1 real coupling: `Worker::$pausable/$restartable` (mutable public statics in Queue) are cross-written by Foundation with no interface — a LOW-MEDIUM silent coupling. Everything else suppressed by the Container/Contracts/Facade typed-interface clause (Laravel mediates almost all shared services).",
+    "IF-6/IF-10/IF-7c clean: value-sets are coincidental per-component homonyms (no entailment); config is runtime (no literal-const dead branches); error handling is catches-and-reports (no bare empty cross-consumed swallow)."
+  ],
+  "honest_assessment": "The EIGHTH stack and first PHP datapoint, and the cleanest 'permitted + VISIBLE' IF-8 result in the corpus: PHP imposes no compile-time cycle ban (like Java/Ruby), and unlike Ruby's Zeitwerk autoload its cross-component deps are explicit `use` imports, so the 31-component Illuminate `use`-cycle is fully groundable and was independently double-verified (agent + main-loop Tarjan, same 31-SCC / 37 mutual pairs) and robustness-tested (not a hub/interface artifact). It is even more striking than Java's 33-package SCC because the Illuminate components ship as separate composer packages yet are deeply mutually entangled. The permissive-shared-state family (IF-3a) surfaced one genuine LOW-MEDIUM coupling (the Worker statics cross-written by Foundation) while the typed-interface clause correctly suppressed Laravel's Container/Contract/Facade-mediated services. 2 genuine GATED fires + 0 false defects + 31 named suppressions.",
+  "totals": {
+    "families": 5, "genuine_fires": 2,
+    "genuine_fire_disposition": "GATED (IF-8 31-component SCC; IF-3a Worker-statics coupling) — reported, not filed",
+    "named_suppressions": 31, "per_family_suppressed": "IF-8 4 / IF-3a 5 / IF-6 7 / IF-10 3 / IF-7c 12",
+    "false_defects": 0,
+    "counts_note": "IF-8 + IF-3a fires both main-loop-verified (the IF-3a agent ran out of budget; the main loop completed + line-verified its fire). The IF-8 31-SCC reported as ONE finding, not 37 pairs."
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "schema_version": 3,
+  "deepinit_version": "2.0.0",
+  "run_id": "blind-eabe-2026-06-13",
+  "generated": "2026-06-13",
+  "components": {
+    "contracts-service": { "doc": ".ai/docs/components/contracts-service.md" },
+    "passes": { "doc": ".ai/docs/components/passes.md" },
+    "offers": { "doc": ".ai/docs/components/offers.md" },
+    "reports": { "doc": ".ai/docs/components/reports.md" },
+    "monolith-host": { "doc": ".ai/docs/components/monolith-host.md" },
+    "common-shared": { "doc": ".ai/docs/components/common-shared.md" }
+  },
+  "deep_docs": ["domain-model.md","technical-dependencies.md","data-layer.md","functional-workflows.md","discovery.md"],
+  "lean_budget": { "root": 100 }
+}

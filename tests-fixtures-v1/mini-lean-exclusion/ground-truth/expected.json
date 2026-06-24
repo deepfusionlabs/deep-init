@@ -1,0 +1,17 @@
+{
+  "_doc": "Synthetic unit oracle for R9 lean-tier issue exclusion (harness §45). Seeds context FACTS (some non-obvious → lean, some obvious → deep) and ISS- DEFECTS (always deep, even one carrying a lean hint and one sharing a match-key with a lean fact). Asserts: 0 issues in lean, every issue in deep, the shared-key fact stays lean while its sibling defect is deep-only.",
+
+  "findings": [
+    { "id": "BR-auth:001", "kind": "fact", "non_obvious": true,  "match_key": "auth/login.rb:42",   "text": "ownership check is order-of-declaration, not nearest-inheritance" },
+    { "id": "BR-auth:002", "kind": "fact", "non_obvious": false, "match_key": "auth/login.rb:88",   "text": "a getter returns the field (obvious)" },
+    { "id": "WF-boot:001", "kind": "fact", "non_obvious": true,  "match_key": "boot.rb:10",         "text": "boot sequence is one ordered call-chain" },
+    { "id": "ISS-auth:001", "kind": "issue", "non_obvious": true, "match_key": "auth/login.rb:42",  "text": "IF-1: admin path enforces ownership; API path does NOT (shares the BR-auth:001 site)" },
+    { "id": "ISS-data:001", "kind": "issue", "non_obvious": true, "match_key": "models/user.rb:5",  "text": "IF-2: model field nickname has no live column (lean-hinted, MUST stay deep)" },
+    { "id": "ISS-cpl:001", "kind": "issue", "non_obvious": false, "match_key": "cache.rb:7",        "text": "IF-3a: magic-string redis key coupling" }
+  ],
+
+  "expected_lean": ["BR-auth:001", "WF-boot:001"],
+  "expected_deep": ["BR-auth:002", "ISS-auth:001", "ISS-data:001", "ISS-cpl:001"],
+  "shared_key_fact_stays_lean": "auth/login.rb:42",
+  "no_issue_id_in_lean": true
+}

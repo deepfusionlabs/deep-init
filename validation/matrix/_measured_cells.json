@@ -1,0 +1,160 @@
+{
+  "cells": [
+    {
+      "repo": "gin",
+      "tier": "M",
+      "lang": "Go",
+      "source_loc": 18349,
+      "output_tokens": 17444,
+      "component_count": 11,
+      "files_read": null,
+      "key_facts_count": 8,
+      "issues_fired": 2,
+      "suppressions": null,
+      "mode": "full",
+      "source": ""
+    },
+    {
+      "repo": "click",
+      "tier": "M",
+      "lang": "Python",
+      "source_loc": 20346,
+      "output_tokens": 16508,
+      "component_count": 17,
+      "files_read": null,
+      "key_facts_count": 8,
+      "issues_fired": 3,
+      "suppressions": null,
+      "mode": "full",
+      "source": ""
+    },
+    {
+      "repo": "express",
+      "tier": "M",
+      "lang": "JavaScript",
+      "source_loc": 15882,
+      "output_tokens": 10010,
+      "component_count": 7,
+      "files_read": null,
+      "key_facts_count": 11,
+      "issues_fired": 0,
+      "suppressions": null,
+      "mode": "full",
+      "source": ""
+    },
+    {
+      "repo": "gorilla-mux",
+      "tier": "S",
+      "lang": "Go",
+      "source_loc": 5820,
+      "output_tokens": 19892,
+      "component_count": 4,
+      "files_read": 7,
+      "key_facts_count": 16,
+      "issues_fired": 0,
+      "suppressions": 9,
+      "verification": {
+        "checked": 11,
+        "resolved": 11,
+        "refuted": 0
+      },
+      "mode": "single_engine",
+      "source": ""
+    },
+    {
+      "repo": "itsdangerous",
+      "tier": "S",
+      "lang": "Python",
+      "source_loc": 1095,
+      "output_tokens": 18495,
+      "component_count": 8,
+      "files_read": 12,
+      "key_facts_count": 17,
+      "issues_fired": 0,
+      "suppressions": 9,
+      "verification": {
+        "checked": 20,
+        "resolved": 20,
+        "refuted": 0
+      },
+      "mode": "single_engine",
+      "source": ""
+    },
+    {
+      "repo": "sinatra",
+      "tier": "M",
+      "lang": "Ruby",
+      "source_loc": 18865,
+      "output_tokens": 27738,
+      "component_count": 3,
+      "files_read": 11,
+      "key_facts_count": 16,
+      "issues_fired": 0,
+      "suppressions": 8,
+      "verification": {
+        "checked": 13,
+        "resolved": 12,
+        "refuted": 1
+      },
+      "mode": "single_engine",
+      "source": ""
+    },
+    {
+      "repo": "phoenix",
+      "tier": "M",
+      "lang": "Elixir",
+      "source_loc": 57900,
+      "output_tokens": 28630,
+      "component_count": 17,
+      "files_read": 18,
+      "key_facts_count": 11,
+      "issues_fired": 4,
+      "suppressions": 7,
+      "verification": {
+        "checked": 15,
+        "resolved": 15,
+        "refuted": 0
+      },
+      "mode": "single_engine",
+      "source": ""
+    },
+    {
+      "repo": "fmt",
+      "tier": "M",
+      "lang": "C++",
+      "source_loc": 49803,
+      "output_tokens": 15054,
+      "component_count": 14,
+      "files_read": 13,
+      "key_facts_count": 11,
+      "issues_fired": 1,
+      "suppressions": 10,
+      "verification": {
+        "checked": 14,
+        "resolved": 14,
+        "refuted": 0
+      },
+      "mode": "single_engine",
+      "source": ""
+    },
+    {
+      "repo": "pyccel",
+      "tier": "L",
+      "lang": "Python",
+      "source_loc": 105175,
+      "output_tokens": 24381,
+      "component_count": 12,
+      "files_read": 22,
+      "key_facts_count": 17,
+      "issues_fired": 2,
+      "suppressions": 6,
+      "verification": {
+        "checked": 22,
+        "resolved": 22,
+        "refuted": 0
+      },
+      "mode": "single_engine",
+      "source": ""
+    }
+  ]
+}

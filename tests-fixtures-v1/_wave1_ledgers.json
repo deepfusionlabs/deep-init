@@ -1,0 +1,105 @@
+{
+  "_comment": "Recorded ledgers from the Wave-1 BLIND live-run of the semantic detectors (2026-06-09, model claude-opus-4-8). Each ledger was produced by an engine that did NOT read the fixture's ground-truth/expected.json. The harness oracle (§18 in _chat_validation.py) scores these against expected.json deterministically (recall + FP), making the make-or-break number re-runnable: replace this file with a fresh blind run to re-measure across model/spec changes.",
+  "run": { "date": "2026-06-09", "model": "claude-opus-4-8", "depth": "deep", "review": "aggressive", "blind": true },
+  "ledgers": [
+    {
+      "fixture": "mini-if1-violation",
+      "issues": [
+        { "family": "IF-1", "file": "src/orders/order.service.ts", "line": 34, "symbol": "bulkDeleteOrders", "severity": "High", "certainty": "HIGH", "verified": true }
+      ],
+      "suppressed": [
+        { "family": "IF-1", "file": "src/orders/order.service.ts", "line": 46, "reason": "different operation (cancel != delete), AF-1(i)" },
+        { "family": "IF-1", "file": "src/orders/account.service.ts", "line": 8, "reason": "equivalent upstream guard via findOrdersByUser, AF-1(iii)" },
+        { "family": "IF-1", "file": "src/orders/order.service.ts", "line": 57, "reason": "read-only projection, different operation, AF-1(i)" },
+        { "family": "IF-1", "file": "src/shared/middleware.ts", "line": 28, "reason": "unused adminOnly = dead code, Test-1' linter territory" },
+        { "family": "IF-1", "file": "src/shared/middleware.ts", "line": 4, "reason": "hardcoded JWT default = secret/SAST territory, out of IF-1 scope" }
+      ]
+    },
+    {
+      "fixture": "mini-fp-trap",
+      "issues": [],
+      "suppressed": [
+        { "family": "IF-1", "file": "src/orders/orders.service.ts", "line": 33, "reason": "markPaid: different operation + upstream HMAC guard, AF-1(i)+(iii)" },
+        { "family": "IF-1", "file": "src/payments/payments.webhook.ts", "line": 33, "reason": "/refund: different entity+op + upstream guard, AF-1" },
+        { "family": "IF-1", "file": "src/orders/orders.service.ts", "line": 13, "reason": "placeOrder: owner-only satisfied by upstream authMiddleware, AF-1(iii)" },
+        { "family": "IF-1", "file": "src/payments/payments.webhook.ts", "line": 16, "reason": "IF-1(d): equivalent upstream HMAC guard exists, AF-1(iii)" },
+        { "family": "IF-2", "file": "src/shared/schema.ts", "line": 22, "reason": "decimal(12,2) == NUMERIC(12,2) base-type synonym, identical params" },
+        { "family": "IF-2", "file": "src/shared/schema.ts", "line": 13, "reason": "boolean == BOOLEAN identical base type" },
+        { "family": "IF-2", "file": "app/db/schema.rb", "line": 11, "reason": "tinyint(1) == boolean MySQL synonym" },
+        { "family": "IF-2", "file": "src/shared/schema.ts", "line": 1, "reason": "no model-only fields; R7 no live DB connection so live-drift suppressed" },
+        { "family": "IF-3a", "file": "app/models/order_report.rb", "line": 16, "reason": "order_events documented exception ADR-014 (asymmetric, contracted)" },
+        { "family": "IF-3a", "file": "src/shared/constants.ts", "line": 11, "reason": "shared vocabulary, not a shared resource" },
+        { "family": "IF-4", "file": "src/payments/reconcile.ts", "line": 4, "reason": "WA-PAY-1 triggering condition (PROV-3821) still OPEN, not stale" },
+        { "family": "IF-4", "file": "docs/shared-tables.md", "line": 26, "reason": "ADR-007 conforms to code, no contradiction" },
+        { "family": "IF-4", "file": "docs/shared-tables.md", "line": 3, "reason": "ADR-014 matches code, no drift/name-lie/load-bearing TODO" },
+        { "family": "IF-5", "file": "src/shared/constants.ts", "line": 1, "reason": "highest churn but Peripheral; behaviour-first ranking, not churn-only" },
+        { "family": "IF-5", "file": "CHURN.md", "line": 1, "reason": "no co-change pair with no structural edge + shared resource" }
+      ]
+    },
+    {
+      "fixture": "mini-if3a-coupling",
+      "issues": [
+        { "family": "IF-3a", "file": "src/orders/orders.service.ts", "line": 24, "symbol": "placeOrder", "severity": "High", "certainty": "HIGH", "verified": true }
+      ],
+      "suppressed": [
+        { "family": "IF-3a", "file": "src/shared/audit-log.ts", "line": 26, "reason": "documented sanctioned append-only sink, ADR-014 (stock explicitly NOT covered)" },
+        { "family": "IF-3a", "file": "src/orders/orders.service.ts", "line": 29, "reason": "order table single-writer, not coupling" },
+        { "family": "IF-3a", "file": "src/shared/db.ts", "line": 7, "reason": "Prisma singleton = shared infrastructure, not a named business resource" }
+      ]
+    },
+    {
+      "fixture": "mini-if4-adr-drift",
+      "issues": [
+        { "family": "IF-4", "file": "src/orders/order.service.ts", "line": 28, "symbol": "placeOrder", "severity": "High", "certainty": "HIGH", "verified": true },
+        { "family": "IF-4", "file": "src/config/loader.ts", "line": 18, "symbol": "loadConfig", "severity": "Low", "certainty": "MEDIUM", "verified": true },
+        { "family": "IF-4", "file": "src/config/loader.ts", "line": 28, "symbol": "saveConfigSync", "severity": "Medium", "certainty": "HIGH", "verified": true },
+        { "family": "IF-4", "file": "src/orders/order.service.ts", "line": 52, "symbol": "cryptoRandomId", "severity": "High", "certainty": "HIGH", "verified": true }
+      ],
+      "suppressed": [
+        { "family": "IF-4", "file": "src/orders/pricing.ts", "line": 15, "reason": "BR-pricing:001 legitimately EVOLVED (still reduces payable total), intent preserved" },
+        { "family": "IF-4", "file": "src/orders/pricing.ts", "line": 15, "reason": "ADR-002 money-in-cents conforms, not violated" },
+        { "family": "IF-4", "file": "src/orders/order.service.ts", "line": 28, "reason": "BR-orders:001 mechanism-vs-intent duplicate folded into ADR-001 root cause (Test-3 dedup)" },
+        { "family": "IF-4", "file": "src/notifications/queue.ts", "line": 26, "reason": "sanctioned out-of-band drain worker, not a request path" },
+        { "family": "IF-4", "file": "src/config/loader.ts", "line": 21, "reason": "benign memoization cache, no contradiction" }
+      ]
+    },
+    {
+      "fixture": "sample-plugin-repo",
+      "real_repo": true,
+      "note": "qualitative spot-read of a real shell-based plugin repo, no answer key; detectors stayed silent + precise (0 false alarms across 10 considered candidates)",
+      "issues": [],
+      "suppressed": [
+        { "family": "IF-1", "file": "scripts/guard.sh", "line": 46, "reason": "co-enforced + fail-safe, no enforced-vs-unenforced contrast" },
+        { "family": "IF-1", "file": "scripts/scan.sh", "line": 161, "reason": "different entity+operation than the validator; both advisory by design" },
+        { "family": "IF-1", "file": "scripts/guard.sh", "line": 42, "reason": "fails OPEN toward scanning, never under-enforced" },
+        { "family": "IF-3a", "file": "scripts/report.sh", "line": 9, "reason": "documented shared resource with an explicit interface contract" },
+        { "family": "IF-3a", "file": "scripts/_lib.sh", "line": 6, "reason": "documented shared seam with a function contract" },
+        { "family": "IF-3a", "file": "scripts/deploy.sh", "line": 75, "reason": "the state-file schema is the interface; below HIGH-confidence bar" },
+        { "family": "IF-4", "file": "directives.md", "line": 10, "reason": "scanner-allow instruction matches actual tool behavior" },
+        { "family": "IF-4", "file": "scripts/install.sh", "line": 217, "reason": "git-write draft-only discipline honored throughout" },
+        { "family": "IF-4", "file": "scripts/cache.sh", "line": 150, "reason": "scanner ok:false asymmetry is deliberate + documented" },
+        { "family": "IF-4", "file": "scripts", "line": 1, "reason": "no load-bearing TODO/FIXME on a core path" }
+      ]
+    },
+    {
+      "fixture": "mini-if7a-errorrule",
+      "note": "IF-7(a) error-path-contradicts-a-documented-rule, COMMISSION sub-type — blind 4-lens run 2026-06-09 (literal lens recorded; ALL 4 lenses agreed: recall 3/3, FP 0, 9/9 traps seen-and-suppressed incl. the documented-exception T1). Semantic family: scored by §18 + the §27 static gates.",
+      "issues": [
+        { "family": "IF-7", "file": "src/payments/charge.ts", "line": 14, "symbol": "chargeAndFulfill", "severity": "Critical", "certainty": "MEDIUM", "verified": true },
+        { "family": "IF-7", "file": "src/payments/outbox.ts", "line": 18, "symbol": "publishEvent", "severity": "Critical", "certainty": "MEDIUM", "verified": true },
+        { "family": "IF-7", "file": "src/auth/authorize.py", "line": 16, "symbol": "authorize", "severity": "High", "certainty": "MEDIUM", "verified": true }
+      ],
+      "suppressed": [
+        { "family": "IF-7", "file": "src/payments/charge.ts", "line": 27, "reason": "documented exception: chargeWithIdempotency marks paid only in the e.code==='idempotency_replay' branch, which ADR-014's own exception clause sanctions; else re-raises (clause 5 FALSE)" },
+        { "family": "IF-7", "file": "src/payments/charge.ts", "line": 44, "reason": "local reconciliation: chargeWithGuard's finally resets status to 'pending' when !charged, undoing the forbidden state before return (clause 4 FALSE)" },
+        { "family": "IF-7", "file": "src/orders/order.service.ts", "line": 11, "reason": "not in an error handler: the ADR-007 inline-send contradiction is on the happy path of placeOrder — routes to IF-4, not IF-7(a) (clause 2 FALSE)" },
+        { "family": "IF-7", "file": "src/cache/store.ts", "line": 12, "reason": "documented fail-open is the policy: BR-cache:002 requires serving origin/stale on a cache-read failure; the catch performs the required, not a forbidden, effect" },
+        { "family": "IF-7", "file": "src/billing/refund.ts", "line": 13, "reason": "soft/advisory rule: only a 'should probably ... (TODO)' comment, no deontic MUST and no ADR/BR record to anchor on (clause 1 FALSE)" },
+        { "family": "IF-7", "file": "src/billing/refund.ts", "line": 24, "reason": "one-sided / no documented rule: refundWithStatus's catch sets a status but no documented invariant governs this error behaviour to dual-cite (clause 1 FALSE)" },
+        { "family": "IF-7", "file": "src/money/pricing.ts", "line": 12, "reason": "rule not about a failure effect: ADR-002 is a money-representation rule with no failure clause; the default-rate catch contradicts no documented error invariant (clause 1 FALSE)" },
+        { "family": "IF-7", "file": "src/legacy/session.ts", "line": 14, "reason": "superseded rule: the keyed retry on timeout contradicts only ADR-009 (Status: Superseded); current policy sanctions it — a superseded record cannot anchor a live contradiction (clause 1/5 FALSE)" },
+        { "family": "IF-7", "file": "src/inventory/reserve.ts", "line": 17, "reason": "omission sub-type (commission-only measurement): the catch omits the BR-inv:001 release but executes no forbidden mutation — omission-from-absence is deferred (clause 3 FALSE)" }
+      ]
+    }
+  ]
+}

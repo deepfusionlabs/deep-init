@@ -1,0 +1,690 @@
+<!-- DeepInit C-DASH | Run run-2026-06-13-kemal-e2e | Generated 2026-06-13T00:00:00Z -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>DeepInit Dashboard</title>
+<style>
+/* ---- DeepInit dashboard: system fonts only, no web fonts, no network ---- */
+:root {
+  --bg: #0f1115;
+  --panel: #181b22;
+  --panel-2: #1f232c;
+  --border: #2c313c;
+  --text: #e6e9ef;
+  --muted: #9aa3b2;
+  --accent: #6ea8fe;
+  --crit: #ff5c5c;
+  --high: #ff9f43;
+  --med: #ffd34e;
+  --low: #7bd88f;
+  --confirmed: #7bd88f;
+  --drifted: #ff9f43;
+  --chip: #2a2f3a;
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+a { color: var(--accent); }
+code, .mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 12.5px;
+}
+.wrap { max-width: 1180px; margin: 0 auto; padding: 20px 22px 64px; }
+
+/* ---- Generated-artifact banner (visible) ---- */
+.gen-banner {
+  background: #3a2a12;
+  border: 1px solid #6b4a16;
+  color: #ffd9a0;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 18px;
+}
+
+header.site { margin-bottom: 16px; }
+header.site h1 { margin: 0 0 4px; font-size: 22px; letter-spacing: .2px; }
+header.site .sub { color: var(--muted); font-size: 13px; }
+
+/* ---- Honesty line ---- */
+.honesty {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin: 10px 0 0;
+}
+.honesty .pill {
+  background: var(--chip);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 3px 11px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ---- Panels ---- */
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin: 18px 0;
+}
+.panel > h2 {
+  margin: 0 0 12px;
+  font-size: 16px;
+  display: flex; align-items: baseline; gap: 10px;
+}
+.panel > h2 .num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px;
+  background: var(--panel-2); border: 1px solid var(--border);
+  border-radius: 6px; font-size: 12px; color: var(--muted);
+}
+.panel > h2 .note { font-size: 12px; color: var(--muted); font-weight: 400; }
+
+/* ---- Headline counts ---- */
+.counts { display: flex; flex-wrap: wrap; gap: 12px; margin: 8px 0 14px; }
+.count-card {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 16px;
+  min-width: 92px;
+}
+.count-card .n { font-size: 22px; font-weight: 600; }
+.count-card .l { font-size: 11.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+.sev-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+.sev-Critical .sev-dot, .dot-Critical { background: var(--crit); }
+.sev-High .sev-dot, .dot-High { background: var(--high); }
+.sev-Medium .sev-dot, .dot-Medium { background: var(--med); }
+.sev-Low .sev-dot, .dot-Low { background: var(--low); }
+
+/* ---- Overview tables ---- */
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .4px; }
+tbody tr:hover { background: var(--panel-2); }
+.crit-Core { color: var(--accent); }
+.crit-Supporting { color: var(--text); }
+.crit-Peripheral { color: var(--muted); }
+
+/* ---- Controls (filter/sort) ---- */
+.controls { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin-bottom: 12px; }
+.controls label { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+select, .toggle {
+  background: var(--panel-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 5px 9px;
+  font-size: 13px;
+  font-family: inherit;
+}
+.toggle { cursor: pointer; user-select: none; display: inline-flex; align-items: center; gap: 7px; }
+.toggle input { margin: 0; }
+
+/* ---- Issue triage ---- */
+.sev-group { margin-bottom: 16px; }
+.sev-group > h3 {
+  font-size: 13.5px; margin: 0 0 6px;
+  display: flex; align-items: center; gap: 8px;
+}
+.fam-group { margin: 4px 0 10px 4px; }
+.fam-group > h4 {
+  font-size: 12px; color: var(--muted); margin: 8px 0 4px;
+  text-transform: uppercase; letter-spacing: .5px;
+}
+.issue-row {
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 12px;
+  margin: 6px 0;
+  background: var(--panel-2);
+}
+.issue-row.s-Critical { border-left-color: var(--crit); }
+.issue-row.s-High { border-left-color: var(--high); }
+.issue-row.s-Medium { border-left-color: var(--med); }
+.issue-row.s-Low { border-left-color: var(--low); }
+.issue-row .id { font-weight: 600; }
+.issue-row .claim { margin: 3px 0; }
+.issue-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
+.tag {
+  font-size: 11px; padding: 1px 8px; border-radius: 999px;
+  background: var(--chip); border: 1px solid var(--border); color: var(--muted);
+}
+.tag.life-open { color: var(--high); }
+.tag.life-regressed { color: var(--crit); }
+.tag.life-resolved { color: var(--low); }
+.tag.life-accepted { color: var(--muted); }
+.tag.cert-HIGH { color: var(--low); }
+.tag.cert-MEDIUM { color: var(--med); }
+.tag.cert-LOW { color: var(--high); }
+.tag.unverified { color: var(--crit); border-color: var(--crit); }
+.tag.citation-weak { color: var(--high); border-color: var(--high); }
+.empty { color: var(--muted); font-style: italic; padding: 8px 2px; }
+
+/* ---- Heatmap ---- */
+.risk-bar-cell { min-width: 160px; }
+.risk-bar {
+  height: 14px; border-radius: 4px; background: var(--panel-2);
+  position: relative; overflow: hidden; border: 1px solid var(--border);
+}
+.risk-bar > span { display: block; height: 100%; }
+.risk-num { font-variant-numeric: tabular-nums; }
+
+/* ---- DB-drift state banner ---- */
+.state-banner {
+  border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; font-size: 13px;
+  border: 1px solid var(--border);
+}
+.state-verified { background: #12251a; border-color: #28543a; color: var(--low); }
+.state-unverifiable { background: #2a2436; border-color: #4a3d63; color: #c9b6ff; }
+
+/* ---- Decisions ---- */
+.status-CONFIRMED { color: var(--confirmed); }
+.status-DRIFTED { color: var(--drifted); }
+.status-badge { font-weight: 600; }
+
+footer { color: var(--muted); font-size: 12px; margin-top: 24px; text-align: center; }
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Generated-artifact banner (visible, R3 / no owned-region protection) -->
+  <div class="gen-banner">
+    Generated artifact &mdash; do not hand-edit; regenerated each run (no owned-region protection).
+  </div>
+
+  <header class="site">
+    <h1 id="title">DeepInit Dashboard</h1>
+    <div class="sub" id="subtitle"></div>
+  </header>
+
+  <!-- ===== Panel 1: Grounded-truth overview ===== -->
+  <section class="panel" id="panel-overview">
+    <h2><span class="num">1</span> Grounded-truth overview</h2>
+    <div class="honesty">
+      <span class="pill">report-only</span>
+      <span class="pill">100% local</span>
+      <span class="pill">flags likely &mdash; not proven</span>
+      <span class="pill" id="fp-pill">measured-own-FP</span>
+    </div>
+    <div class="counts" id="overview-counts"></div>
+    <table>
+      <thead><tr><th>Component</th><th>Criticality</th><th>Risk</th><th>Churn</th><th>Bus factor</th><th>Coverage</th></tr></thead>
+      <tbody id="overview-components"></tbody>
+    </table>
+  </section>
+
+  <!-- ===== Panel 2: Issue triage board ===== -->
+  <section class="panel" id="panel-triage">
+    <h2><span class="num">2</span> Issue triage board
+      <span class="note">flag-don't-assert &middot; the ledger withholds nothing &mdash; this surface defaults to medium+ (anti-alert-fatigue)</span>
+    </h2>
+    <div class="controls">
+      <label>Family
+        <select id="filter-family"><option value="">all</option></select>
+      </label>
+      <label>Severity
+        <select id="filter-severity">
+          <option value="medium+">medium+ (default)</option>
+          <option value="">all</option>
+          <option value="Critical">Critical</option>
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
+        </select>
+      </label>
+      <label>Component
+        <select id="filter-component"><option value="">all</option></select>
+      </label>
+      <label>Sort
+        <select id="sort-by">
+          <option value="severity">severity</option>
+          <option value="family">family</option>
+          <option value="component">component</option>
+          <option value="priority">priority</option>
+        </select>
+      </label>
+      <span class="toggle"><input type="checkbox" id="toggle-low"> Show Low</span>
+    </div>
+    <div id="triage-body"></div>
+  </section>
+
+  <!-- ===== Panel 3: Risk heatmap (ranked table — NOT a dependency-graph explorer) ===== -->
+  <section class="panel" id="panel-heatmap">
+    <h2><span class="num">3</span> Risk heatmap
+      <span class="note">components ranked by risk score &mdash; ranked table, not a dependency-graph explorer (DeepMap owns the graph)</span>
+    </h2>
+    <table>
+      <thead><tr><th>#</th><th>Component</th><th>Criticality</th><th class="risk-bar-cell">Risk score</th><th>Churn</th><th>Bus factor</th><th>Coverage</th></tr></thead>
+      <tbody id="heatmap-body"></tbody>
+    </table>
+  </section>
+
+  <!-- ===== Panel 4: DB-drift (IF-2) ===== -->
+  <section class="panel" id="panel-drift">
+    <h2><span class="num">4</span> DB-drift <span class="note">IF-2 &middot; never a phantom-drift claim</span></h2>
+    <div id="drift-state" class="state-banner"></div>
+    <table>
+      <thead><tr><th>Entity</th><th>Table</th><th>Field</th><th>ORM says</th><th>DB says</th><th>Drift</th><th>Severity</th></tr></thead>
+      <tbody id="drift-body"></tbody>
+    </table>
+  </section>
+
+  <!-- ===== Panel 5: Decisions / WHY (IF-4 surface) ===== -->
+  <section class="panel" id="panel-decisions">
+    <h2><span class="num">5</span> Decisions / WHY <span class="note">ADRs &middot; CONFIRMED vs DRIFTED</span></h2>
+    <table>
+      <thead><tr><th>ID</th><th>Decision</th><th>Status</th></tr></thead>
+      <tbody id="decisions-body"></tbody>
+    </table>
+  </section>
+
+  <footer id="footer"></footer>
+</div>
+
+<!-- ===== THE single data placeholder — emitter replaces the token below with redacted real JSON ===== -->
+<script>
+const DEEPINIT_DATA = {
+  "project": {
+    "name": "kemal",
+    "architecture": "Composable HTTP::Handler middleware chain + Sinatra-style global DSL over a process-global Config singleton (Crystal)",
+    "generated": "2026-06-13T00:00:00Z",
+    "run_id": "run-2026-06-13-kemal-e2e"
+  },
+  "components": [
+    {
+      "name": "core",
+      "criticality": "Core",
+      "risk": 0.0,
+      "churn": 0,
+      "bus_factor": 0,
+      "coverage": 0.0
+    },
+    {
+      "name": "handlers",
+      "criticality": "Core",
+      "risk": 0.0,
+      "churn": 0,
+      "bus_factor": 0,
+      "coverage": 0.0
+    },
+    {
+      "name": "router",
+      "criticality": "Core",
+      "risk": 0.0,
+      "churn": 0,
+      "bus_factor": 0,
+      "coverage": 0.0
+    },
+    {
+      "name": "websocket",
+      "criticality": "Core",
+      "risk": 0.0,
+      "churn": 0,
+      "bus_factor": 0,
+      "coverage": 0.0
+    },
+    {
+      "name": "helpers",
+      "criticality": "Supporting",
+      "risk": 0.0,
+      "churn": 0,
+      "bus_factor": 0,
+      "coverage": 0.0
+    },
+    {
+      "name": "logging",
+      "criticality": "Supporting",
+      "risk": 0.0,
+      "churn": 0,
+      "bus_factor": 0,
+      "coverage": 0.0
+    },
+    {
+      "name": "ext",
+      "criticality": "Supporting",
+      "risk": 0.0,
+      "churn": 0,
+      "bus_factor": 0,
+      "coverage": 0.0
+    }
+  ],
+  "issues": [],
+  "drift": [],
+  "decisions": [
+    {
+      "id": "ADR-0001",
+      "title": "Process-global Config singleton + class-constant handler registries",
+      "status": "CONFIRMED"
+    },
+    {
+      "id": "ADR-0002",
+      "title": "Fixed-order HTTP::Handler chain; terminal handlers appended last",
+      "status": "CONFIRMED"
+    },
+    {
+      "id": "ADR-0003",
+      "title": "Match exception handlers by declaration order, not nearest-inheritance",
+      "status": "CONFIRMED"
+    },
+    {
+      "id": "ADR-0004",
+      "title": "Global before_all/after_all filters kept out of the radix tree (#757 fix)",
+      "status": "CONFIRMED"
+    }
+  ],
+  "counts": {
+    "open": 0,
+    "resolved": 0,
+    "regressed": 0,
+    "by_severity": {
+      "Critical": 0,
+      "High": 0,
+      "Medium": 0,
+      "Low": 0
+    }
+  },
+  "db_verified": false
+};
+</script>
+
+<script>
+/* ================= DeepInit dashboard — vanilla render/filter/sort ================= */
+(function () {
+  "use strict";
+  var D = (typeof DEEPINIT_DATA === "object" && DEEPINIT_DATA) ? DEEPINIT_DATA : {};
+  var SEV_ORDER = { "Critical": 0, "High": 1, "Medium": 2, "Low": 3 };
+  var SEV_LIST = ["Critical", "High", "Medium", "Low"];
+  var FAMILIES = ["IF-1", "IF-2", "IF-3a", "IF-4", "IF-5"];
+
+  function el(id) { return document.getElementById(id); }
+  function txt(s) { return (s === undefined || s === null) ? "" : String(s); }
+  // Safe text node helper — we never use innerHTML with data values.
+  function setText(node, s) { node.textContent = txt(s); }
+  function mk(tag, cls) { var n = document.createElement(tag); if (cls) n.className = cls; return n; }
+  function cell(row, value, cls) {
+    var td = mk("td", cls);
+    setText(td, value);
+    row.appendChild(td);
+    return td;
+  }
+  function pct(x) {
+    if (typeof x !== "number" || isNaN(x)) return "n/a";
+    return Math.round(x * 100) + "%";
+  }
+
+  /* ---------- Header ---------- */
+  var proj = D.project || {};
+  setText(el("title"), "DeepInit Dashboard" + (proj.name ? " — " + proj.name : ""));
+  var subParts = [];
+  if (proj.architecture) subParts.push(proj.architecture);
+  if (proj.generated) subParts.push("generated " + proj.generated);
+  if (proj.run_id) subParts.push("run " + proj.run_id);
+  setText(el("subtitle"), subParts.join("  ·  "));
+  setText(el("footer"), "DeepInit — grounded truth + the problems in your code. Run " + txt(proj.run_id) + ". 100% local, report-only.");
+
+  /* ---------- Panel 1: overview counts + components ---------- */
+  var counts = D.counts || {};
+  var bySev = counts.by_severity || {};
+  var countsWrap = el("overview-counts");
+  function countCard(label, n, sevClass) {
+    var c = mk("div", "count-card" + (sevClass ? " sev-" + sevClass : ""));
+    var nDiv = mk("div", "n");
+    if (sevClass) { var dot = mk("span", "sev-dot"); nDiv.appendChild(dot); }
+    nDiv.appendChild(document.createTextNode(txt(n)));
+    var l = mk("div", "l"); setText(l, label);
+    c.appendChild(nDiv); c.appendChild(l);
+    countsWrap.appendChild(c);
+  }
+  var totalIssues = (D.issues || []).length;
+  countCard("issues", totalIssues, null);
+  countCard("open", counts.open || 0, null);
+  countCard("resolved", counts.resolved || 0, null);
+  countCard("regressed", counts.regressed || 0, null);
+  SEV_LIST.forEach(function (s) { countCard(s, bySev[s] || 0, s); });
+
+  var ocomp = el("overview-components");
+  (D.components || []).forEach(function (c) {
+    var r = mk("tr");
+    cell(r, c.name);
+    cell(r, c.criticality, "crit-" + txt(c.criticality));
+    cell(r, (typeof c.risk === "number" ? c.risk.toFixed(2) : "n/a"), "risk-num");
+    cell(r, c.churn);
+    cell(r, c.bus_factor);
+    cell(r, pct(c.coverage));
+    ocomp.appendChild(r);
+  });
+
+  /* ---------- Panel 2: issue triage ---------- */
+  var issues = (D.issues || []).slice();
+
+  // populate family + component filter dropdowns from data
+  var famSel = el("filter-family");
+  FAMILIES.forEach(function (f) {
+    var o = mk("option"); o.value = f; setText(o, f); famSel.appendChild(o);
+  });
+  var compSel = el("filter-component");
+  var compSet = {};
+  issues.forEach(function (i) {
+    var comp = componentOf(i);
+    if (comp && !compSet[comp]) { compSet[comp] = true; }
+  });
+  Object.keys(compSet).sort().forEach(function (comp) {
+    var o = mk("option"); o.value = comp; setText(o, comp); compSel.appendChild(o);
+  });
+
+  // derive component from id (ISS-{comp}:{nnn}) or first provenance path segment
+  function componentOf(i) {
+    var id = txt(i.id);
+    var m = id.match(/^ISS-([^:]+):/);
+    if (m) return m[1];
+    return ""; // cross-component (ISS-{nnn})
+  }
+
+  function annotationTag(i) {
+    if (i.verified === false || i.annotation === "unverified") return "unverified";
+    if (i.annotation === "citation-weak") return "citation-weak";
+    return null;
+  }
+
+  function renderTriage() {
+    var fam = el("filter-family").value;
+    var sevFilter = el("filter-severity").value;
+    var comp = el("filter-component").value;
+    var sortBy = el("sort-by").value;
+    var showLow = el("toggle-low").checked;
+
+    var body = el("triage-body");
+    while (body.firstChild) body.removeChild(body.firstChild);
+
+    var rows = issues.filter(function (i) {
+      if (fam && i.family !== fam) return false;
+      if (comp && componentOf(i) !== comp) return false;
+      // severity filter
+      var sv = SEV_ORDER[i.severity];
+      if (sevFilter === "medium+") {
+        if (sv === undefined || sv > SEV_ORDER["Medium"]) {
+          // Low (and unknown) hidden unless the Low toggle is on
+          if (!(showLow && i.severity === "Low")) return false;
+        }
+      } else if (sevFilter) {
+        if (i.severity !== sevFilter) return false;
+      } else {
+        // "all" still respects the Low toggle unless explicitly choosing Low
+        if (!showLow && i.severity === "Low") return false;
+      }
+      return true;
+    });
+
+    // sort
+    rows.sort(function (a, b) {
+      if (sortBy === "family") return txt(a.family).localeCompare(txt(b.family)) || (SEV_ORDER[a.severity] - SEV_ORDER[b.severity]);
+      if (sortBy === "component") return componentOf(a).localeCompare(componentOf(b)) || (SEV_ORDER[a.severity] - SEV_ORDER[b.severity]);
+      if (sortBy === "priority") return (b.priority || 0) - (a.priority || 0);
+      // default: severity, then priority desc
+      return (SEV_ORDER[a.severity] - SEV_ORDER[b.severity]) || ((b.priority || 0) - (a.priority || 0));
+    });
+
+    if (!rows.length) {
+      var e = mk("div", "empty");
+      setText(e, "No issues match the current filters. (The deep ledger + SARIF withhold nothing — this is only the human-facing surface.)");
+      body.appendChild(e);
+      return;
+    }
+
+    // group by severity, then family within
+    SEV_LIST.forEach(function (sev) {
+      var inSev = rows.filter(function (r) { return r.severity === sev; });
+      if (!inSev.length) return;
+      var group = mk("div", "sev-group");
+      var h3 = mk("h3", "sev-" + sev);
+      var dot = mk("span", "sev-dot");
+      h3.appendChild(dot);
+      h3.appendChild(document.createTextNode(sev + " (" + inSev.length + ")"));
+      group.appendChild(h3);
+
+      FAMILIES.forEach(function (fm) {
+        var inFam = inSev.filter(function (r) { return r.family === fm; });
+        if (!inFam.length) return;
+        var fg = mk("div", "fam-group");
+        var h4 = mk("h4"); setText(h4, fm + " — " + inFam.length); fg.appendChild(h4);
+        inFam.forEach(function (i) { fg.appendChild(issueRow(i)); });
+        group.appendChild(fg);
+      });
+      body.appendChild(group);
+    });
+  }
+
+  function issueRow(i) {
+    var row = mk("div", "issue-row s-" + txt(i.severity));
+
+    var idLine = mk("div");
+    var idSpan = mk("span", "id"); setText(idSpan, i.id); idLine.appendChild(idSpan);
+    row.appendChild(idLine);
+
+    var claim = mk("div", "claim"); setText(claim, i.claim); row.appendChild(claim);
+
+    // provenance file:line list
+    var prov = mk("div", "mono");
+    prov.style.color = "var(--muted)";
+    setText(prov, (i.provenance || []).join("  •  "));
+    row.appendChild(prov);
+
+    var meta = mk("div", "issue-meta");
+    function tag(text, cls) { var t = mk("span", "tag" + (cls ? " " + cls : "")); setText(t, text); meta.appendChild(t); }
+    tag(i.family);
+    tag(i.severity, "sev-" + txt(i.severity));
+    tag(txt(i.criticality));
+    tag("certainty: " + txt(i.certainty), "cert-" + txt(i.certainty));
+    tag(txt(i.lifecycle), "life-" + txt(i.lifecycle));
+    if (i.baseline) tag("baseline: " + txt(i.baseline));
+    if (typeof i.priority === "number") tag("priority " + i.priority.toFixed(2));
+    var an = annotationTag(i);
+    if (an === "unverified") tag("[unverified]", "unverified");
+    else if (an === "citation-weak") tag("[citation-weak]", "citation-weak");
+    row.appendChild(meta);
+    return row;
+  }
+
+  ["filter-family", "filter-severity", "filter-component", "sort-by"].forEach(function (id) {
+    el(id).addEventListener("change", renderTriage);
+  });
+  el("toggle-low").addEventListener("change", renderTriage);
+  renderTriage();
+
+  /* ---------- Panel 3: risk heatmap (ranked table) ---------- */
+  var hbody = el("heatmap-body");
+  var ranked = (D.components || []).slice().sort(function (a, b) { return (b.risk || 0) - (a.risk || 0); });
+  var maxRisk = ranked.reduce(function (m, c) { return Math.max(m, c.risk || 0); }, 0) || 1;
+  ranked.forEach(function (c, idx) {
+    var r = mk("tr");
+    cell(r, idx + 1);
+    cell(r, c.name);
+    cell(r, c.criticality, "crit-" + txt(c.criticality));
+    // risk bar cell
+    var td = mk("td", "risk-bar-cell");
+    var bar = mk("div", "risk-bar");
+    var fill = mk("span");
+    var frac = (c.risk || 0) / maxRisk;
+    fill.style.width = Math.round(frac * 100) + "%";
+    // color by risk band
+    var risk = c.risk || 0;
+    fill.style.background = risk >= 0.75 ? "var(--crit)" : risk >= 0.5 ? "var(--high)" : risk >= 0.3 ? "var(--med)" : "var(--low)";
+    bar.appendChild(fill);
+    td.appendChild(bar);
+    var num = mk("div", "risk-num"); num.style.fontSize = "11px"; num.style.color = "var(--muted)";
+    setText(num, (typeof c.risk === "number" ? c.risk.toFixed(2) : "n/a"));
+    td.appendChild(num);
+    r.appendChild(td);
+    cell(r, c.churn);
+    cell(r, c.bus_factor);
+    cell(r, pct(c.coverage));
+    hbody.appendChild(r);
+  });
+
+  /* ---------- Panel 4: DB-drift ---------- */
+  var dbVerified = D.db_verified === true;
+  var stateBanner = el("drift-state");
+  if (dbVerified) {
+    stateBanner.className = "state-banner state-verified";
+    setText(stateBanner, "Live-verified — these rows reflect an actual R7-approved read of the live schema.");
+  } else {
+    stateBanner.className = "state-banner state-unverifiable";
+    setText(stateBanner, "Unverifiable — the live DB was not read this run. Run with --db for a live-verified drift check. ORM-side findings shown are not phantom-drift; live checks are suppressed (R7).");
+  }
+  var dbody = el("drift-body");
+  var drift = D.drift || [];
+  if (!drift.length) {
+    var dr = mk("tr"); var dt = mk("td"); dt.colSpan = 7;
+    dt.className = "empty";
+    setText(dt, dbVerified ? "No drift detected against the live schema." : "No drift rows to display (run with --db to live-verify).");
+    dr.appendChild(dt); dbody.appendChild(dr);
+  } else {
+    drift.forEach(function (d) {
+      var r = mk("tr");
+      cell(r, d.entity);
+      cell(r, d.table, "mono");
+      cell(r, d.field, "mono");
+      cell(r, d.orm, "mono");
+      cell(r, d.db, "mono");
+      cell(r, d.drift);
+      var sc = cell(r, d.severity, "sev-" + txt(d.severity));
+      var dot = mk("span", "sev-dot"); sc.insertBefore(dot, sc.firstChild);
+      dbody.appendChild(r);
+    });
+  }
+
+  /* ---------- Panel 5: decisions / WHY ---------- */
+  var decBody = el("decisions-body");
+  var decisions = D.decisions || [];
+  if (!decisions.length) {
+    var er = mk("tr"); var et = mk("td"); et.colSpan = 3; et.className = "empty";
+    setText(et, "No decisions recorded.");
+    er.appendChild(et); decBody.appendChild(er);
+  } else {
+    decisions.forEach(function (dec) {
+      var r = mk("tr");
+      cell(r, dec.id, "mono");
+      cell(r, dec.title);
+      var st = cell(r, dec.status, "status-badge status-" + txt(dec.status));
+      decBody.appendChild(r);
+    });
+  }
+})();
+</script>
+</body>
+</html>

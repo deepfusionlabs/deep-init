@@ -1,0 +1,17 @@
+{
+  "_doc": "Oracle for the docs-viewer build over mini-docs-viewer (harness §43). The fixture carries adversarial payloads (a literal </script>, an http:// URL as inert text, a javascript: link) to prove the embed escaping + island-stripping + scheme allow-list are load-bearing.",
+  "expected_project_name": "widgetstore",
+  "expected_components": ["core"],
+  "expected_counts": {
+    "components": 1,
+    "lean_facts": 2,
+    "adrs": 1,
+    "knowledge_log_entries": 1,
+    "verified_issues": 0,
+    "named_suppressions": 1
+  },
+  "adversarial_in_source": ["</script>", "http://example.com/spec", "javascript:alert(1)"],
+  "xref_ids_must_resolve": ["BR-core:001", "BR-core:002", "ADR-0001", "KL-learning:001"],
+  "island_must_have_no_raw_lt": true,
+  "offhost_loadable_refs_outside_island_must_be": 0
+}

@@ -1,0 +1,13 @@
+{
+  "fixture": "mini-orm-drift",
+  "purpose": "AC8 — live DB schema reconciled against ORM model; drift surfaced as non-obvious findings",
+  "expected_drift": [
+    {"entity": "Invoice", "table": "invoices", "field": "total", "orm": "decimal(10,2)", "db": "numeric(12,4)", "drift": "precision_mismatch", "severity": "MEDIUM"},
+    {"entity": "Invoice", "table": "invoices", "field": "customer_email", "orm": "string (validated present)", "db": "(no column)", "drift": "model_only_field", "severity": "HIGH"},
+    {"entity": "Invoice", "table": "invoices", "field": "discount_rate", "orm": "decimal", "db": "integer", "drift": "type_mismatch", "severity": "HIGH"},
+    {"entity": "(none)", "table": "audit_logs", "field": "-", "orm": "(no model)", "db": "table exists", "drift": "orphan_table", "severity": "LOW"}
+  ],
+  "expected_workaround": [
+    {"id": "WA-x", "note": "total stored at higher DB precision than the model assumes", "file": "app/models/invoice.rb"}
+  ]
+}

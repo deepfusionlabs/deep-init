@@ -1,0 +1,45 @@
+{
+  "fixture": "mini-if7-errorpath",
+  "purpose": "IF-7 (roadmap family #3, workflow/error-path contradictions) — DETERMINISTIC SLICE: a cross-boundary swallowed error. A BARE empty/comment-only catch bound to its ENCLOSING function, where that function is exported AND consumed by another component, is flagged; a re-throwing sibling, a deliberate-fallback sibling, a LOCAL/private empty catch, a private empty-catch helper sharing a file with a clean cross-consumed export (function-scope guard), and an empty catch compensated by a non-empty finally are not. The cross-component-consumption gate is the moat that separates IF-7 from a linter's no-empty; the function-scope binding is what keeps it precise (an empty catch is attributed to the function that encloses it, never to an unrelated sibling export in the same file). The two semantic sub-cases (error-path-contradicts-a-rule; unreachable-state) carry their own future exit-gate and are measured in live runs, not here.",
+  "expected_issues": [
+    {
+      "family": "IF-7",
+      "subcase": "c (cross-boundary swallowed error)",
+      "file": "src/payments/charge.ts",
+      "line": 7,
+      "symbol": "chargeCard",
+      "component": "payments",
+      "severity": "High",
+      "certainty": "HIGH",
+      "claim": "Possible cross-boundary swallowed error: chargeCard (a Core money-mutation primitive, exported by payments and called by gateway/checkout.ts) discards the charge error in an empty catch, so a caller in another component cannot see the failure and may mark the order paid as if the charge succeeded.",
+      "evidence": "src/payments/charge.ts:7-11 `catch (e) { /* comment-only */ }` swallows the error; the function is exported at src/payments/charge.ts:4 and imported across the component boundary at src/gateway/checkout.ts:3 (`import { chargeCard } from '../payments/charge'`), which then calls markOrderPaid as if the charge succeeded."
+    }
+  ],
+  "must_not_fire": [
+    {
+      "family": "IF-7",
+      "file": "src/payments/refund.ts",
+      "reason": "refundCard's catch RE-THROWS (src/payments/refund.ts:9 `throw new Error(...)`) — the error propagates to the caller, it is not swallowed. Cross-consumed by gateway, but propagating, so must not fire."
+    },
+    {
+      "family": "IF-7",
+      "file": "src/payments/rates.ts",
+      "reason": "getRateWithFallback's catch is NON-EMPTY — it logs and returns an explicit documented fallback (src/payments/rates.ts:12-13). A deliberate error-as-value contract, not a silent swallow; the deterministic slice keys strictly on an empty/comment-only body, so must not fire."
+    },
+    {
+      "family": "IF-7",
+      "file": "src/internal/helpers.ts",
+      "reason": "helpers.ts HAS empty catches (private tryParseJSON's catch at line 9, exported formatLabel's catch at line 18), but nothing here crosses a component boundary: tryParseJSON is not exported, and formatLabel is consumed ONLY within the internal component (src/internal/format.ts imports it intra-component). A plain linter's no-empty would flag both; IF-7's moat gate deliberately suppresses them as a local concern, not a cross-boundary swallow. This is the FP-trap proving IF-7 != no-empty."
+    },
+    {
+      "family": "IF-7",
+      "file": "src/payments/audit.ts",
+      "reason": "FUNCTION-SCOPE guard. audit.ts exports a CLEAN cross-consumed function (recordAudit, imported by gateway, no swallow on its own path) AND contains a PRIVATE helper with an empty catch (debugDump, line 12). Under FILE-granularity attribution the file would wrongly fire and mis-pin the swallow on recordAudit; the spec binds the empty catch to its ENCLOSING function, so debugDump (private, not cross-consumed) is suppressed and recordAudit (clean) is not a swallow — must NOT fire. This trap distinguishes the function-scoped detector from a file-scoped one."
+    },
+    {
+      "family": "IF-7",
+      "file": "src/payments/session.ts",
+      "reason": "FINALLY guard. withSession is exported AND cross-consumed and HAS an empty catch (line 12), but a non-empty `finally` (line 14) performs the cleanup — a deliberate try/finally idiom, not a bare swallow. The deterministic slice fires only on a BARE empty handler with no compensating finally; the ambiguous finally case is deferred to the semantic layer (precision-first). Must NOT fire."
+    }
+  ]
+}

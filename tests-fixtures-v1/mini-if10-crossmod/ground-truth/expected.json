@@ -1,0 +1,81 @@
+{
+  "fixture": "mini-if10-crossmod",
+  "purpose": "IF-10 (roadmap family #6) — the CROSS-MODULE const-gated statically-dead branch, unblocked by the resolve-to-literal substrate (the Run-9 'decidable core, not honestly measurable as-built' DEFER). An `export const NAME=<literal>` in component A, consumed across a module edge as the WHOLE test of `if (NAME)` in component B, makes B's arm unreachable-as-written — a one-hop const-fold across the edge (an ES const import binding is read-only, so the value is provably constant from A). The substrate carries A's literal RHS across the edge (following re-export chains) and GROUNDS the fire to A's real export line; where it cannot uniquely resolve (multi-exporter, fork/dead-end chain, importer shadow, namespace/dynamic/type-only import, non-const/non-literal export, mixed condition, intra-component edge, comment/string-only conditional) it SUPPRESSES — never a name-keyed fire. Deterministic (decidable predicate == defect predicate on UNREACHABILITY), so it skips the forced R1.5 validate like the §25 single-file slice. Asserts UNREACHABILITY, never DELETABILITY. The single-file in-file form stays §25; this section is the cross-module sibling (no double-emit — §25 defers all exported/imported flags).",
+  "expected_issues": [
+    {
+      "family": "IF-10",
+      "subcase": "cross-module const-gated statically-dead branch",
+      "file": "src/checkout/flow.ts",
+      "line": 3,
+      "flag": "NEW_CHECKOUT",
+      "dead_arm": "if-body",
+      "severity": "High",
+      "certainty": "HIGH",
+      "origin": { "file": "src/flagdefs/defs.ts", "line": 2 },
+      "claim": "Possible statically-unreachable branch: NEW_CHECKOUT resolves across a module edge to a compile-time-constant `false` (src/flagdefs/defs.ts:2, re-exported via src/flags), so the if-true arm at src/checkout/flow.ts:3 never executes — confirm intended (parked feature vs. dead code).",
+      "evidence": "src/flagdefs/defs.ts:2 `export const NEW_CHECKOUT = false;` (a read-only const import binding, provably constant from A); re-exported by the src/flags barrel; imported by src/checkout/flow.ts:1 and used as the WHOLE test of `if (NEW_CHECKOUT)` at src/checkout/flow.ts:3 → if-body unreachable. Grounded to the ORIGIN literal (flagdefs/defs.ts), not the barrel — the resolution proof."
+    },
+    {
+      "family": "IF-10",
+      "subcase": "cross-module const-gated statically-dead branch",
+      "file": "src/orders/process.ts",
+      "line": 3,
+      "flag": "LEGACY_MODE",
+      "dead_arm": "if-body",
+      "severity": "High",
+      "certainty": "HIGH",
+      "origin": { "file": "src/config/build.ts", "line": 2 },
+      "claim": "Possible statically-unreachable branch: LEGACY_MODE resolves across a direct module edge to a compile-time-constant `true` (src/config/build.ts:2), so the negated test `if (!LEGACY_MODE)` at src/orders/process.ts:3 makes the if-body unreachable — confirm intended.",
+      "evidence": "src/config/build.ts:2 `export const LEGACY_MODE = true;`; imported by src/orders/process.ts:1; `_falsy10(true)=False ⊕ negation` → the if-body at src/orders/process.ts:3 is unreachable-as-written. Dual-cited (origin + conditional); proves the by-value falsy fold works across the edge."
+    },
+    {
+      "family": "IF-10",
+      "subcase": "cross-module const-gated statically-dead branch (PYTHON — §30, the off-TS moat made measured)",
+      "file": "src/pychk/flow.py",
+      "line": 4,
+      "flag": "NEW_CHECKOUT",
+      "dead_arm": "if-body",
+      "severity": "High",
+      "certainty": "HIGH",
+      "origin": { "file": "src/pyflags/defs.py", "line": 2 },
+      "claim": "Possible statically-unreachable branch: NEW_CHECKOUT resolves across a package edge to a module-level literal `False` (src/pyflags/defs.py:2, never rebound), so the `if NEW_CHECKOUT:` body at src/pychk/flow.py:4 never executes — confirm intended. Reported by NO Python tool (pyflakes/pylint don't const-fold; vulture's docs recommend `debug=False; if debug:` as the way to SILENCE it) — the off-TS reach is the moat.",
+      "evidence": "src/pyflags/defs.py:2 `NEW_CHECKOUT = False` (exactly one module-level assignment, a literal → effectively constant); `from pyflags.defs import NEW_CHECKOUT` at src/pychk/flow.py:1 used as the whole test of `if NEW_CHECKOUT:` at src/pychk/flow.py:4 → if-body unreachable. Grounded to the origin module."
+    },
+    {
+      "family": "IF-10",
+      "subcase": "cross-module const-gated statically-dead branch (PYTHON — §30)",
+      "file": "src/pyorders/process.py",
+      "line": 4,
+      "flag": "LEGACY_MODE",
+      "dead_arm": "if-body",
+      "severity": "High",
+      "certainty": "HIGH",
+      "origin": { "file": "src/pyconfig/build.py", "line": 2 },
+      "claim": "Possible statically-unreachable branch: LEGACY_MODE resolves across a package edge to a module-level literal `True` (src/pyconfig/build.py:2), so `if not LEGACY_MODE:` at src/pyorders/process.py:4 makes the if-body unreachable — confirm intended.",
+      "evidence": "src/pyconfig/build.py:2 `LEGACY_MODE = True`; `from pyconfig.build import LEGACY_MODE`; `_falsy10(True)=False ⊕ negation` → the if-body at src/pyorders/process.py:4 is unreachable. Proves the by-value fold works across a Python edge."
+    }
+  ],
+  "must_not_fire": [
+    { "family": "IF-10", "flag": "MODE (py)", "file": "src/pycart/use.py", "reason": "MULTI-EXPORTER (predicate-FALSE via C7): MODE is a module-level literal in TWO distinct packages (pylegacy/mode.py and pynew/mode.py) → ≥2 distinct origins → suppress." },
+    { "family": "IF-10", "flag": "REBOUND (py)", "file": "src/pycart/use.py", "reason": "REBOUND/MUTABLE (predicate-FALSE via C1, the Python `let` analog): pyflags/defs.py assigns REBOUND TWICE (`REBOUND = False` then `REBOUND = compute()`) → >1 module-level assignment → not a stable literal (Python has no const; multiple assignments = mutable) → never recorded as a literal origin → suppress." },
+    { "family": "IF-10", "flag": "ROLLOUT (py)", "file": "src/pydash/view.py", "reason": "IMPORTER SHADOW (predicate-FALSE via C5): ROLLOUT resolves to a unique literal, but pydash/view.py rebinds it locally (`ROLLOUT = load_rollout()`) → >1 binding visible in B → suppress (the if-arm is actually reachable)." },
+    { "family": "IF-10", "flag": "NEW_CHECKOUT (py-ns)", "file": "src/pyreport/ns.py", "reason": "NAMESPACE IMPORT (predicate-FALSE via C2): `import pyflags.defs as F; if F.NEW_CHECKOUT:` — an attribute access on a module object, never a direct `from ... import NAME` → not a candidate (mirrors TS `import * as`)." },
+    { "family": "IF-10", "flag": "SAME (py)", "file": "src/pychk/flow2.py", "reason": "INTRA-PACKAGE (predicate-FALSE via C3): `from pychk.localdefs import SAME` resolves to the SAME top-level package (pychk) as the importer → not a cross-module edge." },
+    { "family": "IF-10", "flag": "DEBUG (py)", "file": "src/pybilling/run.py", "reason": "NON-LITERAL (predicate-FALSE via C1): `DEBUG = os.environ.get('DEBUG') == '1'` — the RHS is not a literal → never a literal origin → suppress." },
+    { "family": "IF-10", "flag": "MODE2 (py)", "file": "src/pybilling/run.py", "reason": "MIXED CONDITION (predicate-FALSE via C4): MODE2 IS a literal ('on'), but the test is `if MODE2 == 'on' and user.is_admin:` — not the bound name alone → the `if MODE2:` whole-test anchor never matches → suppress." },
+    { "family": "IF-10", "flag": "STRFLAG (py)", "file": "src/pynotes/doc.py", "reason": "COMMENT/STRING ONLY (predicate-FALSE via C4 over a Python-aware blanker): STRFLAG resolves to a literal, but its only `if STRFLAG:` occurrences are in a `#` comment and a string; the real guard is `if cfg.flag:` (an attribute read). Comments + strings blanked (line-preserving) before the if-anchor → suppress." },
+    { "family": "IF-10", "flag": "FORKED (py)", "file": "src/pyforkimp/use.py", "reason": "FORK VIA __init__ RE-EXPORT (predicate-FALSE via C7): pyforks/__init__.py does `from .a import FORKED` AND `from .b import FORKED` where a.py `FORKED=True` and b.py `FORKED=False` — two literal origins in the package → ambiguous → suppress." },
+    { "family": "IF-10", "flag": "FORKED", "file": "src/cart/use.ts", "reason": "FORK (predicate-FALSE via C1/C7): the src/forkflags barrel does `export * from './a'` AND `export * from './b'`, where a.ts `export const FORKED=true` and b.ts `export const FORKED=false` — FORKED has TWO distinct literal origins → AMBIGUOUS → suppress. The chain follower must resolve multiplicity, not name-key the barrel symbol." },
+    { "family": "IF-10", "flag": "DEADEND", "file": "src/cart/use.ts", "reason": "DEAD-END (predicate-FALSE via C1): the barrel does `export { DEADEND } from './missing'` — the chain terminates with NO `export const` literal origin (missing module) → unresolvable → suppress. Resolution can only suppress or grounded-fire, never name-key-fire on `import { DEADEND }`." },
+    { "family": "IF-10", "flag": "MODE", "file": "src/cart/use.ts", "reason": "MULTI-EXPORTER (predicate-FALSE via C7): MODE is literal-exported from TWO distinct components (legacyflags/mode.ts and newflags/mode.ts) → ≥2 distinct literal origins → suppress entirely (the deliberate precision-safe over-suppression; a path-precise resolver is a future tightening behind its own measurement)." },
+    { "family": "IF-10", "flag": "ROLLOUT", "file": "src/dash/view.ts", "reason": "IMPORTER SHADOW (predicate-FALSE via C5): ROLLOUT resolves to a unique literal (flagdefs/defs.ts `export const ROLLOUT=false`), but dash/view.ts ALSO has a local `const ROLLOUT = loadRollout()` → >1 binding of ROLLOUT visible in B → a flat scan cannot prove which binding the `if` sees → suppress (the if-arm is actually reachable; the local ROLLOUT is runtime-valued)." },
+    { "family": "IF-10", "flag": "NEW_CHECKOUT", "file": "src/report/ns.ts", "reason": "NAMESPACE IMPORT (predicate-FALSE via C2): `import * as F from '../flags'; if (F.NEW_CHECKOUT)` — a namespace member access, never recorded in the named-import table → no direct-named binding → not a candidate. (NEW_CHECKOUT IS resolvable, so this proves C2 excludes by import-form, not by resolvability.)" },
+    { "family": "IF-10", "flag": "NEW_CHECKOUT", "file": "src/report/dyn.ts", "reason": "DYNAMIC IMPORT (predicate-FALSE via C2): `const { NEW_CHECKOUT } = await import('../flags')` — a dynamic import, never recorded as a static named import → not a candidate." },
+    { "family": "IF-10", "flag": "NEW_CHECKOUT", "file": "src/report/typ.ts", "reason": "TYPE-ONLY IMPORT (predicate-FALSE via C2): `import type { NEW_CHECKOUT }` — a type position, erased at runtime, never recorded as a value import → not a candidate." },
+    { "family": "IF-10", "flag": "SAME", "file": "src/checkout/flow2.ts", "reason": "INTRA-COMPONENT (predicate-FALSE via C3): `import { SAME } from './local'` resolves to the SAME top-level component (checkout) as the importer → not a cross-module edge → the in-file/in-component form is §25's territory (which defers exported flags), not cross-module. No double-emit." },
+    { "family": "IF-10", "flag": "TOGGLE", "file": "src/billing/run.ts", "reason": "EXPORT LET (predicate-FALSE via C1): `export let TOGGLE = false` — a mutable binding, NOT `export const`, so the value can change at runtime → never entered in the literal-export table → no literal origin → suppress." },
+    { "family": "IF-10", "flag": "DEBUG", "file": "src/billing/run.ts", "reason": "NON-LITERAL EXPORT (predicate-FALSE via C1/C6): `export const DEBUG = process.env.NODE_ENV === 'production'` — the RHS is not a compile-time literal (LIT10) → never recorded as a literal origin → suppress." },
+    { "family": "IF-10", "flag": "MODE2", "file": "src/billing/run.ts", "reason": "MIXED CONDITION (predicate-FALSE via C4): MODE2 IS a unique literal ('on'), but the test is `if (MODE2 === 'on' && user.isAdmin)` — not the bound name alone; a runtime term co-decides → the sole-operand `if (MODE2)` anchor never matches → suppress. (Proves C4 holds even when the value resolves.)" },
+    { "family": "IF-10", "flag": "STRFLAG", "file": "src/notes/doc.ts", "reason": "COMMENT/STRING ONLY (predicate-FALSE via C4 over _blank10 strings=True): STRFLAG resolves to a literal, but its only `if (STRFLAG)` occurrences are inside a `// @example` comment and a log string — both blanked (line-preserving) before the if-anchor search; the real guard is `if (cfg.flag)` (a member read). No real sole-operand conditional → suppress (a 'your branch is dead' fire on a comment would be a wrong-fire AND a grounding error)." }
+  ]
+}

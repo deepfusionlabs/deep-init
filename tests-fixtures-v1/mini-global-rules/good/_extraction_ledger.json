@@ -1,0 +1,9 @@
+{
+  "files": [
+    {"path": "src/auth/token.ts", "tag": "graphify"},
+    {"path": "src/auth/refresh.ts", "tag": "ctags"},
+    {"path": "src/main.ts", "tag": "grep"},
+    {"path": "src/legacy/blob.ts", "tag": "llm-only"},
+    {"path": "vendor/lib.js", "tag": "skip", "reason": "vendored"}
+  ]
+}

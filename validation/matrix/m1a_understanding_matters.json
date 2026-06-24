@@ -1,0 +1,346 @@
+{
+  "schema": "deepinit-validation/m1a-understanding-matters/v1",
+  "milestone": "  — the 'understanding MATTERS' 3-mode A/B (operator-emphasized 2026-06-14)",
+  "date": "2026-06-14",
+  "method": "Per repo, 3 modes run sequentially (full Graphify+ground+verify / Graphify-off grep / naive LLM-only), each scored by an INDEPENDENT verifier (separation of duties) against the Graphify AST dependency-edge oracle (validation/matrix/oracles/*.json) + the real code. Grounding% = claims with a verifiable file:line; faithfulness% = claims not code-refuted; dep-edge precision/recall vs the oracle; issues real/fabricated.",
+  "repos": [
+    {
+      "repo": "gin-gonic/gin",
+      "sha": "d75fcd4c9ab2",
+      "lang": "Go",
+      "tier": "M"
+    },
+    {
+      "repo": "pallets/click",
+      "sha": "8a1b1a33d739",
+      "lang": "Python",
+      "tier": "M"
+    },
+    {
+      "repo": "expressjs/express",
+      "sha": "dae209ae6559",
+      "lang": "JavaScript",
+      "tier": "M"
+    }
+  ],
+  "cells": [
+    {
+      "repo": "gin",
+      "lang": "Go",
+      "mode": "full",
+      "output_tokens": 17444,
+      "components": 11,
+      "edges": 12,
+      "facts": 8,
+      "issues": 2,
+      "grounded_anchors": 8
+    },
+    {
+      "repo": "gin",
+      "lang": "Go",
+      "mode": "graphify_off",
+      "output_tokens": 19195,
+      "components": 13,
+      "edges": 17,
+      "facts": 11,
+      "issues": 3,
+      "grounded_anchors": 11
+    },
+    {
+      "repo": "gin",
+      "lang": "Go",
+      "mode": "naive",
+      "output_tokens": 11672,
+      "components": 23,
+      "edges": 12,
+      "facts": 10,
+      "issues": 0,
+      "grounded_anchors": 10
+    },
+    {
+      "repo": "click",
+      "lang": "Python",
+      "mode": "full",
+      "output_tokens": 16508,
+      "components": 17,
+      "edges": 44,
+      "facts": 8,
+      "issues": 3,
+      "grounded_anchors": 8
+    },
+    {
+      "repo": "click",
+      "lang": "Python",
+      "mode": "graphify_off",
+      "output_tokens": 19753,
+      "components": 17,
+      "edges": 50,
+      "facts": 8,
+      "issues": 0,
+      "grounded_anchors": 8
+    },
+    {
+      "repo": "click",
+      "lang": "Python",
+      "mode": "naive",
+      "output_tokens": 19033,
+      "components": 17,
+      "edges": 26,
+      "facts": 10,
+      "issues": 2,
+      "grounded_anchors": 10
+    },
+    {
+      "repo": "express",
+      "lang": "JavaScript",
+      "mode": "full",
+      "output_tokens": 10010,
+      "components": 7,
+      "edges": 7,
+      "facts": 11,
+      "issues": 0,
+      "grounded_anchors": 11
+    },
+    {
+      "repo": "express",
+      "lang": "JavaScript",
+      "mode": "graphify_off",
+      "output_tokens": 12731,
+      "components": 7,
+      "edges": 7,
+      "facts": 10,
+      "issues": 2,
+      "grounded_anchors": 10
+    },
+    {
+      "repo": "express",
+      "lang": "JavaScript",
+      "mode": "naive",
+      "output_tokens": 7418,
+      "components": 7,
+      "edges": 9,
+      "facts": 8,
+      "issues": 4,
+      "grounded_anchors": 8
+    }
+  ],
+  "scorecards": [
+    {
+      "repo": "gin",
+      "modes": [
+        {
+          "mode": "full",
+          "claims_total": 22,
+          "claims_grounded": 22,
+          "grounding_pct": 100,
+          "claims_checked": 22,
+          "claims_refuted": 0,
+          "faithfulness_pct": 100,
+          "dep_edges_claimed": 13,
+          "dep_edges_correct": 13,
+          "dep_edge_precision": 1,
+          "oracle_internal_edges": 31,
+          "dep_edges_oracle_hit": 11,
+          "dep_edge_recall_pct": 100,
+          "issues_real": 2,
+          "issues_fabricated": 0,
+          "notes": "12 components + 8 key_facts + 2 issues = 22 claims, every one carrying a file:line anchor I opened and verified. A handful are off-by-one/two but point to the correct construct: Engine 'gin.go:90' is the doc-comment (struct decl at 92), codec Core interface ':13' (actual :12), BytesToString ':19' (actual :18), Binding interface ':32' (actual :31), ginS engine var ':15' (actual :14) — all counted grounded since they resolve to the right symbol. 0 refutations. 13 dependency edges all confirmed by real non-test imports (root->render/bytesconv/fs/binding, tree->bytesconv, binding->codec_json x2 + bytesconv, render->codec_json/bytesconv/fs, ginS->root); it captured all distinct component-level oracle edges except the errors.go->codec_json and mode/deprecated->binding files (it folded those into 'root->binding' / didn't list root->codec_json) but still hit all ~11 component-pair targets via component granularity. Both issues real+grounded (defaultTrustedCIDRs 0.0.0.0/0 ::/0 at gin.go:39; bytesconv unsafe aliasing at :13). DAG claim verified: zero back-edges from leaf packages into root. SHA d75fcd4c9ab2 confirmed."
+        },
+        {
+          "mode": "graphify_off",
+          "claims_total": 26,
+          "claims_grounded": 26,
+          "grounding_pct": 100,
+          "claims_checked": 26,
+          "claims_refuted": 0,
+          "faithfulness_pct": 100,
+          "dep_edges_claimed": 18,
+          "dep_edges_correct": 18,
+          "dep_edge_precision": 1,
+          "oracle_internal_edges": 31,
+          "dep_edges_oracle_hit": 11,
+          "dep_edge_recall_pct": 100,
+          "issues_real": 3,
+          "issues_fabricated": 0,
+          "notes": "13 components + 10 key_facts + 3 issues = 26 claims, all file:line anchored and verified. Off-by-one anchors again but symbol-correct: render Render interface ':10' exact, render/json.go bytesconv ':15' (actual :14), bytesconv StringToBytes ':11' (comment; decl :13), recovery bytesconv import ':23' (actual :22), default_validator anchored ':93' at the sync.Once lazyinit (the struct is at :15, but :93 is the relevant once.Do site it describes) — counted grounded. 0 refutations; notably MORE complete dep coverage than full: it enumerated the per-file root edges (errors.go->codec_json :12, mode.go->binding :13, deprecated.go->binding :10, auth.go->bytesconv :13, recovery.go->bytesconv) which full omitted — all 18 confirmed by real imports, full component-pair recall. 3 issues all real+grounded: insecure-default trusted proxies (gin.go:38/457 isUnsafeTrustedProxies confirmed), Authorization-only panic-dump masking (recovery.go comment + line ~100 confirm only 'Authorization:' is sanitized — a genuine, correctly-scoped finding the grep path still caught), bytesconv unsafe aliasing. Despite the AST graph being off, the hand-grep import reconstruction matched the oracle exactly (DAG, no back-edges)."
+        },
+        {
+          "mode": "naive",
+          "claims_total": 33,
+          "claims_grounded": 0,
+          "grounding_pct": 0,
+          "claims_checked": 31,
+          "claims_refuted": 0,
+          "faithfulness_pct": 100,
+          "dep_edges_claimed": 12,
+          "dep_edges_correct": 12,
+          "dep_edge_precision": 1,
+          "oracle_internal_edges": 31,
+          "dep_edges_oracle_hit": 9,
+          "dep_edge_recall_pct": 81.8,
+          "issues_real": 0,
+          "issues_fabricated": 0,
+          "notes": "23 components + 10 key_facts + 0 issues = 33 claims. claims_grounded=0 by the file:line standard: every anchor is a bare filename ('gin.go','context.go','codec/json/json.go', 'internal/fs') with NO line number, so nothing is a verifiable file:line citation even though the files exist — this is the core grounding gap vs full/graphify_off. Faithfulness is genuinely high: of 31 verifiable claims, NONE are refuted by code — the framework knowledge is accurate (radix tree from httprouter BSD header confirmed; ErrorTypeBind=1<<63 / ErrorTypeRender=1<<62 confirmed at errors.go:20-22; MIME re-export confirmed; sync.OnceValue ginS confirmed; HTTP/2 h2c + HTTP/3 quic-go http3 imports confirmed at gin.go:20-22). 12 dep edges all TRUE, but 2 (render->codec_json, binding->codec_json) are self-flagged 'from general understanding, not line-verified' — correct by luck/recall, not by inspection; it missed render->internal_fs and render->bytesconv and the codec_json edge resolution, so component recall ~9/11. ZERO issues surfaced (honestly self-noted: no verification/structural pass, so no grounded defects) — vs 2-3 real grounded security/footgun findings the verified paths produced. Net: naive recalls much framework lore correctly but grounds NOTHING and finds NO issues."
+        }
+      ],
+      "verdict": "For gin — a clean Go DAG where the import structure is simple — verification mainly buys GROUNDING and ISSUE-DISCOVERY rather than correcting hallucinations: the naive pass got the framework facts right (0 refutations) but cited zero file:line anchors and surfaced zero of the 2-3 real grounded security findings (insecure-default trusted proxies, Authorization-only panic masking, unsafe bytesconv aliasing) that the full and graphify_off paths both produced at 100% grounding / 100% precision, and notably the grep-fallback graphify_off matched the AST oracle's dependency graph exactly (even edging out full on per-file edge completeness)."
+    },
+    {
+      "modes": [
+        {
+          "mode": "full",
+          "claims_total": 29,
+          "claims_grounded": 28,
+          "grounding_pct": 96.6,
+          "claims_checked": 29,
+          "claims_refuted": 1,
+          "faithfulness_pct": 96.6,
+          "dep_edges_claimed": 44,
+          "dep_edges_correct": 44,
+          "dep_edge_precision": 1,
+          "oracle_internal_edges": 85,
+          "dep_edges_oracle_hit": 41,
+          "dep_edge_recall_pct": 68.3,
+          "issues_real": 3,
+          "issues_fabricated": 0,
+          "notes": "18 components + 8 key_facts + 3 issues, every claim file:line-anchored; 1 off-by-one (shell_completion:18 is blank, def at 19). 1 refuted: testing key_fact says it imports the package facade via 'import click'/'from .__init__' but testing.py only does 'from . import _compat/formatting/termui/utils' (14-17) + a TYPE_CHECKING core ref (23) — no facade import. All 44 dep edges resolve to REAL imports (top-level/TYPE_CHECKING/deferred all verified); precision 1.0. 3 edges (core->_utils @core.py:24, parser->_utils @parser.py:33, testing->utils @testing.py:17) are CORRECT real imports the ORACLE itself MISSES — full mode exceeds the oracle and explicitly flags the oracle gap (_utils omitted) as INFO issue #1. Recall vs oracle's 85 (which counts tests/+examples/, out of scope here) = 41 hits; vs the 60 src-internal oracle edges that's 41/60=68.3%. The 3 'issues' are accurate INFO-level oracle-quality/clean-sweep observations, not fabricated defects; correctly distinguishes runtime vs TYPE_CHECKING/lazy edges and the deliberate cycle-breaking."
+        },
+        {
+          "mode": "graphify_off",
+          "claims_total": 25,
+          "claims_grounded": 25,
+          "grounding_pct": 100,
+          "claims_checked": 25,
+          "claims_refuted": 0,
+          "faithfulness_pct": 100,
+          "dep_edges_claimed": 50,
+          "dep_edges_correct": 50,
+          "dep_edge_precision": 1,
+          "oracle_internal_edges": 85,
+          "dep_edges_oracle_hit": 47,
+          "dep_edge_recall_pct": 78.3,
+          "issues_real": 0,
+          "issues_fabricated": 0,
+          "notes": "17 components + 8 key_facts + 0 issues; every anchor resolves (module-top :1 anchors valid; globals:9, _winconsole:33, _utils:7 all real). Highest fidelity: every deferred-import anchor verified EXACTLY (core.py:1170 decorators / 1576 shell_completion, termui.py:302/521/819/857/890/898 _termui_impl, parser.py:523 shell_completion shim, utils.py:172 FileError, _compat.py:513-514 WIN-guarded _winconsole) and all TYPE_CHECKING back-refs (globals:7, exceptions:13-16, parser:43-46, types:25-27) correctly characterized as type-only non-runtime edges. 50 dep edges all resolve to real imports, precision 1.0; same 3 _utils/testing->utils edges beyond the oracle are correct (oracle gap, not FP). Recall 47/60 src-internal = 78.3% — the most complete edge set, including the deferred core<->decorators / core<->shell_completion / parser->shell_completion cycles the oracle captures. Honestly declined to fabricate issues on clean code. Best overall analysis."
+        },
+        {
+          "mode": "naive",
+          "claims_total": 28,
+          "claims_grounded": 10,
+          "grounding_pct": 35.7,
+          "claims_checked": 24,
+          "claims_refuted": 0,
+          "faithfulness_pct": 100,
+          "dep_edges_claimed": 26,
+          "dep_edges_correct": 26,
+          "dep_edge_precision": 1,
+          "oracle_internal_edges": 85,
+          "dep_edges_oracle_hit": 26,
+          "dep_edge_recall_pct": 43.3,
+          "issues_real": 2,
+          "issues_fabricated": 0,
+          "notes": "16 components + 10 key_facts + 2 issues. Facts are largely CORRECT from training knowledge (gettext-in-7-modules VERIFIED, threadlocal stack, __getattr__ deprecations, core god-module ~142KB vs claimed ~145KB minor overstatement, _termui_impl lazy-split) — naive does NOT hallucinate here. Its weakness is GROUNDING: only 10/28 claims carry a resolvable LINE anchor (14/16 components are file-path-only with no line; ~half the dep edges marked 'general knowledge, exact import line not verified'). Both issues are real + grounded (core god-module file-anchored; pop_context @globals.py:49 no empty-stack guard — verified, _local.stack.pop() at line 51). All 26 dep edges happen to be real imports (precision 1.0) and all hit the oracle (26/26), but recall is lowest at 26/60=43.3% src-internal — it misses ~half the graph (no _compat fan-in detail for types, no _utils, no _winconsole->_compat back-edge, no testing edges, no _termui_impl->* edges) and self-admits it built no structural graph / no SCC / no verification."
+        }
+      ],
+      "repo": "click",
+      "verdict": "For click, understanding-depth clearly mattered: the structural modes (graphify_off 78.3% / full 68.3% src-internal edge recall, 100% precision, ~100% grounding, 0 hallucinated defects) both EXCEEDED the AST oracle by catching the real core->_utils / parser->_utils / testing->utils imports it dropped, and correctly separated runtime from TYPE_CHECKING/deferred cycle-breaking edges; the naive pass got the prose facts right but grounded only 36% of claims and recovered just 43% of the dependency graph with no structural verification — so its output is plausible-but-unverifiable where the grounded modes are trustworthy."
+    },
+    {
+      "repo": "express",
+      "modes": [
+        {
+          "mode": "full",
+          "claims_total": 19,
+          "claims_grounded": 19,
+          "grounding_pct": 100,
+          "claims_checked": 19,
+          "claims_refuted": 0,
+          "faithfulness_pct": 100,
+          "dep_edges_claimed": 7,
+          "dep_edges_correct": 7,
+          "dep_edge_precision": 1,
+          "oracle_internal_edges": 148,
+          "dep_edges_oracle_hit": 6,
+          "dep_edge_recall_pct": 4.1,
+          "issues_real": 0,
+          "issues_fabricated": 0,
+          "notes": "7 components + 12 key_facts + 0 issues, every claim carries a file:line I verified against the real code (express.js:36/19/70, application.js:40/47/69/363, request.js:30, response.js:42/298, utils.js:29/267, view.js:36/81, package.json:85 all resolve and are faithful). Minor: the jsonp fact anchored at response.js:298 lands on the /**/ Rosetta-Flash line; the nosniff sub-claim is actually at response.js:271/282, still inside the same jsonp method, so not refuted. dep_edge precision 7/7 (index->express + express->{application,request,response} + application->{utils,view} + response->utils). The oracle is file-granular with 148 edges, but 142 of them are examples/ + test/ (dev-only, excluded by package.json files field); the own-source key set is exactly 6 edges and full mode captures all 6 (recall 6/6=100% own-source; 6/148=4.1% literal). Note index.js->lib/express.js is real in the code but absent from the oracle's resolved list. Cleanly declined to over-claim: correctly noted the deprecated res.send(status,body) form is only a JSDoc example at response.js:363, not live code, and filed 0 issues."
+        },
+        {
+          "mode": "graphify_off",
+          "claims_total": 19,
+          "claims_grounded": 19,
+          "grounding_pct": 100,
+          "claims_checked": 19,
+          "claims_refuted": 0,
+          "faithfulness_pct": 100,
+          "dep_edges_claimed": 7,
+          "dep_edges_correct": 7,
+          "dep_edge_precision": 1,
+          "oracle_internal_edges": 148,
+          "dep_edges_oracle_hit": 6,
+          "dep_edge_recall_pct": 4.1,
+          "issues_real": 2,
+          "issues_fabricated": 0,
+          "notes": "7 components + 10 key_facts + 2 issues, all anchored to resolving file:line and faithful (express.js:18-21 DAG, application.js:69-82 lazy router, application.js:169-170 re-parent, application.js:363-380 reactive settings, application.js:90-141 defaults, view.js:75-88 engine require, response.js:286-300 jsonp, utils.js:267-270 allowPrototypes, application.js:109-122 mount-inherit all check out). Same 7 import edges as full mode, precision 7/7; same 6/6 own-source oracle recall (4.1% literal of 148, but 142 are dev-only examples/test correctly skipped). Both issues are real, grounded, and honestly hedged as latent/edge-case gaps, not live defects: (1) view.js:75 dereferences opts.engines without guarding it exists (opts=options||{} so opts.engines can be undefined) — genuine; (2) request.js:301 protocol relies on 'trust proxy fn' which the mount handler at application.js:113-114 can delete — a real coupling, plausible edge case. Strongest of the three: matches full's grounding/faithfulness via grep-resolved imports and adds two defensible grounded issues with 0 fabrication."
+        },
+        {
+          "mode": "naive",
+          "claims_total": 19,
+          "claims_grounded": 18,
+          "grounding_pct": 94.7,
+          "claims_checked": 19,
+          "claims_refuted": 0,
+          "faithfulness_pct": 100,
+          "dep_edges_claimed": 9,
+          "dep_edges_correct": 7,
+          "dep_edge_precision": 77.8,
+          "oracle_internal_edges": 148,
+          "dep_edges_oracle_hit": 6,
+          "dep_edge_recall_pct": 4.1,
+          "issues_real": 4,
+          "issues_fabricated": 0,
+          "notes": "7 components + 8 key_facts + 4 issues. Recall of facts is genuinely good (Express well-known), but grounding is weaker: the utils component anchor is bare 'lib/utils.js' with no line, so 18/19 claims carry a resolving file:line (94.7%). Crucially the dependency_edges evidence strings have NO line numbers ('lib/express.js: var proto = require(...)' etc.) — the imports are correct but ungrounded to a line; this is the AST-vs-recall tell. precision 7/9 = 77.8% because naive added 2 RUNTIME couplings (request->application via this.app.get, response->request via this.req) that are real behaviors but NOT import edges and NOT in the import-graph oracle (honestly labeled 'runtime coupling, not a require'). Captures the same 6 own-source oracle import edges (4.1% literal / 6/6 own-source). All 4 issues resolve to real lines and none are code-refuted (faithfulness 100%): res.redirect deprecate-not-throw (823 confirmed), view.js:75 opts.engines guard (real), res.download Object.create(opts) smell (472, self-admittedly 'appears to work'), trust-proxy spoofing config caveat (297, generic). The author flags them as heuristic smells, not verified defects — honest, but exactly the unverified-anchor profile the design path's verification stage would tighten."
+        }
+      ],
+      "verdict": "On this small, famous, strict-DAG repo all three modes recover the same 6 own-source dependency edges and the architecture faithfully (0 hallucinations across the board), so the understanding-matters delta is narrow — it shows up only as grounding rigor: full/graphify_off anchor every claim and every edge to a verified file:line (100% grounding, 7/7 edge precision), whereas naive leaves the utils component and all 9 edge-evidence strings without line numbers and inflates edge precision to 77.8% by mixing in two un-import runtime couplings, the classic recall-without-grounding signature."
+    }
+  ],
+  "usage": {
+    "agents": 12,
+    "note": "12 agents = 9 modes + 3 scorers"
+  },
+  "aggregate_by_mode": {
+    "full": {
+      "grounding_pct_mean": 98.9,
+      "grounding_pct_min": 96.6,
+      "faithfulness_pct_mean": 98.9,
+      "dep_edge_precision_pct_mean": 100,
+      "dep_edge_precision_pct_min": 100,
+      "dep_edge_recall_pct_mean": 57.5,
+      "issues_real_total": 5,
+      "issues_fabricated_total": 0
+    },
+    "graphify_off": {
+      "grounding_pct_mean": 100,
+      "grounding_pct_min": 100,
+      "faithfulness_pct_mean": 100,
+      "dep_edge_precision_pct_mean": 100,
+      "dep_edge_precision_pct_min": 100,
+      "dep_edge_recall_pct_mean": 60.8,
+      "issues_real_total": 5,
+      "issues_fabricated_total": 0
+    },
+    "naive": {
+      "grounding_pct_mean": 43.5,
+      "grounding_pct_min": 0,
+      "faithfulness_pct_mean": 100,
+      "dep_edge_precision_pct_mean": 92.6,
+      "dep_edge_precision_pct_min": 77.8,
+      "dep_edge_recall_pct_mean": 43.1,
+      "issues_real_total": 6,
+      "issues_fabricated_total": 0
+    }
+  },
+  "headline": "Across gin/click/express (3 langs, M-tier, Graphify-parseable), the consistent measured delta is GROUNDING: full 98.9% / grep-fallback 100% / naive 43.5% mean (naive min 0% on gin). Faithfulness is high for ALL modes on these FAMOUS repos (~99-100%) — the model knows them, so naive rarely states a code-refuted fact; the differentiator is that naive's claims are UNVERIFIABLE (cite bare filenames, not lines), it inflates dependency-edge precision with non-import runtime couplings (express naive 77.8% vs 100%), recovers less of the graph (43% vs ~60% recall), and surfaces grounded issues unevenly (it found 0 of gin's 2-3 real grounded security findings). Structural modes even EXCEEDED the AST oracle on click (caught 3 real edges Graphify dropped). Honest caveat: on these famous repos the verified-vs-naive gap is mostly grounding+issue-discovery, not hallucination; on obscure/private code (no training recall) the faithfulness gap should widen."
+}

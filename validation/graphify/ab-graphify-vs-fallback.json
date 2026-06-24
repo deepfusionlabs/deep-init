@@ -1,0 +1,86 @@
+{
+  "schema": "deepinit-validation/graphify-ab-record/v1",
+  "program": " —  (Graphify, the designed structural backbone)",
+  "milestone": "P6-0c — A/B re-validate on the REAL Graphify path vs the committed grep-fallback numbers",
+  "recorded": "2026-06-13",
+  "question": "DeepInit is advertised + designed to parse via Graphify (detection.md Layer 3, spec §9, cost graphify_discount), but every prior validation (15 field sweeps, the Mirror Test, the kemal cost ledger graphify:0) ran on the grep/ctags FALLBACK. Does the designed Graphify path reproduce — or beat — the fallback's structural findings, and where are its limits?",
+  "tooling": {
+    "graphify_version": "0.8.39",
+    "graphify_cli": "graphify update <path> --no-cluster   (deterministic tree-sitter AST extraction, NO LLM, NO API key)",
+    "graphify_output": "<path>/graphify-out/graph.json  ({nodes[], links[]})",
+    "adapter": "tools/graphify_adapter.py  (graph.json → structural-graph.json; gated by harness §35)",
+    "grammars_real": 25,
+    "grammars_list": [
+      "c",
+      "c_sharp",
+      "cpp",
+      "go",
+      "rust",
+      "java",
+      "javascript",
+      "typescript",
+      "python",
+      "ruby",
+      "php",
+      "kotlin",
+      "scala",
+      "swift",
+      "elixir",
+      "lua",
+      "julia",
+      "zig",
+      "groovy",
+      "objc",
+      "pascal",
+      "fortran",
+      "verilog",
+      "powershell",
+      "dm"
+    ],
+    "grammars_note": "Measured from extract.py's extension→extractor dispatch: 25 tree-sitter LANGUAGE grammars (29 incl. JSON/SQL/Terraform config-data), plus Dart/Astro/Svelte/Apex/Razor via dedicated extractors. EMPIRICALLY VERIFIED extracting Go, Rust, Elixir, Python, TS, Java, C#, Kotlin, Swift, Scala, Julia, Zig ( ). The product page's '25 languages' was ACCURATE; an interim mis-count to '14' (a too-narrow regex over only the explicit ts_module= configs) was caught + corrected. Crystal and OCaml are the genuine no-grammar fallbacks."
+  },
+  "results": [
+    {
+      "repo": "excalidraw/excalidraw",
+      "pinned_sha": "0cf56b19c79a28dda52f0dcb1c5392ed19cb5fcd",
+      "stack": "TypeScript (Graphify-parseable)",
+      "graphify_run": "629 files → 4284 nodes / 20438 edges in ~63s (no LLM)",
+      "fallback_recorded": "IF-8 element↔utils 2-cycle (a runtime VALUE cycle; the famous-repo sweep manually suppressed import-type cycles). Recorded GATED in excalidraw-excalidraw-typescript-sweep.json.",
+      "graphify_result": "CONFIRMS the element↔utils runtime value cycle via an INDEPENDENT mechanism (tree-sitter AST), resolving the `@excalidraw/utils/shape` scoped-package import the grep only string-matched. element imports value fn getCurvePathOps() from utils; utils imports AND `calls` getElementAbsoluteCoords (element/src/bounds.ts:59) — the `calls` edge proves runtime (not type-only) use. Adapter also surfaces a larger RAW 5-component SCC {common,element,excalidraw,math,utils}.",
+      "verdict": "CONFIRMED + RICHER. The gated candidate is independently re-verified (a genuine Gate-2 cross-mechanism reproduction). Graphify resolves scoped/aliased imports grep cannot.",
+      "honest_caveat": "Graphify's raw --no-cluster extraction does NOT tag `import type` vs value, so the naive whole-graph 5-SCC over-reports (compile-erased type-only imports inflate it). The element↔utils 2-cycle survives a value-only read (getElementAbsoluteCoords is `calls`-edged); the larger SCC needs the type-vs-value suppression the sweep did manually. That suppression stays an IF-8 SKILL-LAYER responsibility (issues.md IF-8 already specifies it); Graphify supplies the resolved edges + a `calls` runtime signal, not the type distinction.",
+      "verified_by": "main loop read of the live files at the pinned SHA + a direct grep of the cited import lines"
+    },
+    {
+      "repo": "pyccel/pyccel",
+      "pinned_sha": "(validation/_clones/pyccel @ the cross-module-sweep clone)",
+      "stack": "Python (Graphify-parseable)",
+      "graphify_run": "738 files → 5521 nodes / 24329 edges (no LLM)",
+      "fallback_recorded": "pyccel-pyccel-crossmodule-sweep.json: 0 fires / clean (that sweep was SCOPED to IF-10 cross-module const-fold, NOT a full IF-8 component-cycle pass).",
+      "graphify_result": "Surfaces a GENUINE ast↔errors Python runtime circular import that the IF-10-scoped grep sweep did not target. Verified against the real source: 14 files under ast/ import `from pyccel.errors.errors import Errors`; errors/errors.py:16 imports `from pyccel.ast.basic import PyccelAstNode`. Graphify resolved the real edge correctly (errors/errors.py:L16 → ast/basic.py via a `uses` relation) — NOT via the stdlib `import ast` false-friend on line 12.",
+      "verdict": "NEW REAL STRUCTURAL FACT (recorded GATED, NOT filed). In Python all imports are runtime, so this is a real circular import (Python tolerates it but it risks import-order fragility — the architectural-erosion smell IF-8 targets).",
+      "honest_caveat": "A stdlib false-friend risk exists in principle (a local package named `ast` shares a name with Python's stdlib `ast`); here it did NOT pollute the cycle edge (Graphify resolved the real pyccel.ast.basic import). The general lesson — component cycles still need a verification read — is already DeepInit discipline (main-loop double-verify every fire).",
+      "verified_by": "direct grep of pyccel/ast/ and pyccel/errors/ source at the clone + per-edge provenance trace in graph.json"
+    },
+    {
+      "repo": "kemalcr/kemal",
+      "pinned_sha": "(validation/_clones/kemal)",
+      "stack": "Crystal (NO Graphify grammar)",
+      "graphify_run": "N/A — Graphify ships no Crystal grammar (one of the few stacks, with OCaml, it does not cover)",
+      "fallback_recorded": "kemalcr-kemal-crystal-sweep.json: clean / 0 fires (grep fallback). The kemal cost ledger correctly records graphify:0.",
+      "graphify_result": "Graphify cannot parse Crystal → those files fall through to ctags/grep automatically.",
+      "verdict": "FALLBACK IS THE ONLY PATH (correctly). The 'exotic-tooling moat' that protects kemal from naive tools protects it from Graphify too. Confirms the graceful per-file degradation (global-rules R8): a missing grammar is a fall-through, not a crash or a fabricated fire.",
+      "honest_caveat": "Of the 15 field-swept stacks, only 2 have NO Graphify grammar — Crystal (kemal) and OCaml (dune) → those sweeps were correctly fallback-only. The other 13 (TS, Python, Java, C#, C, C++, PHP, Kotlin, Ruby, Swift, Go, Rust, Elixir) ARE Graphify-parseable but historically ran on the grep fallback — the fidelity gap  closes.",
+      "verified_by": "graphify language census (extract.py) + the recorded sweep"
+    }
+  ],
+  "conclusions": [
+    "The designed Graphify path materially IMPROVES the structural substrate on the 25 tree-sitter languages: it RESOLVES an import to its defining file (scoped package aliases, relative imports, re-exports) which the grep fallback structurally cannot — so the dependency-edge / IF-8 cycle / IF-3a coupling skeleton is more accurate, not just faster.",
+    "It does NOT replace DeepInit's verification + precision discipline. Raw Graphify SCCs over-report on languages with erasable type imports (TS/Java) because --no-cluster does not tag `import type`; the existing IF-8 'suppress type-only cycles' rule + the 'main-loop double-verify every fire' rule remain load-bearing. This is consistent with — not a weakening of — the precision-first thesis.",
+    "Only stacks with no Graphify grammar (notably Crystal, OCaml) use the grep fallback and degrade gracefully (R8). Of the 15 field-swept stacks just 2 (Crystal/kemal, OCaml/dune) are in this set; the other 13 are Graphify-parseable.",
+    "Net: Graphify is a real, free, no-API-key Layer-3 backbone (25 languages) that sharpens the structural half on 13 of the 15 swept stacks; the fallback remains a correct ~80% approximation for the few unsupported stacks. The product's hero claim ('real AST parsing via Graphify, 25 languages') is now BACKED by a wired, tested adapter (harness §35) + this A/B + an empirical multi-language extraction check, with the language count verified at the accurate 25."
+  ],
+  "gate_status": "These A/B findings (the excalidraw cycle, the pyccel ast↔errors cycle) are STRUCTURALLY VERIFIED but remain GATED per the program's blast-radius rule — recorded as internal candidates, NOT filed upstream, novelty/known-status UNVERIFIED. The point of this record is the engine-fidelity A/B, not a bug claim.",
+  "harness_delta": "Added harness §35 (6 gates over tools/graphify_adapter.py + the mini-graphify fixture); 150 → 156.",
+  "correction_note": "An interim version of this record stated '14 grammars' and wrongly listed Go/Rust/Elixir as unsupported — caused by a too-narrow regex (only the explicit ts_module= configs). Corrected 2026-06-13 after an empirical extraction test (graphify update on Go/Rust/Elixir/Zig/Julia/Kotlin/Swift/Scala files all produced nodes) + the extension-dispatch census. The real count is 25 language grammars; only Crystal + OCaml fall back. The user's install-permissions question surfaced the package's full tree-sitter Requires list, which triggered the re-check."
+}

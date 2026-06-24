@@ -1,0 +1,2360 @@
+{
+  "schema": "deepinit-validation/coverage-record/v1",
+  "program": "The Mirror Test",
+  "milestone": " (blind engine pass + scored, \u00a734-gated) \u2014 TUNE-set repo",
+  "test_plan_run": "",
+  "scored_date": "2026-06-13",
+  "repo": {
+    "name": "open-telemetry/opentelemetry-collector",
+    "scope": "the OpenTelemetry Collector (Go, multi-module telemetry pipeline)",
+    "url": "https://github.com/open-telemetry/opentelemetry-collector",
+    "branch": "main",
+    "pinned_sha": "af182d232650a324376f0d554a7ee0f5e48e9d39",
+    "pinned_sha_date": "2026-06-12T19:15:19+00:00",
+    "license": "Apache-2.0",
+    "stack": "Go (multi-module)"
+  },
+  "run": {
+    "run_kind": "coverage_validation",
+    "engine_proxy": "blind-workflow (planner+per-component extractors+assembler), doc-removed tree",
+    "model": "claude-opus-4-8",
+    "date": "2026-06-13"
+  },
+  "identity": {
+    "code_loc": 109555,
+    "files": 894,
+    "languages": [
+      "Go"
+    ],
+    "components": 9
+  },
+  "reference_doc": {
+    "kind": "internal-architecture.md + coding-guidelines.md",
+    "source_url": "docs/internal-architecture.md, docs/coding-guidelines.md",
+    "doc_sha_or_rev": "af182d232650a324376f0d554a7ee0f5e48e9d39",
+    "currency_score": 1.0,
+    "currency_bar": 0.85
+  },
+  "reference_key": {
+    "key_path": "validation/coverage/_reference_keys/otelcol.json",
+    "key_sha256": "cba97f591460514ca2dcf8d08f9783c71158eff05b81bea740b63e5071dff320",
+    "held_out": true,
+    "rc_total_extracted": 29,
+    "rc_current": 29,
+    "rc_stale_dropped": 0,
+    "rc_unverifiable_dropped": 0
+  },
+  "reference_claims": [
+    {
+      "rc_id": "RC-001",
+      "kind": "component-exists",
+      "text": "There is a Receiver component type (with a receiver Factory).",
+      "code_anchor": "receiver/receiver.go:60",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-002",
+      "kind": "component-exists",
+      "text": "There is a Processor component type (with a processor Factory).",
+      "code_anchor": "processor/processor.go:51",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-003",
+      "kind": "component-exists",
+      "text": "There is an Exporter component type (with an exporter Factory).",
+      "code_anchor": "exporter/exporter.go:51",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-004",
+      "kind": "component-exists",
+      "text": "There is a Connector component type (with a connector Factory).",
+      "code_anchor": "connector/connector.go:81",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-005",
+      "kind": "component-exists",
+      "text": "There is an Extension component type.",
+      "code_anchor": "extension/extension.go:16",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-006",
+      "kind": "component-exists",
+      "text": "There is a Service component that initializes telemetry and the pipelines.",
+      "code_anchor": "service/service.go:110",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-007",
+      "kind": "component-exists",
+      "text": "The pipelines are represented by an internal pipeline Graph.",
+      "code_anchor": "service/internal/graph/graph.go:4",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-008",
+      "kind": "component-exists",
+      "text": "There is a Collector type that owns the run lifecycle.",
+      "code_anchor": "otelcol/collector.go:99",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-009",
+      "kind": "component-exists",
+      "text": "There is a pdata package that defines the internal pipeline data model.",
+      "code_anchor": "pdata/doc.go:6",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-010",
+      "kind": "component-exists",
+      "text": "There is a consumer package defining the Consumer interface (the data sink contract between components).",
+      "code_anchor": "consumer/doc.go:4",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-011",
+      "kind": "component-role",
+      "text": "A Receiver is how data gets into the Collector: it accepts data in some format, translates it into the internal format, and passes it on to processors and exporters.",
+      "code_anchor": "receiver/README.md:3",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-012",
+      "kind": "component-role",
+      "text": "An Exporter is how data leaves the Collector (sends data to a destination/backend).",
+      "code_anchor": "exporter/exporter.go:15",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-013",
+      "kind": "component-role",
+      "text": "A Processor processes/transforms telemetry data as it passes through a pipeline (between receivers and exporters).",
+      "code_anchor": "processor/processor.go:58",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-014",
+      "kind": "component-role",
+      "text": "A Connector joins two pipelines: it consumes data as an exporter at the end of one pipeline and emits data as a receiver at the start of another.",
+      "code_anchor": "connector/connector.go:16-31",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-015",
+      "kind": "component-role",
+      "text": "An Extension provides capabilities that are not part of pipeline data processing; extensions are started/stopped and notified about the Collector configuration and when the pipeline is ready.",
+      "code_anchor": "extension/extensioncapabilities/interfaces.go:28",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-016",
+      "kind": "component-role",
+      "text": "The Service initializes telemetry and then initializes/builds the pipelines.",
+      "code_anchor": "service/service.go:215",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-017",
+      "kind": "component-role",
+      "text": "The Graph converts the configured pipelines into an internal graph representation (building nodes and edges between components).",
+      "code_anchor": "service/internal/graph/graph.go:75",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-018",
+      "kind": "component-role",
+      "text": "The Collector is created by NewCollector; Collector.Run starts the collector and blocks until it shuts down.",
+      "code_anchor": "otelcol/collector.go:329",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-019",
+      "kind": "dependency-edge",
+      "text": "Within a pipeline, data flows from a receiver through processor(s) to an exporter.",
+      "code_anchor": "service/internal/graph/graph.go:264",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-020",
+      "kind": "dependency-edge",
+      "text": "A receiver is given a handle to a nextConsumer, representing where it sends its data next in the telemetry pipeline.",
+      "code_anchor": "receiver/doc.go:7",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-021",
+      "kind": "dependency-edge",
+      "text": "A Connector bridges two pipelines, acting as both an exporter (consuming) and a receiver (emitting).",
+      "code_anchor": "connector/connector.go:16",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-022",
+      "kind": "boundary-rule",
+      "text": "Each component type contains a Factory interface and a corresponding NewFactory function, used by implementations to register their key functions with the Collector.",
+      "code_anchor": "receiver/receiver.go:60",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-023",
+      "kind": "key-invariant",
+      "text": "The pipeline graph is topologically sorted, and components are created and started in reverse topological order (Graph.StartAll calls Start on each component in reverse topological order).",
+      "code_anchor": "service/internal/graph/graph.go:408",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-024",
+      "kind": "boundary-rule",
+      "text": "Components (receivers, processors, exporters, extensions, connectors) MUST use lower_snake_case names.",
+      "code_anchor": "component/identifiable.go:22",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-025",
+      "kind": "boundary-rule",
+      "text": "The Collector does not crash or exit outside main() (no log.Fatal/os.Exit after startup); errors are propagated to the caller, and it does not crash on bad input in receivers or after startup.",
+      "code_anchor": "otelcol/collector.go:329",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-026",
+      "kind": "boundary-rule",
+      "text": "The codebase is organized as multiple Go modules (per-component / per-package modules), each with its own go.mod.",
+      "code_anchor": "client/go.mod:1",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-027",
+      "kind": "key-invariant",
+      "text": "Service.Start runs in order: start all extensions, notify extensions about the configuration, start all pipelines, then notify extensions that the pipeline is ready.",
+      "code_anchor": "service/service.go:240-262",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-028",
+      "kind": "entry-point",
+      "text": "The startup path is command.NewCommand -> NewCollector -> Collector.Run -> setupConfigurationComponents -> Service.New/Service.Start.",
+      "code_anchor": "otelcol/collector.go:345",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-029",
+      "kind": "technology-choice",
+      "text": "The Collector uses the zap structured logger for logging (and avoids per-data-item logging).",
+      "code_anchor": "service/telemetry/otelconftelemetry/logger.go:58",
+      "currency": "CURRENT",
+      "load_bearing": true
+    }
+  ],
+  "emitted_claims": [
+    {
+      "ec_id": "EC-001",
+      "source_region": "AGENTS.md / Component registry",
+      "kind": "component-exists",
+      "text": "receiver is a component: the pipeline ingress module defining Traces/Metrics/Logs/Profiles interfaces + Factory.",
+      "code_anchor": "receiver/receiver.go:20",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-002",
+      "source_region": "AGENTS.md / Component registry",
+      "kind": "component-role",
+      "text": "receiver role = pipeline ingress: translates external-format data into internal pdata and pushes it to the next consumer.",
+      "code_anchor": "receiver/receiver.go:20",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-003",
+      "source_region": "AGENTS.md / Component registry",
+      "kind": "component-exists",
+      "text": "processor is a component: pipeline-middle module consuming one signal, optionally transforming it, forwarding to the next consumer.",
+      "code_anchor": "processor/processor.go:16-31",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-004",
+      "source_region": "AGENTS.md / Component registry",
+      "kind": "component-role",
+      "text": "processor role = pipeline-middle: consumes one signal, optionally transforms it, forwards to the next consumer.",
+      "code_anchor": "processor/processor.go:16-31",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-005",
+      "source_region": "AGENTS.md / Component registry",
+      "kind": "component-exists",
+      "text": "exporter is a component: the egress tier / terminal pipeline component.",
+      "code_anchor": "exporter/exporter.go:16-31",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-006",
+      "source_region": "AGENTS.md / Component registry",
+      "kind": "component-role",
+      "text": "exporter role = egress: terminal pipeline component that consumes telemetry and sends it to an external destination.",
+      "code_anchor": "exporter/exporter.go:16-31",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-007",
+      "source_region": "AGENTS.md / Component registry",
+      "kind": "component-exists",
+      "text": "connector is a component: joins pipelines, acting as an exporter from one pipeline and a receiver to downstream pipelines.",
+      "code_anchor": "connector/connector.go:16-18",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-008",
+      "source_region": "AGENTS.md / Component registry",
+      "kind": "component-role",
+      "text": "connector role = joins pipelines: acts as an exporter from one pipeline and a receiver to one-or-more downstream pipelines.",
+      "code_anchor": "connector/connector.go:16-18",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-009",
+      "source_region": "AGENTS.md / Component registry",
+      "kind": "component-exists",
+      "text": "service is a component: the runtime orchestrator + graph builder.",
+      "code_anchor": "service/service.go:99",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-010",
+      "source_region": "AGENTS.md / Component registry",
+      "kind": "component-role",
+      "text": "service role = runtime orchestrator + graph builder: assembles the pipeline DAG, owns component lifecycle, is the concrete component.Host.",
+      "code_anchor": "service/service.go:99",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-011",
+      "source_region": "AGENTS.md / Component registry",
+      "kind": "component-exists",
+      "text": "otelcol is a component: the collector entry / CLI + lifecycle layer.",
+      "code_anchor": "otelcol/collector.go:329",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-012",
+      "source_region": "AGENTS.md / Component registry",
+      "kind": "component-role",
+      "text": "otelcol role = collector entry: CLI + lifecycle; Collector.Run starts the collector and blocks until shutdown.",
+      "code_anchor": "otelcol/collector.go:329",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-013",
+      "source_region": "AGENTS.md / Component registry",
+      "kind": "component-exists",
+      "text": "pdata is a component: the canonical in-memory data model for all pipeline signals + proto/JSON (un)marshalers.",
+      "code_anchor": "pdata/doc.go:6",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-014",
+      "source_region": "AGENTS.md / Component registry",
+      "kind": "component-role",
+      "text": "pdata role = data model: canonical in-memory data model for all pipeline signals (traces/metrics/logs/profiles + shared pcommon).",
+      "code_anchor": "pdata/doc.go:6",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-015",
+      "source_region": "AGENTS.md / Component registry",
+      "kind": "component-exists",
+      "text": "consumer is a component: defines the per-signal Traces/Metrics/Logs (+experimental Profiles) consumer contracts + BaseConsumer.Capabilities().",
+      "code_anchor": "consumer/logs.go:15",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-016",
+      "source_region": "AGENTS.md / Component registry",
+      "kind": "component-role",
+      "text": "consumer role = signal interfaces: per-signal consumer contracts that receive pipeline data and forward it on.",
+      "code_anchor": "consumer/logs.go:15",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-017",
+      "source_region": "AGENTS.md / Component registry",
+      "kind": "component-exists",
+      "text": "component is a component: defines the foundational lifecycle interface + shared ID/Type/Kind/Config/Host contracts.",
+      "code_anchor": "component/component.go:25",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-018",
+      "source_region": "AGENTS.md / Component registry",
+      "kind": "component-role",
+      "text": "component role = the foundational Component lifecycle interface (Start/Shutdown) that every receiver/exporter/processor/connector/extension must implement.",
+      "code_anchor": "component/component.go:25",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-019",
+      "source_region": "architecture.md / Layers",
+      "kind": "component-exists",
+      "text": "extension is a component kind wired into the service pipeline (alongside receiver/processor/exporter/connector).",
+      "code_anchor": "service/service.go:23",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-020",
+      "source_region": "AGENTS.md / Architecture",
+      "kind": "technology-choice",
+      "text": "otelcol is a Go multi-module project implementing an OpenTelemetry-style telemetry collector.",
+      "code_anchor": "go.mod:11",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-021",
+      "source_region": "AGENTS.md / Architecture + critical-facts",
+      "kind": "boundary-rule",
+      "text": "The system is a strictly layered dependency DAG built from sealed-factory component contracts; component is the base layer depended-ON, pdata is the leaf/foundation.",
+      "code_anchor": "component/component.go:14",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-022",
+      "source_region": "AGENTS.md / Architecture + critical-facts",
+      "kind": "technology-choice",
+      "text": "Each component is its own Go module wired to siblings via local replace directives, so the build manifest (go.mod) is the dependency-DAG source of truth.",
+      "code_anchor": "receiver/go.mod:1,35",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-023",
+      "source_region": "critical-facts / Tech choices",
+      "kind": "technology-choice",
+      "text": "Modules are go 1.25.0.",
+      "code_anchor": "receiver/go.mod:1",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-024",
+      "source_region": "critical-facts / Tech choices",
+      "kind": "technology-choice",
+      "text": "exporter/ ships 8 Go modules.",
+      "code_anchor": "exporter/go.mod:1,60-118",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-025",
+      "source_region": "critical-facts / Tech choices + consumer.md",
+      "kind": "technology-choice",
+      "text": "consumer/ ships 5 independent Go modules (consumer, xconsumer, consumererror, consumererror/xconsumererror, consumertest).",
+      "code_anchor": "consumer/go.mod:1",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-026",
+      "source_region": "critical-facts / Tech choices + component.md",
+      "kind": "technology-choice",
+      "text": "component/ ships 3 independent Go modules (component, componentstatus, componenttest).",
+      "code_anchor": "component/go.mod:1",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-027",
+      "source_region": "critical-facts / Tech choices",
+      "kind": "technology-choice",
+      "text": "pdata is several modules (pdata, pprofile, xpdata, testdata).",
+      "code_anchor": "pdata/pprofile/go.mod:1",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-028",
+      "source_region": "critical-facts / Tech choices + receiver.md",
+      "kind": "technology-choice",
+      "text": "The reference OTLP receiver is a gRPC + HTTP receiver that multiplexes 4 signals over 2 transports from one shared instance.",
+      "code_anchor": "receiver/otlpreceiver/config.go:54",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-029",
+      "source_region": "AGENTS.md / Critical to know + receiver.md",
+      "kind": "technology-choice",
+      "text": "Default OTLP endpoints are gRPC localhost:4317 and HTTP localhost:4318.",
+      "code_anchor": "receiver/otlpreceiver/factory.go:44",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-030",
+      "source_region": "critical-facts / Tech choices + receiver.md",
+      "kind": "technology-choice",
+      "text": "OTLP HTTP paths are /v1/traces, /v1/metrics, /v1/logs, and profiles /v1development/profiles.",
+      "code_anchor": "receiver/otlpreceiver/factory.go:23",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-031",
+      "source_region": "AGENTS.md / Critical to know + critical-facts",
+      "kind": "technology-choice",
+      "text": "In-memory pdata is the universal signal carrier (no on-the-wire intermediate store inside the pipeline).",
+      "code_anchor": "consumer/traces.go:10",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-032",
+      "source_region": "AGENTS.md / Critical to know + critical-facts",
+      "kind": "technology-choice",
+      "text": "otelcol CLI/runtime stack uses cobra CLI, zap/zapcore logging, confmap+koanf config, multierr error accumulation.",
+      "code_anchor": "otelcol/go.mod:1-3",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-033",
+      "source_region": "critical-facts / Tech choices + service.md",
+      "kind": "technology-choice",
+      "text": "The pipeline DAG is built on the gonum graph library (gonum graph/simple + topo), not a hand-rolled graph.",
+      "code_anchor": "service/internal/graph/graph.go:24-26",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-034",
+      "source_region": "critical-facts / Tech choices + pdata.md",
+      "kind": "technology-choice",
+      "text": "pdata uses json-iterator/go and google.golang.org/protobuf for codecs and google.golang.org/grpc for OTLP request/response types.",
+      "code_anchor": "pdata/go.mod:6,14",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-035",
+      "source_region": "critical-facts / Tech choices",
+      "kind": "technology-choice",
+      "text": "Stability status: package class pkg, distributions core+contrib; signals beta (metrics/traces/logs), profiles alpha.",
+      "code_anchor": "otelcol/metadata.yaml:6-10",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-036",
+      "source_region": "critical-facts / Tech choices + consumer.md",
+      "kind": "technology-choice",
+      "text": "Stable consumer modules are v1.60.0; experimental/profile modules are v0.154.0.",
+      "code_anchor": "consumer/go.mod:7",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-037",
+      "source_region": "technical-dependencies / receiver",
+      "kind": "dependency-edge",
+      "text": "receiver -> component (import / interface-embed: every receiver interface embeds component.Component).",
+      "code_anchor": "receiver/receiver.go:21",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-038",
+      "source_region": "technical-dependencies / receiver",
+      "kind": "dependency-edge",
+      "text": "receiver -> consumer (import / runtime-call: next sink, factory create-funcs receive downstream consumer.Traces/Metrics/Logs).",
+      "code_anchor": "receiver/receiver.go:67",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-039",
+      "source_region": "technical-dependencies / receiver",
+      "kind": "dependency-edge",
+      "text": "receiver -> pipeline (import: sentinel-error pipeline.ErrSignalNotSupported + Signal switch).",
+      "code_anchor": "receiver/receiver.go:147",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-040",
+      "source_region": "technical-dependencies / receiver",
+      "kind": "dependency-edge",
+      "text": "receiver -> pdata (import: otlp wire types via otlpreceiver).",
+      "code_anchor": "receiver/otlpreceiver/otlp.go:22",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-041",
+      "source_region": "technical-dependencies / receiver",
+      "kind": "dependency-edge",
+      "text": "receiver -> consumer/xconsumer (import xconsumer.Profiles, experimental signal).",
+      "code_anchor": "receiver/xreceiver/receiver.go:35",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-042",
+      "source_region": "technical-dependencies / receiver",
+      "kind": "dependency-edge",
+      "text": "receiver -> component (project-ref: go.mod replace ../component).",
+      "code_anchor": "receiver/go.mod:35",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-043",
+      "source_region": "receiver.md / Dependencies",
+      "kind": "dependency-edge",
+      "text": "receiver -> internal/componentalias (factory delegates ValidateComponentType / NewTypeAliasHolder).",
+      "code_anchor": "receiver/receiver.go:150",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-044",
+      "source_region": "receiver.md / Dependencies",
+      "kind": "dependency-edge",
+      "text": "receiver -> consumer/consumererror (receiverhelper uses consumererror.IsDownstream to classify refused vs failed).",
+      "code_anchor": "receiver/receiverhelper/obsreport.go:188",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-045",
+      "source_region": "receiver.md / Dependencies",
+      "kind": "dependency-edge",
+      "text": "receiver -> internal/sharedcomponent (otlpreceiver per-config singleton map).",
+      "code_anchor": "receiver/otlpreceiver/factory.go:163",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-046",
+      "source_region": "receiver.md / Dependencies",
+      "kind": "dependency-edge",
+      "text": "receiver -> config/confighttp + config/configgrpc (otlpreceiver server transport construction).",
+      "code_anchor": "receiver/otlpreceiver/otlp.go:18",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-047",
+      "source_region": "technical-dependencies / receiver + receiver.md",
+      "kind": "boundary-rule",
+      "text": "receiver has NO edge to processor/exporter/connector/service/otelcol \u05d2\u20ac\u201d none in go.mod and none imported; it sits strictly below them.",
+      "code_anchor": "receiver/go.mod:5",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-048",
+      "source_region": "technical-dependencies / processor",
+      "kind": "dependency-edge",
+      "text": "processor -> consumer (import / interface-embed: processor signal interfaces ARE consumers).",
+      "code_anchor": "processor/processor.go:10",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-049",
+      "source_region": "technical-dependencies / processor",
+      "kind": "dependency-edge",
+      "text": "processor -> consumer (runtime-call: next consumer forwarding target in Factory.Create*).",
+      "code_anchor": "processor/processor.go:58",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-050",
+      "source_region": "technical-dependencies / processor",
+      "kind": "dependency-edge",
+      "text": "processor -> component (import / interface-embed).",
+      "code_anchor": "processor/processor.go:9",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-051",
+      "source_region": "technical-dependencies / processor",
+      "kind": "dependency-edge",
+      "text": "processor -> pipeline (import: ErrSignalNotSupported sentinel).",
+      "code_anchor": "processor/processor.go:12",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-052",
+      "source_region": "technical-dependencies / processor",
+      "kind": "dependency-edge",
+      "text": "processor -> consumer/xconsumer (import xconsumer.Profiles in xprocessor).",
+      "code_anchor": "processor/xprocessor/processor.go:10",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-053",
+      "source_region": "technical-dependencies / processor",
+      "kind": "dependency-edge",
+      "text": "processor -> pdata (import ptrace/pmetric/plog in processorhelper + batchprocessor).",
+      "code_anchor": "processor/processorhelper/traces.go:15",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-054",
+      "source_region": "technical-dependencies / processor",
+      "kind": "dependency-edge",
+      "text": "processor -> consumer/consumererror (permanent error in batchprocessor).",
+      "code_anchor": "processor/batchprocessor/batch_processor.go:22",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-055",
+      "source_region": "technical-dependencies / processor",
+      "kind": "dependency-edge",
+      "text": "processor -> component/client (client.Info/Metadata context for batch sharding).",
+      "code_anchor": "processor/batchprocessor/batch_processor.go:19",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-056",
+      "source_region": "processor.md / Dependencies",
+      "kind": "dependency-edge",
+      "text": "processor -> internal/memorylimiter (memorylimiterprocessor delegates admission control to shared memorylimiter.MemoryLimiter).",
+      "code_anchor": "processor/memorylimiterprocessor/memorylimiter.go:10",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-057",
+      "source_region": "technical-dependencies / exporter",
+      "kind": "dependency-edge",
+      "text": "exporter -> component (import / interface-embed / project-ref).",
+      "code_anchor": "exporter/exporter.go:9,17",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-058",
+      "source_region": "technical-dependencies / exporter",
+      "kind": "dependency-edge",
+      "text": "exporter -> consumer (import / interface-embed \u05d2\u20ac\u201d exporter IS a consumer / project-ref).",
+      "code_anchor": "exporter/exporter.go:10,18",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-059",
+      "source_region": "technical-dependencies / exporter",
+      "kind": "dependency-edge",
+      "text": "exporter -> pipeline (import / runtime-call ErrSignalNotSupported, Signal key / project-ref).",
+      "code_anchor": "exporter/exporter.go:12,137",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-060",
+      "source_region": "technical-dependencies / exporter",
+      "kind": "dependency-edge",
+      "text": "exporter -> pdata (marshal ptrace/pmetric/plog/pprofile to OTLP / project-ref).",
+      "code_anchor": "exporter/otlpexporter/otlp.go:25-32,98",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-061",
+      "source_region": "technical-dependencies / exporter",
+      "kind": "dependency-edge",
+      "text": "exporter -> extension (runtime-call host.GetExtensions -> storage.Extension -> storage.Client / project-ref).",
+      "code_anchor": "exporter/exporterhelper/internal/queue/persistent_queue.go:20,549-561",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-062",
+      "source_region": "technical-dependencies / exporter",
+      "kind": "dependency-edge",
+      "text": "exporter -> receiver (project-ref, local replace, build-graph edge; used by exporterhelper test rigs).",
+      "code_anchor": "exporter/go.mod:76",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-063",
+      "source_region": "technical-dependencies / exporter",
+      "kind": "dependency-edge",
+      "text": "exporter -> internal/componentalias (componentalias.ValidateComponentType before each Create).",
+      "code_anchor": "exporter/exporter.go:11,108,140",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-064",
+      "source_region": "exporter.md / Dependencies",
+      "kind": "dependency-edge",
+      "text": "exporter -> config/configgrpc + config/configretry + config/configoptional (gRPC ClientConn dial, retry/backoff, optional queue config).",
+      "code_anchor": "exporter/otlpexporter/otlp.go:20,67",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-065",
+      "source_region": "technical-dependencies / connector",
+      "kind": "dependency-edge",
+      "text": "connector -> consumer (import / interface-embed; routers typed over consumer types).",
+      "code_anchor": "connector/connector.go:11,28-31",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-066",
+      "source_region": "technical-dependencies / connector",
+      "kind": "dependency-edge",
+      "text": "connector -> component (import / interface-embed component.Component/Factory/ID/TelemetrySettings/BuildInfo).",
+      "code_anchor": "connector/connector.go:9,29,82,65-75",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-067",
+      "source_region": "technical-dependencies / connector",
+      "kind": "dependency-edge",
+      "text": "connector -> pdata (project-ref; data model carried via consumers).",
+      "code_anchor": "connector/go.mod:12,41",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-068",
+      "source_region": "technical-dependencies / connector",
+      "kind": "dependency-edge",
+      "text": "connector -> pipeline (routers key by pipeline.ID; errors cite pipeline.Signal*).",
+      "code_anchor": "connector/logs_router.go:15,21",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-069",
+      "source_region": "technical-dependencies / connector",
+      "kind": "dependency-edge",
+      "text": "connector -> internal/fanoutconsumer (routers build fan-out via fanoutconsumer.NewLogs/NewMetrics/NewTraces).",
+      "code_anchor": "connector/logs_router.go:14,37",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-070",
+      "source_region": "technical-dependencies / connector",
+      "kind": "dependency-edge",
+      "text": "connector -> internal/componentalias (TypeAliasHolder + ValidateComponentType in every Create*).",
+      "code_anchor": "connector/connector.go:12,238,313",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-071",
+      "source_region": "technical-dependencies / connector",
+      "kind": "dependency-edge",
+      "text": "connector -> consumer/xconsumer (xconnector profiles surface typed over xconsumer.Profiles).",
+      "code_anchor": "connector/xconnector/connector.go:13,55",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-072",
+      "source_region": "technical-dependencies / connector",
+      "kind": "dependency-edge",
+      "text": "connector -> pipeline/xpipeline (xconnector error paths cite xpipeline.SignalProfiles).",
+      "code_anchor": "connector/xconnector/connector.go:16,274",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-073",
+      "source_region": "technical-dependencies / connector + critical-facts",
+      "kind": "boundary-rule",
+      "text": "connector has NO edge to receiver/exporter/service/otelcol; its exporter+receiver duality is interface composition (consumer embedding) only.",
+      "code_anchor": "connector/connector.go:16-18,28-31",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-074",
+      "source_region": "technical-dependencies / service",
+      "kind": "dependency-edge",
+      "text": "service -> receiver (import; stores ReceiversFactories map).",
+      "code_anchor": "service/service.go:26",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-075",
+      "source_region": "technical-dependencies / service",
+      "kind": "dependency-edge",
+      "text": "service -> processor (import; ProcessorsFactories map).",
+      "code_anchor": "service/service.go:25",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-076",
+      "source_region": "technical-dependencies / service",
+      "kind": "dependency-edge",
+      "text": "service -> exporter (import; ExportersFactories map).",
+      "code_anchor": "service/service.go:22",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-077",
+      "source_region": "technical-dependencies / service",
+      "kind": "dependency-edge",
+      "text": "service -> connector (import; ConnectorsFactories map).",
+      "code_anchor": "service/service.go:21",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-078",
+      "source_region": "technical-dependencies / service",
+      "kind": "dependency-edge",
+      "text": "service -> extension (import; ExtensionsFactories map).",
+      "code_anchor": "service/service.go:23",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-079",
+      "source_region": "technical-dependencies / service",
+      "kind": "dependency-edge",
+      "text": "service -> component (import + runtime-call node.(component.Component).Start/Shutdown).",
+      "code_anchor": "service/internal/graph/graph.go:417",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-080",
+      "source_region": "technical-dependencies / service",
+      "kind": "dependency-edge",
+      "text": "service -> consumer (import + runtime-wiring consumer.Traces/Metrics/Logs + Capabilities).",
+      "code_anchor": "service/internal/graph/graph.go:312",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-081",
+      "source_region": "technical-dependencies / service",
+      "kind": "dependency-edge",
+      "text": "service -> pdata (import pcommon.NewResource).",
+      "code_anchor": "service/service.go:24",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-082",
+      "source_region": "technical-dependencies / service",
+      "kind": "dependency-edge",
+      "text": "service -> otelcol (project-ref only: go.mod require + local replace ../otelcol; NO source import in this component).",
+      "code_anchor": "service/go.mod:241",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-083",
+      "source_region": "service.md / Dependencies",
+      "kind": "dependency-edge",
+      "text": "service -> confmap (config substrate: CollectorConf *confmap.Conf, extensions notified with cloned confmap.Conf).",
+      "code_anchor": "service/service.go:20",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-084",
+      "source_region": "service.md / Dependencies",
+      "kind": "dependency-edge",
+      "text": "service -> pipeline (signal/ID types; graph keys nodes by pipeline.ID/pipeline.Signal).",
+      "code_anchor": "service/internal/graph/graph.go:35",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-085",
+      "source_region": "technical-dependencies / otelcol",
+      "kind": "dependency-edge",
+      "text": "otelcol -> service (runtime-call: constructs and owns the running service via service.New).",
+      "code_anchor": "otelcol/collector.go:212",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-086",
+      "source_region": "technical-dependencies / otelcol",
+      "kind": "dependency-edge",
+      "text": "otelcol -> service (import).",
+      "code_anchor": "otelcol/collector.go:25",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-087",
+      "source_region": "technical-dependencies / otelcol",
+      "kind": "dependency-edge",
+      "text": "otelcol -> component (import).",
+      "code_anchor": "otelcol/factories.go:9",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-088",
+      "source_region": "technical-dependencies / otelcol",
+      "kind": "dependency-edge",
+      "text": "otelcol -> receiver (import; Factories.Receivers map).",
+      "code_anchor": "otelcol/factories.go:15",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-089",
+      "source_region": "technical-dependencies / otelcol",
+      "kind": "dependency-edge",
+      "text": "otelcol -> processor (import; Factories.Processors map).",
+      "code_anchor": "otelcol/factories.go:14",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-090",
+      "source_region": "technical-dependencies / otelcol",
+      "kind": "dependency-edge",
+      "text": "otelcol -> exporter (import; Factories.Exporters map).",
+      "code_anchor": "otelcol/factories.go:11",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-091",
+      "source_region": "technical-dependencies / otelcol",
+      "kind": "dependency-edge",
+      "text": "otelcol -> extension (import; Factories.Extensions map).",
+      "code_anchor": "otelcol/factories.go:12",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-092",
+      "source_region": "technical-dependencies / otelcol",
+      "kind": "dependency-edge",
+      "text": "otelcol -> connector (import; Factories.Connectors map).",
+      "code_anchor": "otelcol/factories.go:10",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-093",
+      "source_region": "technical-dependencies / otelcol",
+      "kind": "dependency-edge",
+      "text": "otelcol -> consumer (project-ref; transitive via service/pipeline graph).",
+      "code_anchor": "otelcol/go.mod:20",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-094",
+      "source_region": "technical-dependencies / otelcol",
+      "kind": "dependency-edge",
+      "text": "otelcol -> pdata (project-ref / indirect require; transitive via service/consumer).",
+      "code_anchor": "otelcol/go.mod:94",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-095",
+      "source_region": "otelcol.md / Dependencies",
+      "kind": "dependency-edge",
+      "text": "otelcol -> confmap (config resolution via confmap.Resolver, confmap.Validate, confmap.New().Marshal).",
+      "code_anchor": "otelcol/collector.go:23",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-096",
+      "source_region": "otelcol.md / Dependencies",
+      "kind": "dependency-edge",
+      "text": "otelcol -> featuregate (the featuregate subcommand + global registry flag wiring).",
+      "code_anchor": "otelcol/command.go:17",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-097",
+      "source_region": "otelcol.md / Dependencies",
+      "kind": "dependency-edge",
+      "text": "otelcol -> service/telemetry (Factories.Telemetry telemetry.Factory; nil-telemetry is a hard error).",
+      "code_anchor": "otelcol/factories.go:16",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-098",
+      "source_region": "technical-dependencies / pdata",
+      "kind": "dependency-edge",
+      "text": "pdata -> featuregate (import; registers pdata.useProtoPooling gate) \u05d2\u20ac\u201d the only production cross-component edge.",
+      "code_anchor": "pdata/internal/metadata/generated_feature_gates.go:6",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-099",
+      "source_region": "technical-dependencies / pdata",
+      "kind": "dependency-edge",
+      "text": "pdata -> client (import; xpdata sub-module only, NOT the root module; encodes/decodes request context).",
+      "code_anchor": "pdata/xpdata/request/context.go:11",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-100",
+      "source_region": "technical-dependencies / consumer",
+      "kind": "dependency-edge",
+      "text": "consumer -> pdata (import signal payload types plog.Logs/ptrace.Traces/pmetric.Metrics).",
+      "code_anchor": "consumer/logs.go:10",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-101",
+      "source_region": "technical-dependencies / consumer",
+      "kind": "dependency-edge",
+      "text": "consumer -> pdata (project-ref, go.mod require + local replace ../pdata).",
+      "code_anchor": "consumer/go.mod:7",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-102",
+      "source_region": "technical-dependencies / consumer",
+      "kind": "dependency-edge",
+      "text": "consumer -> pdata/pprofile (experimental xconsumer.Profiles typed on pprofile.Profiles).",
+      "code_anchor": "consumer/xconsumer/profiles.go:12",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-103",
+      "source_region": "consumer.md / Dependencies",
+      "kind": "dependency-edge",
+      "text": "consumer -> external grpc (consumererror.Error carries *grpc/status.Status; maps OTLP gRPC/HTTP codes to retryability).",
+      "code_anchor": "consumer/consumererror/error.go:11",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-104",
+      "source_region": "technical-dependencies / component",
+      "kind": "dependency-edge",
+      "text": "component -> pdata (import pcommon type-ref: TelemetrySettings.Resource pcommon.Resource).",
+      "code_anchor": "component/telemetry.go:11",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-105",
+      "source_region": "technical-dependencies / component",
+      "kind": "dependency-edge",
+      "text": "component -> pdata (project-ref, direct require + replace => ../pdata).",
+      "code_anchor": "component/go.mod:6",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-106",
+      "source_region": "technical-dependencies / component",
+      "kind": "dependency-edge",
+      "text": "component -> pipeline (componentstatus.InstanceID encodes pipeline.ID).",
+      "code_anchor": "component/componentstatus/instance.go:12",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-107",
+      "source_region": "technical-dependencies / component + component.md",
+      "kind": "boundary-rule",
+      "text": "component has no outgoing edges to receiver/processor/exporter/connector/service/otelcol/consumer; its only non-test collector imports are pdata + pipeline.",
+      "code_anchor": "component/component.go:8",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-108",
+      "source_region": "AGENTS.md / Critical to know + critical-facts",
+      "kind": "boundary-rule",
+      "text": "pdata is the leaf/foundation: no production source imports receiver/processor/exporter/connector/service/otelcol/consumer/component.",
+      "code_anchor": "pdata/go.mod:5-16",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-109",
+      "source_region": "AGENTS.md / Critical to know + critical-facts",
+      "kind": "key-invariant",
+      "text": "Pipeline graph MUST be a DAG: service builds it on gonum and fails with 'cycle detected' via topo.DirectedCyclesIn, rendering the cycle starting from a connector.",
+      "code_anchor": "service/internal/graph/graph.go:295,511",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-110",
+      "source_region": "AGENTS.md / Critical to know + critical-facts",
+      "kind": "key-invariant",
+      "text": "Sealed factories: Receiver/Processor/Exporter/Connector Factory interfaces cannot be implemented directly \u05d2\u20ac\u201d the unexported unexportedFactoryFunc() marker forces construction through NewFactory.",
+      "code_anchor": "receiver/receiver.go:58,90",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-111",
+      "source_region": "AGENTS.md / Critical to know + critical-facts",
+      "kind": "boundary-rule",
+      "text": "Unsupported signals MUST return pipeline.ErrSignalNotSupported \u05d2\u20ac\u201d the default when no WithTraces/WithMetrics/WithLogs option is given.",
+      "code_anchor": "receiver/receiver.go:146",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-112",
+      "source_region": "AGENTS.md / Critical to know + critical-facts",
+      "kind": "key-invariant",
+      "text": "Receive-then-acknowledge ordering invariant (receiver): receive -> push via nextConsumer.Consume*() -> only then ack/fail; storage-extension checkpoints stored only AFTER Consume*() returns.",
+      "code_anchor": "receiver/doc.go:23",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-113",
+      "source_region": "AGENTS.md / Critical to know + critical-facts",
+      "kind": "key-invariant",
+      "text": "Post-return ownership transfer (consumer): after Consume* returns, the payload is no longer accessible \u05d2\u20ac\u201d accessing it is undefined behavior.",
+      "code_anchor": "consumer/logs.go:18",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-114",
+      "source_region": "AGENTS.md / Critical to know + critical-facts",
+      "kind": "boundary-rule",
+      "text": "A processor MUST NOT call the next component on error \u05d2\u20ac\u201d on error the returned data is ignored.",
+      "code_anchor": "processor/processorhelper/traces.go:21",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-115",
+      "source_region": "AGENTS.md / Critical to know + critical-facts",
+      "kind": "key-invariant",
+      "text": "MutatesData copy-on-mutate contract: a processor that modifies input MUST set Capabilities.MutatesData=true (default non-mutating via NewBaseImpl).",
+      "code_anchor": "consumer/internal/consumer.go:13,42",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-116",
+      "source_region": "AGENTS.md / Critical to know + service.md",
+      "kind": "key-invariant",
+      "text": "The service capabilities node aggregates the MutatesData flag across all processors + the exporter fanout so receivers know whether to clone data.",
+      "code_anchor": "service/internal/graph/graph.go:312-318",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-117",
+      "source_region": "AGENTS.md / Critical to know + processor.md",
+      "kind": "key-invariant",
+      "text": "processorhelper's own default capability is MutatesData: true (processors are assumed to mutate unless WithCapabilities overrides).",
+      "code_anchor": "processor/processorhelper/processor.go:69",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-118",
+      "source_region": "AGENTS.md / Critical to know + pdata invariants",
+      "kind": "key-invariant",
+      "text": "pdata mutability invariant: every wrapper carries a *State; mutating methods call AssertMutable() which panics 'invalid access to shared data' when read-only; MarkReadOnly() flips the bit.",
+      "code_anchor": "pdata/internal/state.go:37",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-119",
+      "source_region": "AGENTS.md / Critical to know + pdata invariants",
+      "kind": "key-invariant",
+      "text": "pdata State holds an atomic ref-count; Unref()==true means releasable; a negative count panics 'Cannot unref freed data'.",
+      "code_anchor": "pdata/internal/state.go:53-69",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-120",
+      "source_region": "AGENTS.md / Critical to know + architecture",
+      "kind": "key-invariant",
+      "text": "Experimental signals (Profiles) are segregated into separate x* modules/packages that wrap the stable factory, keeping the stable interfaces signal-frozen.",
+      "code_anchor": "receiver/xreceiver/receiver.go:30",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-121",
+      "source_region": "AGENTS.md / Critical to know + data-layer",
+      "kind": "data-store",
+      "text": "No persistent application store except the exporter send queue; the exporter persistent queue is a durable FIFO backed by a storage.Client from a host-mediated storage extension; default queue is in-memory; all other component state is in-memory only.",
+      "code_anchor": "exporter/exporterhelper/internal/queue/persistent_queue.go:50-72,549-560",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-122",
+      "source_region": "data-layer / pdata",
+      "kind": "data-store",
+      "text": "There is no application database; telemetry data is carried in-memory as pdata OTLP proto structs serialized by hand-written varint codecs.",
+      "code_anchor": "consumer/traces.go:10",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-123",
+      "source_region": "data-layer / pdata",
+      "kind": "data-store",
+      "text": "pdata optional sync.Pool memory pools for proto value structs, gated by the pdata.useProtoPooling alpha gate.",
+      "code_anchor": "pdata/internal/generated_proto_anyvalue.go:120",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-124",
+      "source_region": "data-layer / pdata + pdata.md",
+      "kind": "technology-choice",
+      "text": "pdata serialized output forms: protobuf bytes via ProtoMarshaler/ProtoUnmarshaler and JSON via in-house streaming codec internal/json.",
+      "code_anchor": "pdata/plog/pb.go:8",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-125",
+      "source_region": "data-layer / exporter + exporter.md",
+      "kind": "data-store",
+      "text": "Exporter in-memory send queue (default): QueueBatchConfig stores 1000 requests, non-blocking when full, ErrQueueIsFull on overflow.",
+      "code_anchor": "exporter/exporterhelper/queue_batch.go:38-42",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-126",
+      "source_region": "data-layer / exporter + exporter.md",
+      "kind": "data-store",
+      "text": "Exporter external backend sink (not a local store): OTLP gRPC ClientConn + clients; otlphttp *http.Client.",
+      "code_anchor": "exporter/otlpexporter/otlp.go:35-52,65-84",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-127",
+      "source_region": "data-layer / exporter",
+      "kind": "data-store",
+      "text": "The exporter persistent queue uses metadata key qmv0 (legacy ri/wi/di), keyed component.KindExporter when fetching its storage client.",
+      "code_anchor": "exporter/exporterhelper/internal/queue/persistent_queue.go:50-72,29-34",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-128",
+      "source_region": "data-layer / receiver + receiver.md",
+      "kind": "data-store",
+      "text": "receiver owns no store: an in-process per-config singleton registry (sharedcomponent.NewMap) dedups one otlpReceiver per config; emits accepted/refused/failed telemetry counters.",
+      "code_anchor": "receiver/otlpreceiver/factory.go:163",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-129",
+      "source_region": "data-layer / processor + processor.md",
+      "kind": "data-store",
+      "text": "processor owns in-memory batch buffers only (batchprocessor pending-batch buffer per shard via MoveAndAppendTo, flushed by size/timeout); no persistence.",
+      "code_anchor": "processor/batchprocessor/batch_processor.go:92",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-130",
+      "source_region": "data-layer / processor + processor.md",
+      "kind": "data-store",
+      "text": "processor metadata-keyed shard map multiShardBatcher.batchers (sync.Map keyed by attribute set), guarded by mutex + size counter.",
+      "code_anchor": "processor/batchprocessor/batch_processor.go:311",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-131",
+      "source_region": "data-layer / connector + connector.md",
+      "kind": "data-store",
+      "text": "connector has no persistence; state is in-memory only \u05d2\u20ac\u201d BaseRouter holds Consumers map[pipeline.ID]T (copied via maps.Copy) and a fanout func.",
+      "code_anchor": "connector/internal/router.go:16-25",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-132",
+      "source_region": "data-layer / service + service.md",
+      "kind": "data-store",
+      "text": "service owns no persistent store: in-memory pipeline DAG componentGraph *simple.DirectedGraph (gonum) plus pipelines and instanceIDs maps.",
+      "code_anchor": "service/internal/graph/graph.go:62",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-133",
+      "source_region": "data-layer / service + service.md",
+      "kind": "data-store",
+      "text": "service reads the collector config object in memory (CollectorConf *confmap.Conf); it does not load config from disk itself.",
+      "code_anchor": "service/service.go:48",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-134",
+      "source_region": "data-layer / otelcol + otelcol.md",
+      "kind": "data-store",
+      "text": "otelcol in-memory zap log buffer (bufferedCore) captures early logs then drains once via TakeLogs().",
+      "code_anchor": "otelcol/buffered_core.go:26",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-135",
+      "source_region": "data-layer / otelcol + otelcol.md",
+      "kind": "data-store",
+      "text": "otelcol read-only config source resolved/watched/re-read via confmap.Resolver behind ConfigProvider; never written back.",
+      "code_anchor": "otelcol/configprovider.go:24",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-136",
+      "source_region": "data-layer / consumer + consumer.md",
+      "kind": "data-store",
+      "text": "consumer has no production persistence; the only data-holding type is the in-memory test sink consumertest.TracesSink/MetricsSink/LogsSink/ProfilesSink (mutex-guarded slices for tests).",
+      "code_anchor": "consumer/consumertest/sink.go:20",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-137",
+      "source_region": "data-layer / component + component.md",
+      "kind": "data-store",
+      "text": "component declares no data stores \u05d2\u20ac\u201d contract layer only; the only state types are in-memory value structs (BuildInfo, TelemetrySettings, componentstatus.Event).",
+      "code_anchor": "component/component.go:25",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-138",
+      "source_region": "architecture / intra-pipeline data flow + service.md",
+      "kind": "key-invariant",
+      "text": "Strict layered intra-pipeline flow: receiver -> capabilities node -> processors (ordered) -> fanout node -> exporters; edges drawn only in that direction.",
+      "code_anchor": "service/internal/graph/graph.go:265-288",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-139",
+      "source_region": "architecture / intra-pipeline data flow + service.md",
+      "kind": "key-invariant",
+      "text": "A fanout node is ALWAYS inserted before exporters, acting as a noop even with a single exporter.",
+      "code_anchor": "service/internal/graph/graph.go:280,128",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-140",
+      "source_region": "architecture / intra-pipeline data flow + service.md",
+      "kind": "key-invariant",
+      "text": "Receiver and exporter nodes are deduplicated across same-signal pipelines (node ID = pipeline-type + component-ID).",
+      "code_anchor": "service/internal/graph/receiver.go:24",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-141",
+      "source_region": "critical-facts / sealed-factory + signal contracts",
+      "kind": "boundary-rule",
+      "text": "Component-type/ID consistency gate is checked on every create via componentalias.ValidateComponentType(f, set.ID).",
+      "code_anchor": "receiver/receiver.go:150",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-142",
+      "source_region": "critical-facts / sealed-factory + signal contracts + connector.md",
+      "kind": "boundary-rule",
+      "text": "A connector's 9 (3x3) Create* signal-pair methods enforce only-supported conversions, else return ErrDataTypes/ErrSignalNotSupported.",
+      "code_anchor": "connector/connector.go:93-103,308-311",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-143",
+      "source_region": "critical-facts / sealed-factory + signal contracts",
+      "kind": "technology-choice",
+      "text": "Functional-options factory pattern across the kinds: NewFactory(type, defaultCfg, ...FactoryOption); WithX options install a Create* func + StabilityLevel.",
+      "code_anchor": "receiver/receiver.go:115,182",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-144",
+      "source_region": "critical-facts / sealed-factory + signal contracts",
+      "kind": "boundary-rule",
+      "text": "Public structs use the unkeyed-literal guard \u05d2\u20ac\u201d a trailing _ struct{} field forbids unkeyed-literal initialization (forward-compat).",
+      "code_anchor": "receiver/receiver.go:53",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-145",
+      "source_region": "critical-facts / layering invariants",
+      "kind": "boundary-rule",
+      "text": "internal/ packages are import-restricted to their module by Go's internal-package rule; pdata's raw OTLP structs/codecs live under pdata/internal, exposed only via opaque value types.",
+      "code_anchor": "pdata/pcommon/value.go:144",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-146",
+      "source_region": "critical-facts / data-flow ownership",
+      "kind": "boundary-rule",
+      "text": "ErrSkipProcessingData drops data WITHOUT propagating an error up the pipeline.",
+      "code_anchor": "processor/processorhelper/processor.go:22",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-147",
+      "source_region": "critical-facts / pdata data-model invariants + pdata.md",
+      "kind": "key-invariant",
+      "text": "pdata Value model is a typed tagged-union over OTLP AnyValue: ValueType has 8 variants Empty/Str/Int/Double/Bool/Map/Slice/Bytes; Value is pass-by-value over an internal pointer.",
+      "code_anchor": "pdata/pcommon/value.go:18-28,54-58",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-148",
+      "source_region": "critical-facts / pdata data-model invariants + pdata.md",
+      "kind": "technology-choice",
+      "text": "pdata model is machine-generated via mdatagen (//go:generate mdatagen metadata.yaml) \u05d2\u20ac\u201d edit templates/metadata, not the generated_* files.",
+      "code_anchor": "pdata/doc.go:4",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-149",
+      "source_region": "critical-facts / pdata data-model invariants + pdata.md",
+      "kind": "technology-choice",
+      "text": "pdata uses hand-rolled codecs (custom varint encode + custom JSON iterator/stream), not protobuf-go reflection \u05d2\u20ac\u201d a performance choice.",
+      "code_anchor": "pdata/internal/proto/marshal.go:7",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-150",
+      "source_region": "pdata.md / Key facts",
+      "kind": "key-invariant",
+      "text": "pprofile resolves string_value_ref/key_ref indices to real strings after unmarshal (Profiles dictionary indirection).",
+      "code_anchor": "pdata/pprofile/dictionary_helpers.go:16-19",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-151",
+      "source_region": "critical-facts / service lifecycle invariants + service.md",
+      "kind": "key-invariant",
+      "text": "Lifecycle ordering is inverted vs topology: start in REVERSE toposort order, shutdown in FORWARD toposort order.",
+      "code_anchor": "service/internal/graph/graph.go:413,456",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-152",
+      "source_region": "critical-facts / service lifecycle invariants + service.md",
+      "kind": "key-invariant",
+      "text": "Fixed service start sequence: start extensions -> NotifyConfig -> start pipelines -> NotifyPipelineReady; shutdown is the reverse.",
+      "code_anchor": "service/service.go:234",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-153",
+      "source_region": "critical-facts / service lifecycle invariants + service.md",
+      "kind": "key-invariant",
+      "text": "Telemetry providers shut down in reverse creation order (tracer, meter, logger) because tracer/meter may use the logger; Resource is created FIRST so providers share one service.instance.id.",
+      "code_anchor": "service/service.go:294",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-154",
+      "source_region": "critical-facts / service lifecycle invariants + service.md",
+      "kind": "boundary-rule",
+      "text": "Internal telemetry factory is mandatory \u05d2\u20ac\u201d New errors 'telemetry factory not provided' if nil.",
+      "code_anchor": "service/service.go:128",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-155",
+      "source_region": "critical-facts / service lifecycle invariants + service.md",
+      "kind": "key-invariant",
+      "text": "Validate is a config-only dry run \u05d2\u20ac\u201d builds the graph with noop providers and discards the result.",
+      "code_anchor": "service/service.go:347",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-156",
+      "source_region": "critical-facts / service lifecycle invariants + service.md",
+      "kind": "key-invariant",
+      "text": "Fatal component status (StatusFatalError) is pushed onto the host's AsyncErrorChannel chan error to signal the collector to abort.",
+      "code_anchor": "service/internal/graph/host.go:84",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-157",
+      "source_region": "critical-facts / service lifecycle invariants + service.md",
+      "kind": "boundary-rule",
+      "text": "Process metrics OS allow-list: registered only on linux/darwin/windows/freebsd/openbsd/solaris/plan9; other OSes continue with a warning instead of failing.",
+      "code_anchor": "service/service.go:380-393",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-158",
+      "source_region": "critical-facts / service lifecycle invariants + service.md",
+      "kind": "key-invariant",
+      "text": "Three feature gates govern service behavior: service.AllowNoPipelines, service.profilesSupport, telemetry.newPipelineTelemetry.",
+      "code_anchor": "service/metadata.yaml:192-209",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-159",
+      "source_region": "service.md / Boundary rules",
+      "kind": "boundary-rule",
+      "text": "Connector cross-pipeline validity is enforced: a connector used as exporter must have a supported corresponding receiver use (and vice-versa) or createNodes errors out.",
+      "code_anchor": "service/internal/graph/graph.go:173",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-160",
+      "source_region": "service.md / Key facts",
+      "kind": "key-invariant",
+      "text": "Extension start order is computed (dependency-ordered) and stop order is its reverse (slices.Backward).",
+      "code_anchor": "service/extensions/extensions.go:35",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-161",
+      "source_region": "service.md / Key facts",
+      "kind": "technology-choice",
+      "text": "service serves zPages debug HTTP endpoints (servicez, pipelinez, extensionz, featurez) on an http.ServeMux.",
+      "code_anchor": "service/internal/graph/host.go:89-114",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-162",
+      "source_region": "critical-facts / otelcol invariants + otelcol.md",
+      "kind": "key-invariant",
+      "text": "otelcol lifecycle state machine Starting->Running->Closing->Closed stored atomically in atomic.Int64.",
+      "code_anchor": "otelcol/collector.go:31-36",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-163",
+      "source_region": "critical-facts / otelcol invariants + otelcol.md",
+      "kind": "key-invariant",
+      "text": "Single-select control loop multiplexes config-watch reload, async fatal error, OS signals (SIGHUP=reload, SIGINT/SIGTERM=graceful shutdown), shutdown chan, ctx cancel; hot reload rebuilds a fresh service.",
+      "code_anchor": "otelcol/collector.go:376-407",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-164",
+      "source_region": "critical-facts / otelcol invariants + otelcol.md",
+      "kind": "boundary-rule",
+      "text": "Factory-mediated boundary: otelcol references only Factory interfaces keyed by component.Type, never concrete impls.",
+      "code_anchor": "otelcol/factories.go:21-54",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-165",
+      "source_region": "critical-facts / otelcol invariants + otelcol.md",
+      "kind": "boundary-rule",
+      "text": "Config-reference integrity gate: every pipeline component reference and service extension must be a configured top-level component.",
+      "code_anchor": "otelcol/config.go:82,90",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-166",
+      "source_region": "critical-facts / otelcol invariants + otelcol.md",
+      "kind": "boundary-rule",
+      "text": "A connector ID may not collide with an exporter or receiver ID.",
+      "code_anchor": "otelcol/config.go:68-78",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-167",
+      "source_region": "critical-facts / otelcol invariants + otelcol.md",
+      "kind": "boundary-rule",
+      "text": "At least one receiver and one exporter are required unless AllowNoPipelines (no default component rule).",
+      "code_anchor": "otelcol/config.go:55-65",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-168",
+      "source_region": "critical-facts / otelcol invariants + otelcol.md",
+      "kind": "boundary-rule",
+      "text": "Redaction boundary: print-config defaults to redacted; unredacted is explicit and feature-gated behind otelcol.printInitialConfig.",
+      "code_anchor": "otelcol/command_print.go:40,141",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-169",
+      "source_region": "critical-facts / otelcol invariants + otelcol.md",
+      "kind": "boundary-rule",
+      "text": "otelcol telemetry factory mandatory \u05d2\u20ac\u201d unmarshal fails fast with errNilTelemetryFactory if nil.",
+      "code_anchor": "otelcol/unmarshaler.go:19,33",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-170",
+      "source_region": "critical-facts / otelcol invariants + otelcol.md",
+      "kind": "technology-choice",
+      "text": "CLI is cobra-based with subcommands featuregate/components/validate/print-config; --config takes repeatable URIs and --set rewrites dotted keys to :: YAML overrides (default scheme env).",
+      "code_anchor": "otelcol/command.go:25,44-47",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-171",
+      "source_region": "otelcol.md / Key facts",
+      "kind": "technology-choice",
+      "text": "Two-phase logging via swappable zap core: a bufferedCore captures early logs, wrapped by a collectorCore whose delegate is hot-swapped (atomic.Pointer) to the real service logger once it exists.",
+      "code_anchor": "otelcol/collector.go:125-128",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-172",
+      "source_region": "critical-facts / component contract invariants + component.md",
+      "kind": "key-invariant",
+      "text": "Config is a bare alias type Config any \u05d2\u20ac\u201d no compile-time constraint; the struct/tag contract is enforced only at test time by reflection in CheckConfigStruct.",
+      "code_anchor": "component/config.go:13",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-173",
+      "source_region": "critical-facts / component contract invariants + component.md",
+      "kind": "key-invariant",
+      "text": "Kind is a closed set of five sealed values (Receiver/Processor/Exporter/Extension/Connector) using an unexported-field struct so callers cannot mint new kinds.",
+      "code_anchor": "component/component.go:87,91",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-174",
+      "source_region": "critical-facts / component contract invariants + component.md",
+      "kind": "key-invariant",
+      "text": "Component ID is the unique type[/name] key (separator /); type regex ^[a-zA-Z][0-9a-zA-Z_]{0,62}$, name 1-1024 Unicode chars excluding whitespace/control/symbol.",
+      "code_anchor": "component/identifiable.go:15,22,27",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-175",
+      "source_region": "critical-facts / component contract invariants + component.md",
+      "kind": "key-invariant",
+      "text": "Shutdown re-entrancy invariant: MUST be safe to call without a prior Start() and when already shut down; StartFunc/ShutdownFunc adapters are nil-safe.",
+      "code_anchor": "component/component.go:48",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-176",
+      "source_region": "critical-facts / component contract invariants + component.md",
+      "kind": "boundary-rule",
+      "text": "Host-communication boundary: a Component reaches its host only via the Host interface and must type-assert + error if a required extra interface is absent.",
+      "code_anchor": "component/host.go:8,12",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-177",
+      "source_region": "critical-facts / component contract invariants + component.md",
+      "kind": "key-invariant",
+      "text": "componentstatus.InstanceID encodes its pipeline IDs as a single 0x20-delimited string specifically to stay Comparable / map-key usable.",
+      "code_anchor": "component/componentstatus/instance.go:17,26",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-178",
+      "source_region": "component.md / Key facts",
+      "kind": "key-invariant",
+      "text": "StabilityLevel is an ordered enum starting at 1 (0 = Undefined skipped) with text (un)marshal + per-level log messages.",
+      "code_anchor": "component/component.go:109,119",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-179",
+      "source_region": "component.md / Key facts",
+      "kind": "key-invariant",
+      "text": "componentstatus.Status is an 8-value runtime health enum (None/Starting/OK/RecoverableError/PermanentError/FatalError/Stopping/Stopped); ReportStatus is best-effort and no-ops if host is not a Reporter.",
+      "code_anchor": "component/componentstatus/status.go:46",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-180",
+      "source_region": "consumer.md / Key facts",
+      "kind": "key-invariant",
+      "text": "OTLP error taxonomy lives in consumererror: permanent, Error (HTTP/gRPC status + retryable), downstreamError; retryability derived from OTLP HTTP codes (429/502/503/504) and gRPC codes.",
+      "code_anchor": "consumer/consumererror/permanent.go:10",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-181",
+      "source_region": "consumer.md / Key facts",
+      "kind": "key-invariant",
+      "text": "Panic-on-success-code guard: NewOTLPHTTPError panics on a 2xx code and NewOTLPGRPCError panics on codes.OK.",
+      "code_anchor": "consumer/consumererror/error.go:40",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-182",
+      "source_region": "consumer.md / Boundary rules",
+      "kind": "key-invariant",
+      "text": "consumertest.Consumer is a non-implementable convenience interface \u05d2\u20ac\u201d it carries an unexported unexported() method so external packages cannot implement it.",
+      "code_anchor": "consumer/consumertest/consumer.go:37",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-183",
+      "source_region": "receiver.md / Key facts",
+      "kind": "key-invariant",
+      "text": "OTLP receiver multiplexes 4 signals over 2 transports from ONE shared instance; consumers registered lazily via registerXConsumer and a server is only started for a signal whose next consumer is non-nil.",
+      "code_anchor": "receiver/otlpreceiver/otlp.go:100",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-184",
+      "source_region": "receiver.md / Boundary rules",
+      "kind": "boundary-rule",
+      "text": "receiver error-to-source mapping is protocol-dependent: a transport translates the Consume error into a protocol status (OTLP/HTTP codes; gRPC non-permanent->Unavailable, permanent->InvalidArgument).",
+      "code_anchor": "receiver/doc.go:15",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-185",
+      "source_region": "exporter.md / Key facts",
+      "kind": "technology-choice",
+      "text": "exporterhelper is the reusable resilience toolkit: configurable timeout (default 5s), retry/backoff (disabled by default), queue+batch, capabilities, start/shutdown, assembled via functional Options.",
+      "code_anchor": "exporter/exporterhelper/common.go:18-53",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-186",
+      "source_region": "exporter.md / Key facts",
+      "kind": "key-invariant",
+      "text": "OTLP egress retry classification by gRPC status: retries on Canceled/DeadlineExceeded/Aborted/OutOfRange/Unavailable/DataLoss (ResourceExhausted only with RetryInfo); marks non-retryable errors consumererror.NewPermanent.",
+      "code_anchor": "exporter/otlpexporter/otlp.go:173-222",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-187",
+      "source_region": "exporter.md / Key facts",
+      "kind": "key-invariant",
+      "text": "OTLP partial-success handling: push paths log a warning with rejected-span/datapoint/log/profile counts instead of failing the whole request.",
+      "code_anchor": "exporter/otlpexporter/otlp.go:103-109",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-188",
+      "source_region": "exporter.md / Key facts",
+      "kind": "key-invariant",
+      "text": "gRPC client construction is deferred to Start (not newExporter) because only there is the host available to build the auth round-tripper from Extensions.",
+      "code_anchor": "exporter/otlpexporter/otlp.go:63-67",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-189",
+      "source_region": "exporter.md / Key facts",
+      "kind": "component-exists",
+      "text": "Bundled reference exporters ship in-tree: otlp (gRPC), otlphttp (HTTP), debug (otlptext console dump), nop.",
+      "code_anchor": "exporter/otlpexporter/otlp.go:4",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-190",
+      "source_region": "exporter.md / Boundary rules",
+      "kind": "boundary-rule",
+      "text": "Storage access is host-mediated: the exporter queue never opens files itself; it must obtain a storage extension via host.GetExtensions(), erroring errNoStorageClient/errWrongExtensionType otherwise.",
+      "code_anchor": "exporter/exporterhelper/internal/queue/persistent_queue.go:549-560",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-191",
+      "source_region": "processor.md / Key facts",
+      "kind": "key-invariant",
+      "text": "Batch processor flushes on SendBatchSize reached OR Timeout elapsed (defaults 8192 / 200ms), with per-shard goroutine + timer loops.",
+      "code_anchor": "processor/batchprocessor/batch_processor.go:38-40",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-192",
+      "source_region": "processor.md / Key facts",
+      "kind": "key-invariant",
+      "text": "Memory-limiter processor is a pure admission gate: on MustRefuse() it returns the data unchanged plus ErrDataRefused; it never transforms payload.",
+      "code_anchor": "processor/memorylimiterprocessor/memorylimiter.go:54-64",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-193",
+      "source_region": "processor.md / Key facts",
+      "kind": "component-exists",
+      "text": "processorhelper wraps a per-signal Process*Func into a consumer.New*, auto-recording in/out item counts + internal duration as OTel telemetry around each call.",
+      "code_anchor": "processor/processorhelper/traces.go:50-72",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-194",
+      "source_region": "connector.md / Key facts",
+      "kind": "key-invariant",
+      "text": "BaseRouter[T any] is a Go generic shared across all four signal routers (logs/metrics/traces/profiles), parameterizing Consumer(...pipeline.ID) and PipelineIDs() over the consumer type.",
+      "code_anchor": "connector/internal/router.go:16",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-195",
+      "source_region": "connector.md / Key facts",
+      "kind": "key-invariant",
+      "text": "A router feeds the FIRST consumer of each named pipeline and fans out across all pipelines; Consumer(ids...) builds a fan-out and returns an aggregated multierr error if any pipeline ID is missing.",
+      "code_anchor": "connector/logs_router.go:18",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-196",
+      "source_region": "connector.md / Boundary rules",
+      "kind": "component-exists",
+      "text": "Bundled forwardconnector is the canonical reference connector: a pass-through identity that declares MutatesData: false.",
+      "code_anchor": "connector/forwardconnector/forward.go:88-90",
+      "in_scope": true
+    },
+    {
+      "ec_id": "EC-197",
+      "source_region": "critical-facts / doc.go provenance note",
+      "kind": "technology-choice",
+      "text": "receiver/doc.go and pdata/doc.go are in-source package documentation (.go files), so their stated contracts are code-grounded, not removed prose.",
+      "code_anchor": "receiver/doc.go:4",
+      "in_scope": true
+    }
+  ],
+  "adjudication": [
+    {
+      "referent": "The Receiver component type and its receiver Factory",
+      "rc_id": "RC-001",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-001",
+      "ec_kind": "component-exists",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-001 asserts a Receiver component type exists with a receiver Factory (anchor receiver/receiver.go:60). EC-001 [component-exists] states \"receiver is a component: the pipeline ingress module defining Traces/Metrics/Logs/Profiles interfaces + Factory\" (@receiver/receiver.go:20) \u05d2\u20ac\u201d same referent, same fact (component exists + has a Factory). The blind component doc C:/tmp/p5_otelcol_blind/.ai/doc"
+    },
+    {
+      "referent": "The Processor component type (with its processor Factory), anchored at processor/processor.go:16-31,49-51",
+      "rc_id": "RC-002",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-003",
+      "ec_kind": "component-exists",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "EC-003 [component-exists] states \"processor is a component: pipeline-middle module...\" citing @processor/processor.go:16-31 \u05d2\u20ac\u201d the exact RC referent and code area (the RC key anchor processor/processor.go:51 is the Factory interface within 16-31). The blind artifact independently confirms both halves of the RC: (1) component-exists \u05d2\u20ac\u201d architecture.md:51-53 and :79-80 describe `processor` as the "
+    },
+    {
+      "referent": "The Exporter component type (exporter/exporter.go) with its exporter Factory interface",
+      "rc_id": "RC-003",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-005",
+      "ec_kind": "component-exists",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-003 asserts an Exporter component type exists with an exporter Factory (anchor exporter/exporter.go:51). Source verified: exporter/exporter.go defines Traces/Metrics/Logs exporter interfaces and a `Factory` interface at line 51. The blind artifact captures this same fact: EC-005 [component-exists] \"exporter is a component: the egress tier / terminal pipeline component\" (@exporter/exporter.go:16"
+    },
+    {
+      "referent": "The Connector component type (and its connector Factory) at connector/connector.go",
+      "rc_id": "RC-004",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-007",
+      "ec_kind": "component-exists",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-004 asserts two facts: (1) a Connector component type exists, (2) it has a connector Factory. Both are captured by the blind artifact. (1) EC-007 [component-exists] \"connector is a component: joins pipelines, acting as an exporter from one pipeline and a receiver to downstream pipelines\" (@connector/connector.go:16-18), and the blind component doc connector.md is titled \"Component: connector\". "
+    },
+    {
+      "referent": "The Extension component type/kind (extension/extension.go:16)",
+      "rc_id": "RC-005",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-019",
+      "ec_kind": "component-exists",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-005 asserts the existence of an Extension component type (anchor extension/extension.go:16, where `type Extension interface { component.Component }` is defined). EC-019 [component-exists] states \"extension is a component kind wired into the service pipeline (alongside receiver/processor/exporter/connector)\" \u05d2\u20ac\u201d the SAME fact about the SAME referent. Corroborated across the blind artifact: AGENT"
+    },
+    {
+      "referent": "The Service component (service/service.go) that initializes telemetry providers and assembles the pipeline DAG",
+      "rc_id": "RC-006",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-009",
+      "ec_kind": "component-exists",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-006 asserts a Service component exists that initializes telemetry and pipelines (anchor service/service.go:110). The blind artifact captures the SAME fact about the SAME referent: EC-009 [component-exists] \"service is a component: the runtime orchestrator + graph builder\" (@service/service.go:99), reinforced by EC-010 [component-role] (assembles the pipeline DAG, owns component lifecycle). The "
+    },
+    {
+      "referent": "The internal pipeline Graph representation (service/internal/graph: the `Graph` struct holding `componentGraph *simple.DirectedGraph` + `pipelines map[pipeline.ID]*pipelineNodes`) in which the collector's pipelines are represented.",
+      "rc_id": "RC-007",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-132",
+      "ec_kind": "component-exists",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-007 (component-exists) asserts that pipelines are represented by an internal pipeline Graph, anchored at service/internal/graph/graph.go:4 (package doc: \"Package graph contains the internal graph representation of the pipelines\"). Code confirms: service/internal/graph/graph.go:60 `type Graph struct` holds `componentGraph *simple.DirectedGraph` (line 62) and `pipelines map[pipeline.ID]*pipelineN"
+    },
+    {
+      "referent": "The otelcol Collector type that owns the run lifecycle (otelcol/collector.go)",
+      "rc_id": "RC-008",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-012",
+      "ec_kind": "component-exists",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-008 asserts there is a `Collector` type owning the run lifecycle (anchor otelcol/collector.go:99, where `type Collector struct` is defined; code confirms `Collector.Run` starts the collector and waits for shutdown). The blind artifact captures this same fact directly. EC-012 [component-role]: \"otelcol role = collector entry: CLI + lifecycle; Collector.Run starts the collector and blocks until s"
+    },
+    {
+      "referent": "the pdata package / component that defines the internal pipeline data model",
+      "rc_id": "RC-009",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-013",
+      "ec_kind": "component-exists",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-009 [component-exists] asserts there is a pdata package defining the internal pipeline data model (anchor pdata/doc.go:6). EC-013 [component-exists] states \"pdata is a component: the canonical in-memory data model for all pipeline signals + proto/JSON (un)marshalers\" at the IDENTICAL anchor @pdata/doc.go:6 \u05d2\u20ac\u201d same referent, same fact (pdata defines the internal data model). EC-014 [component-r"
+    },
+    {
+      "referent": "the consumer package and its Consumer interface contract (the data sink between pipeline components)",
+      "rc_id": "RC-010",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-015",
+      "ec_kind": "component-exists",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-010 asserts a consumer package exists that defines the Consumer interface (the data-sink contract between components), anchored at consumer/doc.go:4. The blind artifact captures the SAME FACT about the SAME referent: EC-015 [component-exists] \"consumer is a component: defines the per-signal Traces/Metrics/Logs (+experimental Profiles) consumer contracts + BaseConsumer.Capabilities()\" (@consumer"
+    },
+    {
+      "referent": "receiver component's role (pipeline ingress: accept external-format data, translate to internal format, pass downstream)",
+      "rc_id": "RC-011",
+      "rc_kind": "component-role",
+      "ec_id": "EC-002",
+      "ec_kind": "component-role",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-011 describes the receiver's role: accepts data in a format, translates to the internal format, passes it on to processors/exporters. EC-002 [component-role] states \"receiver role = pipeline ingress: translates external-format data into internal pdata and pushes it to the next consumer\" \u05d2\u20ac\u201d the SAME fact about the SAME referent. The blind receiver component doc (C:/tmp/p5_otelcol_blind/.ai/docs"
+    },
+    {
+      "referent": "exporter component role (data egress)",
+      "rc_id": "RC-012",
+      "rc_kind": "component-role",
+      "ec_id": "EC-006",
+      "ec_kind": "component-role",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-012 says \"An Exporter is how data leaves the Collector (sends data to a destination/backend).\" EC-006 [component-role] states \"exporter role = egress: terminal pipeline component that consumes telemetry and sends it to an external destination.\" Same referent (exporter), same fact (data egress / sends to external destination/backend). Grounded to @exporter/exporter.go:16-31, matching the RC's ke"
+    },
+    {
+      "referent": "The processor component's role in the pipeline (transforming telemetry between receivers and exporters)",
+      "rc_id": "RC-013",
+      "rc_kind": "component-role",
+      "ec_id": "EC-004",
+      "ec_kind": "component-role",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-013 asserts the processor processes/transforms telemetry as it passes through the pipeline, sitting between receivers and exporters. EC-004 states the same fact: \"processor role = pipeline-middle: consumes one signal, optionally transforms it, forwards to the next consumer\" (@processor/processor.go:16-31). The blind artifact AGENTS.md line 45 records this verbatim (\"Pipeline-middle: consumes on"
+    },
+    {
+      "referent": "connector component (its dual exporter/receiver pipeline-joining role)",
+      "rc_id": "RC-014",
+      "rc_kind": "component-role",
+      "ec_id": "EC-008",
+      "ec_kind": "component-role",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-014 asserts a Connector joins two pipelines: consumes as an exporter at the end of one pipeline and emits as a receiver at the start of another (anchor connector/connector.go:16-31). EC-008 [component-role] states \"connector role = joins pipelines: acts as an exporter from one pipeline and a receiver to one-or-more downstream pipelines\" (@connector/connector.go:16-18) \u05d2\u20ac\u201d the SAME fact, SAME re"
+    },
+    {
+      "referent": "The Extension component's defining role: provides capabilities NOT part of pipeline data processing, and is started/stopped + notified about Collector config (ConfigWatcher.NotifyConfig) and pipeline readiness (PipelineWatcher.Ready/NotifyPipelineReady). Referent file: extension/extensioncapabilities/interfaces.go:28 (+ extension/extension.go).</referent>\n<parameter name=\"evidence\">RC-015's PRIMARY fact is the extension's defining role: capabilities outside pipeline data processing, plus config/pipeline-ready notification contracts (PipelineWatcher.Ready + ConfigWatcher.NotifyConfig at extension/extensioncapabilities/interfaces.go:23-49). This fact is GENUINELY ABSENT from the blind artifact. The nearest EC, EC-019 [component-exists], only says \"extension is a component kind wired into the service pipeline (alongside receiver/processor/exporter/connector)\" (@service/service.go:23) \u05d2\u20ac\u201d it characterizes extension as a pipeline component kind, the opposite framing, and never states the distinctive \"not part of pipeline data processing\" role, nor the ConfigWatcher/PipelineWatcher notification contracts from the extension's perspective. The lifecycle half (start extensions -> NotifyConfig -> NotifyPipelineReady) appears only in EC-152, but that is a SERVICE start-sequence invariant (@service/service.go:234), describing what the service does, not the extension's role as referent. The blind artifact has NO dedicated extension component doc (the only component kind missing one) and the \"capabilities\" mentions in it all refer to the service MutatesData capabilities node \u05d2\u20ac\u201d unrelated. Anti-vacuity: the blind artifact cites ZERO extension/*.go source files; it references extension only as the TARGET of edges from service/otelcol/exporter (citing those other components' files). The extension component's own source area (extension/extension.go, extension/extensioncapabilities/interfaces.go \u05d2\u20ac\u201d which exists in C:/tmp/p5_otelcol) was provably NOT in the blind read-set, so miss_referent_read=false (scope caveat, not a coverage failure).",
+      "rc_id": "RC-015",
+      "rc_kind": "component-role",
+      "ec_id": null,
+      "ec_kind": null,
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": false,
+      "evidence": "[CORRECTED read=True] The extension/ package is in the blind tree and extensions are referenced across the blind artifact (otelcol.md, service.md, component.md) and RC-005 (Extension exists) matched. The referent WAS in the read-set; this is a genuine role-capture MISS (the blind under-decomposed extension as a first-class component, omitting its start/stop/notify lifecycle role), not a scope cave"
+    },
+    {
+      "referent": "The Service constructor's initialization sequence \u05d2\u20ac\u201d initialize telemetry, then initialize/build the pipeline graph (service/service.go New(): telemetry providers set up at ~200-207, then srv.initGraph at :215)",
+      "rc_id": "RC-016",
+      "rc_kind": "component-role",
+      "ec_id": "EC-010",
+      "ec_kind": "component-role",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-016 is a component-role/sequence fact: the Service initializes telemetry first, then builds the pipelines. Code confirms: service/service.go sets up telemetrySettings (tracer/meter/logger providers) at lines 200-207, then calls srv.initGraph(ctx, cfg) at line 215. The blind artifact captures this same ordered fact. service.md Role (line 7): \"The runtime orchestrator that assembles a Collector's"
+    },
+    {
+      "referent": "The service/internal/graph Graph (graph.Build) converting configured pipelines into an internal node+edge graph representation",
+      "rc_id": "RC-017",
+      "rc_kind": "component-role",
+      "ec_id": "EC-010",
+      "ec_kind": "component-role",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-017 asserts the Graph converts configured pipelines into an internal graph representation, building nodes and edges between components (anchor service/internal/graph/graph.go:75 = graph.Build, which calls createNodes + createEdges). The blind DeepInit model folds the graph into the `service` component (no separate Graph component), and captures the SAME fact: EC-010 [component-role] states serv"
+    },
+    {
+      "referent": "The otelcol Collector lifecycle: NewCollector constructor + Collector.Run (starts and blocks until shutdown)",
+      "rc_id": "RC-018",
+      "rc_kind": "component-role",
+      "ec_id": "EC-012",
+      "ec_kind": "component-role",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-018 asserts two facts about the otelcol Collector referent: (1) created by NewCollector, (2) Collector.Run starts the collector and blocks until shutdown. EC-012 [component-role] states verbatim: \"otelcol role = collector entry: CLI + lifecycle; Collector.Run starts the collector and blocks until shutdown (@otelcol/collector.go:329)\" \u05d2\u20ac\u201d same referent, same fact, same anchor (collector.go:329)."
+    },
+    {
+      "referent": "Intra-pipeline data flow: receiver -> processor(s) -> exporter, built in service/internal/graph createEdges",
+      "rc_id": "RC-019",
+      "rc_kind": "dependency-edge",
+      "ec_id": "EC-138",
+      "ec_kind": "dependency-edge",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-019 (anchor service/internal/graph/graph.go:264, the createEdges function) asserts data within a pipeline flows receiver -> processor(s) -> exporter. The blind artifact captures this same fact in EC-138 [key-invariant]: \"Strict layered intra-pipeline flow: receiver -> capabilities node -> processors (ordered) -> fanout node -> exporters; edges drawn only in that direction\" anchored to service/i"
+    },
+    {
+      "referent": "The receiver -> consumer edge: a receiver is handed a \"next\"/nextConsumer handle to which it forwards data.",
+      "rc_id": "RC-020",
+      "rc_kind": "dependency-edge",
+      "ec_id": "EC-038",
+      "ec_kind": "dependency-edge",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-020 states a receiver is given a handle to a nextConsumer where it sends its data next (receiver/doc.go:7-8). EC-038 [dependency-edge] captures the SAME FACT on the SAME referent: \"receiver -> consumer (import / runtime-call: next sink, factory create-funcs receive downstream consumer.Traces/Metrics/Logs)\" grounded at receiver/receiver.go:67 \u05d2\u20ac\u201d the CreateTraces(ctx, set, cfg, next consumer.Tra"
+    },
+    {
+      "referent": "connector component's dual nature \u05d2\u20ac\u201d bridges pipelines, acting as both exporter (consuming) and receiver (emitting) \u05d2\u20ac\u201d connector/connector.go:16-18",
+      "rc_id": "RC-021",
+      "rc_kind": "dependency-edge",
+      "ec_id": "EC-008",
+      "ec_kind": "dependency-edge",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-021 [dependency-edge]: \"A Connector bridges two pipelines, acting as both an exporter (consuming) and a receiver (emitting).\" EC-008 [component-role] states: \"connector role = joins pipelines: acts as an exporter from one pipeline and a receiver to one-or-more downstream pipelines\" (@connector/connector.go:16-18) \u05d2\u20ac\u201d the SAME FACT about the SAME referent. EC-007 [component-exists] independently"
+    },
+    {
+      "referent": "The per-component-type Factory interface + corresponding NewFactory function used by implementations to register their create/key functions with the collector (receiver/receiver.go:60).",
+      "rc_id": "RC-022",
+      "rc_kind": "boundary-rule",
+      "ec_id": "EC-110",
+      "ec_kind": "boundary-rule",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-022 (boundary-rule): each component type has a Factory interface + a corresponding NewFactory, used by implementations to register their key functions. The blind artifact captures the SAME fact about the SAME referent. EC-110 [key-invariant]: \"Sealed factories: Receiver/Processor/Exporter/Connector Factory interfaces cannot be implemented directly \u05d2\u20ac\u201d the unexported unexportedFactoryFunc() mark"
+    },
+    {
+      "referent": "Graph.StartAll lifecycle ordering \u05d2\u20ac\u201d pipeline graph is topologically sorted and components are started in reverse topological order (service/internal/graph/graph.go:408-416)",
+      "rc_id": "RC-023",
+      "rc_kind": "key-invariant",
+      "ec_id": "EC-151",
+      "ec_kind": "key-invariant",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-023 asserts the pipeline graph is topo-sorted and components start in reverse topological order (Graph.StartAll, graph.go:408). Code at C:/tmp/p5_otelcol/service/internal/graph/graph.go:408-416 confirms: StartAll calls topo.Sort(g.componentGraph) then iterates slices.Backward(nodes) to Start each component \"in reverse topological order so that downstream components are started before upstream.\""
+    },
+    {
+      "referent": "component type-name validity rule (the typeRegexp at component/identifiable.go:22 constraining component type names to leading-alpha + alphanumeric/underscore)",
+      "rc_id": "RC-024",
+      "rc_kind": "boundary-rule",
+      "ec_id": "EC-174",
+      "ec_kind": "boundary-rule",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-024 (boundary-rule: components MUST use lower_snake_case names) is anchored to component/identifiable.go:22, which is `typeRegexp = regexp.MustCompile(`^[a-zA-Z][0-9a-zA-Z_]{0,62}$`)` \u05d2\u20ac\u201d the regex enforcing the component TYPE naming constraint (lowercase/uppercase letters, digits, underscore; the snake_case-style convention). The blind artifact captures the SAME FACT about the SAME referent at"
+    },
+    {
+      "referent": "The Collector's runtime-robustness boundary rule at otelcol/collector.go:329 (Collector.Run returning error): no crash/exit outside main() \u05d2\u20ac\u201d no log.Fatal/os.Exit after startup \u05d2\u20ac\u201d errors propagated to the caller, and no crash on bad input in receivers or after startup.",
+      "rc_id": "RC-025",
+      "rc_kind": "boundary-rule",
+      "ec_id": null,
+      "ec_kind": null,
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": false,
+      "evidence": "The RC's fact is a holistic collector-wide robustness invariant. Code confirms it: `grep -rln \"os.Exit\\|log.Fatal\" otelcol/` returns nothing (collector.go:329 is `func (col *Collector) Run(ctx context.Context) error` \u05d2\u20ac\u201d returns error rather than crashing). The blind artifact DID analyze this referent (anti-vacuity satisfied): otelcol.md and critical-facts.md both open collector.go:329, the contro"
+    },
+    {
+      "referent": "The codebase's organization as multiple per-component Go modules, each with its own go.mod",
+      "rc_id": "RC-026",
+      "rc_kind": "boundary-rule",
+      "ec_id": "EC-022",
+      "ec_kind": "boundary-rule",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-026 asserts the codebase is organized as multiple per-component/per-package Go modules, each with its own go.mod (anchor client/go.mod:1). Code confirms: client/go.mod declares `module go.opentelemetry.io/collector/client` and there are 97 go.mod files across the tree. The blind artifact captured this exact fact. EC-022 [technology-choice]: \"Each component is its own Go module wired to siblings"
+    },
+    {
+      "referent": "Service.Start ordered lifecycle sequence (service/service.go Start method)",
+      "rc_id": "RC-027",
+      "rc_kind": "key-invariant",
+      "ec_id": "EC-152",
+      "ec_kind": "key-invariant",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "EC-152 [key-invariant] states \"Fixed service start sequence: start extensions -> NotifyConfig -> start pipelines -> NotifyPipelineReady; shutdown is the reverse\" anchored at @service/service.go:234. This is the SAME FACT about the SAME referent as RC-027 (\"Service.Start runs in order: start all extensions, notify extensions about the configuration, start all pipelines, then notify extensions that "
+    },
+    {
+      "referent": "The otelcol startup/entry-point call chain (command.NewCommand -> NewCollector -> Collector.Run -> setupConfigurationComponents -> service.New/Start), anchored at otelcol/collector.go:345.",
+      "rc_id": "RC-028",
+      "rc_kind": "entry-point",
+      "ec_id": null,
+      "ec_kind": null,
+      "bucket": "MISS",
+      "miss_referent_read": true,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": false,
+      "evidence": "RC-028 is an [entry-point] fact: the ORDERED boot call-chain. The blind artifact captures the chain's scattered endpoint pieces but never assembles the chain or its CLI front-half. EC-012/otelcol.md:12 = \"Collector.Run starts the collector and blocks until shutdown\" (one endpoint). EC-085/otelcol.md:16 = otelcol->service via service.New(...) then Start/Shutdown, citing the same collector.go:212,25"
+    },
+    {
+      "referent": "The Collector's logging technology choice (zap structured logger)",
+      "rc_id": "RC-029",
+      "rc_kind": "technology-choice",
+      "ec_id": "EC-032",
+      "ec_kind": "technology-choice",
+      "bucket": "MATCH",
+      "miss_referent_read": false,
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "refuter_signoff": true,
+      "evidence": "RC-029's core fact = \"the Collector uses the zap structured logger for logging.\" EC-032 [technology-choice] states \"otelcol CLI/runtime stack uses cobra CLI, zap/zapcore logging, confmap+koanf config, multierr error accumulation\" (@otelcol/go.mod:1-3). This is the SAME FACT about the SAME referent (the Collector's logging technology). Confirmed in the blind artifact's critical-facts.md:33 (\"zap/za"
+    }
+  ],
+  "beyond_doc": [
+    {
+      "ec_id": "EC-029",
+      "referent": "Default OTLP endpoints gRPC localhost:4317 / HTTP localhost:4318",
+      "note": "Verified @receiver/otlpreceiver/factory.go:44-48 (grpcCfg endpoint localhost:4317, httpCfg localhost:4318). No RC mentions concrete default endpoints. Beyond-doc technology-choice."
+    },
+    {
+      "ec_id": "EC-033",
+      "referent": "Pipeline DAG built on the gonum graph library (graph/simple + topo)",
+      "note": "Verified @service/internal/graph/graph.go:24-26 imports gonum graph/simple/topo. RC-007 only says a pipeline Graph exists; the gonum implementation choice is not in the doc. Beyond-doc."
+    },
+    {
+      "ec_id": "EC-109",
+      "referent": "Pipeline graph MUST be a DAG; fails with 'cycle detected' via topo.DirectedCyclesIn",
+      "note": "Verified @service/internal/graph/graph.go:295 (topo.Sort + cycleErr/DirectedCyclesIn). RC-023 covers topo-sort/reverse-start but not the DAG-or-fail cycle-detection invariant. Beyond-doc key-invariant."
+    },
+    {
+      "ec_id": "EC-118",
+      "referent": "pdata mutability: *State + AssertMutable() panics 'invalid access to shared data'; MarkReadOnly flips the bit",
+      "note": "Verified @pdata/internal/state.go:37-41 (AssertMutable panics 'invalid access to shared data'). No RC addresses the pdata mutability/state model. Beyond-doc key-invariant."
+    },
+    {
+      "ec_id": "EC-125",
+      "referent": "Exporter in-memory send queue default stores 1000 requests, non-blocking when full, ErrQueueIsFull",
+      "note": "Verified @exporter/exporterhelper/queue_batch.go:40-42 (default queue stores 1000 requests, non-blocking). No RC covers the exporter send queue / data stores. Beyond-doc data-store."
+    },
+    {
+      "ec_id": "EC-162",
+      "referent": "otelcol lifecycle state machine Starting->Running->Closing->Closed in atomic.Int64",
+      "note": "Verified @otelcol/collector.go:31-36 (StateStarting/Running/Closing/Closed). RC-018 only says Collector.Run blocks until shutdown; the explicit state machine is not in the doc. Beyond-doc key-invariant."
+    },
+    {
+      "ec_id": "EC-047",
+      "referent": "receiver has NO edge to processor/exporter/connector/service/otelcol (sits strictly below)",
+      "note": "Verified @receiver/go.mod (no such requires) + no imports. The doc describes data-flow direction (RC-019) but never the dependency-layering boundary 'no edge'. Beyond-doc boundary-rule."
+    },
+    {
+      "ec_id": "EC-148",
+      "referent": "pdata model is machine-generated via mdatagen (//go:generate mdatagen metadata.yaml)",
+      "note": "Verified @pdata/doc.go:4 (//go:generate mdatagen). No RC mentions code generation. Beyond-doc technology-choice."
+    },
+    {
+      "ec_id": "EC-170",
+      "referent": "cobra CLI with subcommands featuregate/components/validate/print-config; --config repeatable, --set overrides",
+      "note": "Verified @otelcol/command.go:44-47 (AddCommand featuregate/components/validate/print-config). RC-028/029 cover startup path + zap; the CLI subcommand surface is not in the doc. Beyond-doc technology-choice."
+    },
+    {
+      "ec_id": "EC-098",
+      "referent": "pdata -> featuregate is the only production cross-component edge (registers pdata.useProtoPooling)",
+      "note": "Verified @pdata/internal/metadata/generated_feature_gates.go:6-9 (imports featuregate, registers pdata.useProtoPooling). RC-009 says pdata exists; this dependency-edge fact is beyond-doc."
+    }
+  ],
+  "scores": {
+    "coverage_overall": {
+      "n": 26,
+      "d": 29,
+      "pct": 0.8966,
+      "wilson95_lb": 0.7361
+    },
+    "coverage_by_kind": {
+      "component-exists": {
+        "n": 10,
+        "d": 10
+      },
+      "component-role": {
+        "n": 7,
+        "d": 8
+      },
+      "dependency-edge": {
+        "n": 3,
+        "d": 3
+      },
+      "data-store": {
+        "n": 0,
+        "d": 0
+      },
+      "boundary-rule": {
+        "n": 3,
+        "d": 4
+      },
+      "key-invariant": {
+        "n": 2,
+        "d": 2
+      },
+      "entry-point": {
+        "n": 0,
+        "d": 1
+      },
+      "technology-choice": {
+        "n": 1,
+        "d": 1
+      }
+    },
+    "faithfulness": {
+      "n": 26,
+      "d": 26,
+      "pct": 1.0,
+      "wilson95_lb": 0.8713
+    },
+    "beyond_doc_count": 169,
+    "deepinit_wrong_high": 0
+  },
+  "scoring_provenance": {
+    "method": " isolated-agent scoring (separation of duties): a key-reader + an EC-extractor (BLIND to the key) + one matcher per RC + a faithfulness refuter per overlap (vs CODE) + a beyond-doc finder. Workflow  (fact-keyed).",
+    "orchestrator_caveat": "The orchestrating session authored the curator keys, so it is not a fully fresh scorer; but every EC-extraction, match, and faithfulness JUDGMENT was made by an isolated agent (the EC-extractor blind to the key). Recorded honestly.",
+    "reconciliation": " RC-015 anti-vacuity corrected to read=True (extension package in read-set + referenced in blind output; genuine role MISS \u2014 the blind planner omitted extension as a first-class component despite RC-005 component-exists matching)."
+  },
+  "provenance": {
+    "doc_in_inputs": false,
+    "key_held_out": true,
+    "training_contamination_caveat": true,
+    "publishable": "indicative",
+    "caveats": [
+      "INDICATIVE \u2014 small-n, fuzzy truth, below any ship-gate",
+      "attribution-adjudicated \u2014 divergences resolved to CODE, not auto-scored",
+      "doc-bounded \u2014 agreement with a good human doc, not absolute completeness",
+      "\u00a718 (9/9, FP 0) stays the product headline",
+      "training-contamination \u2014 otelcol is a public repo; the blind output may be informed by pretraining, so the number is INDICATIVE."
+    ],
+    "tune_or_heldout": "tune",
+    "harness_section": "\u00a734"
+  }
+}

@@ -1,0 +1,1136 @@
+{
+  "graphify_parseable_count": 15,
+  "grid": {
+    "C": {
+      "L": [
+        "redis"
+      ]
+    },
+    "C++": {
+      "M": [
+        "fmt"
+      ]
+    },
+    "Crystal": {
+      "S": [
+        "kemal"
+      ]
+    },
+    "Elixir": {
+      "M": [
+        "phoenix"
+      ]
+    },
+    "Go": {
+      "M": [
+        "gin"
+      ],
+      "S": [
+        "gorilla-mux"
+      ]
+    },
+    "Java": {
+      "L": [
+        "commercetools-sync-java"
+      ]
+    },
+    "JavaScript": {
+      "M": [
+        "express"
+      ]
+    },
+    "Kotlin": {
+      "M": [
+        "kotlinx-schema"
+      ]
+    },
+    "PHP": {
+      "L": [
+        "laravel-framework"
+      ]
+    },
+    "Python": {
+      "L": [
+        "pyccel"
+      ],
+      "M": [
+        "click"
+      ],
+      "S": [
+        "itsdangerous"
+      ]
+    },
+    "Ruby": {
+      "M": [
+        "sinatra"
+      ]
+    },
+    "Rust": {
+      "M": [
+        "uniffi-rs"
+      ]
+    },
+    "TypeScript": {
+      "L": [
+        "excalidraw"
+      ]
+    }
+  },
+  "note": "Deterministic language x size matrix. scc (size/langs/tier) + Graphify (AST parseability) + pinned SHA. No LLM. The substrate for the  full-pipeline runs + the  cost model.",
+  "repo_count": 16,
+  "repos": {
+    "click": {
+      "clone_depth": "shallow",
+      "dominant_language": "Python",
+      "file_count": 132,
+      "graphify": {
+        "ast_nodes": 2200,
+        "edges": 5318,
+        "import_edges": 335,
+        "nodes": 2200,
+        "parseable": true,
+        "source_ast_nodes": 1865
+      },
+      "languages": [
+        {
+          "lang": "Python",
+          "loc": 20346,
+          "pct": 74.9
+        },
+        {
+          "lang": "Markdown",
+          "loc": 6080,
+          "pct": 22.4
+        },
+        {
+          "lang": "TOML",
+          "loc": 354,
+          "pct": 1.3
+        },
+        {
+          "lang": "YAML",
+          "loc": 285,
+          "pct": 1.0
+        },
+        {
+          "lang": "SVG",
+          "loc": 53,
+          "pct": 0.2
+        },
+        {
+          "lang": "Plain Text",
+          "loc": 23,
+          "pct": 0.1
+        },
+        {
+          "lang": "JSON",
+          "loc": 17,
+          "pct": 0.1
+        },
+        {
+          "lang": "Shell",
+          "loc": 6,
+          "pct": 0.0
+        }
+      ],
+      "loc": 27166,
+      "pinned_sha": "8a1b1a33d739be05b7e91251e3c0dde77c5e152f",
+      "primary_language": {
+        "file_count": 63,
+        "lang": "Python",
+        "loc": 20346,
+        "pct": 74.9
+      },
+      "repo": "pallets/click",
+      "size_basis": "source_loc (code only; data/markup excluded)",
+      "size_tier": "M",
+      "source_loc": 20346
+    },
+    "commercetools-sync-java": {
+      "clone_depth": "shallow",
+      "dominant_language": "Java",
+      "file_count": 809,
+      "graphify": {
+        "ast_nodes": 9559,
+        "edges": 422393,
+        "import_edges": 0,
+        "nodes": 9559,
+        "parseable": true,
+        "source_ast_nodes": 9003
+      },
+      "languages": [
+        {
+          "lang": "Java",
+          "loc": 104655,
+          "pct": 81.4
+        },
+        {
+          "lang": "JSON",
+          "loc": 16238,
+          "pct": 12.6
+        },
+        {
+          "lang": "Markdown",
+          "loc": 6318,
+          "pct": 4.9
+        },
+        {
+          "lang": "Gradle",
+          "loc": 453,
+          "pct": 0.4
+        },
+        {
+          "lang": "XML",
+          "loc": 268,
+          "pct": 0.2
+        },
+        {
+          "lang": "YAML",
+          "loc": 190,
+          "pct": 0.1
+        },
+        {
+          "lang": "License",
+          "loc": 169,
+          "pct": 0.1
+        },
+        {
+          "lang": "Shell",
+          "loc": 142,
+          "pct": 0.1
+        }
+      ],
+      "loc": 128513,
+      "pinned_sha": "a0fbe1f4e6c83965f1ae96596cb58c084e65e05f",
+      "primary_language": {
+        "file_count": 574,
+        "lang": "Java",
+        "loc": 104655,
+        "pct": 81.4
+      },
+      "repo": "commercetools/commercetools-sync-java",
+      "size_basis": "source_loc (code only; data/markup excluded)",
+      "size_tier": "L",
+      "source_loc": 105108
+    },
+    "excalidraw": {
+      "clone_depth": "shallow",
+      "dominant_language": "TypeScript",
+      "file_count": 896,
+      "graphify": {
+        "ast_nodes": 5276,
+        "edges": 22516,
+        "import_edges": 4348,
+        "nodes": 5276,
+        "parseable": true,
+        "source_ast_nodes": 4387
+      },
+      "languages": [
+        {
+          "lang": "TypeScript",
+          "loc": 143445,
+          "pct": 69.4
+        },
+        {
+          "lang": "JSON",
+          "loc": 46533,
+          "pct": 22.5
+        },
+        {
+          "lang": "Sass",
+          "loc": 7940,
+          "pct": 3.8
+        },
+        {
+          "lang": "JavaScript",
+          "loc": 2837,
+          "pct": 1.4
+        },
+        {
+          "lang": "MDX",
+          "loc": 2796,
+          "pct": 1.4
+        },
+        {
+          "lang": "Markdown",
+          "loc": 2174,
+          "pct": 1.1
+        },
+        {
+          "lang": "YAML",
+          "loc": 356,
+          "pct": 0.2
+        },
+        {
+          "lang": "HTML",
+          "loc": 241,
+          "pct": 0.1
+        }
+      ],
+      "loc": 206706,
+      "pinned_sha": "0cf56b19c79a28dda52f0dcb1c5392ed19cb5fcd",
+      "primary_language": {
+        "file_count": 592,
+        "lang": "TypeScript",
+        "loc": 143445,
+        "pct": 69.4
+      },
+      "repo": "excalidraw/excalidraw",
+      "size_basis": "source_loc (code only; data/markup excluded)",
+      "size_tier": "L",
+      "source_loc": 157207
+    },
+    "express": {
+      "clone_depth": "shallow",
+      "dominant_language": "JavaScript",
+      "file_count": 186,
+      "graphify": {
+        "ast_nodes": 329,
+        "edges": 704,
+        "import_edges": 387,
+        "nodes": 329,
+        "parseable": true,
+        "source_ast_nodes": 235
+      },
+      "languages": [
+        {
+          "lang": "JavaScript",
+          "loc": 15804,
+          "pct": 79.5
+        },
+        {
+          "lang": "Markdown",
+          "loc": 3503,
+          "pct": 17.6
+        },
+        {
+          "lang": "YAML",
+          "loc": 278,
+          "pct": 1.4
+        },
+        {
+          "lang": "JSON",
+          "loc": 99,
+          "pct": 0.5
+        },
+        {
+          "lang": "Handlebars",
+          "loc": 71,
+          "pct": 0.4
+        },
+        {
+          "lang": "HTML",
+          "loc": 44,
+          "pct": 0.2
+        },
+        {
+          "lang": "CSS",
+          "loc": 44,
+          "pct": 0.2
+        },
+        {
+          "lang": "License",
+          "loc": 20,
+          "pct": 0.1
+        }
+      ],
+      "loc": 19883,
+      "pinned_sha": "dae209ae6559c29cfca2a1f4414c51d89ea643d5",
+      "primary_language": {
+        "file_count": 141,
+        "lang": "JavaScript",
+        "loc": 15804,
+        "pct": 79.5
+      },
+      "repo": "expressjs/express",
+      "size_basis": "source_loc (code only; data/markup excluded)",
+      "size_tier": "M",
+      "source_loc": 15882
+    },
+    "fmt": {
+      "clone_depth": "shallow",
+      "dominant_language": "C++",
+      "file_count": 129,
+      "graphify": {
+        "ast_nodes": 3125,
+        "edges": 8737,
+        "import_edges": 10,
+        "nodes": 3125,
+        "parseable": true,
+        "source_ast_nodes": 2978
+      },
+      "languages": [
+        {
+          "lang": "C Header",
+          "loc": 26912,
+          "pct": 46.2
+        },
+        {
+          "lang": "C++",
+          "loc": 20324,
+          "pct": 34.9
+        },
+        {
+          "lang": "Markdown",
+          "loc": 7148,
+          "pct": 12.3
+        },
+        {
+          "lang": "Python",
+          "loc": 1292,
+          "pct": 2.2
+        },
+        {
+          "lang": "CMake",
+          "loc": 1055,
+          "pct": 1.8
+        },
+        {
+          "lang": "YAML",
+          "loc": 610,
+          "pct": 1.0
+        },
+        {
+          "lang": "Plain Text",
+          "loc": 508,
+          "pct": 0.9
+        },
+        {
+          "lang": "Gradle",
+          "loc": 120,
+          "pct": 0.2
+        }
+      ],
+      "loc": 58228,
+      "pinned_sha": "11ddbcb7898d2d3445d431a54814367b21dee6ad",
+      "primary_language": {
+        "file_count": 25,
+        "lang": "C Header",
+        "loc": 26912,
+        "pct": 46.2
+      },
+      "repo": "fmtlib/fmt",
+      "size_basis": "source_loc (code only; data/markup excluded)",
+      "size_tier": "M",
+      "source_loc": 49803
+    },
+    "gin": {
+      "clone_depth": "shallow",
+      "dominant_language": "Go",
+      "file_count": 125,
+      "graphify": {
+        "ast_nodes": 2072,
+        "edges": 4805,
+        "import_edges": 517,
+        "nodes": 2072,
+        "parseable": true,
+        "source_ast_nodes": 1851
+      },
+      "languages": [
+        {
+          "lang": "Go",
+          "loc": 18347,
+          "pct": 83.1
+        },
+        {
+          "lang": "Markdown",
+          "loc": 3204,
+          "pct": 14.5
+        },
+        {
+          "lang": "YAML",
+          "loc": 401,
+          "pct": 1.8
+        },
+        {
+          "lang": "Makefile",
+          "loc": 91,
+          "pct": 0.4
+        },
+        {
+          "lang": "License",
+          "loc": 17,
+          "pct": 0.1
+        },
+        {
+          "lang": "Protocol Buffers",
+          "loc": 10,
+          "pct": 0.0
+        },
+        {
+          "lang": "Go Template",
+          "loc": 2,
+          "pct": 0.0
+        },
+        {
+          "lang": "Plain Text",
+          "loc": 2,
+          "pct": 0.0
+        }
+      ],
+      "loc": 22074,
+      "pinned_sha": "d75fcd4c9ab260e5225de590f1f0f8c0e0e12d11",
+      "primary_language": {
+        "file_count": 99,
+        "lang": "Go",
+        "loc": 18347,
+        "pct": 83.1
+      },
+      "repo": "gin-gonic/gin",
+      "size_basis": "source_loc (code only; data/markup excluded)",
+      "size_tier": "M",
+      "source_loc": 18349
+    },
+    "gorilla-mux": {
+      "clone_depth": "shallow",
+      "dominant_language": "Go",
+      "file_count": 24,
+      "graphify": {
+        "ast_nodes": 354,
+        "edges": 939,
+        "import_edges": 75,
+        "nodes": 354,
+        "parseable": true,
+        "source_ast_nodes": 339
+      },
+      "languages": [
+        {
+          "lang": "Go",
+          "loc": 5820,
+          "pct": 88.0
+        },
+        {
+          "lang": "Markdown",
+          "loc": 629,
+          "pct": 9.5
+        },
+        {
+          "lang": "YAML",
+          "loc": 114,
+          "pct": 1.7
+        },
+        {
+          "lang": "Makefile",
+          "loc": 27,
+          "pct": 0.4
+        },
+        {
+          "lang": "License",
+          "loc": 24,
+          "pct": 0.4
+        }
+      ],
+      "loc": 6614,
+      "pinned_sha": "db9d1d0073d27a0a2d9a8c1bc52aa0af4374d265",
+      "primary_language": {
+        "file_count": 17,
+        "lang": "Go",
+        "loc": 5820,
+        "pct": 88.0
+      },
+      "repo": "gorilla/mux",
+      "size_basis": "source_loc (code only; data/markup excluded)",
+      "size_tier": "S",
+      "source_loc": 5820
+    },
+    "itsdangerous": {
+      "clone_depth": "shallow",
+      "dominant_language": "Python",
+      "file_count": 46,
+      "graphify": {
+        "ast_nodes": 221,
+        "edges": 715,
+        "import_edges": 92,
+        "nodes": 221,
+        "parseable": true,
+        "source_ast_nodes": 213
+      },
+      "languages": [
+        {
+          "lang": "Python",
+          "loc": 1095,
+          "pct": 49.1
+        },
+        {
+          "lang": "ReStructuredText",
+          "loc": 521,
+          "pct": 23.3
+        },
+        {
+          "lang": "TOML",
+          "loc": 180,
+          "pct": 8.1
+        },
+        {
+          "lang": "YAML",
+          "loc": 176,
+          "pct": 7.9
+        },
+        {
+          "lang": "SVG",
+          "loc": 89,
+          "pct": 4.0
+        },
+        {
+          "lang": "Markdown",
+          "loc": 86,
+          "pct": 3.9
+        },
+        {
+          "lang": "Batch",
+          "loc": 26,
+          "pct": 1.2
+        },
+        {
+          "lang": "Plain Text",
+          "loc": 23,
+          "pct": 1.0
+        }
+      ],
+      "loc": 2232,
+      "pinned_sha": "672971d66a2ef9f85151e53283113f33d642dabd",
+      "primary_language": {
+        "file_count": 15,
+        "lang": "Python",
+        "loc": 1095,
+        "pct": 49.1
+      },
+      "repo": "pallets/itsdangerous",
+      "size_basis": "source_loc (code only; data/markup excluded)",
+      "size_tier": "S",
+      "source_loc": 1095
+    },
+    "kemal": {
+      "clone_depth": "shallow",
+      "dominant_language": "Crystal",
+      "file_count": 89,
+      "graphify": {
+        "ast_nodes": 73,
+        "edges": 68,
+        "import_edges": 0,
+        "nodes": 73,
+        "parseable": false,
+        "source_ast_nodes": 0
+      },
+      "languages": [
+        {
+          "lang": "Crystal",
+          "loc": 5532,
+          "pct": 89.1
+        },
+        {
+          "lang": "Markdown",
+          "loc": 570,
+          "pct": 9.2
+        },
+        {
+          "lang": "YAML",
+          "loc": 69,
+          "pct": 1.1
+        },
+        {
+          "lang": "License",
+          "loc": 16,
+          "pct": 0.3
+        },
+        {
+          "lang": "HTML",
+          "loc": 11,
+          "pct": 0.2
+        },
+        {
+          "lang": "Plain Text",
+          "loc": 9,
+          "pct": 0.1
+        }
+      ],
+      "loc": 6207,
+      "pinned_sha": "b73de3d8e6de97541866b6ecdc8c6ee1ef3eb747",
+      "primary_language": {
+        "file_count": 75,
+        "lang": "Crystal",
+        "loc": 5532,
+        "pct": 89.1
+      },
+      "repo": "kemalcr/kemal",
+      "size_basis": "source_loc (code only; data/markup excluded)",
+      "size_tier": "S",
+      "source_loc": 5532
+    },
+    "kotlinx-schema": {
+      "clone_depth": "shallow",
+      "dominant_language": "Kotlin",
+      "file_count": 295,
+      "graphify": {
+        "ast_nodes": 2426,
+        "edges": 7797,
+        "import_edges": 0,
+        "nodes": 2426,
+        "parseable": true,
+        "source_ast_nodes": 2168
+      },
+      "languages": [
+        {
+          "lang": "Kotlin",
+          "loc": 25014,
+          "pct": 83.6
+        },
+        {
+          "lang": "Markdown",
+          "loc": 3440,
+          "pct": 11.5
+        },
+        {
+          "lang": "JSON",
+          "loc": 340,
+          "pct": 1.1
+        },
+        {
+          "lang": "Shell",
+          "loc": 303,
+          "pct": 1.0
+        },
+        {
+          "lang": "YAML",
+          "loc": 220,
+          "pct": 0.7
+        },
+        {
+          "lang": "Batch",
+          "loc": 192,
+          "pct": 0.6
+        },
+        {
+          "lang": "License",
+          "loc": 150,
+          "pct": 0.5
+        },
+        {
+          "lang": "Properties File",
+          "loc": 102,
+          "pct": 0.3
+        }
+      ],
+      "loc": 29920,
+      "pinned_sha": "574cf764a7529e34831327fbcc6885e2809a0a3b",
+      "primary_language": {
+        "file_count": 235,
+        "lang": "Kotlin",
+        "loc": 25014,
+        "pct": 83.6
+      },
+      "repo": "Kotlin/kotlinx-serialization-json-schema",
+      "size_basis": "source_loc (code only; data/markup excluded)",
+      "size_tier": "M",
+      "source_loc": 25091
+    },
+    "laravel-framework": {
+      "clone_depth": "shallow",
+      "dominant_language": "PHP",
+      "file_count": 3085,
+      "graphify": {
+        "ast_nodes": 41246,
+        "edges": 75642,
+        "import_edges": 11,
+        "nodes": 41246,
+        "parseable": true,
+        "source_ast_nodes": 39881
+      },
+      "languages": [
+        {
+          "lang": "PHP",
+          "loc": 327955,
+          "pct": 97.6
+        },
+        {
+          "lang": "JSON",
+          "loc": 2856,
+          "pct": 0.9
+        },
+        {
+          "lang": "Blade template",
+          "loc": 1849,
+          "pct": 0.6
+        },
+        {
+          "lang": "YAML",
+          "loc": 1573,
+          "pct": 0.5
+        },
+        {
+          "lang": "Markdown",
+          "loc": 1389,
+          "pct": 0.4
+        },
+        {
+          "lang": "CSS",
+          "loc": 265,
+          "pct": 0.1
+        },
+        {
+          "lang": "JavaScript",
+          "loc": 102,
+          "pct": 0.0
+        },
+        {
+          "lang": "SVG",
+          "loc": 5,
+          "pct": 0.0
+        }
+      ],
+      "loc": 335996,
+      "pinned_sha": "1baaf229cf8a8a4a0e7f2ed01dd4c8f97f299ac8",
+      "primary_language": {
+        "file_count": 2804,
+        "lang": "PHP",
+        "loc": 327955,
+        "pct": 97.6
+      },
+      "repo": "laravel/framework",
+      "size_basis": "source_loc (code only; data/markup excluded)",
+      "size_tier": "L",
+      "source_loc": 329906
+    },
+    "phoenix": {
+      "clone_depth": "shallow",
+      "dominant_language": "Elixir",
+      "file_count": 449,
+      "graphify": {
+        "ast_nodes": 3001,
+        "edges": 5602,
+        "import_edges": 39,
+        "nodes": 3001,
+        "parseable": true,
+        "source_ast_nodes": 2459
+      },
+      "languages": [
+        {
+          "lang": "Elixir",
+          "loc": 41919,
+          "pct": 59.6
+        },
+        {
+          "lang": "Markdown",
+          "loc": 9350,
+          "pct": 13.3
+        },
+        {
+          "lang": "Elixir Template",
+          "loc": 8457,
+          "pct": 12.0
+        },
+        {
+          "lang": "JavaScript",
+          "loc": 7524,
+          "pct": 10.7
+        },
+        {
+          "lang": "CSS",
+          "loc": 2599,
+          "pct": 3.7
+        },
+        {
+          "lang": "YAML",
+          "loc": 259,
+          "pct": 0.4
+        },
+        {
+          "lang": "JSON",
+          "loc": 170,
+          "pct": 0.2
+        },
+        {
+          "lang": "Shell",
+          "loc": 34,
+          "pct": 0.0
+        }
+      ],
+      "loc": 70318,
+      "pinned_sha": "cd55c239b553e17c2356d8487ab55dcb94f2c72e",
+      "primary_language": {
+        "file_count": 176,
+        "lang": "Elixir",
+        "loc": 41919,
+        "pct": 59.6
+      },
+      "repo": "phoenixframework/phoenix",
+      "size_basis": "source_loc (code only; data/markup excluded)",
+      "size_tier": "M",
+      "source_loc": 57900
+    },
+    "pyccel": {
+      "clone_depth": "shallow",
+      "dominant_language": "Python",
+      "file_count": 923,
+      "graphify": {
+        "ast_nodes": 10609,
+        "edges": 34051,
+        "import_edges": 1073,
+        "nodes": 10609,
+        "parseable": true,
+        "source_ast_nodes": 10107
+      },
+      "languages": [
+        {
+          "lang": "Python",
+          "loc": 103146,
+          "pct": 89.2
+        },
+        {
+          "lang": "Markdown",
+          "loc": 6728,
+          "pct": 5.8
+        },
+        {
+          "lang": "YAML",
+          "loc": 3193,
+          "pct": 2.8
+        },
+        {
+          "lang": "Fortran Modern",
+          "loc": 681,
+          "pct": 0.6
+        },
+        {
+          "lang": "C Header",
+          "loc": 577,
+          "pct": 0.5
+        },
+        {
+          "lang": "C",
+          "loc": 548,
+          "pct": 0.5
+        },
+        {
+          "lang": "Plain Text",
+          "loc": 174,
+          "pct": 0.2
+        },
+        {
+          "lang": "ReStructuredText",
+          "loc": 151,
+          "pct": 0.1
+        }
+      ],
+      "loc": 115591,
+      "pinned_sha": "b559732cd126b771eb0d7d8bf7cc78ceb7cc6070",
+      "primary_language": {
+        "file_count": 762,
+        "lang": "Python",
+        "loc": 103146,
+        "pct": 89.2
+      },
+      "repo": "pyccel/pyccel",
+      "size_basis": "source_loc (code only; data/markup excluded)",
+      "size_tier": "L",
+      "source_loc": 105175
+    },
+    "redis": {
+      "clone_depth": "shallow",
+      "dominant_language": "C",
+      "file_count": 1743,
+      "graphify": {
+        "ast_nodes": 14937,
+        "edges": 57866,
+        "import_edges": 56,
+        "nodes": 14937,
+        "parseable": true,
+        "source_ast_nodes": 14739
+      },
+      "languages": [
+        {
+          "lang": "C",
+          "loc": 219154,
+          "pct": 55.1
+        },
+        {
+          "lang": "TCL",
+          "loc": 73333,
+          "pct": 18.4
+        },
+        {
+          "lang": "C Header",
+          "loc": 34602,
+          "pct": 8.7
+        },
+        {
+          "lang": "JSON",
+          "loc": 28664,
+          "pct": 7.2
+        },
+        {
+          "lang": "Module-Definition",
+          "loc": 10336,
+          "pct": 2.6
+        },
+        {
+          "lang": "HTML",
+          "loc": 6718,
+          "pct": 1.7
+        },
+        {
+          "lang": "Autoconf",
+          "loc": 4889,
+          "pct": 1.2
+        },
+        {
+          "lang": "Python",
+          "loc": 4566,
+          "pct": 1.1
+        }
+      ],
+      "loc": 398055,
+      "pinned_sha": "f6ffa0003a257da819bc245e94b96e193d622c1d",
+      "primary_language": {
+        "file_count": 471,
+        "lang": "C",
+        "loc": 219154,
+        "pct": 55.1
+      },
+      "repo": "redis/redis",
+      "size_basis": "source_loc (code only; data/markup excluded)",
+      "size_tier": "L",
+      "source_loc": 345771
+    },
+    "sinatra": {
+      "clone_depth": "shallow",
+      "dominant_language": "Ruby",
+      "file_count": 221,
+      "graphify": {
+        "ast_nodes": 1284,
+        "edges": 1976,
+        "import_edges": 0,
+        "nodes": 1284,
+        "parseable": true,
+        "source_ast_nodes": 1045
+      },
+      "languages": [
+        {
+          "lang": "Ruby",
+          "loc": 18372,
+          "pct": 78.9
+        },
+        {
+          "lang": "Markdown",
+          "loc": 4035,
+          "pct": 17.3
+        },
+        {
+          "lang": "YAML",
+          "loc": 323,
+          "pct": 1.4
+        },
+        {
+          "lang": "Rakefile",
+          "loc": 299,
+          "pct": 1.3
+        },
+        {
+          "lang": "Gemfile",
+          "loc": 80,
+          "pct": 0.3
+        },
+        {
+          "lang": "Ruby HTML",
+          "loc": 72,
+          "pct": 0.3
+        },
+        {
+          "lang": "License",
+          "loc": 60,
+          "pct": 0.3
+        },
+        {
+          "lang": "HAML",
+          "loc": 31,
+          "pct": 0.1
+        }
+      ],
+      "loc": 23284,
+      "pinned_sha": "5236d3459b8b9015e5ce21ddd0c6beb0db4081d4",
+      "primary_language": {
+        "file_count": 147,
+        "lang": "Ruby",
+        "loc": 18372,
+        "pct": 78.9
+      },
+      "repo": "sinatra/sinatra",
+      "size_basis": "source_loc (code only; data/markup excluded)",
+      "size_tier": "M",
+      "source_loc": 18865
+    },
+    "uniffi-rs": {
+      "clone_depth": "shallow",
+      "dominant_language": "Rust",
+      "file_count": 1086,
+      "graphify": {
+        "ast_nodes": 9587,
+        "edges": 36144,
+        "import_edges": 1144,
+        "nodes": 9587,
+        "parseable": true,
+        "source_ast_nodes": 8756
+      },
+      "languages": [
+        {
+          "lang": "Rust",
+          "loc": 43094,
+          "pct": 56.0
+        },
+        {
+          "lang": "Markdown",
+          "loc": 7446,
+          "pct": 9.7
+        },
+        {
+          "lang": "Kotlin",
+          "loc": 4939,
+          "pct": 6.4
+        },
+        {
+          "lang": "Python",
+          "loc": 4727,
+          "pct": 6.1
+        },
+        {
+          "lang": "Swift",
+          "loc": 4711,
+          "pct": 6.1
+        },
+        {
+          "lang": "Ruby",
+          "loc": 4239,
+          "pct": 5.5
+        },
+        {
+          "lang": "IDL",
+          "loc": 2807,
+          "pct": 3.6
+        },
+        {
+          "lang": "TOML",
+          "loc": 2076,
+          "pct": 2.7
+        }
+      ],
+      "loc": 76973,
+      "pinned_sha": "c6c518fd49525a2fb69e2b7e2f181d877ee6a570",
+      "primary_language": {
+        "file_count": 410,
+        "lang": "Rust",
+        "loc": 43094,
+        "pct": 56.0
+      },
+      "repo": "mozilla/uniffi-rs",
+      "size_basis": "source_loc (code only; data/markup excluded)",
+      "size_tier": "M",
+      "source_loc": 64675
+    }
+  },
+  "schema": "deepinit-validation/matrix-manifest/v1",
+  "size_tiers": {
+    "L": ">100k loc",
+    "M": "10k-100k loc",
+    "S": "<10k loc"
+  }
+}

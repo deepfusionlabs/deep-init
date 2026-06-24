@@ -1,0 +1,113 @@
+{
+  "schema": "deepinit-validation/discovery-record/v1",
+  "program": "DeepInit in the Wild",
+  "track": "3 — recall/discovery (M4c: the C++ datapoint — the C sibling for IF-8 (permitted+textual) but with EXCEPTIONS, so IF-7c REACTIVATES; + a real IF-6 value-set divergence)",
+  "shape": "A-structurally-verified ×1 (one grounded IF-6 divergent named value-set — the syslog Facility enum — recorded GATED / not filed) + a clean Shape-B across the other four families / 0 false defects",
+  "recorded": "2026-06-13",
+  "engine_proxy": "deterministic-detector-sweep (5 read-only agents — IF-8 / IF-6 / IF-10 / IF-7c / IF-3a — applying the SHIPPED deterministic predicates directly to real C++ source; NOT a full Detect→Emit pipeline; no cost ledger). Build chain:  (5 agents, ~330k tokens, 152 tool-uses). The IF-8 headline (clean DAG) and the IF-6 fire (Facility) were INDEPENDENTLY re-verified by the main loop (a second cross-library #include-graph Tarjan + a side-by-side read of both Facility enums).",
+  "repo": {
+    "name": "pocoproject/poco",
+    "url": "https://github.com/pocoproject/poco",
+    "branch": "main",
+    "pinned_sha": "501ddd6608ea3fcdfcf2580e4c10787f64b08559",
+    "pinned_sha_note": "shallow-clone HEAD at 2026-06-13; the file:line citations are the durable anchors.",
+    "license": "BSL-1.0 (Boost Software License — permissive)",
+    "stack": "C++ (the POCO C++ Libraries) — the FIRST C++ datapoint and the C SIBLING: the same textual #include / 'permitted + textual' IF-8 regime as C/nginx, but with namespaces + EXCEPTIONS — so IF-7c REACTIVATES (the headline contrast: C was applicable=false; C++ has 79 real empty catches).",
+    "size": "multi-library; 10 core libs in scope (Foundation/Net/Util/XML/JSON/Crypto/Data/Zip/Redis/Encodings) = 101,708 LOC (.cpp+.h)"
+  },
+  "analysis_scope": "the 10 core POCO libraries. IF-8 built the real cross-library #include graph (10 nodes / 12 edges) in BOTH full (.cpp+.h) and header-only (.h) form, resolving each `#include \"Poco/...\"` via a PHYSICAL header→component location map (not a path-prefix heuristic — Foundation + Encodings place headers directly under Poco/). The deep families swept the 7 core code libs.",
+  "result_headline": "Across five families on poco@501ddd66 (10 core libs / ~101.7k LOC), the guarded sweep produced exactly 1 fire — an IF-6 divergent named value-set: the syslog `Facility` enum, defined in BOTH Foundation (SyslogChannel, 20 members, Core) and Net (RemoteSyslogChannel, 24 members) with Net a strict superset by {NTP, LOGAUDIT, LOGALERT, CLOCK} (HIGH, GATED) — against 101 named suppressions (IF-8 6 / IF-6 7 / IF-10 5 / IF-7c 75 / IF-3a 8) and 0 false defects. IF-8 is a CLEAN DAG (permitted+textual but architecturally disciplined — Foundation is the universal out-degree-0 sink, header-only graph == full graph), like C/nginx's regime but here it does NOT fire (nginx did). The headline cross-family finding: IF-7c REACTIVATES on C++ vs pure C — 79 real empty `catch(...){}` handlers exist (C had zero), yet the cross-component-consumed moat suppresses ALL 79 → 0 fires / 0 FP (the strongest IF-7c precision demonstration in the corpus), with the C++-mandatory destructor-must-not-throw idiom the single biggest suppression (25 of 79).",
+  "per_family": [
+    {
+      "family": "IF-8",
+      "applicable": true,
+      "fired": 0,
+      "fires": [],
+      "suppressed_count": 6,
+      "regime": "PERMITTED + TEXTUAL (the C sibling) — no compiler/linker cycle ban; the acyclicity is architectural DISCIPLINE, not language-enforced",
+      "key_suppressions": [
+        "9 non-Foundation libs → Foundation (438 Net, 177 Data, 127 Util, 97 Encodings, …): Foundation has very high IN-degree (a hub heuristic over-fires) but its cross-component OUT-degree is exactly 0 (verified: 0 Poco/<other>/ includes in Foundation) → a pure DAG sink, no SCC can form through it.",
+        "Util→XML (10×), Util→JSON (3×), Redis→Net (2×): each a one-directional DOWNHILL edge; the reverse arms (XML→Util, JSON→Util, Net→Redis) are ABSENT (grep-verified) → no two-node mutual cycle.",
+        "Poco/Dynamic/ resolved INTRA-component: it physically lives under Foundation/include/Poco/Dynamic/ → Dynamic↔Foundation is the same component (self-loop, excluded) — a naive 2nd-path-segment resolver would fabricate a phantom Dynamic↔Foundation 2-SCC.",
+        "Foundation + Encodings place headers directly under Poco/ (no Poco/Encodings/ prefix) — resolved by a PHYSICAL header→component map, not a path-prefix split (the named precision guard that prevented misattributing Encodings headers to Foundation)."
+      ],
+      "language_specific_note": "C++ CLASSIC-HEADER regime (POCO uses NO C++20 modules — verified). This is the SAME 'permitted + textual' IF-8 regime as C/nginx: NO compiler/linker ban on a cyclic #include graph (include guards make a cycle compile), so the acyclicity is ARCHITECTURAL DISCIPLINE, not a language guarantee. POCO is famous for strict layering and the sweep confirms it: a clean 10-node / 12-edge DAG with Foundation the universal out-degree-0 sink. The path-qualified `#include \"Poco/<Component>/<Header>.h\"` makes owning-component resolution EXACT (unlike C/nginx basename ambiguity) EXCEPT for Foundation + Encodings (headers directly under Poco/) → a physical header→component map was required. Header-only graph == full graph (12 edges identical) → the layering holds at the INTERFACE (.h) level too (no implementation-only cross-layer coupling masking an interface cycle). CONTRAST: same permitted-textual regime as C/nginx but here disciplined-acyclic (nginx FIRED its core↔event↔os triad; Poco does not) — and distinct from the hard-ban langs (structurally impossible) and the permitted-AND-cycled langs (Java/PHP/Kotlin/C#-ns, which FIRED). Independently main-loop-verified (a second Tarjan converged on the DAG).",
+      "naive_overfire_estimate": 3
+    },
+    {
+      "family": "IF-6",
+      "applicable": true,
+      "fired": 1,
+      "fires": [
+        {
+          "title": "Divergent 'Facility' allowed-value set across the Foundation and Net syslog channels",
+          "canonical_name": "facility",
+          "components": ["Foundation", "Net"],
+          "definition_a": "Foundation/include/Poco/SyslogChannel.h:42 — enum Facility, 20 members (SYSLOG_KERN…SYSLOG_FTP, then SYSLOG_LOCAL0…LOCAL7)",
+          "definition_b": "Net/include/Poco/Net/RemoteSyslogChannel.h:65 — enum Facility, 24 members (the same 20 PLUS SYSLOG_NTP(12<<3), SYSLOG_LOGAUDIT(13<<3), SYSLOG_LOGALERT(14<<3), SYSLOG_CLOCK(15<<3))",
+          "symmetric_difference": "{SYSLOG_NTP, SYSLOG_LOGAUDIT, SYSLOG_LOGALERT, SYSLOG_CLOCK} — present in Net's RemoteSyslogChannel, ABSENT from Foundation's local SyslogChannel",
+          "behavioral_entailment": "Both are the RFC-5424 syslog FACILITY code set used to tag log messages; same canonical name + same concept = behaviorally entailed. A log message tagged with one of the 4 extra facilities (codes 12-15) can be represented by Net's RemoteSyslogChannel but NOT by Foundation's local SyslogChannel — a real divergence with a behavioral consequence.",
+          "severity": "High",
+          "certainty": "HIGH",
+          "fp_risk": "LOW",
+          "is_core": true,
+          "gated": true,
+          "filed": false,
+          "note": "The 3rd IF-6 fire in the whole corpus (after excalidraw's Ellipse + Phoenix's @invalid_local_url_chars). Main-loop-verified by reading both enums side by side. Recorded GATED."
+        }
+      ],
+      "suppressed_count": 7,
+      "language_specific_note": "C++ value-sets = enum / enum class, static const arrays, #define groups. The ONE fire is the syslog Facility divergence (Foundation 20 vs Net 24, Net a strict superset). The 7 suppressions are coincidental homonyms / single-definition enums / same-value duplicates across the libs. 1 fire / 7 named suppressions.",
+      "naive_overfire_estimate": 7
+    },
+    {
+      "family": "IF-10",
+      "applicable": true,
+      "fired": 0,
+      "fires": [],
+      "suppressed_count": 5,
+      "language_specific_note": "Muted (0 fires). C++ has BOTH IF-10 substrates — the preprocessor (#if/#ifdef, config-as-preprocessor like C) and language-level constexpr/const bool whole-`if` tests — but POCO's are config/platform-gated (POCO_OS / POCO_HAVE_* build macros) or non-literal. No in-source literal-const whole-if dead branch. 0 fires / 5 named suppressions.",
+      "naive_overfire_estimate": 3
+    },
+    {
+      "family": "IF-7c",
+      "applicable": true,
+      "fired": 0,
+      "fires": [],
+      "suppressed_count": 75,
+      "language_specific_note": "THE HEADLINE CROSS-FAMILY FINDING — IF-7c REACTIVATES on C++ vs pure C. C was applicable=false (no catch construct); C++ uses classic exceptions (Poco::Exception + try/catch), so 79 real empty/comment-only catch blocks exist across the core libs (Foundation 30, Net 41, Util 1, JSON 4, Crypto 1, Data 3; XML 0 — all its catches re-raise after cleanup). RESULT: 0 fires / 79 named suppressions / 0 false defects — the cross-component-consumed moat holds against 79 candidates (the strongest IF-7c precision demonstration in the corpus). The single biggest C++-specific suppression is the DESTRUCTOR-MUST-NOT-THROW idiom (25 of 79: a destructor that throws during stack unwinding calls std::terminate, so a catch-all swallow is language-MANDATORY there) — the C++ analog of Java's InterruptedException carve-out. The rest: private / not-cross-component-consumed functions, deliberate documented best-effort, and handlers that log/return-default/re-raise (non-empty). 0 fires / 75 named suppression entries.",
+      "naive_overfire_estimate": 79
+    },
+    {
+      "family": "IF-3a",
+      "applicable": true,
+      "fired": 0,
+      "fires": [],
+      "suppressed_count": 8,
+      "language_specific_note": "Clean (0 fires). C++ shared-mutable-state shapes = file-scope globals, non-const static class data members, SingletonHolder<T>/static singletons. POCO's dominant idiom wraps every process-global behind a TYPED static-method accessor (e.g. ::instance()/::defaultPool()) — a mediated explicit interface → suppress; const/immutable statics → suppress; FastMutex-guarded statics accessed via methods → mediated. No genuinely mutable static written/read by ≥2 libs with no accessor. 0 fires / 8 named suppressions.",
+      "naive_overfire_estimate": 7
+    }
+  ],
+  "naive_vs_guarded_illustrative": {
+    "naive_overfires_approx": 99,
+    "guarded_fires": 1,
+    "false_defects": 0,
+    "note": "A naive surface detector would over-fire on ~99 candidates — dominated by IF-7c's 79 empty catches (a no-empty-catch linter would fire ALL 79; the guarded predicate suppresses all 79 via the cross-component-consumed moat + the destructor-must-not-throw idiom) — plus IF-8 ~3 (the Foundation hub + Util↔XML/JSON one-way pairs + the Dynamic phantom), IF-6 ~7, IF-10 ~3, IF-3a ~7. The guarded predicate fired exactly once (the real Facility value-set divergence), HIGH, GATED, 0 false defects."
+  },
+  "key_cpp_findings": [
+    "IF-7c REACTIVATES on C++ (the headline C↔C++ contrast): pure C was applicable=false (no catch construct); C++ classic exceptions give 79 real empty catch handlers — yet the cross-component-consumed moat suppresses ALL 79 → 0 fires / 0 FP. The single biggest suppression is the destructor-must-not-throw idiom (25 of 79: a throwing destructor calls std::terminate during stack unwinding, so a catch-all is language-MANDATORY) — the C++ analog of Java's InterruptedException carve-out.",
+    "IF-8 is the C sibling: the same 'permitted + textual' regime (no compiler/linker cycle ban; include guards make cycles compile) — but POCO's strict layering makes it a CLEAN DAG (Foundation the universal out-degree-0 sink; header-only graph == full graph, so the layering holds at the interface level). Contrast: nginx FIRED in this exact regime; Poco is disciplined-acyclic — the regime PERMITS cycles, discipline avoids them.",
+    "IF-6 FIRED on the syslog Facility enum (Foundation 20 members vs Net 24, Net a strict superset by NTP/LOGAUDIT/LOGALERT/CLOCK) — the 3rd IF-6 fire in the corpus, a real same-name same-concept divergent value-set with a behavioral consequence (the local SyslogChannel can't represent 4 facility codes the remote one can).",
+    "IF-8 resolution precision: Foundation + Encodings place headers directly under Poco/ (no component path prefix), and Poco/Dynamic is a Foundation sub-namespace — a path-prefix resolver would fabricate phantom edges; a PHYSICAL header→component location map resolves them correctly (the named precision guard)."
+  ],
+  "honest_assessment": "The first C++ datapoint, and the deliberate sibling of C/nginx. IF-8 confirms the 'permitted + textual' regime is about the LANGUAGE permitting cycles, not the codebase having them — POCO's strict layering yields a clean DAG (including at the interface level) where nginx's foundational triad fired. The headline is IF-7c: it REACTIVATES on C++ (79 real empty catches vs C's zero), and the precision discipline holds completely — the cross-component-consumed moat plus the C++-mandatory destructor-must-not-throw carve-out suppress all 79 with 0 false positives, the strongest IF-7c precision result in the corpus. The one fire is a real, behaviorally-grounded IF-6 value-set divergence (the syslog Facility enum), independently verified by reading both enums. Recorded GATED (training-contamination caveat; facts rest on the live code at the pinned SHA).",
+  "totals": {
+    "families": 5,
+    "genuine_fires": 1,
+    "fires_severity": "1 HIGH (IF-6 Facility value-set divergence, Foundation vs Net), GATED / not filed",
+    "named_suppressions": 101,
+    "false_defects": 0,
+    "naive_overfire_surface": 99
+  },
+  "counts_note": "Authoritative counts are the structured suppressed[] arrays: 101 named suppressions (IF-8 6 / IF-6 7 / IF-10 5 / IF-7c 75 / IF-3a 8) + 1 HIGH IF-6 fire, 0 false defects. (IF-7c's note cites 79 empty-catch candidates; the suppressed[] array groups them into 75 entries.)"
+}

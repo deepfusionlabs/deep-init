@@ -1,0 +1,182 @@
+{
+  "schema": "deepinit-validation/discovery-record/v1",
+  "program": "DeepInit in the Wild",
+  "track": "3 — recall/discovery (the FIRST pure-C datapoint; the novel 'permitted + textual' IF-8 regime FIRES + the richest IF-3a substrate FIRES)",
+  "shape": "A-structurally-verified ×2 (two grounded, main-loop-double-verified fires — IF-8 {core,event,os} 3-SCC HIGH + IF-3a accept-mutex protocol HIGH — recorded GATED / not filed) over 40 mechanism-named suppressions / 0 false defects on a mature C codebase",
+  "recorded": "2026-06-13",
+  "engine_proxy": "deterministic-detector-sweep (5 read-only agents — IF-8 / IF-6 / IF-10 / IF-7c / IF-3a — applying the SHIPPED deterministic predicates (§21/§24+§28/§25+§29/§23/AF-1) directly to real C source; NOT a full Detect→Emit pipeline; no cost ledger recorded — cost is the Track-2 ledgers). Build chain:  (5 agents, ~302k tokens, 81 tool-uses). BOTH headline fires were INDEPENDENTLY re-computed by the main loop (a second Tarjan SCC over its own grep'd #include edges for IF-8 — convergent on {core,event,os} in both the full and header-only graphs; a second grep of the accept-mutex write/read sites for IF-3a — convergent on 3 writer subsystems / 6 readers).",
+  "repo": {
+    "name": "nginx/nginx",
+    "url": "https://github.com/nginx/nginx",
+    "branch": "master",
+    "pinned_sha": "da80db978fa7dfb2195a436b06b8ecab9627dcbf",
+    "pinned_sha_note": "shallow-clone HEAD at 2026-06-13; the file:line citations are the durable anchors.",
+    "license": "BSD-2-Clause (classic 2-clause; never changed — unambiguous, verified LICENSE at the pinned SHA)",
+    "stack": "C (the nginx web server / reverse proxy) — the FIRST pure-C datapoint in the discovery  the HIGHEST-NOVELTY IF-8 substrate: the preprocessor #include model, NO module system. Prior sweeps: Crystal/kemal, Python/pyccel, TS/excalidraw, Go/caddy, Rust/ripgrep, Java/Signal-Server, Ruby/discourse, PHP/laravel, Elixir/phoenix, C#/jellyfin, Kotlin/okhttp.",
+    "size": "400 .c/.h files / 249,043 lines (.c+.h, wc -l), L-tier; 7 directory-given subsystems (core 78f/32k · event 60f/39k · http 110f/126k · mail 19f/11k · misc 1f · os 99f/17k · stream 33f/25k)"
+  },
+  "analysis_scope": "whole-repo src/ (all 400 .c/.h files). IF-8 built the real 7-subsystem cross-#include graph (component = top-level src/ subdir; edge X->Y for each `#include <H>` where H is a .h owned by subsystem Y != X; includes are by-basename, resolved to owning subsystem), in BOTH a full (.c+.h) and a header-only (.h) form. The deep families (IF-6/IF-10/IF-7c/IF-3a) swept the whole tree with focus on core/event/os/http/stream.",
+  "result_headline": "Across five families on nginx@da80db97 (400 C files / ~249k lines), the guarded sweep produced exactly 2 fires — IF-8 (a genuine {core,event,os} 3-component header-level #include cycle, HIGH) and IF-3a (the accept-mutex protocol globals ngx_use_accept_mutex/ngx_accept_mutex_held, bare-assigned by 3 distinct subsystems with no accessor, HIGH) — against 40 named suppressions (IF-8 7 / IF-6 7 / IF-10 12 / IF-7c 3 / IF-3a 11) and a ~342-candidate naive-overfire surface, with 0 false defects. Both fires recorded GATED (comprehension/architecture findings, not filed). The datapoint completes the IF-8 spectrum with a NEW fifth mechanism — 'permitted + textual' (textual #include + include guards, NO compiler/linker cycle ban — the most permissive regime in the corpus) — and adds two more corpus firsts: the novel preprocessor IF-10 muting mechanism (config-as-preprocessor-flag + #if-0 deliberate-disable) and the FIRST applicable=false-by-substrate IF-7c (pure C has no catch block for the empty-handler predicate to match).",
+  "per_family": [
+    {
+      "family": "IF-8",
+      "applicable": true,
+      "fired": 1,
+      "fires": [
+        {
+          "title": "Circular component dependency: core <-> event <-> os strongly-connected #include cycle (3-node SCC)",
+          "scc_members": ["core", "event", "os"],
+          "scc_size": 3,
+          "severity": "High",
+          "certainty": "HIGH",
+          "fp_risk": "LOW",
+          "why_high": "Two of the three SCC members (core, event) are Core subsystems → severity High per the IF-8 predicate.",
+          "verified_on_both_graphs": "The IDENTICAL SCC {core,event,os} fires in BOTH the FULL (.c+.h, 7 nodes / 12 cross-subsystem edges) and the HEADER-ONLY (.h, 7 nodes / 11 edges) graphs (SCC sizes [3,1,1,1,1] in each). The header-only agreement proves this is genuine INTERFACE-level co-recursion (co-recursive type/interface definitions), not mere .c implementation usage — the STRONG fire.",
+          "closing_edges": [
+            "core->event: core/ngx_core.h:87 (#include <ngx_event_openssl.h>, event-owned) + core/ngx_thread_pool.h:14 (unconditional <ngx_event.h>); also 6 core .c files (ngx_connection.c:10 …)",
+            "core->os: core/ngx_config.h:22 (#include <ngx_freebsd_config.h>; siblings :26 linux/:30 solaris/:34 darwin/:38 win32/:42 posix, all os-owned) + core/ngx_core.h:96 (#include <ngx_os.h>)",
+            "event->core: event/ngx_event.h:12-13 (#include <ngx_config.h>/<ngx_core.h>, unconditional)",
+            "os->core: os/unix/ngx_alloc.h:12-13 + os/unix/ngx_channel.h:13 (#include <ngx_core.h>, unconditional)",
+            "os->event: os/unix/ngx_channel.h:14 (#include <ngx_event.h>, unconditional)"
+          ],
+          "umbrella_mechanism": "The convenience/umbrella header core/ngx_core.h aggregates the whole core API AND pulls sibling-subsystem event headers (ngx_event_openssl.h:87, ngx_event_quic.h:89) while being #included by ~every file; event/os headers include ngx_core.h back. This 'umbrella-includes-a-sibling-subsystem' pattern mechanically closes the cross-component cycle and has NO analog in module languages.",
+          "guard_mechanism": "Include guards (_NGX_*_H_INCLUDED_ ifndef wrappers) make the textual cycle NON-FATAL — the second textual visit dedups rather than recursing infinitely. The guard is precisely WHAT LETS the cross-component cycle exist and compile.",
+          "regime": "NOVEL 'permitted + textual' — the most permissive IF-8 regime in the 12-stack corpus. C has no module/package system; the dependency unit is the textual #include. NO compiler/linker ban on a cyclic #include graph (contrast Go/Rust/C#-project/Java-Kotlin-module hard-ban). A flat global symbol namespace at link time. The SCC is a REAL groundable structural finding, not a build error.",
+          "gated": true,
+          "filed": false,
+          "gated_note": "Intrinsic nginx layering (core/event/os are co-recursive by design — the cycle/connection/event-loop/OS-abstraction substrate), not a bug. The fire documents the genuine permitted cross-component circular structure; recorded GATED, not filed."
+        }
+      ],
+      "suppressed_count": 7,
+      "suppressed": [
+        {"candidate": "http subsystem in the cycle", "reason": "OUTBOUND-only (http->core src/http/ngx_http.h:12, http->event ngx_http_upstream.h:14); ZERO inbound back-edges (grep '#include.*ngx_http' over core/event/os = empty). Predicate-FALSE: acyclic leaf consumer (no back-edge)."},
+        {"candidate": "mail subsystem in the cycle", "reason": "OUTBOUND-only (mail->core ngx_mail.h:12, mail->event ngx_mail.h:14); nothing includes a mail header. Acyclic leaf (no back-edge)."},
+        {"candidate": "stream subsystem in the cycle", "reason": "OUTBOUND-only (stream->core ngx_stream.h:12, stream->event ngx_stream_upstream.h:15); nothing includes a stream header. Acyclic leaf."},
+        {"candidate": "misc subsystem in the cycle", "reason": "single outbound edge misc->core (ngx_google_perftools_module.c:8); owns 0 headers so nothing can depend on it. Acyclic leaf."},
+        {"candidate": "Naive basename-collision over-fire (13 duplicate header basenames: ngx_errno.h, ngx_os.h, ngx_socket.h, ngx_time.h, ngx_files.h, …)", "reason": "Each duplicate lives in BOTH os/unix/ AND os/win32/ ONLY → both resolve to the SAME 'os' subsystem. Cross-subsystem basename collisions == {} (computed). Predicate-FALSE: platform variants of ONE component introduce no spurious X->Y edge (the caddy-lesson precision guard)."},
+        {"candidate": "System/libc + build-generated headers (time.h, errno.h, ngx_auto_config.h, ngx_auto_headers.h, zlib.h, …)", "reason": "not owned by any src/ subsystem → resolve to no component, add no edge. ngx_auto_*.h are configure-generated (not in the pinned tree)."},
+        {"candidate": "Intra-component self-loops (a core file including another core header, etc.)", "reason": "edges added only when Y!=X by construction; within-subsystem includes (the vast majority, e.g. ngx_core.h->ngx_buf.h) excluded. Predicate-FALSE: intra-component recursion is not an IF-8 fire."}
+      ],
+      "c_specific_note": "THE HEADLINE NOVEL C CASE — the most permissive IF-8 regime in the corpus, 'permitted + textual + guard-protected'. The {core,event,os} SCC is real (present identically in the full and header-only graphs), language-PERMITTED (no compiler/linker ban — the DAG-ness of http/mail/stream/misc is by DISCIPLINE, not enforcement), and closed through the umbrella header ngx_core.h. Independently main-loop-verified (a second Tarjan over the orchestrator's own grep'd edges converged on the exact same SCC, edges, and minimal 2-node sub-cycles). RECALL CAVEAT (never an FP): forward-declaration coupling (a .c depending on another subsystem's type via a forward decl with no #include) sits below the grep substrate and is NOT counted — this can only UNDER-report cycles; here it changes nothing (the SCC is already fully grounded on explicit #include edges).",
+      "naive_overfire_estimate": 6
+    },
+    {
+      "family": "IF-6",
+      "applicable": true,
+      "fired": 0,
+      "fires": [],
+      "suppressed_count": 7,
+      "suppressed": [
+        {"canonical_name": "ngxgeoipcountry (NGX_GEOIP_COUNTRY_* 3-member #define set)", "components": ["http", "stream"], "sites": "http/modules/ngx_http_geoip_module.c:16-18 vs stream/ngx_stream_geoip_module.c:16-18", "reason": "SAME-VALUE: identical member names AND values (CODE=0/CODE3=1/NAME=2) — empty symmetric difference. The http/stream module-mirror pattern (parallel copies of the same GeoIP logic). IF-6 is the polarity-opposite of a clone detector; identical sets are not divergences."},
+        {"canonical_name": "escape[] log-escaping byte table + hex[] charset", "components": ["http", "stream"], "sites": "http/modules/ngx_http_log_module.c:995-1015 vs stream/ngx_stream_log_module.c:773-793", "reason": "SAME-VALUE: the two escape[] bitmaps are BYTE-FOR-BYTE identical (same 8 uint32_t words) and hex[] identical. This is the EXACT IF-6 shape that fired on Phoenix (@invalid_local_url_chars) — currently identical, so a FUTURE drift between the two copies would be the one real HIGH fire (flagged)."},
+        {"canonical_name": "ngxclose/ngxread/ngxwrite/ngxlog (prefix collisions)", "components": ["event", "os", "core"], "sites": "event/ngx_event.h:281,307-308 (NGX_*_EVENT poller flags) vs os/ngx_socket.h:15-16 (NGX_*_SHUTDOWN) vs os/ngx_files.h:109 (ngx_close_file alias) vs core/ngx_log.h:16-24 (NGX_LOG_* levels)", "reason": "ZERO-OVERLAP HOMONYM: distinct member names, no value-flow; several are non-enumerable function-alias macros. Coincidental homonyms, not divergences."},
+        {"canonical_name": "NGX_READ_EVENT/NGX_WRITE_EVENT/NGX_CLOSE_EVENT (per-poller)", "components": ["event"], "sites": "event/ngx_event.h:281-375 (kqueue/epoll/poll/devpoll/select branches)", "reason": "SAME-COMPONENT: redefined with conflicting values (EVFILT_READ vs POLLIN vs EPOLLIN…) but ALL within event/, selected mutually-exclusively by compile-time #if poller guards. Predicate requires >=2 DISTINCT components."},
+        {"canonical_name": "NGX_ALIGNMENT / NGX_HAVE_SO_SNDLOWAT / NGX_SENDFILE_LIMIT / ngx_inline (platform scalars)", "components": ["core", "os"], "sites": "core/ngx_config.h:48,97,114 vs os/unix/ngx_linux_config.h:82,120 / solaris / win32", "reason": "NON-ENUMERABLE (single scalar portability constant, not a value-SET) + DERIVATION/EXTENSION (the #ifndef-default + per-OS-override pattern; core provides the default, the OS config header overrides per platform). Confirmed core/ngx_config.h:47-49 (#ifndef NGX_HAVE_SO_SNDLOWAT)."},
+        {"canonical_name": "NGX_*_FRAME (HTTP/2) / NGX_ESCAPE_* / NGX_LOG_* / NGX_OK/ERROR/AGAIN / uri[] tables", "components": ["http(v2/v3/modules)", "core"], "sites": "http/v2/ngx_http_v2.h:30-39 ; core/ngx_string.h:199-209 ; core/ngx_core.h ; core/ngx_string.c:1517-1657", "reason": "SINGLE-DEFINITION: defined ONCE in their home subsystem and merely USED elsewhere — never a >=2-component conflicting redefinition. (The dominant nginx pattern: define-in-core, use-everywhere.)"},
+        {"canonical_name": "ssl_encryption_level_t / bpf_cmd / bpf_map_type (external library enum tags)", "components": ["event(quic)", "core"], "sites": "event/quic/ngx_event_quic_openssl_compat.h:18 ; core/ngx_bpf.h:24,36", "reason": "EXTERNAL TYPE / single-definition: provided by the OpenSSL/Linux-BPF libraries, shimmed once; not an nginx value-set redefined with conflicting membership across 2 components."}
+      ],
+      "c_specific_note": "C IF-6 substrate = enum {...} blocks, groups of #define NAME <val>, and static const byte-table arrays (the richest allowed-character-set shape). KEY finding: the dominant nginx pattern is SINGLE-DEFINITION-IN-CORE-USED-EVERYWHERE (NGX_OK/ERROR/AGAIN, NGX_LOG_*, NGX_ESCAPE_*), so the >=2-component-conflicting gate is never reached. C's flat #define namespace makes prefix-collisions common but they are zero-overlap homonyms. Every typedef enum is component-LOCAL (ZERO enum tag spans >=2 distinct subsystems) — so the per-file-enum coincidental-homonym risk the brief warned of never even reached the gate. The two genuine cross-component value-sets (geoip defines + log escape[] tables) are byte-for-byte identical http/stream mirror copies (same-value). 0 fires / 7 mechanism-grounded suppression groups.",
+      "naive_overfire_estimate": 5
+    },
+    {
+      "family": "IF-10",
+      "applicable": true,
+      "fired": 0,
+      "fires": [],
+      "suppressed_count": 12,
+      "suppressed": [
+        {"candidate": "#if (NGX_HAVE_VARIADIC_MACROS) (core/ngx_log.c:93,107,132; ngx_log.h:135; ngx_module.h:103)", "reason": "config-as-preprocessor-flag: the 1-vs-0 define is selected by #if (NGX_HAVE_C99_VARIADIC_MACROS)/#elif(GCC)/… where the gating macros are configure-set (objs/ngx_auto_config.h). Effective RHS is build config, not an in-source literal."},
+        {"candidate": "#if (NGX_HAVE_ATOMIC_OPS) (core/ngx_cycle.c:1005, ngx_rwlock.c:12, ngx_shmtx, ngx_spinlock.c:16)", "reason": "config/platform-driven: 1-vs-0 chosen by per-arch #if blocks in ngx_atomic.h (gcc builtins / x86 asm), gated on toolchain+configure macros. Not an in-source literal."},
+        {"candidate": "#if (NGX_QUIC_BORINGSSL_EVP_API) (13 sites in event/quic/ngx_event_quic_protection.c)", "reason": "external-library/config-driven: defined 1-vs-0 by #if(defined OPENSSL_IS_BORINGSSL || OPENSSL_IS_AWSLC)/#else — depends on which TLS library headers are present."},
+        {"candidate": "#if (NGX_QUIC_OPENSSL_API)/(QUICTLS_API)/(BORINGSSL_API)/(OPENSSL_COMPAT)", "reason": "external-version/config-driven: exactly one is #define'd 1 by the OpenSSL-version #if/#elif ladder at ngx_event_quic.h:15-28. RHS is the linked OpenSSL variant."},
+        {"candidate": "#if (NGX_HAVE_ADDRINFO_CMSG) (18 sites: ngx_event_udp.*, ngx_event_quic_output.c, ngx_udp_sendmsg_chain.c)", "reason": "config/platform-driven: #define'd 1 only inside a nested #if of configure-set capability flags (ngx_event_udp.h:15-23). Whole #if-test depends on build config."},
+        {"candidate": "~60+ sites of NGX_HAVE_DLOPEN / SENDFILE / CPU_AFFINITY / FIONREAD / LITTLE_ENDIAN / KEEPALIVE_FACTOR / … across core/event/http/os/stream", "reason": "config/platform-driven: each #define'd to a literal 1 ONLY inside a per-platform config header (ngx_{win32,freebsd,darwin,linux,solaris,posix}_config.h), which is itself conditionally #include'd behind #if(NGX_LINUX)/#elif(NGX_WIN32)/… in ngx_config.h:21-44 from configure macros. Effective presence/value is build config, never an unconditional in-source literal."},
+        {"candidate": "#if (NGX_SENDFILE_LIMIT) (core/ngx_output_chain.c:65,267,314,331,520)", "reason": "deliberate-disable: the only in-source #define NGX_SENDFILE_LIMIT 4096 sits inside a #if 0…#endif block (ngx_output_chain.c:13-15) → effectively UNDEFINED → the five #if arms are dead BY DELIBERATE DISABLE."},
+        {"candidate": "#if (NGX_HTTP_XSLT_REUSE_DTD) (http/modules/ngx_http_xslt_filter_module.c:268,283,437)", "reason": "build-overridable default: #define wrapped in #ifndef (xslt:25-27) → overridable by configure/-D. Not an assigned-once-unconditional in-source literal."},
+        {"candidate": "82× '#if 0 … #endif' blocks across the tree (ngx_hash.c:18,58,…, ngx_connection.c:257,873, ngx_conf_file.c:1434, …)", "reason": "deliberate-disable idiom: the universal C convention for disabled/commented-out/reference code in-tree — the polar opposite of an accidental dead branch. Linter territory at most, never an IF-10 fire."},
+        {"candidate": "7× '#if 1' blocks (ngx_event.c:627, ngx_http_sub_filter_module.c:548, ngx_iocp_module.c:170, …)", "reason": "deliberate-toggle with NO dead arm: '#if 1' with no '#else' makes NO branch unreachable (an always-on debug/self-check wrapper a dev flips to '#if 0'). Not an IF-10 shape."},
+        {"candidate": "~80 enum-like value macros #define'd to literal 0/1 (NGX_OK 0, NGX_RESOLVE_A 1, NGX_READ_EVENT 0, NGX_QUIC_SHORT_DCID_OFFSET 1, …)", "reason": "not used as the WHOLE test of a conditional: consumed in assignments/comparisons/switch-cases (offset = NGX_QUIC_SHORT_DCID_OFFSET; if (rc == NGX_OK)). Mixed-condition / value-use clause — they never gate a branch alone."},
+        {"candidate": "language-level if (MACRO) whole-tests where MACRO→in-source literal", "reason": "0 found: all if (UPPER_IDENT) single-name whole-tests resolve to a runtime variable or a config-gated macro, never a fixed in-source literal."}
+      ],
+      "c_specific_note": "C is the NOVEL IF-10 substrate: the dead-const-branch lives at the PREPROCESSOR (#if FLAG / #if 0 / #if 1), not in runtime if-statements. nginx has ZERO genuine fires, muted by three mechanisms: (1) config-as-preprocessor-flag — the C twin of Java/PHP config-as-runtime-state: ~108 #if(MACRO) whole-tests where MACRO is #define'd to a literal 1/0 but the value/presence is selected by configure (objs/ngx_auto_config.h) or a per-platform config header conditionally included behind #if(NGX_LINUX)/… So the literal-in-a-header is NOT an unconditional in-source literal — its effective RHS is the build/platform. (2) deliberate-disable #if 0 (82 sites). (3) deliberate-toggle #if 1 with no #else (7 sites). The remaining ~80 #define NAME 0/1 are enum-like VALUE constants used in assignments, never as a whole branch test. The strongest corpus demonstration that config-driven literals must be distinguished from in-source literals — C makes EVERY platform/feature literal look like an in-source const at grep level. (configure-generated objs/ headers are not in the repo → a macro's build-time value is genuinely below the in-source substrate; declining to fire is correct precision, never a fabricated fire.)",
+      "naive_overfire_estimate": 108
+    },
+    {
+      "family": "IF-7c",
+      "applicable": false,
+      "fired": 0,
+      "fires": [],
+      "suppressed_count": 3,
+      "suppressed": [
+        {"kind": "structural-muting-language-lacks-substrate", "reason": "The shipped §23 predicate keys on a BARE EMPTY / comment-only error HANDLER BODY (an empty catch/rescue). Pure C has NO exception-handling construct — no try/catch — so there is no handler body that can be empty. The predicate's syntactic substrate DOES NOT EXIST. Evidence: grep over src/ → throw=0; try=33 (ALL the English word in comments or the try_files module name, e.g. ngx_connection.c:442 '/* TODO: configurable try number */', the http_try_files module — none a 'try {' block); catch=2 (a comment + the fastcgi 'catch_stderr' config directive — zero catch-blocks). NOVEL muting reason — the FIRST in the corpus where the LANGUAGE LACKS THE SUBSTRATE (distinct from 'clean' or 'reduced-recall'). Crystal/Ruby/Java/Kotlin/PHP/Elixir/C# all HAVE catch/rescue; pure C does not."},
+        {"kind": "lone-cpp-translation-unit-checked", "file": "src/misc/ngx_cpp_test_module.cpp", "reason": "The single C++ TU (the only file that COULD legally contain a try/catch). Read in full: a header-compatibility stub (extern \"C\" wrapping nginx headers + a trivial void handler). NO try/catch/throw. Even the one C++ unit lacks the substrate."},
+        {"kind": "deferred-not-shipped-ignored-return-code", "reason": "The C analogue of a swallowed error is a DISCARDED RETURN VALUE ((void)foo(); or bare foo();) — the DEFERRED semantic 'ignored-return-code' case, NOT the shipped empty-handler predicate. Idiomatic in nginx (165 explicit (void)-cast discards; the cast is a deliberate intentional-ignore annotation). nginx otherwise propagates errors EXPLICITLY via 'if (rc == NGX_ERROR) return NGX_ERROR;' and 'goto failed;' cleanup labels. Out-of-shipped-predicate-scope, not a recall gap."}
+      ],
+      "c_specific_note": "C ERROR MODEL = return codes (int NGX_OK/NGX_ERROR/NGX_AGAIN/NGX_DECLINED, NULL, errno) with NO exceptions and NO try/catch in pure C. IF-7c is STRUCTURALLY MUTED on pure C: applicable=false — the FIRST corpus datapoint where the language itself lacks the syntactic substrate the predicate matches (inapplicable-by-language, not 'clean codebase' nor 'reduced recall'). RECALL CAVEAT: none for the shipped predicate — nothing for it to miss in a language with no catch blocks; the only un-surfaced shape is the out-of-scope deferred ignored-rc case.",
+      "naive_overfire_estimate": 165
+    },
+    {
+      "family": "IF-3a",
+      "applicable": true,
+      "fired": 1,
+      "fires": [
+        {
+          "title": "Silent cross-subsystem coupling via the mutable accept-mutex protocol globals (ngx_use_accept_mutex / ngx_accept_mutex_held)",
+          "resource": "two plain mutable ngx_uint_t externs; defined event/ngx_event.c:53; extern decl event/ngx_event.h:460,462 — ONLY an extern declaration, NO get/set accessor in any .h",
+          "distinct_writer_subsystems": ["event", "core", "os"],
+          "write_sites": [
+            "event: ngx_event.c:650 (=1),651 (=0),655 (=0),665 (=0); ngx_event_accept.c:122 (=0),362 (=1),375 (=0)",
+            "core: ngx_connection.c:1138 (ngx_accept_mutex_held=0),1139 (ngx_use_accept_mutex=0) — ngx_close_listening_sockets reaches into the event-loop protocol state",
+            "os: ngx_process_cycle.c:1115 (=0) — cache-manager/helper process disables it directly"
+          ],
+          "read_blast_radius": ["event (ngx_event.c:219,863,883,917; ngx_event_accept.c:119; eventport module:579)", "http (ngx_http_request.c:354 — if (ngx_use_accept_mutex) post-and-return)", "mail (ngx_mail_handler.c:188)", "stream (ngx_stream_handler.c:200)"],
+          "mechanism": "Bare =0/=1 assignment (no function boundary, no accessor) from 3 DISTINCT subsystems, read to drive control flow in 5. core/ngx_connection.c and os/ngx_process_cycle.c clear the event subsystem's protocol state directly; http/mail/stream request handlers branch on it directly. The protocol invariant is maintained by mutating a flat global by name across subsystem boundaries with nothing but grep to find the couplers — the canonical C silent-coupling shape. Blast radius across 6 subsystems.",
+          "severity": "High",
+          "certainty": "HIGH",
+          "fp_risk": "LOW",
+          "gated": true,
+          "filed": false,
+          "note": "Intentional nginx architecture (worker accept-load-balancing / thundering-herd avoidance) but genuinely SILENT (no interface, name-only cross-subsystem mutation) — exactly the IF-3a predicate. Recorded GATED, not filed. Independently main-loop-verified (re-grep'd the 3-subsystem write set + the http/mail/stream read branches)."
+        }
+      ],
+      "suppressed_count": 11,
+      "suppressed": [
+        {"resource": "ngx_cycle (volatile ngx_cycle_t *)", "writers": ["core (nginx.c:252,335)", "os (ngx_process_cycle.c:231,323,690,990; win32:209)"], "reason": "clause (e): documented per-process singleton SET at lifecycle transitions (startup/fork/reconfigure/exit) and only READ everywhere else — a read-mostly architectural baton-pass, not a >=2-concurrent-WRITER coupling. Borderline; weighed and SUPPRESSED in favor of the genuine >=3-writer accept-mutex fire (the bare-assignment, no-accessor pair is the stronger, less-arguable headline)."},
+        {"resource": "ngx_cached_time / ngx_current_msec / cached-time globals", "writers": ["core ONLY (ngx_times.c)"], "reason": "clause (a) single-writer-subsystem + clause (c) reads mediated by the ngx_time()/ngx_timeofday() accessor MACROS (ngx_times.h:36-37). Both independently suppress."},
+        {"resource": "ngx_ssl_*_index (OpenSSL ex-data index ints)", "writers": ["event ONLY (ngx_event_openssl.c)"], "reason": "clause (e)+(a): write-ONCE at SSL-library init in a single subsystem; read cross-subsystem but never written outside event — registration constant."},
+        {"resource": "ngx_modules[] / ngx_max_module / ngx_module_names[] (module registry)", "writers": ["core ONLY (ngx_module.c)"], "reason": "clause (a): link-time-populated write-once array; runtime writes only in core. Read everywhere, never cross-written."},
+        {"resource": "ngx_http_top_*_filter / ngx_stream_top_filter (filter-chain heads)", "writers": ["http ONLY (http/modules/*) ; stream ONLY"], "reason": "clause (a) same-subsystem writers + the documented filter-chain registration idiom (each module prepends itself at postconfiguration) — a recognized init-time interface convention."},
+        {"resource": "ngx_quit / ngx_terminate / ngx_reopen / ngx_reconfigure / ngx_noaccept (sig_atomic_t signal flags)", "writers": ["os ONLY (ngx_process.c handlers + ngx_process_cycle.c)"], "reason": "clause (a): written exclusively within os; read mostly within os/core — single writer-subsystem, not >=2 distinct."},
+        {"resource": "ngx_pid / ngx_parent / ngx_process", "writers": ["core (nginx.c)", "os (ngx_process.c/ngx_daemon.c)"], "reason": "clause (e): per-process identity set ONCE at startup/fork (a lifecycle baton like ngx_cycle); both writers assign the same getpid()-derived value at the fork boundary — read-mostly identity singleton."},
+        {"resource": "ngx_stat_active/accepted/handled/requests/reading/writing/waiting (stub_status counters)", "writers": ["event + http + mail + stream (all via ngx_atomic_fetch_add)"], "reason": "clause (c): reached through the well-known typed ATOMIC API ngx_atomic_fetch_add(ptr,delta) — a deliberate documented lock-free counter interface, NOT bare name-mutation. The SECOND-strongest candidate (genuine multi-subsystem mutation) — correctly suppressed because it goes through a typed atomic interface, the clean contrast with the accept-mutex flags' bare assignments."},
+        {"resource": "ngx_temp_number / ngx_random_number", "writers": ["core (ngx_file.c:16-17 defs)", "event (ngx_event.c:598,602 re-point into shared memory at init)"], "reason": "clause (e): the core lines are DEFINITIONS; event re-binds the pointer into the shared-memory zone once at init — single genuine runtime writer, write-once-at-init."},
+        {"resource": "ngx_max_sockets / ngx_cacheline_size / ngx_pagesize / ngx_ncpu", "writers": ["core (nginx.c:224 '/* TODO */ = -1' placeholder; ngx_cpuinfo.c)", "os (ngx_posix_init.c/ngx_win32_init.c)"], "reason": "clause (e): platform/capability constants probed ONCE at process init (os writes the real value; the core line is a pre-init placeholder) — effectively immutable after init."},
+        {"resource": "request/connection/cycle-threaded state (ngx_http_request_t *r, ngx_connection_t *c, ngx_cycle_t *cycle as PARAMETERS)", "writers": ["n/a (struct pointers passed by parameter)"], "reason": "clause (d): NOT a global — nginx threads the overwhelming majority of its state as a struct pointer passed by PARAMETER. This clause PRE-SUPPRESSES the entire pointer-threaded state surface (the dominant pattern), leaving only true flat-namespace externs as IF-3a candidates."}
+      ],
+      "c_specific_note": "C is the MOST PERMISSIVE / richest-surface IF-3a substrate: a flat global namespace, no encapsulation, extern globals freely shared. 156 extern globals declared; 58 visible across >=2 subsystems. Yet precise predicate application yields exactly ONE fire because nginx is disciplined: (d) threads almost all state via struct-pointer parameters (r/c/cycle); (c) cached time behind ngx_time() macros + stat counters behind ngx_atomic_fetch_add(); (a)/(e) most remaining externs are write-once-at-init capability/registration singletons or read-mostly lifecycle batons (ngx_cycle, ngx_pid). The ONE fire surviving every clause is the accept-mutex pair: bare =0/=1 assignment (no accessor — contrast the atomic stat counters), mutated from 3 DISTINCT subsystems, read in 5 — the purest 'flat-namespace mutable extern written cross-subsystem by name with zero interface', the canonical IF-3a shape the predicate was written for. Like Go/PHP/C#/Elixir/Ruby this is permitted-and-fires; C's version is the purest. RECALL CAVEAT (analogous to Ruby autoload): forward-declaration coupling is below the grep substrate — not relevant to this fire (fully #include-visible) but it makes IF-3a recall on C a lower bound, never inflated.",
+      "naive_overfire_estimate": 58
+    }
+  ],
+  "naive_vs_guarded_illustrative": {
+    "naive_overfires_approx": 342,
+    "guarded_fires": 2,
+    "false_defects": 0,
+    "note": "A naive surface detector would over-fire on ~342 near-candidates: IF-8 ~6 (the basename-collision + system-header + intra-component noise a naive include-graph builder would mis-edge); IF-6 ~5 (the same-value geoip/escape mirror copies + distinct-named platform scalars + homonyms); IF-10 ~108 (#if(MACRO) whole-tests where MACRO is config/platform-driven but looks like an in-source literal at grep level — plus ~89 more from #if 0/#if 1 idioms = ~197 at maximal naivety); IF-7c ~165 (the (void)-cast ignored-return-code discards a naive 'ignored error' detector would chase — a conservative lower bound, bare foo(); discards uncounted); IF-3a ~58 (extern globals touched by >=2 subsystems). The guarded predicates fired exactly TWICE (the real {core,event,os} cycle + the real accept-mutex coupling), both HIGH, both GATED, with 0 false defects — every suppression names its predicate-FALSE mechanism."
+  },
+  "key_c_findings": [
+    "IF-8 / the NOVEL 'permitted + textual' regime (the 5th, most permissive IF-8 mechanism in the corpus): C has NO module system — the dependency unit is the textual #include, and there is NO compiler/linker ban on a cyclic #include graph. Include guards make cross-component cycles non-fatal (they dedup the second textual visit) — the mechanism that lets cycles exist. nginx FIRES a genuine {core,event,os} 3-component cycle, present identically in the full and header-only graphs (interface-level co-recursion), closed through the umbrella god-header ngx_core.h (which includes sibling event/os headers while being included by ~every file — a pattern with no module-language analog). Independently main-loop-verified (a second Tarjan converged on the same SCC). http/mail/stream/misc are clean acyclic leaves by DISCIPLINE, not enforcement.",
+    "IF-10 / the NOVEL preprocessor muting mechanism: C's dead-const-branch lives at the preprocessor (#if FLAG). 0 fires, muted by config-as-preprocessor-flag (the C twin of Java/PHP config-as-runtime-state — ~108 #if(MACRO) whole-tests where MACRO is configure/platform-driven, not an in-source literal) + the #if-0 deliberate-disable idiom (82 sites). The strongest corpus demonstration that config-driven literals must be told apart from in-source literals, since C makes every platform/feature literal look like a const at grep level.",
+    "IF-7c / the FIRST applicable=false-by-substrate datapoint: pure C has NO exception construct — throw=0, try-block=0, catch-block=0 across the whole tree (the lone .cpp is a header-compat stub). The shipped §23 empty-handler predicate has no syntactic substrate to match → structurally muted, a NOVEL muting reason (inapplicable-by-language, distinct from 'clean' or 'reduced-recall'). The C analogue (ignored return code, 165 (void) discards) is the deferred, not-shipped family.",
+    "IF-3a / the richest substrate FIRES: C's flat global namespace (156 externs, 58 cross-subsystem-visible) is the corpus's most permissive IF-3a surface, yet nginx's discipline (struct-pointer parameter threading, accessor macros, atomic APIs, write-once-init singletons) collapses it to ONE fire — the accept-mutex protocol pair (bare =0/=1, no accessor, 3 writer subsystems, read in 6) — the purest canonical IF-3a shape in the corpus. The borderline ngx_cycle lifecycle-baton and the atomic-mediated ngx_stat_* counters were correctly suppressed in favor of it."
+  ],
+  "honest_assessment": "This is the FIRST pure-C datapoint and the highest-novelty stack in the discovery track: it completes the cross-language IF-8 spectrum with a genuinely NEW fifth mechanism — 'permitted + textual' (textual #include + include guards, NO compiler/linker cycle ban — strictly more permissive than every module language studied) — witnessed by a real, main-loop-double-verified {core,event,os} 3-component header-level cycle. The five families exercise C's distinct structural rules and land on 2 HIGH fires (both GATED) / 40 named suppressions / 0 false defects against a ~342-candidate naive surface. The comprehension (not keyword-matching) shows in four places: IF-8 builds the real by-basename-resolved #include graph and fires only on the genuinely co-recursive core/event/os triad while suppressing http/mail/stream as acyclic leaves AND the 13 unix/win32 duplicate-basename headers as one 'os' component (the caddy-lesson precision guard); IF-10 distinguishes ~108 config/platform-driven #if literals (muted) from a true in-source literal (none) — the preprocessor twin of config-as-runtime-state; IF-7c recognizes that pure C lacks the empty-handler substrate entirely (applicable=false, a corpus first) rather than reporting a hollow 'clean'; and IF-3a, on the most permissive shared-state surface in the corpus, fires only on the one bare-assignment-no-accessor accept-mutex coupling and names why the read-mostly lifecycle batons and atomic-mediated counters are not. Every load-bearing structural claim (the SCC, the 3-writer IF-3a coupling) was independently re-computed by the main loop and converged. Recorded GATED (comprehension/architecture findings on a famous repo, training-contamination caveat noted; the facts rest on the live code re-read at the pinned SHA).",
+  "totals": {
+    "families": 5,
+    "genuine_fires": 2,
+    "fires_severity": "2 HIGH (IF-8 {core,event,os} 3-SCC + IF-3a accept-mutex protocol), both GATED / not filed",
+    "named_suppressions": 40,
+    "false_defects": 0,
+    "naive_overfire_surface": 342
+  },
+  "counts_note": "Authoritative counts are the structured suppressed[] arrays: 40 named suppressions (IF-8 7 / IF-6 7 / IF-10 12 / IF-7c 3 / IF-3a 11) + 2 HIGH fires (IF-8 + IF-3a), 0 false defects. IF-7c is applicable=false (structurally muted — pure C lacks the empty-handler substrate); its 3 suppressed[] entries are the structural-muting record (substrate-absent + the lone-cpp check + the out-of-scope ignored-rc note), not near-candidate suppressions of real fire sites."
+}

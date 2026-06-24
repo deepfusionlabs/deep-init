@@ -1,0 +1,36 @@
+{
+  "fixture": "mini-if2-drift",
+  "purpose": "IF-2 DB-vs-code drift: model-only field (High) + precision drift across a base-type synonym (Medium) fire; dialect synonyms with identical params are suppressed by type-equivalence.",
+  "expected_issues": [
+    {
+      "family": "IF-2",
+      "file": "app/models/subscription.rb",
+      "line": 23,
+      "severity": "High",
+      "certainty": "HIGH",
+      "claim": "Possible model-only field: the ORM validates `external_billing_id` presence, but no such column appears in the live `subscriptions` schema.",
+      "evidence": "ORM declares/validates `external_billing_id` at app/models/subscription.rb:23; the live schema for `subscriptions` (db/schema.rb) has no `external_billing_id` column. Severity lifted from database.md drift table (model_only_field = High)."
+    },
+    {
+      "family": "IF-2",
+      "file": "app/models/subscription.rb",
+      "line": 10,
+      "severity": "Medium",
+      "certainty": "HIGH",
+      "claim": "Possible precision/scale divergence between code and live schema on `monthly_amount`: ORM assumes decimal(10,2), live column is numeric(12,4).",
+      "evidence": "Contrast: ORM `monthly_amount` decimal(10,2) at app/models/subscription.rb:10 vs live `monthly_amount` numeric(12,4) at db/schema.rb. decimal==numeric is a base-type synonym but precision/scale differ, so the base-type-only equivalence layer must STILL flag. Severity lifted from database.md drift table (precision_mismatch = Medium)."
+    }
+  ],
+  "must_not_fire": [
+    {
+      "family": "IF-2",
+      "file": "app/models/subscription.rb",
+      "reason": "`proration_credit` is decimal(8,2) in the ORM (line 15) and numeric(8,2) in the live schema (db/schema.rb). decimal and numeric are dialect synonyms of the same base type AND the precision/scale are identical, so type-equivalence normalization suppresses it. A naive `decimal != numeric` string compare would false-positive here."
+    },
+    {
+      "family": "IF-2",
+      "file": "app/models/subscription.rb",
+      "reason": "`auto_renew` is declared :boolean in the ORM (line 20) and stored as tinyint(1) in the live schema (db/schema.rb). tinyint(1) is the canonical MySQL boolean synonym with identical semantics, so type-equivalence normalization suppresses it. A naive `boolean != tinyint` compare would false-positive here."
+    }
+  ]
+}

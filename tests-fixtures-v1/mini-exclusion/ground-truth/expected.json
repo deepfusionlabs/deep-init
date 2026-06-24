@@ -1,0 +1,37 @@
+{
+  "fixture": "mini-exclusion",
+  "purpose": "Edge/failure-mode fixture for the deterministic exclusion pass (detection.md). Proves tools/exclusion_pass.py classifies every category correctly + counts honestly (R8 — no silent skip). Scanned tree = repo/. The gate runs with --max-lines 50 so the 60-line data_big.txt trips oversize without a huge committed file (real defaults: >1MB or >20k lines).",
+  "max_lines_for_test": 50,
+  "must_keep": [
+    "src/app.ts",
+    "src/util.ts",
+    "packages/core/core.go",
+    "packages/extra/extra.go"
+  ],
+  "must_skip": {
+    "secrets.env": "gitignored",
+    "debug.log": "gitignored",
+    "node_modules/dep/index.js": "vendored",
+    "dist/bundle.min.js": "vendored",
+    "vendor/lib.go": "vendored",
+    "generated/api_pb2.py": "generated",
+    "src/schema.generated.ts": "generated",
+    "src/wired.ts": "generated",
+    "__snapshots__/comp.snap": "generated",
+    "assets/logo.png": "binary",
+    "data_big.txt": "oversize"
+  },
+  "expected_counts": {
+    "gitignored": 2,
+    "vendored": 3,
+    "generated": 4,
+    "binary": 1,
+    "oversize": 1,
+    "out_of_scope": 0
+  },
+  "monorepo_scope": {
+    "scope": "packages/core",
+    "only_included": "packages/core/core.go",
+    "note": "with --scope packages/core, everything outside that package (incl. src/* and packages/extra) becomes out_of_scope — the component-scoped path."
+  }
+}

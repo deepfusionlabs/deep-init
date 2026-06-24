@@ -1,0 +1,85 @@
+{
+  "schema": "deepinit-validation/integration-manifest/v1",
+  "program": "Real-engine integration suite (docs/TESTING.md L3 / Tier-2)",
+  "role": "The corpus roster the metered Tier-2 runner (tools/run_integration.py) drives. Single source of truth: every repo here carries a 40-hex pinned_sha + tier + mode + doc_source. The runner refuses any repo not listed here, and the §A4 static contract refuses any committed run-record whose repo is NOT in this roster (no orphan run). Cost-is-no-object spend = depth: aggressive profile + N-x stability re-runs on the corpus core.",
+  "tiers": {
+    "S": "small (<25k LOC)",
+    "M": "medium (25k-100k LOC)",
+    "L": "large (>100k LOC or multi-module)"
+  },
+  "modes": {
+    "blind": "doc-comparison Mirror Test — the repo's own docs are HELD OUT of the engine's inputs; output scored vs the held-out key (coverage + faithfulness).",
+    "single": "single-pass full run, snapshot + citation-resolution audit (no held-out scoring).",
+    "multi-component": "full multi-component run (nested AGENTS.md + horizontal docs), snapshot + audit."
+  },
+  "corpus": {
+    "kemal": {
+      "repo": "kemalcr/kemal", "stack": "Crystal", "tier": "S",
+      "pinned_sha": "b73de3d8e6de97541866b6ecdc8c6ee1ef3eb747",
+      "mode": "multi-component", "split": "n/a",
+      "doc_source": "README.md + the kemal guide (https://kemalcr.com/)",
+      "status": "snapshotted",
+      "snapshot_ref": "validation/end-to-end/kemal",
+      "caveat": "PRE-B1 canonical e2e archive (single AGENTS.md, pre-nested-emit); its four §40 invariants stay valid — do not demand B1-era nested/horizontal completeness from it."
+    },
+    "eabe": {
+      "repo": "evolutionary-architecture/evolutionary-architecture-by-example", "stack": "C#", "tier": "M",
+      "pinned_sha": "04c3f717d96f505d8355fac517c780904982d5bd",
+      "mode": "blind", "split": "held-out",
+      "doc_source": "the per-module ADR set + README (ADR-rich teaching repo — the richest doc-comparison target)",
+      "status": "planned",
+      "coverage_ref": "validation/coverage/results/eabe.json"
+    },
+    "helix": {
+      "repo": "helix-editor/helix", "stack": "Rust", "tier": "L",
+      "pinned_sha": "14eda106f0a3e6a5fc6fb5cbd96bda9774f64ae1",
+      "mode": "blind", "split": "held-out",
+      "doc_source": "book/src/architecture.md + the crate-level docs",
+      "status": "planned",
+      "coverage_ref": "validation/coverage/results/helix.json"
+    },
+    "scrapy": {
+      "repo": "scrapy/scrapy", "stack": "Python", "tier": "M",
+      "pinned_sha": "af30cfea120a0b0853984bedc350e8dc114bba25",
+      "mode": "blind", "split": "held-out",
+      "doc_source": "docs/topics/architecture.rst (the documented Twisted async architecture)",
+      "status": "planned",
+      "coverage_ref": "validation/coverage/results/scrapy.json"
+    },
+    "otelcol": {
+      "repo": "open-telemetry/opentelemetry-collector", "stack": "Go", "tier": "L",
+      "pinned_sha": "af182d232650a324376f0d554a7ee0f5e48e9d39",
+      "mode": "blind", "split": "tune",
+      "doc_source": "docs/design.md + the per-module READMEs (multi-module, well-documented)",
+      "status": "planned",
+      "coverage_ref": "validation/coverage/results/otelcol.json"
+    },
+    "excalidraw": {
+      "repo": "excalidraw/excalidraw", "stack": "TypeScript", "tier": "L",
+      "pinned_sha": "0cf56b19c79a28dda52f0dcb1c5392ed19cb5fcd",
+      "mode": "multi-component", "split": "n/a",
+      "doc_source": "the package READMEs across the Yarn-workspaces monorepo",
+      "status": "planned",
+      "coverage_ref": "validation/end-to-end/excalidraw-real/_q1_real_engine_record.json"
+    },
+    "commercetools-sync-java": {
+      "repo": "commercetools/commercetools-sync-java", "stack": "Java", "tier": "L",
+      "pinned_sha": "a0fbe1f4e6c83965f1ae96596cb58c084e65e05f",
+      "mode": "blind", "split": "held-out",
+      "doc_source": "the docs/ usage guides + javadoc (large + documented commerce data-sync library)",
+      "status": "planned",
+      "coverage_ref": "validation/coverage/results/commercetools-sync-java.json"
+    }
+  },
+  "showcases_planned": {
+    "note": "Famous large repos earmarked for the metered  showcase sweep (size-scaling + marketing figures). Pinned SHAs assigned at run time by the operator (NOT fabricated here); excluded from the §A4 40-hex contract until they carry a real pin + snapshot.",
+    "repos": ["redis/redis", "laravel/framework", "expressjs/express"]
+  },
+  "expectations_default": {
+    "coverage_floor_wilson95_lb": 0.20,
+    "faithfulness_floor": 0.90,
+    "citation_resolution_floor": 1.0,
+    "deepinit_wrong_high_max": 0,
+    "components_min": 1
+  }
+}

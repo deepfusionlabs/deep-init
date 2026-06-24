@@ -1,0 +1,70 @@
+{
+  "fixture": "mini-if10-deadflag",
+  "purpose": "IF-10 (roadmap family #6, semantic dead/orphan code) — DETERMINISTIC SLICE: a const-gated statically-dead branch. An arm under a conditional whose WHOLE test is a module-level compile-time-LITERAL const (TS `const NAME = false|true|<str>|<num>`, no rebind/export) is flagged as unreachable-as-written; a non-literal config flag, a let/rebound flag, a mixed condition, a bare `if(false)`, and an exported flag are not. This is a LOCAL AST const-fold (one hop) — NOT reachability: it needs no import graph, entry-point, or reflection inference, which is why it passes the structural test (decidable predicate == defect predicate, on the UNREACHABILITY claim only). It escapes both kill-shots: NOT knip (the flag is read, the arm is referenced) and NOT ESLint no-constant-condition (which only flags a bare literal in test position, not a const indirection). It asserts UNREACHABILITY, never DELETABILITY — the parked-feature-vs-garbage verdict and cross-module const resolution are the deferred semantic part.",
+  "expected_issues": [
+    {
+      "family": "IF-10",
+      "subcase": "const-gated statically-dead branch",
+      "file": "src/checkout/flow.ts",
+      "line": 5,
+      "flag": "NEW_CHECKOUT",
+      "dead_arm": "if-body",
+      "severity": "High",
+      "certainty": "HIGH",
+      "claim": "Possible statically-unreachable branch: NEW_CHECKOUT is a compile-time-constant `false`, so the if-true arm at src/checkout/flow.ts:6 never executes — confirm intended (parked feature vs. dead code).",
+      "evidence": "src/checkout/flow.ts:2 `const NEW_CHECKOUT = false;` (a `const` literal, never rebound or exported); src/checkout/flow.ts:5 `if (NEW_CHECKOUT) {` uses it as the WHOLE test, so the if-body (line 6) is unreachable-as-written. One-hop const-fold — no reachability/entry-point inference needed."
+    }
+  ],
+  "must_not_fire": [
+    {
+      "family": "IF-10",
+      "flag": "DEBUG",
+      "file": "src/config/env.ts",
+      "reason": "NON-LITERAL config flag. `const DEBUG = process.env.NODE_ENV === 'production'` — the RHS is not a compile-time literal (config-determined at runtime), so the literal-const binding never matches. Predicate genuinely FALSE (not intent-suppressed). Must not fire."
+    },
+    {
+      "family": "IF-10",
+      "flag": "ENABLED",
+      "file": "src/feature/toggle.ts",
+      "reason": "LET + REBIND. `let ENABLED = false; ENABLED = loadFlag();` — not `const`, and provably reassigned before the test, so the value can change at runtime. Predicate FALSE. Must not fire."
+    },
+    {
+      "family": "IF-10",
+      "flag": "MODE",
+      "file": "src/api/handler.ts",
+      "reason": "MIXED CONDITION. `const MODE = 'on'; if (MODE === 'on' && user.isAdmin)` — the test is not the bound name alone; a runtime term (user.isAdmin) co-decides the branch, so the literal does not statically decide it. The sole-operand anchor never matches. Predicate FALSE. Must not fire."
+    },
+    {
+      "family": "IF-10",
+      "flag": "(bare literal)",
+      "file": "src/legacy/raw.ts",
+      "reason": "BARE LITERAL (linter territory, Test-1'). `if (false) {...}` with no const indirection — there is no literal-const binding, which is exactly the gap that makes ESLint no-constant-condition fire and IF-10 stay scoped to the const-indirection case it leaves. Predicate FALSE for this slice (no const binding). Must not fire."
+    },
+    {
+      "family": "IF-10",
+      "flag": "ROLLOUT",
+      "file": "src/feature/rollout.ts",
+      "scope_boundary": true,
+      "reason": "EXPORTED flag — SCOPE-BOUNDARY suppression (the local arm IS locally dead; suppressed by a deliberate scope rule, not because the predicate is false). `export const ROLLOUT = false` is provably constant from this file in TS, so the if-arm is locally unreachable — but for an exported symbol the reviewer-relevant question is CROSS-MODULE deadness (the deferred semantic headline), and firing risks nudging toward deleting a public-surface API toggle, which IF-10 swears off. So the single-file slice defers exported flags. Must not fire."
+    },
+    {
+      "family": "IF-10",
+      "flag": "FLAG",
+      "file": "src/commentstr/doc.ts",
+      "reason": "COMMENT/STRING anchor. FLAG is a const false, but the real gate is a member read (`if (cfg.flag)`), not a sole-operand `if (FLAG)`. Its name appears only inside a JSDoc-style comment and a string literal; the detector blanks comments + string content (preserving line numbers) before the if-anchor search, so neither produces a mislocated 'your branch is dead' fire. Predicate FALSE (no real sole-operand const conditional). Must not fire."
+    },
+    {
+      "family": "IF-10",
+      "flag": "FLAG",
+      "file": "src/reexport/flags.ts",
+      "scope_boundary": true,
+      "reason": "DETACHED RE-EXPORT — SCOPE-BOUNDARY suppression. FLAG is exported via a separate `export { FLAG }` statement (not `export const`). Same scope rule as the exported flag: cross-module deadness is the deferred headline, and we won't over-claim toward deleting a public-surface symbol. The suppress regex catches the detached form. Must not fire."
+    },
+    {
+      "family": "IF-10",
+      "flag": "FLAG",
+      "file": "src/shadow/scope.ts",
+      "reason": "SHADOWING. An inner `const FLAG = true` shadows the outer module-level `const FLAG = false`. A flat regex cannot resolve scope, so >1 const binding of the same name is ambiguous → skip entirely (precision-safe). The inner `if (FLAG)` arm is actually REACHABLE (inner FLAG is true), so firing would assert a live arm is dead — exactly the FP to avoid. Must not fire."
+    }
+  ]
+}

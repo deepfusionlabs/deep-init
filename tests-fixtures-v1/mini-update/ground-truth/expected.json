@@ -1,0 +1,55 @@
+{
+  "project": "mini-update",
+  "description": "Pre-existing DeepInit output for lifecycle mode testing",
+  "test_scenarios": {
+    "lint_fresh": {
+      "description": "Run --lint with no code changes",
+      "setup": "No changes needed — hashes are stale (won't match real sha256), so all components will appear changed",
+      "expected": "All components reported as stale (hashes are fake placeholder values)"
+    },
+    "update_billing_change": {
+      "description": "Modify billing/invoice.ts, run --update",
+      "setup": "Edit src/billing/invoice.ts (add a comment or change a value)",
+      "expected_behavior": [
+        "Detects invoice.ts hash changed",
+        "Maps to billing component",
+        "Re-analyzes billing only (not auth)",
+        "Re-runs Wave 3-4 (horizontal + cross-refs)",
+        "Updates .file_hashes.json with new hash",
+        "Appends entry to changelog.md"
+      ]
+    },
+    "update_no_changes": {
+      "description": "Run --update after updating hashes to match current files",
+      "setup": "Recompute real sha256 hashes and update .file_hashes.json",
+      "expected": "Reports 'No changes detected' and exits quickly"
+    },
+    "decisions_only": {
+      "description": "Run --decisions-only",
+      "expected_behavior": [
+        "Scans code comments for decision language",
+        "Produces decisions.md",
+        "Does NOT run full Wave 2 analysis"
+      ]
+    },
+    "new_component": {
+      "description": "Add new directory src/reports/ with a file, run --update",
+      "setup": "mkdir src/reports && create reports/summary.ts",
+      "expected_behavior": [
+        "Detects new component 'reports'",
+        "Flags as NEW — full analysis",
+        "Analyzes reports component",
+        "Updates component registry"
+      ]
+    },
+    "deleted_reference": {
+      "description": "Delete src/billing/payment.ts, run --lint",
+      "setup": "rm src/billing/payment.ts",
+      "expected_behavior": [
+        "billing.md references src/billing/payment.ts — file not found",
+        "Reports broken reference in lint output",
+        "billing component reported as CRITICAL (file deleted)"
+      ]
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "mini-if6-enumforms",
+  "version": "0.0.0",
+  "private": true,
+  "description": "IF-6 named-set coverage cluster (§28) — TS enum / Zod z.enum / Python frozenset under the name-keyed set-diff; 3 divergences fire, 3 same-value clones suppressed"
+}

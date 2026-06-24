@@ -1,0 +1,25 @@
+{
+  "schema": "deepinit-validation/end-to-end-record/v1",
+  "program": "Synthetic minimal e2e snapshot (§A3 fixture — NOT a real engine run)",
+  "repo": { "name": "acme/widget", "stack": "Go", "synthetic": true },
+  "run": { "mode": "single", "model": "synthetic-fixture", "date": "2026-06-19" },
+  "independent_validation": {
+    "validated_by": "tools/audit (re-derived structurally by §A3 over the committed snapshot — separation of duties)",
+    "sarif_valid_v210": true,
+    "dashboard_self_contained": true,
+    "agents_md_owned_region": true,
+    "agents_md_issue_leak": false
+  },
+  "pipeline_result": {
+    "components": 1,
+    "verification_checked": 1,
+    "verification_resolved": 1,
+    "verification_refuted": 0,
+    "issues_fired": 0,
+    "suppressions_named": 0
+  },
+  "provenance": {
+    "synthetic": true,
+    "note": "The four §A3 invariants (SARIF v2.1.0 + ref-integrity, dashboard self-contained, lean owned-region + no issue-leak, record all-resolved-0-refuted) are re-checked from the committed artifacts; nothing here is self-attested as the source of truth."
+  }
+}

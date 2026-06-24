@@ -1,0 +1,61 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+#
+# CodeRabbit config for DeepInit. This repo is unusual: the PRODUCT is Markdown
+# (the skill engine in skills/deep-init/), the tools/ are executable reference
+# implementations of those specs, and tests-fixtures-v1/ is the only test (a
+# deterministic harness). Reviews should reflect that, not treat it as a normal app.
+language: en-US
+early_access: false
+
+reviews:
+  # "chill" keeps the noise down — this project biases hard toward precision over
+  # recall, so we don't want a flood of low-confidence nits.
+  profile: chill
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+  auto_review:
+    enabled: true
+    drafts: false
+
+  # Don't waste review budget on generated / vendored / third-party content.
+  path_filters:
+    - "!**/node_modules/**"
+    - "!package-lock.json"
+    - "!validation/_clones/**"
+    - "!**/assets/vendor/**"
+    - "!**/*.min.js"
+    - "!CHANGELOG.md"
+
+  path_instructions:
+    - path: "skills/deep-init/**"
+      instructions: >-
+        This IS the product — a Claude Code skill defined entirely in Markdown
+        (SKILL.md + references/*.md prose specs), executed by a Claude instance, not
+        an app runtime. Review for instruction clarity, internal consistency across
+        the references, and the load-bearing invariants: never fabricate (every claim
+        cites file:line with a certainty tag), expand-only (extend a stage, never
+        remove a capability), report-only (issues never edit source, never enter the
+        lean CLAUDE.md tier), and 100% local / read-only / no network.
+    - path: "tools/**"
+      instructions: >-
+        Executable reference implementations of the skill specs (and the
+        build/validation tooling). Each tool mirrors a references/*.md spec and is
+        pinned by a harness section. Flag any drift from the prose spec, and anything
+        that breaks byte-stable deterministic output (sorted keys, no clock/random).
+    - path: "tests-fixtures-v1/**"
+      instructions: >-
+        The deterministic validation harness — the ONLY test (no LLM, no real skill
+        run). It must stay all-PASS and the gate count must grow additively, never
+        regress. A new gated check needs a RED-before-GREEN proof and a killing
+        mutation so it is provably load-bearing.
+    - path: "**/*.md"
+      instructions: >-
+        Docs and specs. Watch for figures that should be derived from STATS.json
+        (never hand-typed), broken file:line citations, and claims that overstate
+        evidence framed as INDICATIVE.
+
+chat:
+  auto_reply: true

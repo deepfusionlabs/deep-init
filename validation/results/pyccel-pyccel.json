@@ -1,0 +1,44 @@
+{
+  "schema": "deepinit-validation/precision-record/v1",
+  "program": "DeepInit in the Wild",
+  "track": "1 — precision (naive-vs-guarded FP + census-signal correctness)",
+  "recorded": "2026-06-10",
+  "test_plan_run": "",
+  "repo": {
+    "name": "pyccel/pyccel",
+    "url": "https://github.com/pyccel/pyccel",
+    "branch": "devel",
+    "pinned_sha": "b559732cd126b771eb0d7d8bf7cc78ceb7cc6070",
+    "pinned_sha_date": "2026-04-16T15:56:06Z",
+    "sha_provenance": "default-branch (devel) HEAD at or before the 2026-06-10 validation date, resolved via GitHub API 2026-06-11 (the validation clone was not retained; the file:line citations below are the durable anchors and are SHA-robust because they describe structural conformance to a slow-changing documented rule).",
+    "license": "MIT",
+    "stack": "Python"
+  },
+  "documented_rule": "\"All internal classes which can be generated from FunctionCalls must inherit from PyccelFunction\" — CHANGELOG.md:436, in the [2.0.0] - 2025-06-21 'Changed/[INTERNALS]' section (a historical change-log entry, not a maintained ADR).",
+  "rule_hardness": "hard-deontic",
+  "rule_location_kind": "CHANGELOG",
+  "census": {
+    "class_selector": "Internal AST classes registered as `func_class` in a `PyccelFunctionDef(...)` (positional 2nd arg or `func_class=`) across pyccel/ast/*.py — the structural enumeration of 'classes which can be generated from a FunctionCall'. Excludes 2 commented-out aliases (NumpyDeg2rad/NumpyRad2deg at numpyext.py:4034-4035). No generated/test/vendored sites in this set.",
+    "conformance_check": "Transitive issubclass(cls, PyccelFunction), verified at runtime by importing pyccel.ast.* and calling issubclass (not a textual extends-clause match), per the LITERAL CHANGELOG rule.",
+    "N": 114,
+    "conformers_k": 103,
+    "deviants_sample": [
+      "pyccel/ast/class_defs.py:287 (DictItems -> Iterable)",
+      "pyccel/ast/class_defs.py:288 (DictKeys -> Iterable)",
+      "pyccel/ast/itertoolsext.py:67 (Product -> Iterable)",
+      "pyccel/ast/numpyext.py:4002 (NumpyDivide -> PyccelDiv operator)",
+      "pyccel/ast/typingext.py:237 (TypingTypeVar -> TypedAstNode)"
+    ],
+    "signal": "DEGRADE",
+    "degrade_guard": ["superseded-contract"],
+    "signal_is_correct": true,
+    "signal_reason": "The naive census formula computes CORROBORATE (k=103 >= ceil(2*114/3)=76 AND k>N-k=11), which would flag the 11 deviants as outlier violations. That is WRONG here. The conformance property is NOT a single unambiguous structural fact: the project's ACTUAL code-enforced contract is `assert issubclass(func_class, (PyccelFunction, TypedAstNode, Iterable))` at pyccel/ast/core.py:2986-2988 — broader than the literal one-base CHANGELOG sentence. CHANGELOG.md:444 (SAME 2.0.0 release as the rule) states '[INTERNALS] Make Iterable into a super-class instead of a storage class', and post-2.0.0 releases added typing.* (TypeVar/TypeAlias/Final) and dict.items() classes based directly on TypedAstNode. So the literal rule is a stale/simplified description of a one-time refactor, superseded by the project's own enforced invariant. Under the REAL 3-base contract, all 11 'deviants' are permitted and violations==0. Correct verdict: DEGRADE (ambiguous/superseded structural property; human decides), NOT an auto-flag of 11 outliers."
+  },
+  "naive_vs_guarded": {
+    "naive_detector_false_positives": 11,
+    "guarded_detector_avoids_them": true,
+    "genuine_deviation_found": "none — clean repo under the project's real, code-enforced contract. Of the 11 literal-rule deviants, 0 violate the actually-enforced invariant `issubclass(func_class, (PyccelFunction, TypedAstNode, Iterable))` (pyccel/ast/core.py:2986-2988). The closest thing to a 'genuine' outlier — NumpyDivide (numpyext.py:4002/4003) inheriting from the operator PyccelDiv rather than PyccelFunction — is still a permitted TypedAstNode subclass and reflects a deliberate design (numpy.divide modeled as the '/' operator), not an accidental violation."
+  },
+  "honest_assessment": "A HARD, class-ranging deontic witness IS present and citable (CHANGELOG.md:436, 'must inherit'), and the class is cleanly structurally enumerable (registry of `func_class` args in `PyccelFunctionDef` calls). I verified conformance at runtime via issubclass after importing the real AST modules — N=114, k=103, 11 literal deviants (DictItems/DictKeys/DictValues/Product -> Iterable; NumpyDivide -> PyccelDiv; 6x Typing* -> TypedAstNode). BUT the literal rule is contradicted by the project's OWN enforced contract: the runtime assert at core.py:2986-2988 permits PyccelFunction OR TypedAstNode OR Iterable, and CHANGELOG.md:444 (same 2.0.0 release) plus later-release typing/dict features explain every deviant as intentional. So the rule is a stale CHANGELOG simplification, not a living invariant, and the conformance predicate is NOT a single unambiguous structural fact. A naive census would over-fire on all 11 as 'violations' (CORROBORATE-the-outlier framing); the guarded detector correctly DEGRADEs. This is a strong scope-honesty data point: even a hard, citable, class-ranging deontic can be a measurement trap when the documented one-base property has been superseded by a broader enforced contract — surfacing the 11 would be 11 false positives. The right detector output here is a NEUTRAL/DEGRADE rule-health flag ('the literal CHANGELOG rule is stale relative to core.py:2986-2988'), not an auto-judgment against the code.",
+  "verdict": "DEGRADE — clean repo; 11 naive false-positives avoided; 0 false defects emitted; census correctly degraded (superseded/ambiguous structural property)."
+}

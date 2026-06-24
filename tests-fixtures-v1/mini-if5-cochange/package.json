@@ -1,0 +1,11 @@
+{
+  "name": "mini-if5-cochange",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Small checkout/billing/orders app used as the IF-5 change-coupling oracle fixture.",
+  "main": "src/orders/order.service.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "license": "MIT"
+}

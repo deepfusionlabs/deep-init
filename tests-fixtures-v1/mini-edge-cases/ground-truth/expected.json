@@ -1,0 +1,25 @@
+{
+  "fixture": "mini-edge-cases",
+  "purpose": "Edge/failure-mode ROBUSTNESS modality (M8-T1). Proves the deterministic pre-scan (tools/exclusion_pass.py) survives degenerate inputs WITHOUT crashing, ALWAYS classifies every file (no silent drop — R8), and keeps honest counts. The cleanly-committable degenerate files live under repo/; the un-committable ones (empty repo, true 0-byte, null-byte binary, invalid-UTF-8, symlink) are built programmatically in a tmp dir by the §48 harness section from this spec. The accounting invariant (included + skipped == files scanned, counts sum == skipped) is the load-bearing R8 honesty property.",
+  "max_lines_for_test": 50,
+  "committed_cases": {
+    "src/app.ts": "keep",
+    "src/gen_header.ts": "generated",
+    "packages/core/core.go": "keep",
+    "packages/extra/extra.go": "keep"
+  },
+  "monorepo_scope": {
+    "scope": "packages/core",
+    "only_included": "packages/core/core.go"
+  },
+  "degenerate_invariants": [
+    "empty-repo: no crash; included_count==0; skipped_count==0; counts all 0",
+    "zero-byte-source: a 0-byte .ts is KEPT (a valid empty source file), no crash",
+    "huge-by-lines: a file exceeding max_lines is classified oversize",
+    "huge-by-bytes: a file exceeding max_bytes is classified oversize",
+    "binary-null-bytes: a .png with NUL bytes is classified binary (by extension), no crash reading it",
+    "non-utf8-source: a .py with invalid UTF-8 bytes is KEPT, line-counted with errors=replace, no crash",
+    "symlink: a symlink does not cause an infinite loop or a crash (skipped gracefully where the OS forbids creation)",
+    "accounting: included_count + skipped_count == number of regular files scanned; sum(counts.values()) == skipped_count"
+  ]
+}

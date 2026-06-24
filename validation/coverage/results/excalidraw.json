@@ -1,0 +1,536 @@
+{
+  "schema": "deepinit-validation/coverage-record/v1",
+  "program": " —  (Mirror scale-up) +  (Mirror on the Graphify path)",
+  "milestone": " (a TUNE/demo datapoint: TS stack + AI-agent-CLAUDE.md doc-type, run on the REAL Graphify structural path)",
+  "test_plan_run": "",
+  "scored_date": "2026-06-13",
+  "repo": {
+    "name": "excalidraw/excalidraw",
+    "url": "https://github.com/excalidraw/excalidraw",
+    "pinned_sha": "0cf56b19c79a28dda52f0dcb1c5392ed19cb5fcd",
+    "stack": "TypeScript (Yarn-workspaces monorepo)",
+    "license": "MIT"
+  },
+  "run": {
+    "engine_proxy": "isolated-subagent workflow (curator ≠ blind-engine ≠ scorer, separation of duties; )",
+    "graphify_path": true,
+    "m5_fix_injected": true,
+    "split": "tune"
+  },
+  "identity": {
+    "split": "tune",
+    "contamination": "popular"
+  },
+  "reference_doc": {
+    "path": "CLAUDE.md",
+    "type": "AI-agent architecture doc",
+    "currency_score": 1
+  },
+  "reference_key": {
+    "key_path": "validation/coverage/_reference_keys/excalidraw.json",
+    "key_sha256": "d05358408048c722714327b662d6d49b217413f7c9a45dd2f0987055cf5fef23",
+    "held_out": true,
+    "rc_total_extracted": 14,
+    "rc_current": 14,
+    "rc_stale_dropped": 0,
+    "rc_unverifiable_dropped": 0
+  },
+  "reference_claims": [
+    {
+      "rc_id": "RC-001",
+      "kind": "technology-choice",
+      "text": "The project is a monorepo managed with Yarn workspaces.",
+      "code_anchor": "package.json:5",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-002",
+      "kind": "component-exists",
+      "text": "packages/excalidraw/ exists as the main React component library.",
+      "code_anchor": "packages/excalidraw/package.json:2",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-003",
+      "kind": "technology-choice",
+      "text": "packages/excalidraw/ is published to npm as @excalidraw/excalidraw.",
+      "code_anchor": "packages/excalidraw/package.json:2",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-004",
+      "kind": "component-exists",
+      "text": "excalidraw-app/ exists as the full-featured web application (excalidraw.com).",
+      "code_anchor": "excalidraw-app/package.json:2",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-005",
+      "kind": "dependency-edge",
+      "text": "excalidraw-app uses (depends on) the @excalidraw/excalidraw library.",
+      "code_anchor": "excalidraw-app/App.tsx:10",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-006",
+      "kind": "component-exists",
+      "text": "Core package @excalidraw/common exists under packages/.",
+      "code_anchor": "packages/common/package.json:2",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-007",
+      "kind": "component-exists",
+      "text": "Core package @excalidraw/element exists under packages/.",
+      "code_anchor": "packages/element/package.json:2",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-008",
+      "kind": "component-exists",
+      "text": "Core package @excalidraw/math exists under packages/.",
+      "code_anchor": "packages/math/package.json:2",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-009",
+      "kind": "component-exists",
+      "text": "Core package @excalidraw/utils exists under packages/.",
+      "code_anchor": "packages/utils/package.json:2",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-010",
+      "kind": "component-exists",
+      "text": "examples/ contains integration examples: a NextJS example and a browser-script example.",
+      "code_anchor": "examples/with-nextjs/package.json:2",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-011",
+      "kind": "boundary-rule",
+      "text": "Internal packages are referenced via path aliases configured in vitest.config.mts.",
+      "code_anchor": "vitest.config.mts:7",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-012",
+      "kind": "technology-choice",
+      "text": "The package build system uses esbuild.",
+      "code_anchor": "scripts/buildBase.js:3",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-013",
+      "kind": "technology-choice",
+      "text": "The web application is built with Vite.",
+      "code_anchor": "excalidraw-app/package.json:45",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-014",
+      "kind": "technology-choice",
+      "text": "The codebase is TypeScript throughout with strict configuration enabled.",
+      "code_anchor": "tsconfig.json:11",
+      "currency": "CURRENT",
+      "load_bearing": true
+    }
+  ],
+  "emitted_claims": [
+    {
+      "ec_id": "EC-01",
+      "kind": "technology-choice",
+      "claim": "The repository is a Yarn-workspaces monorepo named excalidraw-monorepo; workspaces are excalidraw-app, packages/*, and examples/*.",
+      "code_anchor": "package.json:1 (\"name\":\"excalidraw-monorepo\", \"workspaces\":[\"excalidraw-app\",\"packages/*\",\"examples/*\"])"
+    },
+    {
+      "ec_id": "EC-02",
+      "kind": "component-exists",
+      "claim": "@excalidraw/common is a foundational package (31 files, 182 exports) holding shared constants, color palettes, key/event helpers, math-free utility types and primitives.",
+      "code_anchor": "packages/common/src/index.ts:1; structural-graph.json:6 (components.common)"
+    },
+    {
+      "ec_id": "EC-03",
+      "kind": "component-exists",
+      "claim": "@excalidraw/element is the element-model package (77 files, 334 exports) defining all ExcalidrawElement types and element operations (binding, resize, frames, arrows, fractional indexing).",
+      "code_anchor": "packages/element/src/index.ts:1; structural-graph.json:500 (components.element)"
+    },
+    {
+      "ec_id": "EC-04",
+      "kind": "component-exists",
+      "claim": "@excalidraw/math is a geometry primitives package (26 files, 74 exports: points, vectors, curves, ellipses, line-segments).",
+      "code_anchor": "packages/math; structural-graph.json (components.math, imports_from common/utils)"
+    },
+    {
+      "ec_id": "EC-05",
+      "kind": "component-exists",
+      "claim": "@excalidraw/utils is a thin cross-cutting utilities package (12 files, 11 exports) including export-to-canvas/SVG helpers and GeometricShape.",
+      "code_anchor": "packages/utils; structural-graph.json:1125 (utils exports exportToCanvas/exportToSvg/GeometricShape)"
+    },
+    {
+      "ec_id": "EC-06",
+      "kind": "component-exists",
+      "claim": "@excalidraw/excalidraw is the main React editor library package (418 files, 97 public exports) published to npm; it contains the App component, actions, renderer, scene, data, and i18n.",
+      "code_anchor": "packages/excalidraw/package.json:1 (name \"@excalidraw/excalidraw\"); packages/excalidraw/index.tsx:1; structural-graph.json (components.excalidraw files=418)"
+    },
+    {
+      "ec_id": "EC-07",
+      "kind": "component-exists",
+      "claim": "@excalidraw/fractional-indexing is a tiny leaf package (4 files, 3 exports: generateKeyBetween, generateNKeysBetween, validateOrderKey) with no internal package dependencies.",
+      "code_anchor": "packages/fractional-indexing; structural-graph.json (components.fractional-indexing imports_from=[])"
+    },
+    {
+      "ec_id": "EC-08",
+      "kind": "component-exists",
+      "claim": "excalidraw-app is the full web application (excalidraw.com) that consumes the @excalidraw/excalidraw library and adds collaboration, persistence, and sharing.",
+      "code_anchor": "excalidraw-app/App.tsx:1 (imports Excalidraw from \"@excalidraw/excalidraw\"); excalidraw-app/package.json:1"
+    },
+    {
+      "ec_id": "EC-09",
+      "kind": "component-role",
+      "claim": "The App class (extends React.Component) is the central editor orchestrator: it instantiates and owns the Scene, Store, and History and exposes the ExcalidrawImperativeAPI.",
+      "code_anchor": "packages/excalidraw/components/App.tsx:620 (class App extends React.Component); App.tsx:826 (this.scene = new Scene()), :833 (this.store = new Store(this)), :834 (this.history = new History(this.store))"
+    },
+    {
+      "ec_id": "EC-10",
+      "kind": "component-role",
+      "claim": "Scene is the in-memory authoritative element store: it holds the canonical elementsMap and nonDeletedElementsMap (branded Maps) and serves element queries to the rest of the editor.",
+      "code_anchor": "packages/element/src/Scene.ts:108 (class Scene); Scene.ts:117 (nonDeletedElementsMap), :125 (private elementsMap = toBrandedType<SceneElementsMap>(new Map()))"
+    },
+    {
+      "ec_id": "EC-11",
+      "kind": "component-role",
+      "claim": "Store captures observed scene/appstate changes and emits them as StoreIncrement events (durable vs ephemeral), feeding undo/redo and collaboration.",
+      "code_anchor": "packages/element/src/store.ts:78 (class Store); store.ts:80-84 (onDurableIncrementEmitter / onStoreIncrementEmitter)"
+    },
+    {
+      "ec_id": "EC-12",
+      "kind": "component-role",
+      "claim": "History implements undo/redo via two stacks (undoStack, redoStack) of HistoryDelta entries fed by the Store.",
+      "code_anchor": "packages/excalidraw/history.ts:90 (class History); history.ts:95-96 (undoStack/redoStack: HistoryDelta[])"
+    },
+    {
+      "ec_id": "EC-13",
+      "kind": "component-role",
+      "claim": "Collab (Portal) is the real-time collaboration transport: it manages the socket.io connection, room id/key, and broadcasts element updates to a collaboration room.",
+      "code_anchor": "excalidraw-app/collab/Portal.tsx:25 (class Portal); Portal.tsx:27 (socket: Socket|null), :29-31 (roomId/roomKey/broadcastedElementVersions)"
+    },
+    {
+      "ec_id": "EC-14",
+      "kind": "data-store",
+      "claim": "Collaboration scene state and files are persisted to Google Firebase ג€” Firestore for scene documents and Firebase Storage for files.",
+      "code_anchor": "excalidraw-app/data/firebase.ts:10 (initializeApp from \"firebase/app\"), :12 (getFirestore from \"firebase/firestore\"), :18 (getStorage/ref/uploadBytes from \"firebase/storage\")"
+    },
+    {
+      "ec_id": "EC-15",
+      "kind": "data-store",
+      "claim": "Local persistence uses the browser: localStorage for scene/appState (with quota-exceeded handling) and IndexedDB (via idb-keyval) for binary files in a \"files-db\"/\"files-store\".",
+      "code_anchor": "excalidraw-app/data/LocalData.ts:27 (import from \"idb-keyval\"), :49 (createStore(\"files-db\",\"files-store\")), :90 (localStorage.setItem); LocalData.ts:117 (class LocalData)"
+    },
+    {
+      "ec_id": "EC-16",
+      "kind": "technology-choice",
+      "claim": "Application state is managed with Jotai atoms (collabAPIAtom, isCollaboratingAtom, localStorageQuotaExceededAtom) via a dedicated appJotaiStore.",
+      "code_anchor": "excalidraw-app/App.tsx:84-89 (useAtom/useAtomValue/appJotaiStore from ./app-jotai); excalidraw-app/data/LocalData.ts:51 (atom(false))"
+    },
+    {
+      "ec_id": "EC-17",
+      "kind": "technology-choice",
+      "claim": "Rendering uses RoughJS for hand-drawn shapes and React for UI; the app is built with Vite, the packages with esbuild (per build scripts).",
+      "code_anchor": "packages/excalidraw/components/App.tsx:5 (import rough from \"roughjs/bin/rough\"); excalidraw-app/vite.config.mts:88 (outDir:\"build\"); package.json (build:app vs build:packages scripts)"
+    },
+    {
+      "ec_id": "EC-18",
+      "kind": "entry-point",
+      "claim": "The web app bootstraps in excalidraw-app/index.tsx: it creates a React root on #root, registers a service worker (PWA), and renders <ExcalidrawApp/> in StrictMode.",
+      "code_anchor": "excalidraw-app/index.tsx:10 (getElementById(\"root\")), :11 (createRoot), :12 (registerSW()), :13-16 (root.render(<StrictMode><ExcalidrawApp/></StrictMode>))"
+    },
+    {
+      "ec_id": "EC-19",
+      "kind": "entry-point",
+      "claim": "The library's public API entry is packages/excalidraw/index.tsx, exporting the <Excalidraw> component, ExcalidrawAPIProvider, and the ExcalidrawImperativeAPI surface for host applications.",
+      "code_anchor": "packages/excalidraw/index.tsx:40-41 (ExcalidrawImperativeAPI, ExcalidrawProps); index.tsx:51 (export const ExcalidrawAPIProvider)"
+    },
+    {
+      "ec_id": "EC-20",
+      "kind": "key-invariant",
+      "claim": "Element identity for collaboration is the (version, versionNonce) pair: every mutation bumps element.version (+1), regenerates a random versionNonce, and sets the updated timestamp ג€” these MUST advance monotonically or remote-merge will be wrong.",
+      "code_anchor": "packages/element/src/mutateElement.ts:139-141 (element.version = updates.version ?? element.version+1; versionNonce = randomInteger(); updated = getUpdatedTimestamp()); mutateElement.ts:185 (bumpVersion)"
+    },
+    {
+      "ec_id": "EC-21",
+      "kind": "key-invariant",
+      "claim": "Concurrent-edit conflicts are resolved deterministically: a remote element is discarded when local is being edited, OR local.version > remote.version, OR (equal versions) local.versionNonce <= remote.versionNonce (lowest-nonce-wins tiebreak). Changing this tiebreak breaks convergence.",
+      "code_anchor": "packages/excalidraw/data/reconcile.ts:23 (shouldDiscardRemoteElement); reconcile.ts:35-39 (local.version > remote.version || (equal && local.versionNonce <= remote.versionNonce))"
+    },
+    {
+      "ec_id": "EC-22",
+      "kind": "key-invariant",
+      "claim": "Fractional indices must stay in sync with array order and be strictly ordered between predecessor and successor; a violation throws InvalidFractionalIndexError (in dev/test/DEBUG), and bound text must have a smaller index than its container.",
+      "code_anchor": "packages/element/src/fractionalIndex.ts:74 (\"Fractional indices invariant has been compromised\"); fractionalIndex.ts:89 (bound-elements invariant); fractionalIndex.ts:44 (@throws InvalidFractionalIndexError)"
+    },
+    {
+      "ec_id": "EC-23",
+      "kind": "key-invariant",
+      "claim": "Undoability is governed by CaptureUpdateAction with exactly three modes ג€” IMMEDIATELY (local edits, captured to undo stack), NEVER (remote/init updates, never captured), EVENTUALLY (deferred capture). Mis-tagging an update corrupts undo/redo and collab.",
+      "code_anchor": "packages/element/src/store.ts:38-69 (CaptureUpdateAction = { IMMEDIATELY, NEVER, EVENTUALLY } as const, with the NEVER doc \"remote updates or scene initialization\")"
+    },
+    {
+      "ec_id": "EC-24",
+      "kind": "key-invariant",
+      "claim": "Embeddable iframe URLs must be validated by the trusted editor before rendering; the embedsValidationStatus flag is intentionally NOT reset on URL change so validation provenance (trusted source) is guaranteed.",
+      "code_anchor": "packages/excalidraw/components/App.tsx:652-658 (embedsValidationStatus comment: \"guarantee the validation came from a trusted source (the editor)\")"
+    },
+    {
+      "ec_id": "EC-25",
+      "kind": "boundary-rule",
+      "claim": "Collaboration data is end-to-end encrypted: the Portal encrypts payloads with encryptData before broadcasting, using AES-GCM (Web Crypto subtle) with a 12-byte IV; the room key never leaves the client unencrypted.",
+      "code_anchor": "excalidraw-app/collab/Portal.tsx:3 (import encryptData from data/encryption); packages/excalidraw/data/encryption.ts:17-23 (AES-GCM generateKey, encrypt/decrypt), :5 (IV_LENGTH_BYTES=12)"
+    },
+    {
+      "ec_id": "EC-26",
+      "kind": "boundary-rule",
+      "claim": "The dependency direction is one-way at the app boundary: packages/* never import from excalidraw-app (the app consumes the library, not vice-versa); the only such import is in a package test-util, not in shipped code.",
+      "code_anchor": "packages/excalidraw/tests/test-utils.ts (sole file importing excalidraw-app; verified via grep over packages/ ג€” no non-test source imports excalidraw-app); excalidraw-app/App.tsx:2 (imports from @excalidraw/excalidraw)"
+    },
+    {
+      "ec_id": "EC-27",
+      "kind": "boundary-rule",
+      "claim": "common is the lowest layer (imported by element, excalidraw, math, utils) and must not depend on app-level concerns; the internal package graph is intentionally cyclic among common/element/excalidraw/math/utils (mutual type imports), so adding cross-package value-imports risks bundling cycles.",
+      "code_anchor": "structural-graph.json (common.imported_by=[element,excalidraw,math,utils]; element.imports_from includes excalidraw & vice-versa ג€” mutual cycle)"
+    },
+    {
+      "ec_id": "EC-28",
+      "kind": "key-invariant",
+      "claim": "Fractional index z-order ordering breaks ties deterministically: identical fractional indices fall back to element id ordering, and missing indices preserve array order ג€” required for stable cross-client z-order.",
+      "code_anchor": "packages/element/src/fractionalIndex.ts:129-131 (orderByFractionalIndex: \"when fractional indices are identical, break the tie based on the element id\")"
+    },
+    {
+      "ec_id": "EC-29",
+      "kind": "data-store",
+      "claim": "The release/build git SHA is injected at build time and exposed on window.__EXCALIDRAW_SHA__ from the Vite env (VITE_APP_GIT_SHA).",
+      "code_anchor": "excalidraw-app/index.tsx:9 (window.__EXCALIDRAW_SHA__ = import.meta.env.VITE_APP_GIT_SHA)"
+    },
+    {
+      "ec_id": "EC-30",
+      "kind": "technology-choice",
+      "claim": "Firebase configuration is supplied via the VITE_APP_FIREBASE_CONFIG env var (JSON-parsed at runtime), so the app is configured for self-hosting via environment, not hard-coded credentials.",
+      "code_anchor": "excalidraw-app/data/firebase.ts:44-53 (FIREBASE_CONFIG = JSON.parse(import.meta.env.VITE_APP_FIREBASE_CONFIG))"
+    }
+  ],
+  "adjudication": [
+    {
+      "rc_id": "RC-001",
+      "ec_id": "EC-01",
+      "bucket": "MATCH",
+      "rc_kind": "technology-choice",
+      "ec_kind": "technology-choice",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "note": "EC-01 captures the Yarn-workspaces monorepo with the exact workspace globs (excalidraw-app, packages/*, examples/*)."
+    },
+    {
+      "rc_id": "RC-002",
+      "ec_id": "EC-06",
+      "bucket": "MATCH",
+      "rc_kind": "component-exists",
+      "ec_kind": "component-exists",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "note": "EC-06 identifies @excalidraw/excalidraw as the main React editor library package."
+    },
+    {
+      "rc_id": "RC-003",
+      "ec_id": "EC-06",
+      "bucket": "MATCH",
+      "rc_kind": "technology-choice",
+      "ec_kind": "technology-choice",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "note": "Fact-keyed: EC-06 explicitly states the package is 'published to npm' as @excalidraw/excalidraw, capturing the publish technology-choice despite the component-exists label."
+    },
+    {
+      "rc_id": "RC-004",
+      "ec_id": "EC-08",
+      "bucket": "MATCH",
+      "rc_kind": "component-exists",
+      "ec_kind": "component-exists",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "note": "EC-08 describes excalidraw-app as the full web application (excalidraw.com)."
+    },
+    {
+      "rc_id": "RC-005",
+      "ec_id": "EC-08",
+      "bucket": "MATCH",
+      "rc_kind": "dependency-edge",
+      "ec_kind": "dependency-edge",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "note": "Fact-keyed: EC-08 states the app consumes/imports @excalidraw/excalidraw (also EC-26 confirms the app->library edge)."
+    },
+    {
+      "rc_id": "RC-006",
+      "ec_id": "EC-02",
+      "bucket": "MATCH",
+      "rc_kind": "component-exists",
+      "ec_kind": "component-exists",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "note": "EC-02 identifies @excalidraw/common as a foundational package."
+    },
+    {
+      "rc_id": "RC-007",
+      "ec_id": "EC-03",
+      "bucket": "MATCH",
+      "rc_kind": "component-exists",
+      "ec_kind": "component-exists",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "note": "EC-03 identifies @excalidraw/element as the element-model package."
+    },
+    {
+      "rc_id": "RC-008",
+      "ec_id": "EC-04",
+      "bucket": "MATCH",
+      "rc_kind": "component-exists",
+      "ec_kind": "component-exists",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "note": "EC-04 identifies @excalidraw/math as the geometry primitives package."
+    },
+    {
+      "rc_id": "RC-009",
+      "ec_id": "EC-05",
+      "bucket": "MATCH",
+      "rc_kind": "component-exists",
+      "ec_kind": "component-exists",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "note": "EC-05 identifies @excalidraw/utils as the thin cross-cutting utilities package."
+    },
+    {
+      "rc_id": "RC-010",
+      "ec_id": "",
+      "bucket": "MISS",
+      "rc_kind": "component-exists",
+      "ec_kind": "na",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": true,
+      "note": "No EC asserts the examples/ integration examples (NextJS + browser-script) as a component. EC-01 only lists examples/* as a workspace glob, not the existence of the two named example components. Blind run provably read package.json workspaces, so the examples/ referent was readable."
+    },
+    {
+      "rc_id": "RC-011",
+      "ec_id": "",
+      "bucket": "MISS",
+      "rc_kind": "boundary-rule",
+      "ec_kind": "na",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": true,
+      "note": "No EC captures the path-alias resolution mechanism (vitest.config.mts resolve.alias / tsconfig paths mapping @excalidraw/* to packages/*/src). EC-26/EC-27 cover dependency direction and graph cyclicity, a different fact. vitest.config.mts/tsconfig.json were readable by the blind run."
+    },
+    {
+      "rc_id": "RC-012",
+      "ec_id": "EC-17",
+      "bucket": "MATCH",
+      "rc_kind": "technology-choice",
+      "ec_kind": "technology-choice",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "note": "EC-17 states 'the packages with esbuild (per build scripts).'"
+    },
+    {
+      "rc_id": "RC-013",
+      "ec_id": "EC-17",
+      "bucket": "MATCH",
+      "rc_kind": "technology-choice",
+      "ec_kind": "technology-choice",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "note": "EC-17 states 'the app is built with Vite' (also EC-18/EC-29/EC-30 cite vite config)."
+    },
+    {
+      "rc_id": "RC-014",
+      "ec_id": "",
+      "bucket": "MISS",
+      "rc_kind": "technology-choice",
+      "ec_kind": "na",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": true,
+      "note": "No EC asserts 'TypeScript throughout with strict config enabled' as a technology-choice. The language is implied by pervasive .ts/.tsx anchors but the distinctive load-bearing fact (tsconfig strict:true) is never stated. tsconfig.json was readable by the blind run."
+    }
+  ],
+  "beyond_doc": {
+    "count": 21,
+    "note": "code-groundable ECs absent from CLAUDE.md (NEUTRAL, suggestive-only)"
+  },
+  "scores": {
+    "coverage_overall": {
+      "n": 11,
+      "d": 14,
+      "pct": 0.7857,
+      "wilson95_lb": 0.5241
+    },
+    "coverage_by_kind": {
+      "technology-choice": {
+        "n": 4,
+        "d": 5
+      },
+      "component-exists": {
+        "n": 6,
+        "d": 7
+      },
+      "dependency-edge": {
+        "n": 1,
+        "d": 1
+      },
+      "boundary-rule": {
+        "n": 0,
+        "d": 1
+      }
+    },
+    "faithfulness": {
+      "n": 9,
+      "d": 9,
+      "pct": 1.0,
+      "wilson95_lb": 0.7008
+    },
+    "beyond_doc_count": 21,
+    "deepinit_wrong_high": 0
+  },
+  "scoring_provenance": {
+    "separation_of_duties": true,
+    "adversarial_refutation": "every deepinit_wrong adjudication refuted; 0 confirmed wrong+HIGH",
+    "fact_keyed": "MATCH ec_kind normalized to rc_kind (matcher authoritative; EC label advisory — see adjudication notes)"
+  },
+  "provenance": {
+    "doc_in_inputs": false,
+    "key_held_out": true,
+    "training_contamination_caveat": true,
+    "publishable": "indicative",
+    "caveats": [
+      "INDICATIVE — small-n, fuzzy truth, below any ship-gate",
+      "attribution-adjudicated — divergences resolved to CODE, not auto-scored",
+      "doc-bounded — agreement with a good human doc, not absolute completeness",
+      "§18 (9/9, FP 0) stays the product headline"
+    ],
+    "tune_or_heldout": "tune",
+    "harness_section": "§34"
+  }
+}

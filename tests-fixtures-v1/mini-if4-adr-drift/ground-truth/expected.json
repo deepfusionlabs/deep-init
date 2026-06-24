@@ -1,0 +1,49 @@
+{
+  "fixture": "mini-if4-adr-drift",
+  "purpose": "IF-4 intent/decision contradictions — ADR contradicted by code, stale workaround, name-lie + load-bearing TODO; and one legitimately-evolved BR that must NOT over-flag as DRIFTED",
+  "expected_issues": [
+    {
+      "family": "IF-4",
+      "file": "src/orders/order.service.ts",
+      "line": 28,
+      "severity": "High",
+      "certainty": "HIGH",
+      "claim": "possible decision contradiction: placeOrder dispatches the order-confirmation notification synchronously inline on the request path, which appears to contradict ADR-001 (notifications MUST be enqueued via NotificationQueue.enqueue() and the request MUST NOT block on a provider)",
+      "evidence": "ADR-001 at .ai/docs/decisions.md:4 (Decision at :12 — 'MUST enqueue a job and return immediately ... MUST NOT call any notification provider synchronously inline') vs the direct `await sendEmail(...)` at src/orders/order.service.ts:28; exact contrast: the sibling cancelOrder path correctly uses NotificationQueue.enqueue() at src/orders/order.service.ts:46"
+    },
+    {
+      "family": "IF-4",
+      "file": "src/config/loader.ts",
+      "line": 19,
+      "severity": "Medium",
+      "certainty": "MEDIUM",
+      "claim": "possible stale workaround WA-001: loadConfig still reads the config file twice and merges to defend against a partial-write race, but the original triggering condition appears no longer to hold",
+      "evidence": "WA-001 recorded at .ai/docs/decisions.md:46 — triggering condition was the non-atomic write bug in @acme/atomic-writer@1.x; the import at src/config/loader.ts:2 now pins @2.0.1 ('atomic write fixed'), so the double-read at src/config/loader.ts:19 defends against a condition that no longer holds"
+    },
+    {
+      "family": "IF-4",
+      "file": "src/config/loader.ts",
+      "line": 28,
+      "severity": "Medium",
+      "certainty": "HIGH",
+      "claim": "possible name-lie: saveConfigSync is named (and commented) as a synchronous write but is declared async and awaits an async writer, so a caller relying on the name will not have a completed write when the call returns",
+      "evidence": "the identifier `saveConfigSync` and the inline comment 'Writes the config synchronously to disk.' contradict the `async ... Promise<void>` signature and `await writeFileAtomic(...)` at src/config/loader.ts:28-30"
+    },
+    {
+      "family": "IF-4",
+      "file": "src/orders/order.service.ts",
+      "line": 52,
+      "severity": "High",
+      "certainty": "HIGH",
+      "claim": "possible load-bearing TODO on a Core path: order-ID generation is a TODO-flagged placeholder (Math.random) on the order-placement path, with the comment itself stating a collision silently merges two customers' orders",
+      "evidence": "TODO at src/orders/order.service.ts:52 inside cryptoRandomId(), the ID source used by placeOrder() (Core order path); the comment marks it load-bearing ('Order IDs are the primary key used by the payment reconciliation job ... do not ship as-is')"
+    }
+  ],
+  "must_not_fire": [
+    {
+      "family": "IF-4",
+      "file": "src/orders/pricing.ts",
+      "reason": "BR-pricing:001's recorded intent is 'a discount reduces what the customer pays' (decisions.md:37). computeOrderTotal (src/orders/pricing.ts:15) has legitimately EVOLVED from a flat 10% to volume tiers + a stacking coupon (src/orders/pricing.ts:32), but every branch still reduces the payable total (clamped 0..subtotal). A naive detector would flag this as ADR/BR DRIFTED because the code diverged in style from the recorded rule; the IF-4(a) BR-specific drift definition requires the code to CONTRADICT the rule, not merely evolve — intent is preserved, so it MUST NOT fire."
+    }
+  ]
+}

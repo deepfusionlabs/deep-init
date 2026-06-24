@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "DeepInit",
+          "informationUri": "https://github.com/deepfusionlabs/deep-init",
+          "version": "2.0.0",
+          "rules": [
+            {
+              "id": "deepinit/IF-1",
+              "name": "UnenforcedBusinessRule",
+              "shortDescription": { "text": "Business-rule violation / inconsistent enforcement across sibling paths" },
+              "helpUri": "https://github.com/deepfusionlabs/deep-init/blob/main/skill/references/issues.md"
+            },
+            {
+              "id": "deepinit/IF-2",
+              "name": "DbCodeDrift",
+              "shortDescription": { "text": "DB-vs-code drift (ORM disagrees with the live schema)" },
+              "helpUri": "https://github.com/deepfusionlabs/deep-init/blob/main/skill/references/issues.md"
+            },
+            {
+              "id": "deepinit/IF-3a",
+              "name": "SilentCrossComponentCoupling",
+              "shortDescription": { "text": "Named resource read/written by >=2 components with no explicit interface" },
+              "helpUri": "https://github.com/deepfusionlabs/deep-init/blob/main/skill/references/issues.md"
+            },
+            {
+              "id": "deepinit/IF-4",
+              "name": "IntentDecisionContradiction",
+              "shortDescription": { "text": "Code contradicts a recorded decision / a name that lies / a load-bearing TODO" },
+              "helpUri": "https://github.com/deepfusionlabs/deep-init/blob/main/skill/references/issues.md"
+            },
+            {
+              "id": "deepinit/IF-5",
+              "name": "HiddenCoChangeCoupling",
+              "shortDescription": { "text": "Co-change coupling with no structural edge (criticality-weighted risk)" },
+              "helpUri": "https://github.com/deepfusionlabs/deep-init/blob/main/skill/references/issues.md"
+            },
+            {
+              "id": "deepinit/IF-6",
+              "name": "DivergentNamedValueSet",
+              "shortDescription": { "text": "Same-named literal value-set with conflicting membership across components" },
+              "helpUri": "https://github.com/deepfusionlabs/deep-init/blob/main/skill/references/issues.md"
+            },
+            {
+              "id": "deepinit/IF-7",
+              "name": "CrossBoundarySwallowedError",
+              "shortDescription": { "text": "Empty/comment-only error handler on a cross-consumed boundary" },
+              "helpUri": "https://github.com/deepfusionlabs/deep-init/blob/main/skill/references/issues.md"
+            },
+            {
+              "id": "deepinit/IF-8",
+              "name": "CircularComponentDependency",
+              "shortDescription": { "text": "Strongly-connected import cycle across components" },
+              "helpUri": "https://github.com/deepfusionlabs/deep-init/blob/main/skill/references/issues.md"
+            },
+            {
+              "id": "deepinit/IF-10",
+              "name": "ConstGatedDeadBranch",
+              "shortDescription": { "text": "Module-level literal constant gates a statically-dead conditional arm" },
+              "helpUri": "https://github.com/deepfusionlabs/deep-init/blob/main/skill/references/issues.md"
+            }
+          ]
+        }
+      },
+      "results": []
+    }
+  ]
+}

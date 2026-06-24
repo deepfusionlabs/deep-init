@@ -1,0 +1,949 @@
+{
+  "schema": "deepinit-validation/coverage-record/v1",
+  "program": " —  (Mirror held-out scale-up: obscure + stack-diverse, Graphify path)",
+  "milestone": "/B2 held-out datapoint",
+  "test_plan_run": "",
+  "scored_date": "2026-06-13",
+  "repo": {
+    "name": "Kotlin/kotlinx-schema",
+    "url": "https://github.com/Kotlin/kotlinx-schema",
+    "pinned_sha": "574cf764a7529e34831327fbcc6885e2809a0a3b",
+    "stack": "Kotlin (multiplatform, KSP + reflection)",
+    "license": "see repo"
+  },
+  "run": {
+    "engine_proxy": "isolated-subagent workflow (curator ≠ blind-engine ≠ scorer; )",
+    "graphify_path": true,
+    "m5_fix_injected": true,
+    "split": "held-out"
+  },
+  "identity": {
+    "split": "held-out",
+    "contamination": "obscure"
+  },
+  "reference_doc": {
+    "path": "docs/architecture.md",
+    "type": "ARCHITECTURE.md",
+    "currency_score": 1
+  },
+  "reference_key": {
+    "key_path": "validation/coverage/_reference_keys/kotlinx-schema.json",
+    "key_sha256": "eb1beea94200a95ce988f282850ea4dd6b9d69838bcf84d0052b748abf871ea2",
+    "held_out": true,
+    "rc_total_extracted": 32,
+    "rc_current": 32,
+    "rc_stale_dropped": 0,
+    "rc_unverifiable_dropped": 0
+  },
+  "reference_claims": [
+    {
+      "rc_id": "RC-001",
+      "kind": "component-exists",
+      "text": "Module kotlinx-schema-annotations exists, providing runtime annotations (@Schema, @Description).",
+      "code_anchor": "kotlinx-schema-annotations/src/commonMain/kotlin/kotlinx/schema/Schema.kt:22",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-002",
+      "kind": "component-exists",
+      "text": "Module kotlinx-schema-json exists, providing type-safe models and a DSL for building JSON Schema definitions.",
+      "code_anchor": "kotlinx-schema-json/src/commonMain/kotlin/kotlinx/schema/json/JsonSchema.kt:411",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-003",
+      "kind": "component-exists",
+      "text": "Module kotlinx-schema-generator-core exists, providing the internal representation (IR), introspection utils, and generator interfaces.",
+      "code_anchor": "kotlinx-schema-generator-core/src/commonMain/kotlin/kotlinx/schema/generator/core/ir/TypeGraph.kt:4",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-004",
+      "kind": "component-exists",
+      "text": "Module kotlinx-schema-generator-json exists, providing the JSON Schema transformer from the IR plus a kotlinx-serialization schema generator.",
+      "code_anchor": "kotlinx-schema-generator-json/src/commonMain/kotlin/kotlinx/schema/generator/json/TypeGraphToJsonSchemaTransformer.kt:58",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-005",
+      "kind": "component-exists",
+      "text": "Module kotlinx-schema-ksp exists, the KSP processor that scans code and generates extension properties.",
+      "code_anchor": "kotlinx-schema-ksp/src/main/kotlin/kotlinx/schema/ksp/SchemaExtensionProcessor.kt:28",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-006",
+      "kind": "component-exists",
+      "text": "A Gradle plugin module exists (the doc labels it 'kotlinx-schema-gradle-plugin'); it is the Gradle plugin with id org.jetbrains.kotlinx.schema.ksp.",
+      "code_anchor": "kotlinx-schema-ksp-gradle-plugin/src/main/kotlin/kotlinx/schema/ksp/gradle/plugin/KotlinxSchemaPlugin.kt:35",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-007",
+      "kind": "component-exists",
+      "text": "Module gradle-plugin-integration-tests exists, an independent build including the main project demonstrating real MPP usage.",
+      "code_anchor": "gradle-plugin-integration-tests/settings.gradle.kts:1",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-008",
+      "kind": "component-exists",
+      "text": "Module ksp-integration-tests exists, KSP end-to-end tests for generation without the Gradle plugin.",
+      "code_anchor": "settings.gradle.kts:28",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-009",
+      "kind": "component-exists",
+      "text": "TypeGraph exists as the unified Internal Representation type.",
+      "code_anchor": "kotlinx-schema-generator-core/src/commonMain/kotlin/kotlinx/schema/generator/core/ir/TypeGraph.kt:4",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-010",
+      "kind": "data-store",
+      "text": "TypeGraph is the unified intermediate format carrying Properties, Types, Descriptions, Nullable, and Defaults; a graph of discovered types plus a root reference.",
+      "code_anchor": "kotlinx-schema-generator-core/src/commonMain/kotlin/kotlinx/schema/generator/core/ir/TypeGraph.kt:4",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-011",
+      "kind": "component-role",
+      "text": "SchemaIntrospector is the introspector abstraction that extracts type information and produces a TypeGraph (introspect(root): TypeGraph).",
+      "code_anchor": "kotlinx-schema-generator-core/src/commonMain/kotlin/kotlinx/schema/generator/core/ir/SchemaIntrospector.kt:15",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-012",
+      "kind": "component-role",
+      "text": "A KSP (compile-time) introspector exists that turns Kotlin declarations into the TypeGraph IR (doc box 'KspSchemaIntrospector').",
+      "code_anchor": "kotlinx-schema-ksp/src/main/kotlin/kotlinx/schema/ksp/ir/KspClassIntrospector.kt:1",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-013",
+      "kind": "component-role",
+      "text": "A runtime reflection introspector exists that turns (e.g. Java/third-party) classes into the TypeGraph IR (doc box 'ReflectionSchemaIntrospector').",
+      "code_anchor": "kotlinx-schema-generator-core/src/jvmMain/kotlin/kotlinx/schema/generator/reflect/ReflectionClassIntrospector.kt:1",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-014",
+      "kind": "component-role",
+      "text": "SerializationClassSchemaIntrospector is a runtime introspector that converts kotlinx.serialization SerialDescriptor instances into the TypeGraph IR.",
+      "code_anchor": "kotlinx-schema-generator-json/src/commonMain/kotlin/kotlinx/schema/generator/json/serialization/SerializationClassSchemaIntrospector.kt:19",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-015",
+      "kind": "component-role",
+      "text": "TypeGraphTransformer is the transformer abstraction that converts a TypeGraph into a target schema format (transform(graph, rootName)).",
+      "code_anchor": "kotlinx-schema-generator-core/src/commonMain/kotlin/kotlinx/schema/generator/core/ir/TypeGraphTransformer.kt:25",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-016",
+      "kind": "component-role",
+      "text": "A JSON Schema transformer (doc box 'JsonSchemaTransformer') converts the TypeGraph into JSON Schema (Draft 2020-12).",
+      "code_anchor": "kotlinx-schema-generator-json/src/commonMain/kotlin/kotlinx/schema/generator/json/TypeGraphToJsonSchemaTransformer.kt:58",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-017",
+      "kind": "component-role",
+      "text": "A Function Calling transformer (doc box 'FunctionCallingTransformer', OpenAI/Anthropic format) converts the TypeGraph into a function-calling schema.",
+      "code_anchor": "kotlinx-schema-generator-json/src/commonMain/kotlin/kotlinx/schema/generator/json/TypeGraphToFunctionCallingSchemaTransformer.kt:1",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-018",
+      "kind": "component-role",
+      "text": "SchemaGeneratorService discovers and looks up SchemaGenerators by target type T and schema class via getGenerator(T::class, R::class).",
+      "code_anchor": "kotlinx-schema-generator-core/src/jvmMain/kotlin/kotlinx/schema/generator/core/SchemaGeneratorService.kt:15",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-019",
+      "kind": "component-role",
+      "text": "SchemaGenerator generates a schema (R) for a target T by invoking an introspector (TypeGraph) then a transformer.",
+      "code_anchor": "kotlinx-schema-generator-core/src/commonMain/kotlin/kotlinx/schema/generator/core/SchemaGenerator.kt:5",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-020",
+      "kind": "key-invariant",
+      "text": "The runtime workflow is: Service.getGenerator -> Generator.generate(T) -> Introspector.introspect(T)=TypeGraph -> Transformer.transform(TypeGraph, rootName)=schema(R).",
+      "code_anchor": "kotlinx-schema-generator-core/src/commonMain/kotlin/kotlinx/schema/generator/core/ir/TypeGraphTransformer.kt:43",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-021",
+      "kind": "key-invariant",
+      "text": "Both KSP (compile-time) and reflection/serialization (runtime) sources are unified by translating into the shared TypeGraph IR, decoupling sources from output targets.",
+      "code_anchor": "kotlinx-schema-generator-core/src/commonMain/kotlin/kotlinx/schema/generator/core/ir/SchemaIntrospector.kt:21",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-022",
+      "kind": "dependency-edge",
+      "text": "kotlinx-schema-generator-json depends on (uses) kotlinx-schema-generator-core.",
+      "code_anchor": "kotlinx-schema-generator-json/build.gradle.kts:20",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-023",
+      "kind": "dependency-edge",
+      "text": "kotlinx-schema-generator-json depends on (uses) kotlinx-schema-json.",
+      "code_anchor": "kotlinx-schema-generator-json/build.gradle.kts:21",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-024",
+      "kind": "dependency-edge",
+      "text": "kotlinx-schema-generator-core depends on (knows) kotlinx-schema-annotations.",
+      "code_anchor": "kotlinx-schema-generator-core/build.gradle.kts:25",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-025",
+      "kind": "dependency-edge",
+      "text": "kotlinx-schema-ksp depends on (uses) kotlinx-schema-generator-json.",
+      "code_anchor": "kotlinx-schema-ksp/build.gradle.kts:22",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-026",
+      "kind": "dependency-edge",
+      "text": "The Gradle plugin uses kotlinx-schema-ksp (wires it in as the KSP processor dependency for consumer builds).",
+      "code_anchor": "kotlinx-schema-ksp-gradle-plugin/src/main/kotlin/kotlinx/schema/ksp/gradle/plugin/KspTaskBuilder.kt:45",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-027",
+      "kind": "boundary-rule",
+      "text": "The KSP path has zero runtime overhead because @Schema/@Description are compile-time (SOURCE-retention) annotations consumed at compile time.",
+      "code_anchor": "kotlinx-schema-annotations/src/commonMain/kotlin/kotlinx/schema/Schema.kt:20",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-028",
+      "kind": "technology-choice",
+      "text": "The library is Kotlin Multiplatform, supporting JVM, JS, Native, and Wasm targets.",
+      "code_anchor": "buildSrc/src/main/kotlin/kotlin-multiplatform-convention.gradle.kts:31",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-029",
+      "kind": "technology-choice",
+      "text": "The JSON Schema output conforms to JSON Schema Draft 2020-12.",
+      "code_anchor": "kotlinx-schema-generator-json/src/commonMain/kotlin/kotlinx/schema/generator/json/TypeGraphToJsonSchemaTransformer.kt:48",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-030",
+      "kind": "technology-choice",
+      "text": "Schema output models (JsonSchema, FunctionCallingSchema) are kotlinx.serialization @Serializable types, and the JSON output ultimately surfaces as JsonObject / JSON string.",
+      "code_anchor": "kotlinx-schema-json/src/commonMain/kotlin/kotlinx/schema/json/JsonSchema.kt:409",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-031",
+      "kind": "entry-point",
+      "text": "The KSP processor (SchemaExtensionProcessor) is the entry point that scans annotated code and generates KClass<T>.jsonSchema and KClass<T>.jsonSchemaString extension properties.",
+      "code_anchor": "kotlinx-schema-ksp/src/main/kotlin/kotlinx/schema/ksp/type/ClassSchemaStrategy.kt:172",
+      "currency": "CURRENT",
+      "load_bearing": true
+    },
+    {
+      "rc_id": "RC-032",
+      "kind": "entry-point",
+      "text": "The Gradle plugin (id org.jetbrains.kotlinx.schema.ksp) auto-applies KSP, adds the processor dependency, and wires generated sources into the consumer's source sets.",
+      "code_anchor": "kotlinx-schema-ksp-gradle-plugin/src/main/kotlin/kotlinx/schema/ksp/gradle/plugin/KotlinxSchemaPlugin.kt:36",
+      "currency": "CURRENT",
+      "load_bearing": true
+    }
+  ],
+  "emitted_claims": [
+    {
+      "ec_id": "EC-01",
+      "kind": "component-exists",
+      "claim": "kotlinx-schema-annotations is a Kotlin-multiplatform module defining the user-facing marker annotations that drive schema generation: @Schema, @Description, @SchemaIgnore.",
+      "code_anchor": "kotlinx-schema-annotations/src/commonMain/kotlin/kotlinx/schema/Schema.kt:22"
+    },
+    {
+      "ec_id": "EC-02",
+      "kind": "component-role",
+      "claim": "@Schema is the entry-point annotation: applied to a CLASS or FUNCTION (Retention SOURCE) it marks the element for schema generation; value defaults to \"json\" and withSchemaObject defaults to false (whether to also emit a JsonObject/JsonSchema representation).",
+      "code_anchor": "kotlinx-schema-annotations/src/commonMain/kotlin/kotlinx/schema/Schema.kt:19"
+    },
+    {
+      "ec_id": "EC-03",
+      "kind": "component-exists",
+      "claim": "kotlinx-schema-generator-core is the format-agnostic core module: it defines the SchemaGenerator abstraction, the intermediate representation (TypeGraph IR), the introspector/transformer interfaces, and the JVM reflection introspectors.",
+      "code_anchor": "kotlinx-schema-generator-core/src/commonMain/kotlin/kotlinx/schema/generator/core/SchemaGenerator.kt:5"
+    },
+    {
+      "ec_id": "EC-04",
+      "kind": "component-role",
+      "claim": "SchemaGenerator<T,R> is the central public abstraction: declares targetType()/schemaType() (the registry keys), generateSchema(target):R, generateSchemaString(target):String, and encodeToString(schema):String.",
+      "code_anchor": "kotlinx-schema-generator-core/src/commonMain/kotlin/kotlinx/schema/generator/core/SchemaGenerator.kt:5"
+    },
+    {
+      "ec_id": "EC-05",
+      "kind": "key-invariant",
+      "claim": "The schema-generation pipeline is a fixed two-stage flow encoded in AbstractSchemaGenerator: generateSchema() ALWAYS calls introspector.introspect(target) to build a TypeGraph, then typeGraphTransformer.transform(graph, getRootName(target)) to produce the output. Every concrete generator is the composition of one SchemaIntrospector plus one TypeGraphTransformer.",
+      "code_anchor": "kotlinx-schema-generator-core/src/commonMain/kotlin/kotlinx/schema/generator/core/AbstractSchemaGenerator.kt:22"
+    },
+    {
+      "ec_id": "EC-06",
+      "kind": "component-role",
+      "claim": "SchemaIntrospector<T,C> is the front-half facade: it reads a source (KClass via reflection, KSP declaration, or kotlinx.serialization SerialDescriptor) and produces a language-agnostic TypeGraph via introspect(root). Each implementation carries its own config:C.",
+      "code_anchor": "kotlinx-schema-generator-core/src/commonMain/kotlin/kotlinx/schema/generator/core/ir/SchemaIntrospector.kt:15"
+    },
+    {
+      "ec_id": "EC-07",
+      "kind": "component-role",
+      "claim": "TypeGraphTransformer<R,C> is the back-half: it converts the TypeGraph IR into a concrete target schema format (JSON Schema, function-calling schema, etc.) via transform(graph, rootName), guided by its config. AbstractTypeGraphTransformer is the base class.",
+      "code_anchor": "kotlinx-schema-generator-core/src/commonMain/kotlin/kotlinx/schema/generator/core/ir/TypeGraphTransformer.kt:25"
+    },
+    {
+      "ec_id": "EC-08",
+      "kind": "key-invariant",
+      "claim": "TypeGraph is the immutable intermediate representation that decouples introspection from emission: a data class holding root:TypeRef plus nodes:Map<TypeId,TypeNode>. TypeId is the stable identifier used for deduplication and $ref linking; TypeNode is a sealed hierarchy (Primitive/Enum/Object/List/Map/Any/Polymorphic) and TypeRef is sealed Inline|Ref. This IR is the contract that lets any introspector pair with any transformer.",
+      "code_anchor": "kotlinx-schema-generator-core/src/commonMain/kotlin/kotlinx/schema/generator/core/ir/TypeGraph.kt:4"
+    },
+    {
+      "ec_id": "EC-09",
+      "kind": "component-role",
+      "claim": "ReflectionClassIntrospector (JVM-only, a singleton object) introspects a KClass at runtime via kotlin-reflect, walking properties/constructors into a TypeGraph; it requires a primary constructor and does not fully support type parameters.",
+      "code_anchor": "kotlinx-schema-generator-core/src/jvmMain/kotlin/kotlinx/schema/generator/reflect/ReflectionClassIntrospector.kt:23"
+    },
+    {
+      "ec_id": "EC-10",
+      "kind": "entry-point",
+      "claim": "SchemaGeneratorService is the JVM runtime registry/entry point: a singleton object that uses java.util.ServiceLoader to discover all SchemaGenerator implementations at load time, and getGenerator(targetType, schemaType) selects one by its (targetType, schemaType) pair.",
+      "code_anchor": "kotlinx-schema-generator-core/src/jvmMain/kotlin/kotlinx/schema/generator/core/SchemaGeneratorService.kt:15"
+    },
+    {
+      "ec_id": "EC-11",
+      "kind": "key-invariant",
+      "claim": "Generator lookup must be unambiguous: SchemaGeneratorService.getGenerator filters by targetType then uses singleOrNull on schemaType, so a (targetType, schemaType) pair must resolve to exactly one registered generator or the lookup returns null (singleOrNull throws on >1 match).",
+      "code_anchor": "kotlinx-schema-generator-core/src/jvmMain/kotlin/kotlinx/schema/generator/core/SchemaGeneratorService.kt:34"
+    },
+    {
+      "ec_id": "EC-12",
+      "kind": "boundary-rule",
+      "claim": "@InternalSchemaGeneratorApi is a @RequiresOptIn marker fencing off the internal schema-generation surface; downstream modules must opt in. The core, json-generator, and ksp build files all declare optIn for kotlinx.schema.generator.core.InternalSchemaGeneratorApi, making it the enforced internal/public boundary.",
+      "code_anchor": "kotlinx-schema-generator-core/src/commonMain/kotlin/kotlinx/schema/generator/core/InternalSchemaGeneratorApi.kt:13"
+    },
+    {
+      "ec_id": "EC-13",
+      "kind": "component-exists",
+      "claim": "kotlinx-schema-json is a Kotlin-multiplatform module defining the serializable JSON Schema data model (JsonSchema, FunctionCallingSchema, AdditionalPropertiesConstraint) and its kotlinx.serialization custom serializers.",
+      "code_anchor": "kotlinx-schema-json/src/commonMain/kotlin/kotlinx/schema/json/JsonSchema.kt:3"
+    },
+    {
+      "ec_id": "EC-14",
+      "kind": "component-role",
+      "claim": "kotlinx-schema-json owns the output schema vocabulary: the JsonSchema model is @Serializable with bespoke serializers (e.g. AdditionalPropertiesSerializer, PolymorphicEnumSerializer, StringOrListSerializer) so it round-trips to/from spec-shaped JSON Schema; AdditionalPropertiesConstraint encodes the true/false/schema tri-state.",
+      "code_anchor": "kotlinx-schema-json/src/commonMain/kotlin/kotlinx/schema/json/JsonSchema.kt:56"
+    },
+    {
+      "ec_id": "EC-15",
+      "kind": "component-exists",
+      "claim": "kotlinx-schema-generator-json is the JSON-Schema-specific generator module: it provides the JsonSchemaGenerator interface, the TypeGraph->JSON transformers, and the reflection- and serialization-based concrete generators.",
+      "code_anchor": "kotlinx-schema-generator-json/src/commonMain/kotlin/kotlinx/schema/generator/json/JsonSchemaGenerator.kt:10"
+    },
+    {
+      "ec_id": "EC-16",
+      "kind": "component-role",
+      "claim": "JsonSchemaGenerator<T> specializes SchemaGenerator<T, JsonObject> and fixes encodeToString to kotlinx.serialization Json.encodeToString(schema) — binding the JSON-Schema output format to the kotlinx.serialization Json encoder.",
+      "code_anchor": "kotlinx-schema-generator-json/src/commonMain/kotlin/kotlinx/schema/generator/json/JsonSchemaGenerator.kt:10"
+    },
+    {
+      "ec_id": "EC-17",
+      "kind": "component-role",
+      "claim": "ReflectionClassJsonSchemaGenerator is the runtime-reflection JSON-Schema generator: it composes ReflectionClassIntrospector (KClass->TypeGraph) with TypeGraphToJsonSchemaTransformer (TypeGraph->JsonSchema), targetType()=KClass, schemaType()=JsonSchema, and ships a Default instance using JsonSchemaConfig.Strict and Json{encodeDefaults=false}.",
+      "code_anchor": "kotlinx-schema-generator-json/src/jvmMain/kotlin/kotlinx/schema/generator/json/ReflectionClassJsonSchemaGenerator.kt:21"
+    },
+    {
+      "ec_id": "EC-18",
+      "kind": "component-role",
+      "claim": "SerializationClassJsonSchemaGenerator is the second runtime path: it composes SerializationClassSchemaIntrospector (kotlinx.serialization SerialDescriptor -> TypeGraph) with TypeGraphToJsonSchemaTransformer, so a JSON Schema can be derived from a kotlinx.serialization descriptor instead of reflection; targetType()=SerialDescriptor.",
+      "code_anchor": "kotlinx-schema-generator-json/src/commonMain/kotlin/kotlinx/schema/generator/json/serialization/SerializationClassJsonSchemaGenerator.kt:24"
+    },
+    {
+      "ec_id": "EC-19",
+      "kind": "component-exists",
+      "claim": "kotlinx-schema-ksp is the compile-time path: a JVM module hosting the KSP SymbolProcessor that generates schema extension properties at build time for elements annotated @Schema.",
+      "code_anchor": "kotlinx-schema-ksp/src/main/kotlin/kotlinx/schema/ksp/SchemaExtensionProcessor.kt:28"
+    },
+    {
+      "ec_id": "EC-20",
+      "kind": "entry-point",
+      "claim": "SchemaExtensionProcessorProvider is the KSP entry point registered in META-INF/services (SymbolProcessorProvider); its create() instantiates SchemaExtensionProcessor with the KSP codeGenerator, logger and options.",
+      "code_anchor": "kotlinx-schema-ksp/src/main/kotlin/kotlinx/schema/ksp/SchemaExtensionProcessorProvider.kt:12"
+    },
+    {
+      "ec_id": "EC-21",
+      "kind": "component-role",
+      "claim": "SchemaExtensionProcessor is the compile-time processor: per round it reads symbols annotated kotlinx.schema.Schema, filters them via SymbolFilter, and for each valid class/function generates an extension property (e.g. `val MyClass.jsonSchemaString: String`). Classes use ClassSchemaStrategy; functions dispatch across TopLevel/Instance/Companion/Object function strategies.",
+      "code_anchor": "kotlinx-schema-ksp/src/main/kotlin/kotlinx/schema/ksp/SchemaExtensionProcessor.kt:125"
+    },
+    {
+      "ec_id": "EC-22",
+      "kind": "boundary-rule",
+      "claim": "@Schema and @SchemaIgnore are mutually exclusive on the same declaration: the processor logs an error and skips the class (no schema emitted) when both are present — an enforced consistency rule.",
+      "code_anchor": "kotlinx-schema-ksp/src/main/kotlin/kotlinx/schema/ksp/SchemaExtensionProcessor.kt:192"
+    },
+    {
+      "ec_id": "EC-23",
+      "kind": "key-invariant",
+      "claim": "Schema generation can be globally disabled and scoped via KSP options: OPTION_ENABLED (kotlinx.schema.enabled==\"false\" disables all generation), OPTION_ROOT_PACKAGE, OPTION_INCLUDE / OPTION_EXCLUDE (comma/semicolon glob lists, exclude wins over include), OPTION_VISIBILITY, and OPTION_WITH_SCHEMA_OBJECT.",
+      "code_anchor": "kotlinx-schema-ksp/src/main/kotlin/kotlinx/schema/ksp/SchemaExtensionProcessor.kt:126"
+    },
+    {
+      "ec_id": "EC-24",
+      "kind": "key-invariant",
+      "claim": "Per-symbol failure is isolated: SchemaExtensionProcessor wraps each class/function generation in try/catch and logs an error rather than aborting the round, and declarations that fail validate() are returned as deferred (unprocessable) for the next KSP round.",
+      "code_anchor": "kotlinx-schema-ksp/src/main/kotlin/kotlinx/schema/ksp/SchemaExtensionProcessor.kt:171"
+    },
+    {
+      "ec_id": "EC-25",
+      "kind": "component-role",
+      "claim": "UnifiedKspSchemaGenerator collapses class- and function-schema generation into one config-driven AbstractSchemaGenerator: the KspSchemaGeneratorConfig supplies the introspector (KspClassIntrospector vs KspFunctionIntrospector), the transformer (TypeGraphToJsonObjectSchemaTransformer vs TypeGraphToFunctionCallingSchemaTransformer), and JSON formatting. targetType()/schemaType() intentionally throw because KSP uses compile-time symbols, not runtime KClass.",
+      "code_anchor": "kotlinx-schema-ksp/src/main/kotlin/kotlinx/schema/ksp/generator/UnifiedKspSchemaGenerator.kt:49"
+    },
+    {
+      "ec_id": "EC-26",
+      "kind": "component-role",
+      "claim": "KspIntrospectionContext is the shared KSP introspection engine: it extends BaseIntrospectionContext (inheriting node-state management and cycle detection) and applies an ordered type-resolution strategy (basic/primitive+collection -> Any fallback for generics -> sealed->Polymorphic -> enum->Enum -> object->ObjectNode), eliminating toRef() duplication between the class and function introspectors.",
+      "code_anchor": "kotlinx-schema-ksp/src/main/kotlin/kotlinx/schema/ksp/ir/KspIntrospectionContext.kt:16"
+    },
+    {
+      "ec_id": "EC-27",
+      "kind": "component-exists",
+      "claim": "kotlinx-schema-ksp-gradle-plugin is a java-gradle-plugin module that packages the KSP processor as a consumable Gradle plugin (id org.jetbrains.kotlinx.schema.ksp, implementation class kotlinx.schema.ksp.gradle.plugin.KotlinxSchemaPlugin).",
+      "code_anchor": "kotlinx-schema-ksp-gradle-plugin/build.gradle.kts:14"
+    },
+    {
+      "ec_id": "EC-28",
+      "kind": "entry-point",
+      "claim": "KotlinxSchemaPlugin is the Gradle build-time entry point: apply(Project) registers the kotlinxSchema DSL extension, short-circuits if enabled==false, then detects the Kotlin plugin type and routes to MultiplatformConfigurator or JvmConfigurator. It invokes KSP2 programmatically (KotlinSymbolProcessing) instead of applying Google's KSP Gradle plugin.",
+      "code_anchor": "kotlinx-schema-ksp-gradle-plugin/src/main/kotlin/kotlinx/schema/ksp/gradle/plugin/KotlinxSchemaPlugin.kt:35"
+    },
+    {
+      "ec_id": "EC-29",
+      "kind": "key-invariant",
+      "claim": "KspTask is annotated @CacheableTask and documented as configuration-cache compatible: all inputs are resolved in the configuration phase, the task action holds no Project/Configuration references, and it relies on KSP being deterministic (same sources+classpath+options => same generated output under build/generated/kotlinxSchema/).",
+      "code_anchor": "kotlinx-schema-ksp-gradle-plugin/src/main/kotlin/kotlinx/schema/ksp/gradle/plugin/KspTask.kt:35"
+    },
+    {
+      "ec_id": "EC-30",
+      "kind": "dependency-edge",
+      "claim": "Module layering is declared via Gradle project() dependencies: kotlinx-schema-generator-json api-depends on kotlinx-schema-annotations, kotlinx-schema-generator-core, and kotlinx-schema-json (the json generator sits atop core + the json model + annotations).",
+      "code_anchor": "kotlinx-schema-generator-json/build.gradle.kts:19"
+    },
+    {
+      "ec_id": "EC-31",
+      "kind": "dependency-edge",
+      "claim": "kotlinx-schema-generator-core api-depends on kotlinx-schema-annotations (and on kotlinx.serialization.json), so the format-agnostic core layers directly on the annotation contract; it does NOT depend on the json-generator or ksp modules (one-directional layering).",
+      "code_anchor": "kotlinx-schema-generator-core/build.gradle.kts:25"
+    },
+    {
+      "ec_id": "EC-32",
+      "kind": "dependency-edge",
+      "claim": "kotlinx-schema-ksp implementation-depends on kotlinx-schema-generator-json (plus the KSP api), so the compile-time processor reuses the JSON generator stack; the dependency points ksp -> generator-json -> generator-core (never the reverse).",
+      "code_anchor": "kotlinx-schema-ksp/build.gradle.kts:22"
+    },
+    {
+      "ec_id": "EC-33",
+      "kind": "technology-choice",
+      "claim": "The repo is a Gradle multi-module Kotlin Multiplatform build: settings.gradle.kts includes the 7 library/test modules and docs, enables TYPESAFE_PROJECT_ACCESSORS, and resolves dependencies from mavenCentral; shared build logic lives in the buildSrc convention plugins (kotlin-multiplatform-convention, kotlin-jvm-convention, dokka-convention, publishing-convention).",
+      "code_anchor": "settings.gradle.kts:21"
+    },
+    {
+      "ec_id": "EC-34",
+      "kind": "technology-choice",
+      "claim": "kotlinx.serialization is the serialization backbone: generator-core, generator-json and the json model all api-depend on kotlinx.serialization.json, the JSON model is @Serializable with custom KSerializers, and generators apply the kotlin(\"plugin.serialization\") Gradle plugin.",
+      "code_anchor": "kotlinx-schema-json/build.gradle.kts:6"
+    },
+    {
+      "ec_id": "EC-35",
+      "kind": "technology-choice",
+      "claim": "Two distinct introspection technologies back the two run paths: KSP (Kotlin Symbol Processing, com.google.devtools.ksp) for compile-time generation in the ksp module, and kotlin-reflect for runtime generation in generator-core jvmMain (jvmMain dependency implementation(kotlin(\"reflect\"))).",
+      "code_anchor": "kotlinx-schema-generator-core/build.gradle.kts:42"
+    },
+    {
+      "ec_id": "EC-36",
+      "kind": "technology-choice",
+      "claim": "Logging uses io.github.oshai kotlin-logging (KotlinLogging) — e.g. SchemaGeneratorService logs discovered generators at init; the dependency is declared as implementation(libs.kotlin.logging) in generator-core.",
+      "code_anchor": "kotlinx-schema-generator-core/src/jvmMain/kotlin/kotlinx/schema/generator/core/SchemaGeneratorService.kt:16"
+    },
+    {
+      "ec_id": "EC-37",
+      "kind": "component-exists",
+      "claim": "ksp-integration-tests and gradle-plugin-integration-tests are dedicated end-to-end test fixtures: the former exercises the KSP processor over model/function fixtures, the latter applies the actual Gradle plugin to jvm-module and kmp-module sub-projects to verify schema generation across JVM and multiplatform.",
+      "code_anchor": "gradle-plugin-integration-tests/settings.gradle.kts:1"
+    },
+    {
+      "ec_id": "EC-38",
+      "kind": "key-invariant",
+      "claim": "KspTaskConfiguration/KspTask wire the generated sources to a fixed output location: the plugin places generated files under build/generated/kotlinxSchema/, the contract by which consuming compilations pick up the generated extension properties.",
+      "code_anchor": "kotlinx-schema-ksp-gradle-plugin/src/main/kotlin/kotlinx/schema/ksp/gradle/plugin/KotlinxSchemaPlugin.kt:19"
+    }
+  ],
+  "adjudication": [
+    {
+      "rc_id": "RC-001",
+      "bucket": "MATCH",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-01",
+      "ec_kind": "component-exists",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "EC-01 names the annotations module + @Schema/@Description (and @SchemaIgnore)."
+    },
+    {
+      "rc_id": "RC-002",
+      "bucket": "MATCH",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-13",
+      "ec_kind": "component-exists",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "EC-13 = kotlinx-schema-json serializable JSON Schema data model."
+    },
+    {
+      "rc_id": "RC-003",
+      "bucket": "MATCH",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-03",
+      "ec_kind": "component-exists",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "EC-03 = generator-core: SchemaGenerator, TypeGraph IR, introspector/transformer interfaces."
+    },
+    {
+      "rc_id": "RC-004",
+      "bucket": "MATCH",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-15",
+      "ec_kind": "component-exists",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "EC-15 = generator-json: JsonSchemaGenerator, TypeGraph->JSON transformers, serialization-based generators."
+    },
+    {
+      "rc_id": "RC-005",
+      "bucket": "MATCH",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-19",
+      "ec_kind": "component-exists",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "EC-19 = kotlinx-schema-ksp KSP SymbolProcessor module."
+    },
+    {
+      "rc_id": "RC-006",
+      "bucket": "MATCH",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-27",
+      "ec_kind": "component-exists",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "EC-27 = gradle-plugin module, plugin id org.jetbrains.kotlinx.schema.ksp, KotlinxSchemaPlugin; matches the role/id (doc's module label divergence is cosmetic, same as RC currency note)."
+    },
+    {
+      "rc_id": "RC-007",
+      "bucket": "MATCH",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-37",
+      "ec_kind": "component-exists",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "EC-37 = gradle-plugin-integration-tests applies the actual plugin to jvm/kmp sub-projects (independent build, MPP usage)."
+    },
+    {
+      "rc_id": "RC-008",
+      "bucket": "MATCH",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-37",
+      "ec_kind": "component-exists",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "EC-37 also names ksp-integration-tests as KSP processor e2e fixtures (without the Gradle plugin)."
+    },
+    {
+      "rc_id": "RC-009",
+      "bucket": "MATCH",
+      "rc_kind": "component-exists",
+      "ec_id": "EC-08",
+      "ec_kind": "component-exists",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "EC-08 declares TypeGraph as the IR data class (root + nodes); entails the component-exists fact (kind label differs, fact-keyed credit)."
+    },
+    {
+      "rc_id": "RC-010",
+      "bucket": "MATCH",
+      "rc_kind": "data-store",
+      "ec_id": "EC-08",
+      "ec_kind": "data-store",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "EC-08 captures TypeGraph as graph-of-discovered-types (nodes:Map<TypeId,TypeNode>) + root:TypeRef; the carried metadata (nullable/defaults/descriptions/properties) is the node hierarchy. Fact-keyed data-store match."
+    },
+    {
+      "rc_id": "RC-011",
+      "bucket": "MATCH",
+      "rc_kind": "component-role",
+      "ec_id": "EC-06",
+      "ec_kind": "component-role",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "EC-06 = SchemaIntrospector facade, introspect(root)->TypeGraph."
+    },
+    {
+      "rc_id": "RC-012",
+      "bucket": "MATCH",
+      "rc_kind": "component-role",
+      "ec_id": "EC-26",
+      "ec_kind": "component-role",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "EC-26 names KspClassIntrospector/KspFunctionIntrospector + KspIntrospectionContext as the compile-time KSP introspection; bridges the doc's conceptual KspSchemaIntrospector box."
+    },
+    {
+      "rc_id": "RC-013",
+      "bucket": "MATCH",
+      "rc_kind": "component-role",
+      "ec_id": "EC-09",
+      "ec_kind": "component-role",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "EC-09 = ReflectionClassIntrospector, JVM runtime kotlin-reflect -> TypeGraph; bridges doc's ReflectionSchemaIntrospector box."
+    },
+    {
+      "rc_id": "RC-014",
+      "bucket": "MATCH",
+      "rc_kind": "component-role",
+      "ec_id": "EC-18",
+      "ec_kind": "component-role",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "EC-18 names SerializationClassSchemaIntrospector (SerialDescriptor->TypeGraph) as the runtime serialization introspector — exact-name match."
+    },
+    {
+      "rc_id": "RC-015",
+      "bucket": "MATCH",
+      "rc_kind": "component-role",
+      "ec_id": "EC-07",
+      "ec_kind": "component-role",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "EC-07 = TypeGraphTransformer, transform(graph,rootName)->R, AbstractTypeGraphTransformer base."
+    },
+    {
+      "rc_id": "RC-016",
+      "bucket": "MATCH",
+      "rc_kind": "component-role",
+      "ec_id": "EC-17",
+      "ec_kind": "component-role",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "EC-17 (and EC-25) name TypeGraphToJsonSchemaTransformer (TypeGraph->JsonSchema) — the JSON Schema transformer role; bridges doc's JsonSchemaTransformer box."
+    },
+    {
+      "rc_id": "RC-017",
+      "bucket": "MATCH",
+      "rc_kind": "component-role",
+      "ec_id": "EC-25",
+      "ec_kind": "component-role",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "EC-25 names TypeGraphToFunctionCallingSchemaTransformer as the function-calling transformer option; bridges doc's FunctionCallingTransformer box."
+    },
+    {
+      "rc_id": "RC-018",
+      "bucket": "MATCH",
+      "rc_kind": "component-role",
+      "ec_id": "EC-10",
+      "ec_kind": "component-role",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "EC-10 = SchemaGeneratorService ServiceLoader registry, getGenerator(targetType,schemaType) lookup. Fact-keyed (kind label entry-point vs component-role)."
+    },
+    {
+      "rc_id": "RC-019",
+      "bucket": "MATCH",
+      "rc_kind": "component-role",
+      "ec_id": "EC-04",
+      "ec_kind": "component-role",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "EC-04 (SchemaGenerator<T,R> abstraction) + EC-05 (generateSchema = introspect then transform) capture the generator producing R for T via introspector+transformer."
+    },
+    {
+      "rc_id": "RC-020",
+      "bucket": "MATCH",
+      "rc_kind": "key-invariant",
+      "ec_id": "EC-05",
+      "ec_kind": "key-invariant",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "EC-05 = the fixed pipeline getGenerator -> introspect(target)=TypeGraph -> transform(graph,rootName)=output; combined with EC-10/EC-04 captures the full workflow invariant."
+    },
+    {
+      "rc_id": "RC-021",
+      "bucket": "MATCH",
+      "rc_kind": "key-invariant",
+      "ec_id": "EC-08",
+      "ec_kind": "key-invariant",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "EC-08 ('IR is the contract that lets any introspector pair with any transformer') + EC-05 ('every generator = one introspector + one transformer') capture the source/target decoupling via shared TypeGraph."
+    },
+    {
+      "rc_id": "RC-022",
+      "bucket": "MATCH",
+      "rc_kind": "dependency-edge",
+      "ec_id": "EC-30",
+      "ec_kind": "dependency-edge",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "EC-30 = generator-json api-depends on generator-core."
+    },
+    {
+      "rc_id": "RC-023",
+      "bucket": "MATCH",
+      "rc_kind": "dependency-edge",
+      "ec_id": "EC-30",
+      "ec_kind": "dependency-edge",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "EC-30 = generator-json api-depends on kotlinx-schema-json."
+    },
+    {
+      "rc_id": "RC-024",
+      "bucket": "MATCH",
+      "rc_kind": "dependency-edge",
+      "ec_id": "EC-31",
+      "ec_kind": "dependency-edge",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "EC-31 = generator-core api-depends on annotations."
+    },
+    {
+      "rc_id": "RC-025",
+      "bucket": "MATCH",
+      "rc_kind": "dependency-edge",
+      "ec_id": "EC-32",
+      "ec_kind": "dependency-edge",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "EC-32 = ksp implementation-depends on generator-json."
+    },
+    {
+      "rc_id": "RC-026",
+      "bucket": "MISS",
+      "rc_kind": "dependency-edge",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": true,
+      "note": "No EC asserts the Gradle plugin -> kotlinx-schema-ksp processor-coordinate dependency. EC-28 says the plugin invokes KSP2 (the KSP API) programmatically, not that it adds the kotlinx-schema-ksp processor dep; EC-30/31/32 cover other edges. Referent (KspTaskBuilder.kt) is readable -> miss_referent_read=true."
+    },
+    {
+      "rc_id": "RC-027",
+      "bucket": "MATCH",
+      "rc_kind": "boundary-rule",
+      "ec_id": "EC-02",
+      "ec_kind": "boundary-rule",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "The constituent code facts of the zero-runtime-overhead boundary are emitted: EC-02 (@Schema Retention SOURCE) + EC-19 (ksp is the compile-time/build-time path). Fact-keyed credit for the SOURCE-retention/compile-time-consumed boundary."
+    },
+    {
+      "rc_id": "RC-028",
+      "bucket": "MATCH",
+      "rc_kind": "technology-choice",
+      "ec_id": "EC-33",
+      "ec_kind": "technology-choice",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "EC-33 = Gradle multi-module Kotlin Multiplatform build (kotlin-multiplatform-convention); EC-01/EC-13 also call modules KMP. The KMP technology choice is captured; the JVM/JS/Native/Wasm target enumeration is a sub-detail not separately spelled out."
+    },
+    {
+      "rc_id": "RC-029",
+      "bucket": "MISS",
+      "rc_kind": "technology-choice",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": true,
+      "note": "No EC names JSON Schema Draft 2020-12. EC-14/16/17 mention JSON Schema output generally but never the draft version. Referent (TypeGraphToJsonSchemaTransformer KDoc/JSON_SCHEMA_ID_DRAFT202012) is readable -> miss_referent_read=true."
+    },
+    {
+      "rc_id": "RC-030",
+      "bucket": "MATCH",
+      "rc_kind": "technology-choice",
+      "ec_id": "EC-14",
+      "ec_kind": "technology-choice",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "EC-13/EC-14 (JsonSchema + FunctionCallingSchema are @Serializable, custom serializers) + EC-16 (output is JsonObject) capture the serializable-models-surface-as-JsonObject/JSON fact."
+    },
+    {
+      "rc_id": "RC-031",
+      "bucket": "MATCH",
+      "rc_kind": "entry-point",
+      "ec_id": "EC-21",
+      "ec_kind": "entry-point",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "EC-21 = processor generates extension property e.g. val MyClass.jsonSchemaString: String (via ClassSchemaStrategy); EC-19/EC-20 the KSP entry point. jsonSchema JsonObject variant implied via withSchemaObject (EC-02/EC-23)."
+    },
+    {
+      "rc_id": "RC-032",
+      "bucket": "MATCH",
+      "rc_kind": "entry-point",
+      "ec_id": "EC-28",
+      "ec_kind": "entry-point",
+      "mismatch_attribution": null,
+      "mismatch_certainty": null,
+      "miss_referent_read": false,
+      "note": "EC-28 = KotlinxSchemaPlugin.apply() build-time entry point (DSL, configurator routing, KSP2 invocation) + EC-38 wires generated sources into build/generated/kotlinxSchema/."
+    }
+  ],
+  "beyond_doc": {
+    "count": 20,
+    "note": "code-groundable ECs absent from the doc (NEUTRAL)"
+  },
+  "scores": {
+    "coverage_overall": {
+      "n": 30,
+      "d": 32,
+      "pct": 0.9375,
+      "wilson95_lb": 0.7985
+    },
+    "coverage_by_kind": {
+      "component-exists": {
+        "n": 9,
+        "d": 9
+      },
+      "data-store": {
+        "n": 1,
+        "d": 1
+      },
+      "component-role": {
+        "n": 9,
+        "d": 9
+      },
+      "key-invariant": {
+        "n": 2,
+        "d": 2
+      },
+      "dependency-edge": {
+        "n": 4,
+        "d": 5
+      },
+      "boundary-rule": {
+        "n": 1,
+        "d": 1
+      },
+      "technology-choice": {
+        "n": 2,
+        "d": 3
+      },
+      "entry-point": {
+        "n": 2,
+        "d": 2
+      }
+    },
+    "faithfulness": {
+      "n": 27,
+      "d": 27,
+      "pct": 1.0,
+      "wilson95_lb": 0.8754
+    },
+    "beyond_doc_count": 20,
+    "deepinit_wrong_high": 0
+  },
+  "scoring_provenance": {
+    "separation_of_duties": true,
+    "adversarial_refutation": "every deepinit_wrong refuted; 0 confirmed wrong+HIGH",
+    "fact_keyed": "MATCH ec_kind normalized to rc_kind (matcher authoritative)"
+  },
+  "provenance": {
+    "doc_in_inputs": false,
+    "key_held_out": true,
+    "training_contamination_caveat": false,
+    "publishable": "indicative",
+    "caveats": [
+      "INDICATIVE — small-n, fuzzy truth, below any ship-gate",
+      "attribution-adjudicated — divergences resolved to CODE, not auto-scored",
+      "doc-bounded — agreement with a good human doc, not absolute completeness",
+      "§18 (9/9, FP 0) stays the product headline"
+    ],
+    "tune_or_heldout": "held-out",
+    "harness_section": "§34"
+  }
+}

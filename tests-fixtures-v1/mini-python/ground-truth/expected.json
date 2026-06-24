@@ -1,0 +1,35 @@
+{
+  "project": "mini-python",
+  "architecture": "Vertical Slices",
+  "tech_stack": ["Python", "FastAPI", "SQLAlchemy", "SQLite", "python-jose", "passlib"],
+  "components": {
+    "auth": { "files": ["app/auth/models.py", "app/auth/service.py", "app/auth/routes.py"], "type": "domain" },
+    "tasks": { "files": ["app/tasks/models.py", "app/tasks/service.py", "app/tasks/routes.py"], "type": "domain" },
+    "notifications": { "files": ["app/notifications/service.py"], "type": "domain" }
+  },
+  "dependencies": {
+    "notifications": ["tasks"],
+    "tasks": ["auth"],
+    "auth": []
+  },
+  "business_rules": [
+    { "id": "BR-1", "rule": "Email must be unique", "file": "app/auth/service.py" },
+    { "id": "BR-2", "rule": "Password hashed with bcrypt", "file": "app/auth/service.py" },
+    { "id": "BR-3", "rule": "JWT expires after 24 hours", "file": "app/auth/service.py" },
+    { "id": "BR-4", "rule": "Task priority must be low/medium/high/urgent", "file": "app/tasks/service.py" },
+    { "id": "BR-5", "rule": "Task status transitions one-way: pending→in_progress→completed", "file": "app/tasks/service.py" },
+    { "id": "BR-6", "rule": "Only task owner can modify their tasks", "file": "app/tasks/service.py" },
+    { "id": "BR-7", "rule": "Notification deduplication per task per day", "file": "app/notifications/service.py" }
+  ],
+  "workflows": [
+    { "id": "WF-1", "name": "User registration", "steps": ["check email unique", "hash password", "create user", "generate JWT"] },
+    { "id": "WF-2", "name": "User login", "steps": ["find by email", "verify password", "create JWT"] },
+    { "id": "WF-3", "name": "Task lifecycle", "steps": ["create (pending)", "start (in_progress)", "complete"] },
+    { "id": "WF-4", "name": "Send reminders", "steps": ["list pending tasks", "deduplicate", "send email per task"] }
+  ],
+  "integration_points": [
+    { "id": "IP-1", "name": "SQLite via SQLAlchemy", "type": "data persistence" },
+    { "id": "IP-2", "name": "SMTP email (simulated)", "type": "notifications" },
+    { "id": "IP-3", "name": "JWT via python-jose", "type": "authentication" }
+  ]
+}

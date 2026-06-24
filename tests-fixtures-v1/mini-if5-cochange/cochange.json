@@ -1,0 +1,169 @@
+{
+  "_comment": "Synthetic git history for the IF-5 fixture. The harness cannot run real git, so this file encodes commits->files (6-month window), plus derived churn / bus-factor / coverage / structural-edge inputs. window_months=6. cochange_support_threshold=3.",
+  "window_months": 6,
+  "cochange_support_threshold": 3,
+  "commits": [
+    {
+      "sha": "a1",
+      "date": "2026-01-09",
+      "author": "dana@example.com",
+      "message": "Raise free-shipping threshold and high-value cutoff for Q1 promo",
+      "files": ["src/checkout/cart.js", "src/billing/tax.js"]
+    },
+    {
+      "sha": "a2",
+      "date": "2026-02-03",
+      "author": "dana@example.com",
+      "message": "Bump high-value order cutoff to $250 (finance request)",
+      "files": ["src/checkout/cart.js", "src/billing/tax.js"]
+    },
+    {
+      "sha": "a3",
+      "date": "2026-03-18",
+      "author": "dana@example.com",
+      "message": "Sync high-value threshold after surcharge policy change",
+      "files": ["src/billing/tax.js", "src/checkout/cart.js"]
+    },
+    {
+      "sha": "a4",
+      "date": "2026-04-27",
+      "author": "dana@example.com",
+      "message": "Adjust thresholds again for spring sale",
+      "files": ["src/checkout/cart.js", "src/billing/tax.js"]
+    },
+    {
+      "sha": "b1",
+      "date": "2026-01-22",
+      "author": "lee@example.com",
+      "message": "Add createdAt to stored order; thread requiresReview through service",
+      "files": ["src/orders/order.service.js", "src/orders/order.repository.js"]
+    },
+    {
+      "sha": "b2",
+      "date": "2026-02-15",
+      "author": "morgan@example.com",
+      "message": "Rename order id prefix and update service callers",
+      "files": ["src/orders/order.repository.js", "src/orders/order.service.js"]
+    },
+    {
+      "sha": "b3",
+      "date": "2026-03-30",
+      "author": "lee@example.com",
+      "message": "Add findOrder lookup and getOrder wrapper",
+      "files": ["src/orders/order.service.js", "src/orders/order.repository.js"]
+    },
+    {
+      "sha": "b4",
+      "date": "2026-05-11",
+      "author": "morgan@example.com",
+      "message": "Persist status field and surface it from getOrder",
+      "files": ["src/orders/order.repository.js", "src/orders/order.service.js"]
+    },
+    {
+      "sha": "c1",
+      "date": "2026-02-01",
+      "author": "lee@example.com",
+      "message": "Seed catalog with launch SKUs",
+      "files": ["src/catalog/product.service.js"]
+    },
+    {
+      "sha": "c2",
+      "date": "2026-04-09",
+      "author": "morgan@example.com",
+      "message": "Add gizmo SKU and fix price",
+      "files": ["src/catalog/product.service.js", "src/checkout/cart.js"]
+    }
+  ],
+  "cochange_pairs": [
+    {
+      "pair": ["src/checkout/cart.js", "src/billing/tax.js"],
+      "shared_commits": 4,
+      "structural_edge": false,
+      "shared_named_resource": null,
+      "note": "Co-change-only. Neither file imports the other. Coupling is via two duplicated magic-number policy thresholds (HIGH_VALUE_ORDER_CENTS / HIGH_VALUE_CENTS = 25000) that are kept in sync by hand. This is the IF-5 hidden-coupling target."
+    },
+    {
+      "pair": ["src/orders/order.service.js", "src/orders/order.repository.js"],
+      "shared_commits": 4,
+      "structural_edge": true,
+      "structural_edge_evidence": "src/orders/order.service.js:8 require('./order.repository')",
+      "shared_named_resource": null,
+      "note": "Co-change AND a real import edge. Legitimate, expected coupling — MUST be suppressed by IF-5 (the structural edge explains the temporal coupling)."
+    },
+    {
+      "pair": ["src/catalog/product.service.js", "src/checkout/cart.js"],
+      "shared_commits": 1,
+      "structural_edge": true,
+      "structural_edge_evidence": "src/checkout/cart.js:6 require('../catalog/product.service')",
+      "shared_named_resource": null,
+      "note": "Below support threshold (1<3) AND has a structural edge — does not qualify on either count."
+    }
+  ],
+  "structural_edges": [
+    { "from": "src/checkout/cart.js", "to": "src/catalog/product.service.js", "kind": "require", "line": 6 },
+    { "from": "src/orders/order.service.js", "to": "src/checkout/cart.js", "kind": "require", "line": 6 },
+    { "from": "src/orders/order.service.js", "to": "src/billing/tax.js", "kind": "require", "line": 7 },
+    { "from": "src/orders/order.service.js", "to": "src/orders/order.repository.js", "kind": "require", "line": 8 }
+  ],
+  "git_intel": {
+    "_comment": "Per-file 6-month git signals reused by IF-5 ranking. churn_6mo = lines changed; commit_count_6mo = commits touching the file; distinct_authors drives bus_factor (1 author => bus_factor=1, single-author hotspot); coverage_pct from the test report; has_tests/has_docs are discovery.md Legacy Health Flags.",
+    "files": {
+      "src/billing/tax.js": {
+        "churn_6mo": 142,
+        "commit_count_6mo": 4,
+        "distinct_authors": 1,
+        "bus_factor": 1,
+        "coverage_pct": 0,
+        "has_tests": false,
+        "has_docs": false,
+        "criticality": "Core"
+      },
+      "src/checkout/cart.js": {
+        "churn_6mo": 118,
+        "commit_count_6mo": 5,
+        "distinct_authors": 1,
+        "bus_factor": 1,
+        "coverage_pct": 12,
+        "has_tests": false,
+        "has_docs": false,
+        "criticality": "Core"
+      },
+      "src/orders/order.service.js": {
+        "churn_6mo": 64,
+        "commit_count_6mo": 4,
+        "distinct_authors": 2,
+        "bus_factor": 2,
+        "coverage_pct": 78,
+        "has_tests": true,
+        "has_docs": true,
+        "criticality": "Supporting"
+      },
+      "src/orders/order.repository.js": {
+        "churn_6mo": 58,
+        "commit_count_6mo": 4,
+        "distinct_authors": 2,
+        "bus_factor": 2,
+        "coverage_pct": 81,
+        "has_tests": true,
+        "has_docs": true,
+        "criticality": "Supporting"
+      },
+      "src/catalog/product.service.js": {
+        "churn_6mo": 22,
+        "commit_count_6mo": 2,
+        "distinct_authors": 2,
+        "bus_factor": 2,
+        "coverage_pct": 90,
+        "has_tests": true,
+        "has_docs": false,
+        "criticality": "Peripheral"
+      }
+    }
+  },
+  "history_depth": {
+    "shallow_clone": false,
+    "commits_in_window": 10,
+    "thin_history": false,
+    "_comment": "Full history available => IF-5 certainty is normal (not [LOW]). A shallow/young repo would set thin_history=true and force [LOW] + a stated-coverage note."
+  }
+}
