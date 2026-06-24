@@ -1,14 +1,9 @@
-# Server-side secret scanning (defense-in-depth complement to the
-# client-side commit-guard.sh + secret-scan.sh hooks shipped by this plugin).
+# Server-side secret scanning (defense-in-depth complement to the client-side
+# commit-guard.sh + secret-scan.sh hooks shipped by this plugin).
 #
-# NOTE on licensing:
-#   - Public repositories: gitleaks-action runs for free, no license required.
-#   - Private repositories owned by a GitHub organization: a GITLEAKS_LICENSE
-#     secret (org-level or repo-level) is required. The guard below skips the
-#     job on private repos when the license secret is missing so the workflow
-#     does not fail noisily.
-#   - Personal private repos: same — set GITLEAKS_LICENSE or accept the skip.
-# See: https://github.com/gitleaks/gitleaks-action#-license
+# Uses the gitleaks CLI directly (MIT-licensed, free for everyone) rather than the
+# gitleaks-ACTION, which requires a paid GITLEAKS_LICENSE for ORGANIZATION-owned
+# repositories — even public ones. The CLI reads .gitleaks.toml and scans full history.
 
 name: gitleaks
 
@@ -25,12 +20,9 @@ on:
 
 permissions:
   contents: read
-  pull-requests: write
 
 jobs:
   scan:
-    # Always run on public repos; on private repos only run when a license is configured.
-    if: ${{ github.event.repository.private == false || vars.GITLEAKS_LICENSE_CONFIGURED == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -38,7 +30,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e  # v3.0.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+      - name: Install gitleaks CLI
+        run: |
+          VERSION=8.30.1
+          curl -sSfL "https://github.com/gitleaks/gitleaks/releases/download/v${VERSION}/gitleaks_${VERSION}_linux_x64.tar.gz" \
+            | tar -xz gitleaks
+          ./gitleaks version
+
+      - name: Scan git history for secrets
+        run: ./gitleaks detect --no-banner --redact --exit-code 1
