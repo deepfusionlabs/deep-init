@@ -43,6 +43,15 @@ jobs:
       # One command, every gate: the deterministic harness + stats drift + count drift + the mutation
       # meta-harness + the public-harness contract (green WITHOUT the internal held-out keys — the Phase-7
       # unblock). validate_all prints a per-gate PASS/FAIL line, so CI keeps full visibility in one step.
+      - name: DEBUG — surface failing gates (temporary)
+        env:
+          PYTHONUTF8: '1'
+        run: |
+          echo "=== harness [FAIL] lines ==="
+          python tests-fixtures-v1/_chat_validation.py 2>&1 | grep -E '\[FAIL\]|RESULT:' || true
+          echo "=== build_stats --check (drift detail) ==="
+          python tools/build_stats.py --check 2>&1 | tail -25 || true
+
       - name: Run ALL validation gates (tools/validate_all.py)
         env:
           PYTHONUTF8: '1'
