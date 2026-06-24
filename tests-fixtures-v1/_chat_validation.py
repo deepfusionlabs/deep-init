@@ -1828,6 +1828,13 @@ if _EXC41.exists() and (_EXFX / "ground-truth" / "expected.json").exists():
         _exp41 = json.loads((_EXFX / "ground-truth" / "expected.json").read_text(encoding="utf-8"))
         _repo41 = _EXFX / "repo"
         _ml = _exp41["max_lines_for_test"]
+        # The .gitignored fixture files (secrets.env, *.log, node_modules/) are intentionally NOT committed (they
+        # ARE what the exclusion pass must skip), so a fresh checkout / clean clone lacks them and the gitignored +
+        # vendored counts would be short. Recreate them at runtime so the pass exercises those paths everywhere.
+        (_repo41 / "secrets.env").write_text("API_KEY=fixture-not-a-real-secret\n", encoding="utf-8")
+        (_repo41 / "debug.log").write_text("fixture debug output\n", encoding="utf-8")
+        (_repo41 / "node_modules" / "dep").mkdir(parents=True, exist_ok=True)
+        (_repo41 / "node_modules" / "dep" / "index.js").write_text("module.exports = 1;\n", encoding="utf-8")
         _res41 = _exc41.run(_repo41, max_lines=_ml)
         _inc = set(_res41["included"]); _skip = {s["path"]: s["category"] for s in _res41["skipped"]}
         _g41_ok = True
