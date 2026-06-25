@@ -19,7 +19,7 @@
   SEPARATE artifact from the issue dashboard.
 -->
 <style>
-/* ---- Deep Fusion Labs brand system (navy + lime). Light: white/navy text,
+/* ---- DeepFusion Labs brand system (navy + lime). Light: white/navy text,
    readable blue links, lime accents/fills. Dark: navy #070E1B hero + lime #C4E934.
    System fonts only (no embedded/CDN font — license-clean, offline). ---- */
 :root{
@@ -233,7 +233,7 @@ dialog#shortcuts dt{text-align:right}
 @media (max-width:720px){.shell{grid-template-columns:1fr}nav.rail{display:none}.searchwrap{width:auto;flex:1}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important;animation:none!important}}
 
-/* ===== Co-branded masthead (Deep Fusion Labs) ===== */
+/* ===== Co-branded masthead (DeepFusion Labs) ===== */
 .brand{display:flex;align-items:center;gap:.6rem;text-decoration:none;white-space:nowrap;color:var(--fg)}
 .brand:hover{text-decoration:none}
 .brand .logo{width:1.85rem;height:1.85rem;flex:0 0 auto;border-radius:8px;box-shadow:0 1px 3px rgba(15,34,64,.22)}
@@ -409,7 +409,7 @@ try{var _t=localStorage.getItem("deepinit-viewer-theme");if(_t){document.documen
 <a class="skip" href="#maincontent">Skip to content</a>
 
 <header class="top">
-  <a class="brand" href="#overview" aria-label="DeepInit — by Deep Fusion Labs">
+  <a class="brand" href="#overview" aria-label="DeepInit — by DeepFusion Labs">
     <svg class="logo" viewBox="0 0 32 32" role="img" aria-hidden="true">
       <rect width="32" height="32" rx="8.5" fill="#c4e934"/>
       <path d="M4 22L16 28L28 22L16 16Z" fill="#0b1a30" opacity=".30"/>
@@ -417,7 +417,7 @@ try{var _t=localStorage.getItem("deepinit-viewer-theme");if(_t){document.documen
       <path d="M4 10L16 16L28 10L16 4Z" fill="#0b1a30" opacity=".85"/>
       <circle cx="16" cy="4.4" r="2.5" fill="#0b1a30"/>
     </svg>
-    <span class="brandtext"><span class="bn">DeepInit</span><span class="bsub">by Deep Fusion Labs</span></span>
+    <span class="brandtext"><span class="bn">DeepInit</span><span class="bsub">by DeepFusion Labs</span></span>
   </a>
   <span class="topdiv" aria-hidden="true"></span>
   <nav class="viewswitch" role="tablist" aria-label="Switch view">
@@ -1274,7 +1274,7 @@ try{var _t=localStorage.getItem("deepinit-viewer-theme");if(_t){document.documen
   if(pj.name){ var rp=$("#reporepo"); rp.hidden=false; rp.textContent=pj.name+(pj.repo_sha?(" @ "+pj.repo_sha.slice(0,10)):""); }
   $("#genbanner").textContent="Generated artifact — regenerated on each DeepInit run; edits here are not preserved. "+(pj.generated?("Generated "+pj.generated+". "):"")+"Report-only · 100% local · self-contained (no network).";
   var fwrap=el("div","footwrap"); fwrap.appendChild(appIcon(24));
-  var ftx=el("div"); ftx.appendChild(el("div","f1","DeepInit — by Deep Fusion Labs"));
+  var ftx=el("div"); ftx.appendChild(el("div","f1","DeepInit — by DeepFusion Labs"));
   ftx.appendChild(el("div","f2","Grounded, verified context · every claim cites a file:line"+(pj.deepinit_version?(" · engine "+pj.deepinit_version):"")+(pj.run_id?(" · run "+pj.run_id):"")+" · deepfusionlabs.ai"));
   fwrap.appendChild(ftx); $("#footer").appendChild(fwrap);
   if(window.matchMedia && matchMedia("(prefers-reduced-motion:reduce)").matches) document.body.classList.add("reduced");

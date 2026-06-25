@@ -207,4 +207,4 @@ docs/                     # the design corpus (spec, requirements, design, test 
 
 ## License
 
-MIT © Deep Fusion Labs. See [`LICENSE`](LICENSE) and [`AI_POLICY.md`](AI_POLICY.md).
+MIT © DeepFusion Labs. See [`LICENSE`](LICENSE) and [`AI_POLICY.md`](AI_POLICY.md).

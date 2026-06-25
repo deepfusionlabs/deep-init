@@ -1,9 +1,9 @@
 {
   "name": "deep-init",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Generates a grounded, verified, two-tier agent context layer (lean CLAUDE.md + deep .ai/docs) for any codebase, plus report-only issue detection. 100% local, read-only.",
   "author": {
-    "name": "Deep Fusion Labs",
+    "name": "DeepFusion Labs",
     "url": "https://deepfusionlabs.ai"
   },
   "homepage": "https://github.com/deepfusionlabs/deep-init",

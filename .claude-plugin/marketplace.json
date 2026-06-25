@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
   "name": "deepfusionlabs-deep-init",
-  "owner": { "name": "Deep Fusion Labs" },
-  "description": "Deep Fusion Labs — DeepInit plugin marketplace.",
+  "owner": { "name": "DeepFusion Labs" },
+  "description": "DeepFusion Labs — DeepInit plugin marketplace.",
   "plugins": [
     {
       "name": "deep-init",

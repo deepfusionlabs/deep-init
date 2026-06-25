@@ -45,7 +45,7 @@ _PATTERNS = [
     re.compile(r"`[^`\n]+`"),                                    # inline code
     re.compile(r"\b[\w./\-]+\.[A-Za-z0-9]+:\d+(?:-\d+)?\b"),     # file:line (needs a dotted ext)
     re.compile(r"\b(?:BR|WF|IP|ADR|KL|ISS|IF)-[A-Za-z0-9:._\-]+"),  # record IDs
-    re.compile(r"DeepInit|DeepMap|Deep Fusion Labs|CLAUDE\.md|AGENTS\.md|\.ai/"),  # product nouns (verbatim)
+    re.compile(r"DeepInit|DeepMap|DeepFusion Labs|CLAUDE\.md|AGENTS\.md|\.ai/"),  # product nouns (verbatim)
 ]
 
 

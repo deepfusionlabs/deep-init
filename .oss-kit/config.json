@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "identity": {
-    "copyrightHolder": "Deep Fusion Labs",
+    "copyrightHolder": "DeepFusion Labs",
     "brand": "DeepInit",
-    "author": "Deep Fusion Labs",
-    "maintainerName": "Deep Fusion Labs",
+    "author": "DeepFusion Labs",
+    "maintainerName": "DeepFusion Labs",
     "securityEmail": "elad@deepfusionlabs.ai",
     "license": "MIT"
   },

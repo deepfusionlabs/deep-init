@@ -1,7 +1,7 @@
 # report.md — C-REPORT (unified, co-branded Docs + Insights report)
 
 Emits ONE **`.ai/report.html`** — a self-contained, offline, co-branded report
-("DeepInit, by Deep Fusion Labs") that **MERGES** the docs reader and the
+("DeepInit, by DeepFusion Labs") that **MERGES** the docs reader and the
 metrics/issue dashboard into a single artifact with a top-level **Docs** (default)
 · **Insights** · **Map** view switch. It supersedes the two separate artifacts (`viewer.md`
 C-VIEW + `dashboard.md` C-DASH), which remain legacy until the harness/STATS
@@ -79,9 +79,9 @@ parser now handles those shapes, pinned by harness §43 G6).
   `prefers-reduced-motion`-aware.
 
 ## Brand
-Deep Fusion Labs: lime `#C4E934` + navy `#070E1B`, the layered-diamond app-icon logo
+DeepFusion Labs: lime `#C4E934` + navy `#070E1B`, the layered-diamond app-icon logo
 (inline SVG), co-branded masthead + footer (product-forward: **DeepInit** hero +
-"by Deep Fusion Labs"). System fonts (no embedded font — keeps the self-contained,
+"by DeepFusion Labs"). System fonts (no embedded font — keeps the self-contained,
 nothing-bundled-but-the-pinned-libs story).
 
 ## Template & verification
@@ -95,4 +95,4 @@ self-containment checks (zero off-host refs). The Python harness pins the report
 `viewMap`, the navigable enriched graph schema, the vendored-inlined + license-clean +
 self-contained graph lib, byte-stable determinism), each with a load-bearing mutation. Build
 a populated preview with `make report-preview` (or `python tools/build_report.py
-validation/dogfooding/oss-kit`) and smoke it with `make report-smoke`.
+validation/end-to-end/kemal`) and smoke it with `make report-smoke`.

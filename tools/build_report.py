@@ -4,7 +4,7 @@ build_report.py — DeepInit unified Report (Docs + Insights, one file)
 
 Builds ONE self-contained, OFFLINE report.html that merges the docs reader
 (the "Docs" view) and the metrics / issue dashboard (the "Insights" view) into
-a single co-branded artifact (DeepInit, by Deep Fusion Labs). It REUSES
+a single co-branded artifact (DeepInit, by DeepFusion Labs). It REUSES
 build_docs_viewer's tolerant parsers (the spec<->impl mirror — one source of
 truth for parsing AGENTS.md/CLAUDE.md + .ai/docs/**), then adds an Insights
 data block and injects the model into report-template.html.

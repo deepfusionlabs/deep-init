@@ -10,7 +10,7 @@ Please report privately — **do not** open a public issue for a security report
 
 Include: a description, affected file(s)/stage, reproduction steps, and impact. We aim to acknowledge within a few business days and will coordinate a fix and disclosure timeline with you.
 
-(This repository is currently private; GitHub Private Vulnerability Reporting — a public-repo feature — will be enabled if/when the project goes public. Until then, use the email above.)
+Prefer not to email? Use GitHub's **[Private Vulnerability Reporting](https://github.com/deepfusionlabs/deep-init/security/advisories/new)** — open the repository's **Security → Report a vulnerability** tab and your report stays private to the maintainers.
 
 ## Supported versions
 

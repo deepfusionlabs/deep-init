@@ -6,7 +6,7 @@ Bring the running DeepInit up to date. Claude Code has no first-party "pull the 
 
 1. **Detect the install kind:**
    - **Marketplace install** (the plugin loads from `~/.claude/plugins/`) → go to step 2.
-   - **Local dogfood** (you're running this repo's `skills/deep-init/` directly) → there is nothing to fetch; skip to step 4 (a reload just picks up your local edits).
+   - **Local clone** (you're running this repo's `skills/deep-init/` directly) → there is nothing to fetch; skip to step 4 (a reload just picks up your local edits).
 
 2. **Detect your host first — it changes BOTH how you update and how you activate.** Read your runtime host from your system context (e.g. a note that you're "running inside a VSCode native extension environment"), then follow **only** the matching block. Resolve the target `deep-init@<marketplace>` — read the marketplace alias from the installed plugin state under `~/.claude/plugins/`, else fall back to the `name` in `.claude-plugin/marketplace.json`.
 

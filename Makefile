@@ -32,9 +32,9 @@ golden: ## Regenerate the canonical e2e golden snapshot (deliberate)
 	$(PYTHON) tools/build_golden_snapshot.py validation/end-to-end/kemal --write
 
 report-preview: ## Build the report against a fixture WITH a populated graph + docs (open it to eyeball the Map view)
-	$(PYTHON) tools/build_report.py validation/dogfooding/oss-kit
-	@echo "open validation/dogfooding/oss-kit/.ai/report.html in a browser — click the Map tab (pan/zoom, click a node -> its docs)"
+	$(PYTHON) tools/build_report.py validation/end-to-end/kemal
+	@echo "open validation/end-to-end/kemal/.ai/report.html in a browser — click the Map tab (pan/zoom, click a node -> its docs)"
 
 report-smoke: ## Headless jsdom render test of the report (Docs/Insights/Map + node-navigation + honest-degrade)
-	$(PYTHON) tools/build_report.py validation/dogfooding/oss-kit
-	node tools/smoke_report.mjs validation/dogfooding/oss-kit/.ai/report.html
+	$(PYTHON) tools/build_report.py validation/end-to-end/kemal
+	node tools/smoke_report.mjs validation/end-to-end/kemal/.ai/report.html

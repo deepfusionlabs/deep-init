@@ -4,13 +4,19 @@ All notable changes to DeepInit are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); this project uses **manual** `0.x`
 versioning (no release tooling derives this file).
 
+## [0.5.1] — Security reporting + output copy
+
+- **Security** — vulnerability reports can now be filed through GitHub Private Vulnerability
+  Reporting (the repo's **Security → Report a vulnerability** tab), alongside email.
+- Clearer `version` and `plugin-update` command output.
+
 ## [0.5.0] — Initial public release
 
 The first public release of **DeepInit** — a Claude Code skill that reads a codebase and emits a
 grounded, verified, two-tier agent context layer (a lean `CLAUDE.md` + a deep `.ai/docs/` layer),
 every claim tied to a `file:line`, plus a report-only issue layer. 100% local, read-only, MIT.
 
-Developed and dogfooded internally at Deep Fusion Labs before this first public release.
+Developed and dogfooded internally at DeepFusion Labs before this first public release.
 
 - **Two-tier context** — a lean, always-loaded `CLAUDE.md` + an on-demand `.ai/docs/` deep layer
   (per-component analysis, whole-system docs, decisions/ADRs, live DB/ORM drift).
