@@ -4,6 +4,13 @@ All notable changes to DeepInit are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); this project uses **manual** `0.x`
 versioning (no release tooling derives this file).
 
+## [0.6.0] — 2026-06-27
+
+### Changed
+- _Summarize this release; replace this line._
+
+---
+
 ## [0.5.1] — Security reporting + output copy
 
 - **Security** — vulnerability reports can now be filed through GitHub Private Vulnerability

@@ -40,4 +40,5 @@ graphify-out/
 
 # DeepInit freshness-hook runtime state — local, machine-specific, never committed
 .ai/.deepinit-nudge-state
+.ai/.deepinit-nudge-snooze
 .claude/.deepinit-no-nudge

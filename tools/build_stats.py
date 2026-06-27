@@ -298,6 +298,34 @@ def build_understanding_matters() -> dict:
     }
 
 
+def build_init_head_to_head() -> dict:
+    """M1-B: the measured DeepInit-vs-/init head-to-head (validation/matrix/m1b_init_head_to_head.json).
+    Mirrors build_understanding_matters — flows the per-arm aggregate into STATS with an INDICATIVE
+    caveat; NOT published to the page (needs an isolated-timing + held-out-repo run first)."""
+    p = VAL / "matrix" / "m1b_init_head_to_head.json"
+    if not p.exists():
+        return {"available": False}
+    d = _load(p)
+    agg = d.get("aggregate_by_arm", {})
+    return {
+        "available": True,
+        "repos": [r["key"] for r in d.get("repos", [])],
+        "by_arm": {k: {"grounding_pct_mean": v.get("grounding_pct_mean"),
+                       "grounding_pct_min": v.get("grounding_pct_min"),
+                       "faithfulness_pct_mean": v.get("faithfulness_pct_mean"),
+                       "actionability_mean": v.get("actionability_mean"),
+                       "dep_edge_recall_pct_mean": v.get("dep_edge_recall_pct_mean"),
+                       "issues_real_total": v.get("issues_real_total"),
+                       "wrong_high_total": v.get("wrong_high_total"),
+                       "cost_usd_mean": v.get("cost_usd_mean")}
+                   for k, v in agg.items()},
+        "caveat": "INDICATIVE - 9 repos (8 langs, S/M/L) x 2 arms (/init vs /deep-init:fast), 36 blind-scored "
+                  "outputs; metered api_usage cost. NOT published to the page (needs an isolated-timing run + "
+                  "held-out / post-cutoff repos; on famous repos faithfulness is high for both arms so grounding "
+                  "is the differentiator).",
+    }
+
+
 def build_cost_model() -> dict:
     p = VAL / "matrix" / "cost_model.json"
     if not p.exists():
@@ -414,6 +442,7 @@ def build_stats() -> dict:
         "stacks": build_stacks(),
         "matrix": build_matrix(),
         "understanding_matters": build_understanding_matters(),
+        "init_head_to_head": build_init_head_to_head(),
         "cost_model": build_cost_model(),
         "marketing_evidence": build_marketing(),
         "timing": build_timing(),

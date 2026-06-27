@@ -248,6 +248,8 @@ Per file/component: `content_hash` (SHA256 of source) + `interface_hash` (SHA256
 }
 ```
 
+**`files` is an ARRAY of repo-relative path strings** — never a count integer (DeepInit's component-size vocabulary uses `files: <int>` ELSEWHERE — `emit_plan` records — so do NOT carry that form into the hash file). The deterministic reader (`assets/deepinit_status.py`) tolerates a non-conforming shape (int / string / null / nested object) without crashing — the keystone never raises from a hook — but only the array-of-paths (or per-file nested-object) form is content-checkable.
+
 ## `changelog.md`
 Append-only, typed:
 ```markdown

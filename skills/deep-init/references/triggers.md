@@ -14,7 +14,7 @@ session suggestion             →   commit breadcrumb        →   auto-update 
 (SessionStart + UserPromptSubmit:   (post-commit records +        (a detached headless `claude -p`
  docs stale → the agent OFFERS a    optionally nudges in the      runs --update after a source commit;
  one-click refresh, FIRST, showing  terminal — invisible in       never auto-commits)
- WHAT changed; once per session)    the VS Code commit UI)
+ WHAT changed; default ≈once/day)   the VS Code commit UI)
 ```
 
 The first two are **0-token, deterministic** (they shell out to `assets/deepinit_status.py`, never to
@@ -38,24 +38,32 @@ a `SessionStart`-only hook injects context the agent often skips when the user's
 and Claude Code **drops a hook's `systemMessage` in the VS Code UI** — so the *reliable* surface is the
 agent acting on `additionalContext` at the `UserPromptSubmit` injection point (the freshest, right before
 the agent answers), with `SessionStart` as the opening nudge. Both share **one** cadence gate, so the
-offer still appears **at most once per session**. On either event it:
-1. self-gates — silent if the repo has no DeepInit state, if disabled (below), or if it already nudged
-   for this session. The cadence (`notify-cadence`, default **session**) decides "already nudged":
-   **session** = once per NEW session — it dedups on the `session_id` (from the hook's stdin JSON, carried
-   by both events), so an actively-committing dev is nudged each genuinely-new session but never twice
-   within one (resume/compact/clear and every later prompt stay silent); **window** = at most once per
-   `notify-window-hours` (default 6h) wall-clock; **always** = every session start / prompt while stale.
-   (No `session_id` — older Claude Code — falls back to the 6h window.) The last-nudged session id (or
-   timestamp, for window/fallback) lives in the gitignored `.ai/.deepinit-nudge-state`. The cheap gate runs
-   **before** the tree-hashing status check, so an already-nudged session never re-hashes on every prompt;
+offer self-limits — by default **at most once per ~24h across sessions**. On either event it:
+1. self-gates — silent if the repo has no DeepInit state, if disabled (below), if the user **recently
+   declined** (the snooze, step 2), or if it already nudged for the current cadence window. The cadence
+   (`notify-cadence`, default **window**) decides "already nudged":
+   **window** (default) = at most once per `notify-window-hours` (default **24h**) of wall-clock, so a dev
+   who opens many short sessions in a day isn't re-nudged in each one — the less-naggy default; **session**
+   = once per NEW session — it dedups on the `session_id` (from the hook's stdin JSON, carried by both
+   events), nudging each genuinely-new session but never twice within one (resume/compact/clear and every
+   later prompt stay silent); **always** = every session start / prompt while stale. (In `session` mode, no
+   `session_id` — older Claude Code — falls back to the window.) The last-nudged timestamp (or session id,
+   for `session` cadence) lives in the gitignored `.ai/.deepinit-nudge-state`. The cheap gate runs **before**
+   the tree-hashing status check, so an already-nudged window never re-hashes on every prompt.
+   **Remember-declines:** when the user answers the offer with **[Not now]**, the agent records the decline
+   by running `deepinit_status.py --snooze`, which writes `now + notify-snooze-hours` (default **168h / one
+   week**, longer than the passive window so an explicit decline buys more quiet than letting a nudge lapse)
+   to the gitignored `.ai/.deepinit-nudge-snooze`; the hook honors that snooze across **all** events and
+   cadences until it expires — so "Not now" means "not for a while", not just "not this one prompt";
 2. else it runs the 0-token status check and, if **stale**, emits an `additionalContext` payload (with
    `hookEventName` matching the invoking event — required for Claude Code to accept it) telling the agent
    that its **FIRST action, before addressing the user's request, MUST be to OFFER a refresh** — *a hook
    can only inject text, it cannot draw a button*, so the agent presents the choice via **AskUserQuestion**
    and the payload lists **what changed** (the modified/removed/pending paths + owning components, not just
    a count):
-   **[Update now]** → run `/deep-init:refresh` · **[Not now]** → nothing · **[Don't ask in this repo]**
-   → create the `.claude/.deepinit-no-nudge` flag.
+   **[Update now]** → run `/deep-init:refresh` · **[Not now]** → record a `notify-snooze-hours` back-off
+   (run `deepinit_status.py --snooze`; no re-ask for ~a week) · **[Don't ask in this repo]** → create the
+   `.claude/.deepinit-no-nudge` flag.
    It **NEVER** runs the (costly) update itself — the user chooses; on **[Update now]** the update runs
    in-session.
 
@@ -68,11 +76,13 @@ offer still appears **at most once per session**. On either event it:
   button) creates `.claude/.deepinit-no-nudge` (gitignored). Delete it to re-enable. (You can also just
   `touch .claude/.deepinit-no-nudge`.)
 - **Config:** `notify-on-session-start: "off"` (or the back-compat `check-on-session-start: "off"`) in
-  `.ai/deepinit.config`. Change *how often* (not whether) with `notify-cadence` / `notify-window-hours`.
+  `.ai/deepinit.config`. Change *how often* (not whether) with `notify-cadence` / `notify-window-hours` /
+  `notify-snooze-hours`.
 - **Whole plugin:** `claude plugin disable deep-init`.
 - **All hooks:** `disableAllHooks: true` in `~/.claude/settings.json` (global) or
   `.claude/settings.local.json` (per-project, gitignored).
-- **Self-quieting:** at most once per session (default cadence) even when left fully on.
+- **Self-quieting:** at most once per ~24h window (default cadence) even when left fully on, and a **[Not now]**
+  decline snoozes it for a further `notify-snooze-hours` (default a week).
 
 Every off-switch silences **both** events — the disable checks and the cadence gate live in the one shared
 `session-start.sh`, before any payload is emitted, so `notify-on-session-start` governs the whole in-session
@@ -84,8 +94,8 @@ suggestion (both `SessionStart` and `UserPromptSubmit`), not just the opening on
 - **`UserPromptSubmit` → chosen (the reliability surface).** Fires right before the agent answers, so its
   `additionalContext` is the *freshest* — the agent acts on it instead of skipping a session-open note to
   do the user's first task — and it catches staleness that appears **mid-session** (e.g. just after a
-  commit). It is **not** the rejected per-message nudge below: the **shared once-per-session cadence gate**
-  makes it fire at most once per session, exactly like `SessionStart`, not on every prompt.
+  commit). It is **not** the rejected per-message nudge below: the **shared cadence gate** makes it fire
+  at most once per window (≈once/day by default), exactly like `SessionStart`, not on every prompt.
 - **Per-message (`Stop`) → rejected.** It fires after *every* reply with no natural dedup — the fastest way
   to make a user disable the whole feature. Over-notifying is the only real failure mode of a proactive
   nudge; the `UserPromptSubmit` surface avoids it precisely *because* it shares the session cadence gate.
@@ -126,9 +136,14 @@ Trigger settings are ordinary config keys (long-flag names, no `--`), resolved w
 - `notify-on-session-start` — default **on** — the proactive in-session suggestion (primary); governs
   **both** the `SessionStart` and `UserPromptSubmit` surfaces (one shared gate). The name is kept for
   back-compat; `check-on-session-start` is an alias.
-- `notify-cadence` — default **session** — how often the suggestion re-fires while stale (across both
-  events): `session` (once per new session) · `window` (once per `notify-window-hours`) · `always`.
-- `notify-window-hours` — default **6** — the back-off window for `notify-cadence: "window"` (ignored otherwise).
+- `notify-cadence` — default **window** — how often the suggestion re-fires while stale (across both
+  events): `window` (once per `notify-window-hours`, the less-naggy default) · `session` (once per new
+  session) · `always`.
+- `notify-window-hours` — default **24** — the back-off window for `notify-cadence: "window"` (the default;
+  ignored for session/always).
+- `notify-snooze-hours` — default **168** (one week) — how long a **[Not now]** decline silences the
+  suggestion. The agent records the decline via `deepinit_status.py --snooze`, which writes the expiry to
+  the gitignored `.ai/.deepinit-nudge-snooze`; the hook honors it across all events and cadences.
 - `notify-on-commit` — default **on** — the post-commit terminal breadcrumb (secondary).
 - `auto-update` — default **off** — the opt-in headless run above.
 

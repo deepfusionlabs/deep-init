@@ -10,6 +10,8 @@ Every finding MUST cite a source `file:line`. Certainty levels:
 
 Prefer omission over speculation. If uncertain, mark `[LOW]` or move to Open Questions. A confidently wrong claim is worse than a gap.
 
+**Exact counts, enumerations, AND absolute quantifiers are HIGH-confidence claims too.** A specific number or closed "the N items" set — "22 test files", "4 overloads", "9 ADRs", "the three handlers" — and an absolute quantifier — "**every** / **all** / **always** / **never** / **only** / **mandatory**" — is a factual assertion that MUST be checked against the code before it is stated: actually count it, and for a universal confirm there is **no counterexample** (one missing case refutes an "every"/"all" claim). Otherwise soften to an unbounded/qualified form ("several test files", "most modules", "typically") or drop it. An unverified count or universal asserted as fact is an R1 violation **even when the surrounding prose is correct**. (Measured: a DeepInit-vs-`/init` benchmark found off-by-one counts were the dominant wrong-HIGH failure mode; after a fix corrected them, a re-run surfaced false universals as the next class — e.g. "`from __future__ import annotations` in EVERY module" when one file lacked it. See `validation/matrix/m1b_init_head_to_head.json`.)
+
 ## R2 — Strict input boundaries
 Each subagent reads ONLY its designated inputs:
 - Component-extraction subagents: ONLY files within their component path.

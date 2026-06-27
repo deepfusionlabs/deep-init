@@ -24,6 +24,7 @@ import hashlib
 import json
 import re
 import sys
+import time
 from pathlib import Path
 
 # DeepInit's generated state lives at .ai/docs/ (the current product layout) OR .ai/docs/current/
@@ -46,6 +47,24 @@ def _sha256(p: Path) -> str | None:
         return hashlib.sha256(p.read_bytes()).hexdigest()
     except OSError:
         return None
+
+
+def _iter_paths(x) -> list:
+    """Repo-relative paths from a component record's `files` field — tolerant of ANY JSON shape.
+
+    The writer is a Claude instance executing generation.md (there is NO deterministic writer), and
+    DeepInit's own vocabulary overloads `files` as an INT count elsewhere (the emit_plan component
+    records), so the deterministic reader must never assume the spec's list shape — a `files` that is
+    an int / str / null / nested object must degrade to "no tracked paths", never crash the keystone.
+      - list/tuple        -> its string members (the spec shape)
+      - dict {path: meta}  -> its keys (generation.md's per-file nested form; existence-only)
+      - anything else      -> []
+    """
+    if isinstance(x, (list, tuple)):
+        return [p for p in x if isinstance(p, str)]
+    if isinstance(x, dict):
+        return [p for p in x.keys() if isinstance(p, str)]
+    return []
 
 
 def stored_files(data: dict) -> dict:
@@ -71,7 +90,7 @@ def stored_files(data: dict) -> dict:
     comps = data.get("components")
     if isinstance(comps, dict):
         for rec in comps.values():
-            for rel in (rec or {}).get("files", []) or []:
+            for rel in _iter_paths((rec or {}).get("files")):
                 out.setdefault(rel, None)
     # Shape 3 — flat {rel_path: "<sha-hex>"} (the current emitted layout). A top-level entry counts
     # as a tracked file iff its value is a hex digest and its key isn't a wrapper/meta field.
@@ -103,7 +122,7 @@ def stored_components(data: dict) -> dict:
     comps = data.get("components")
     if isinstance(comps, dict):
         for cname, rec in comps.items():
-            for rel in (rec or {}).get("files", []) or []:
+            for rel in _iter_paths((rec or {}).get("files")):
                 out.setdefault(rel, cname)
     return out
 
@@ -150,7 +169,12 @@ def compute_status(root: Path) -> dict:
         return {"available": False, "stale": False,
                 "reason": f"unreadable .file_hashes.json: {e}",
                 "tracked": 0, "modified": [], "removed": [], "pending": []}
-    stored = stored_files(data)
+    try:
+        stored = stored_files(data)
+    except Exception as e:  # the keystone must never crash a hook on a novel writer shape (R1)
+        return {"available": False, "stale": False,
+                "reason": f"unparseable .file_hashes.json shape: {e}",
+                "tracked": 0, "modified": [], "removed": [], "pending": []}
     modified, removed = diff_stored(stored, root)
     pending = read_pending(state)
     return {"available": True, "stale": bool(modified or removed or pending),
@@ -212,7 +236,7 @@ def summary_for(root: Path, status: dict | None = None) -> str:
     if state is not None:
         try:
             components = stored_components(json.loads((state / HASHES).read_text(encoding="utf-8")))
-        except (OSError, ValueError):
+        except Exception:
             components = {}
     return change_summary(s, components)
 
@@ -224,7 +248,33 @@ def summary_for(root: Path, status: dict | None = None) -> str:
 _CFG = ".ai/deepinit.config"
 _NO_NUDGE = ".claude/.deepinit-no-nudge"
 _NUDGE_STATE = ".ai/.deepinit-nudge-state"
+_NUDGE_SNOOZE = ".ai/.deepinit-nudge-snooze"   # a "Not now" decline back-off (unix expiry) — remember-declines
 _CADENCES = ("session", "window", "always")
+_DEFAULT_CADENCE = "window"                     # less-naggy default: cross-session wall-clock back-off
+_DEFAULT_WINDOW_HOURS = 24                       # ≈ once/day while stale (was 6)
+_DEFAULT_SNOOZE_HOURS = 168                      # a "Not now" silences the nudge for one week
+
+
+def snooze(root: Path, hours=None) -> int:
+    """Record a 'Not now' decline → write `now + notify-snooze-hours` (default 168h) to
+    .ai/.deepinit-nudge-snooze so the SessionStart/UserPromptSubmit hook stays silent until it expires.
+
+    The agent calls this when the user declines the proactive offer (a git/Session hook can't observe the
+    AskUserQuestion answer, so the agent is the one actor that can record the decline). Uses time.time() —
+    no shell-`date` dependency — and returns the expiry unix timestamp. Clearing = delete the file."""
+    if hours is None:
+        hours = _cfg_num(_cfg_text(root), "notify-snooze-hours", _DEFAULT_SNOOZE_HOURS)
+    try:
+        hours = float(hours)
+    except (TypeError, ValueError):
+        hours = _DEFAULT_SNOOZE_HOURS
+    if hours < 0:
+        hours = _DEFAULT_SNOOZE_HOURS
+    expiry = int(time.time() + hours * 3600)
+    p = root / _NUDGE_SNOOZE
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(str(expiry) + "\n", encoding="utf-8")
+    return expiry
 
 
 def _cfg_text(root: Path) -> str:
@@ -257,10 +307,10 @@ def explain(root: Path) -> dict:
         disabled.append(".claude/.deepinit-no-nudge")
     if _cfg_str(cfg, "notify-on-session-start", "on") == "off" or _cfg_str(cfg, "check-on-session-start", "on") == "off":
         disabled.append('notify-on-session-start:"off"')
-    cadence = _cfg_str(cfg, "notify-cadence", "session")
+    cadence = _cfg_str(cfg, "notify-cadence", _DEFAULT_CADENCE)
     if cadence not in _CADENCES:
-        cadence = "session"
-    window_hours = _cfg_num(cfg, "notify-window-hours", 6)
+        cadence = _DEFAULT_CADENCE
+    window_hours = _cfg_num(cfg, "notify-window-hours", _DEFAULT_WINDOW_HOURS)
     state_p = root / _NUDGE_STATE
     last = None
     if state_p.exists():
@@ -268,6 +318,17 @@ def explain(root: Path) -> dict:
             last = state_p.read_text(encoding="utf-8").strip() or None
         except OSError:
             last = None
+    # snooze (remember-declines): report the stored expiry as a FACT — explain() stays CLOCK-FREE (harness-
+    # testable), so it does NOT decide whether the snooze is live now; the bash hook (which reads the wall
+    # clock) is what suppresses while now < expiry. A set snooze is surfaced in the verdict reason.
+    snooze_p = root / _NUDGE_SNOOZE
+    snooze_until = None
+    if snooze_p.exists():
+        try:
+            _raw = snooze_p.read_text(encoding="utf-8").strip()
+            snooze_until = int(_raw) if _raw.isdigit() else None
+        except OSError:
+            snooze_until = None
     if not st["available"]:
         verdict, why = "no", f"no DeepInit state ({st['reason']})"
     elif not st["stale"]:
@@ -280,10 +341,12 @@ def explain(root: Path) -> dict:
         verdict, why = "per-window", f"stale — fires at most once per {window_hours}h (last: {last or 'never'})"
     else:
         verdict, why = "new-session-only", f"stale — fires once per new session (last session: {last or 'never'})"
+    if snooze_until is not None and verdict not in ("no",):
+        why += f" — but a 'Not now' snooze is recorded (until unix {snooze_until}); the hook stays silent until then"
     return {"available": st["available"], "stale": st["stale"], "tracked": st["tracked"],
             "modified": st["modified"], "removed": st["removed"], "pending": st["pending"],
             "nudge_disabled_by": disabled, "cadence": cadence, "window_hours": window_hours,
-            "last_nudge_state": last, "would_nudge": verdict, "why": why}
+            "last_nudge_state": last, "snooze_until": snooze_until, "would_nudge": verdict, "why": why}
 
 
 def human_explain(e: dict) -> str:
@@ -294,11 +357,13 @@ def human_explain(e: dict) -> str:
                "new-session-only": "WOULD NUDGE (once per new session)",
                "per-window": f"WOULD NUDGE (once per {e['window_hours']}h window)"}[e["would_nudge"]]
     cad = e["cadence"] + (f" (window {e['window_hours']}h)" if e["cadence"] == "window" else "")
+    snz = (f"until unix {e['snooze_until']}" if e.get("snooze_until") else "none")
     return ("DeepInit freshness - would the SessionStart nudge fire now?\n"
             f"  docs:             {docs}\n"
             f"  nudge enabled:    {enabled}\n"
             f"  cadence:          {cad}\n"
             f"  last-nudge state: {e['last_nudge_state'] or 'none'}  (.ai/.deepinit-nudge-state)\n"
+            f"  decline snooze:   {snz}  (.ai/.deepinit-nudge-snooze)\n"
             f"  verdict:          {verdict} - {e['why']}")
 
 
@@ -311,7 +376,14 @@ def main(argv=None) -> int:
                     help="diagnose WHY the SessionStart nudge would / wouldn't fire now (stale? disabled? cadence?)")
     ap.add_argument("--summary", action="store_true",
                     help="print the status line, then (if stale) a second line listing WHAT changed (paths + components)")
+    ap.add_argument("--snooze", action="store_true",
+                    help="record a 'Not now' decline → back off the nudge for notify-snooze-hours (writes .ai/.deepinit-nudge-snooze)")
     a = ap.parse_args(argv)
+    if a.snooze:
+        exp = snooze(Path(a.root))
+        print(f"deep-init: nudge snoozed — no re-ask until unix {exp} "
+              "(tune with notify-snooze-hours; clear by deleting .ai/.deepinit-nudge-snooze).")
+        return 0
     if a.explain:
         e = explain(Path(a.root))
         print(json.dumps(e, indent=2, sort_keys=True) if a.json else human_explain(e))

@@ -168,14 +168,15 @@ Keep it to these six — more would regress the zero-friction posture. The full 
 ### Freshness controls (question 6 — the one step that PERSISTS)
 Questions 1–5 tune the immediate run only. Question 6 is different: it governs the **proactive freshness surfaces** (the plugin-shipped SessionStart staleness nudge + the optional commit breadcrumb / auto-update — `triggers.md`), which are *future* behavior, so its non-default answers are **persisted**, not applied to this run. Present it as type-safe buttons; on **Configure…**, drill into a short follow-up `AskUserQuestion` for the detail (still buttons, never hand-typed):
 - **Session-start nudge** — On (default) · Off → `notify-on-session-start`
-- **Cadence** — Once per new session (default) · Time window · Every session → `notify-cadence` (+ a window-hours follow-up when *Time window*: 6 (default) · 12 · 24 · Custom → `notify-window-hours`)
+- **Cadence** — Time window (default, ≈once/day so frequent short sessions aren't each re-nudged) · Once per new session · Every session → `notify-cadence` (+ a window-hours follow-up when *Time window*: 24 (default) · 12 · 6 · Custom → `notify-window-hours`)
+- **Decline back-off** — how long a **[Not now]** snoozes the nudge: 1 week (default) · 3 days · 1 day · Custom → `notify-snooze-hours`
 - **Commit breadcrumb** — On (default) · Off → `notify-on-commit`; **Auto-update (headless, spends tokens)** — Off (default) · On → `auto-update`
 - **Install the commit hook** — Install · Skip → `setup-hooks` (unchanged)
 
 **Persisting the choice — the one narrow config-write exception (R-config).** A DeepInit *run* **never** writes `.ai/deepinit.config` (it stays read-only input — see *Configuration*). This user-invoked Freshness step is the single, deliberate exception: when the user changes a persistent freshness setting, **state exactly which keys will be written and ask for an explicit confirmation first**, then persist via the deterministic, schema-validating writer — never a hand-edit:
 
 ```
-python "${CLAUDE_PLUGIN_ROOT}/tools/freshness_config.py" --root <repo> --set notify-on-session-start=off --set notify-cadence=window --set notify-window-hours=12 --apply
+python "${CLAUDE_PLUGIN_ROOT}/tools/freshness_config.py" --root <repo> --set notify-cadence=window --set notify-window-hours=24 --set notify-snooze-hours=168 --apply
 ```
 
 It is **surgical** — it upserts only the named freshness keys and leaves every other key, comment, and the file's layout intact, validating each value against the schema before writing. **Pause in this repo** is the exception's exception: it writes the `.claude/.deepinit-no-nudge` flag (gitignored), not the config. Without an explicit "yes", show the resulting config (run the writer without `--apply` to preview) and let the user save it themselves.

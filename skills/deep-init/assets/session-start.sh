@@ -12,10 +12,13 @@
 # nudged-this-session (one shared cadence gate across both events), and is trivial to silence.
 #
 # CADENCE (notify-cadence in .ai/deepinit.config):
-#   session (DEFAULT) = once per NEW session — dedup on the SessionStart session_id (stdin JSON), so an
-#                       actively-committing dev gets nudged each genuinely-new session, never twice in one;
-#   window            = at most once per notify-window-hours (wall-clock back-off, the old behavior);
+#   window (DEFAULT)  = at most once per notify-window-hours (default 24h) of wall-clock back-off, so a dev
+#                       opening many short sessions in a day isn't re-nudged in each one;
+#   session           = once per NEW session — dedup on the SessionStart session_id (stdin JSON);
 #   always            = every session start while stale.
+# REMEMBER-DECLINES: when the user answers the offer with "Not now", the agent records a back-off via
+#   `deepinit_status.py --snooze` (writes .ai/.deepinit-nudge-snooze = now + notify-snooze-hours, default 168h
+#   / one week); this hook honors that snooze below, so "Not now" means "not for a while", not just this prompt.
 # Disable: .claude/.deepinit-no-nudge, notify-on-session-start:"off", `claude plugin disable deep-init`,
 # or disableAllHooks. Tune it all the safe way via /deep-init:customize → Freshness. See references/triggers.md.
 set -u
@@ -35,6 +38,17 @@ CONFIG="$ROOT/.ai/deepinit.config"
 [ -f "$ROOT/.claude/.deepinit-no-nudge" ] && exit 0          # per-repo "Don't ask in this repo" flag
 if [ -f "$CONFIG" ] && grep -Eq '"(notify-on-session-start|check-on-session-start)"[[:space:]]*:[[:space:]]*"off"' "$CONFIG" 2>/dev/null; then
   exit 0
+fi
+
+# --- SNOOZE gate (remember declines): a prior "Not now" recorded a wall-clock back-off — stay silent until it
+#     expires. Cheap (cat + date), runs before the cadence gate + the tree hash. The expiry is written by the
+#     agent via `deepinit_status.py --snooze` when the user declines the offer (the hook can't observe the
+#     AskUserQuestion answer itself), so a decline silences ALL events/cadences until the snooze lapses.
+SNOOZE="$ROOT/.ai/.deepinit-nudge-snooze"
+if [ -f "$SNOOZE" ]; then
+  _snz_now="$(date +%s 2>/dev/null || echo 0)"
+  _snz_exp="$(cat "$SNOOZE" 2>/dev/null)"; case "$_snz_exp" in ''|*[!0-9]*) _snz_exp=0;; esac
+  [ "$_snz_now" -ne 0 ] && [ "$_snz_now" -lt "$_snz_exp" ] && exit 0
 fi
 
 # tiny flat-JSON readers for .ai/deepinit.config (return DEFAULT when the key is absent/unset).
@@ -67,7 +81,7 @@ done
 #     (.ai/.deepinit-nudge-state) records the last-nudged session id (session cadence) OR a unix timestamp
 #     (window/fallback), and is written ONLY when we actually emit (below) — never here — so a fresh session
 #     can't suppress a later stale one inside its window.
-CADENCE="$(cfg notify-cadence session)"
+CADENCE="$(cfg notify-cadence window)"
 STATE="$ROOT/.ai/.deepinit-nudge-state"
 SID="$(json_str "$INPUT" session_id)"
 EVENT="$(json_str "$INPUT" hook_event_name)"; [ -n "$EVENT" ] || EVENT="SessionStart"
@@ -75,7 +89,7 @@ EVENT="$(json_str "$INPUT" hook_event_name)"; [ -n "$EVENT" ] || EVENT="SessionS
 _within_window() {  # true (0) iff a stored unix timestamp is still inside notify-window-hours of now (no write)
   local now win last
   now="$(date +%s 2>/dev/null || echo 0)"
-  win="$(awk "BEGIN{w=($(cfg_num notify-window-hours 6))*3600; if(w<=0)w=21600; printf \"%d\", w}" 2>/dev/null || echo 21600)"
+  win="$(awk "BEGIN{w=($(cfg_num notify-window-hours 24))*3600; if(w<=0)w=86400; printf \"%d\", w}" 2>/dev/null || echo 86400)"
   [ -f "$STATE" ] && [ "$now" -ne 0 ] || return 1
   last="$(cat "$STATE" 2>/dev/null)"; case "$last" in ''|*[!0-9]*) last=0;; esac
   [ $((now - last)) -lt "$win" ]
@@ -89,7 +103,7 @@ case "$CADENCE" in
       last=""; [ -f "$STATE" ] && last="$(cat "$STATE" 2>/dev/null)"
       [ "$last" = "$SID" ] && exit 0             # same session already nudged (resume/compact/clear/next prompt) → silent
     else
-      _within_window && exit 0                   # no session id (older Claude Code / no stdin) → 6h fallback
+      _within_window && exit 0                   # no session id (older Claude Code / no stdin) → 24h fallback
     fi
     ;;
 esac
@@ -114,21 +128,27 @@ esac
 #     hook systemMessage, so the reliable surface is the agent acting on additionalContext) PLUS the imperative
 #     additionalContext telling the agent to OFFER the refresh FIRST. hookEventName mirrors whichever event
 #     invoked us (SessionStart or UserPromptSubmit) — Claude Code requires the match to accept the context.
-"$PY" - "$STATUSLINE" "$EVENT" "$CHANGES" <<'PYEOF' 2>/dev/null
+"$PY" - "$STATUSLINE" "$EVENT" "$CHANGES" "$STATUS" "$ROOT" "$PY" <<'PYEOF' 2>/dev/null
 import json, sys
 line = sys.argv[1] if len(sys.argv) > 1 else "DeepInit docs look stale."
 event = sys.argv[2] if len(sys.argv) > 2 and sys.argv[2] else "SessionStart"
 changes = sys.argv[3] if len(sys.argv) > 3 else ""
+status = sys.argv[4] if len(sys.argv) > 4 else ""
+root = sys.argv[5] if len(sys.argv) > 5 else "."
+interp = sys.argv[6] if len(sys.argv) > 6 and sys.argv[6] else "python3"   # the hook-resolved interpreter (python3||python), so the snooze cmd runs on a python3-only host
 detail = (" Files changed: " + changes + ".") if changes else ""
+snooze = ('"' + interp + '" "' + status + '" --root "' + root + '" --snooze') if status else "/deep-init:customize -> Freshness"
 ctx = (
     "DeepInit freshness check: the generated context layer (CLAUDE.md + .ai/docs) is STALE relative to "
     "the current code. " + line + detail + " Your FIRST action in this turn, BEFORE you address the "
     "user's request, MUST be to call AskUserQuestion to offer a one-click refresh with three options: "
     "'Update now' (then run /deep-init:refresh), 'Not now' (do nothing), and \"Don't ask in this repo\" "
-    "(then create the file .claude/.deepinit-no-nudge to silence future prompts here). After the user "
-    "answers, carry on with their original request. Do NOT run the update automatically - the user "
-    "decides. Persistent freshness settings (turn the nudge off, change the cadence/time-window) live in "
-    "/deep-init:customize -> Freshness. This was a 0-token deterministic check, not the update itself."
+    "(then create the file .claude/.deepinit-no-nudge to silence future prompts here). If the user chooses "
+    "'Not now', record the decline so DeepInit backs off and won't re-ask for about a week — run: " + snooze + " "
+    "(a 0-token write; do NOT run any other command for this). After the user answers, carry on with their "
+    "original request. Do NOT run the update automatically - the user decides. Persistent freshness settings "
+    "(turn the nudge off, change the cadence/time-window) live in /deep-init:customize -> Freshness. This was "
+    "a 0-token deterministic check, not the update itself."
 )
 print(json.dumps({
     "hookSpecificOutput": {"hookEventName": event, "additionalContext": ctx},

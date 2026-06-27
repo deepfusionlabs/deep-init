@@ -3987,6 +3987,26 @@ else:
           set(_sf72) == {"src/a.ts", "docs/b.md"} and _sf72["src/a.ts"] == "a" * 64, f"tracked={sorted(_sf72)}")
     check("§72 freshness G0b layout — STATE_DIRS resolves the flat `.ai/docs` layout (not only `.ai/docs/current`)",
           Path(".ai/docs") in _ds72.STATE_DIRS, f"dirs={[str(d) for d in _ds72.STATE_DIRS]}")
+    # G0c — ROBUSTNESS: the keystone must NEVER raise on a structurally-valid-JSON shape the LLM writer
+    #       can plausibly emit. The writer is a Claude instance (no deterministic writer) and DeepInit's own
+    #       vocab overloads `files` as an INT count (emit_plan records), so a per-component {"files": <int>}
+    #       (also str / null / nested dict) must degrade to "no tracked paths", not crash a hook (R1).
+    _int72  = {"version": 1, "components": {"auth": {"content_hash": "x", "files": 4}}}
+    _str72  = {"components": {"auth": {"files": "src/auth/login.ts"}}}
+    _null72 = {"components": {"auth": {"files": None}}}
+    _dict72 = {"components": {"auth": {"files": {"src/auth/login.ts": {"sha256": "a" * 64}}}}}
+    _robust72 = True
+    try:
+        for _shape72 in (_int72, _str72, _null72, _dict72):
+            _ds72.stored_files(_shape72); _ds72.stored_components(_shape72)
+        _robust72 = (_ds72.stored_files(_int72) == {} and _ds72.stored_components(_int72) == {}
+                     and _ds72.stored_files(_dict72).get("src/auth/login.ts", "X") is None)
+    except BaseException:
+        _robust72 = False
+    check("§72 freshness G0c robustness — stored_files/stored_components tolerate a per-component `files` that "
+          "is an int count / str / null / nested dict (the LLM writer's plausible shapes) without raising — the "
+          "keystone never crashes a hook ('int' object is not iterable, R1)",
+          _robust72, "non-list files shapes degrade cleanly" if _robust72 else "a non-list files shape RAISED")
 # G1 — the SessionStart hook is PLUGIN-SHIPPED (active on install): hooks/hooks.json declares a SessionStart
 #      hook whose command runs session-start.sh.
 _hook_ok72 = False
@@ -4002,9 +4022,10 @@ check("§72 freshness G1 plugin-shipped hook — hooks/hooks.json declares a Ses
 # G2 — the hook SUGGESTS, never auto-runs, and self-gates (offer via AskUserQuestion, suppress flag, cadence dedup).
 _ss72 = _SS72.read_text(encoding="utf-8") if _SS72.exists() else ""
 _g2_72 = (".deepinit-no-nudge" in _ss72 and "AskUserQuestion" in _ss72 and "Don't ask in this repo" in _ss72
-          and "Do NOT run the update automatically" in _ss72 and "notify-cadence" in _ss72 and "session_id" in _ss72)
-check("§72 freshness G2 suggest-only + self-gating — session-start.sh offers via AskUserQuestion, honors the .deepinit-no-nudge flag + the cadence/session-id dedup, and NEVER auto-runs the update",
-      _g2_72, f"offer={'AskUserQuestion' in _ss72} suppress={'.deepinit-no-nudge' in _ss72} cadence={'notify-cadence' in _ss72} no_auto_run={'Do NOT run the update automatically' in _ss72}")
+          and "Do NOT run the update automatically" in _ss72 and "notify-cadence" in _ss72 and "session_id" in _ss72
+          and ".deepinit-nudge-snooze" in _ss72 and "--snooze" in _ss72)
+check("§72 freshness G2 suggest-only + self-gating — session-start.sh offers via AskUserQuestion, honors the .deepinit-no-nudge flag + the cadence/session-id dedup + the 'Not now' snooze gate (.deepinit-nudge-snooze / --snooze), and NEVER auto-runs the update",
+      _g2_72, f"offer={'AskUserQuestion' in _ss72} suppress={'.deepinit-no-nudge' in _ss72} cadence={'notify-cadence' in _ss72} snooze={'.deepinit-nudge-snooze' in _ss72} no_auto_run={'Do NOT run the update automatically' in _ss72}")
 # G3 — the disable matrix is documented (per-repo flag, config key, plugin disable, disableAllHooks).
 _tg72 = _TRIG72.read_text(encoding="utf-8") if _TRIG72.exists() else ""
 _g3_72 = all(t in _tg72 for t in [".deepinit-no-nudge", "notify-on-session-start", "claude plugin disable", "disableAllHooks"])
@@ -4019,10 +4040,12 @@ _schema72 = _json72.loads((PKG / "skills" / "deep-init" / "assets" / "deepinit.c
 _props72 = _schema72.get("properties", {})
 _cad72 = _props72.get("notify-cadence", {})
 _win72 = _props72.get("notify-window-hours", {})
-_g4_72 = (set(_cad72.get("enum", [])) == {"session", "window", "always"} and _cad72.get("default") == "session"
-          and _win72.get("type") == "number" and _win72.get("default") == 6)
-check("§72 freshness G4 cadence schema — notify-cadence (enum session/window/always, default session) + notify-window-hours (number, default 6) are type-safe config keys",
-      _g4_72, f"cadence={_cad72.get('enum')}/{_cad72.get('default')} window={_win72.get('type')}/{_win72.get('default')}")
+_snz72 = _props72.get("notify-snooze-hours", {})
+_g4_72 = (set(_cad72.get("enum", [])) == {"session", "window", "always"} and _cad72.get("default") == "window"
+          and _win72.get("type") == "number" and _win72.get("default") == 24
+          and _snz72.get("type") == "number" and _snz72.get("default") == 168)
+check("§72 freshness G4 cadence schema — notify-cadence (enum session/window/always, default window — the less-naggy cross-session back-off) + notify-window-hours (number, default 24) + notify-snooze-hours (number, default 168 = the 'Not now' back-off) are type-safe config keys",
+      _g4_72, f"cadence={_cad72.get('enum')}/{_cad72.get('default')} window={_win72.get('default')} snooze={_snz72.get('type')}/{_snz72.get('default')}")
 
 # G5 — the surgical, schema-validating freshness writer: validates values, upserts ONLY freshness keys (other
 #      keys + comments preserved), idempotent. This is the ONE place a DeepInit invocation writes config.
@@ -4034,18 +4057,22 @@ else:
     _fc72 = _ilu72.module_from_spec(_specfc72); _specfc72.loader.exec_module(_fc72)
     _val_ok72 = (_fc72.validate("notify-cadence", "window")[0] and not _fc72.validate("notify-cadence", "hourly")[0]
                  and _fc72.validate("notify-window-hours", "12")[0] and not _fc72.validate("notify-window-hours", "-3")[0]
+                 and _fc72.validate("notify-snooze-hours", "72")[0] and not _fc72.validate("notify-snooze-hours", "-1")[0]
                  and not _fc72.validate("depth", "deep")[0])           # depth is NOT a managed freshness key
     _src72 = ('{ "$schema": "./deepinit.config.schema.json",\n  // team\n  "depth": "deep",\n'
               '  "notify-cadence": "session",\n  "issues-families": ["IF-1","IF-8"] }')
-    _outw72, _ = _fc72.set_freshness(_src72, {"notify-on-session-start": "off", "notify-cadence": "always"})
+    _setk72 = {"notify-on-session-start": "off", "notify-cadence": "always", "notify-snooze-hours": "72"}
+    _outw72, _ = _fc72.set_freshness(_src72, _setk72)
     _stripped72 = _re72.sub(r",(\s*[}\]])", r"\1", _re72.sub(r"//[^\n]*", "", _outw72))
     _pj72 = _json72.loads(_stripped72)
     _surgical72 = (_pj72.get("depth") == "deep" and _pj72.get("issues-families") == ["IF-1", "IF-8"]   # untouched
                    and _pj72.get("notify-cadence") == "always" and _pj72.get("notify-on-session-start") == "off"  # applied
+                   and _pj72.get("notify-snooze-hours") == 72                                          # snooze key managed
                    and "// team" in _outw72)                                                            # comment preserved
-    _outw72b, _ = _fc72.set_freshness(_outw72, {"notify-on-session-start": "off", "notify-cadence": "always"})
-    _idem72 = _outw72b.count('"notify-cadence"') == 1 and _outw72b.count('"notify-on-session-start"') == 1
-    check("§72 freshness G5 surgical writer — freshness_config validates values, upserts ONLY the freshness keys (other keys + comments preserved), and is idempotent",
+    _outw72b, _ = _fc72.set_freshness(_outw72, _setk72)
+    _idem72 = (_outw72b.count('"notify-cadence"') == 1 and _outw72b.count('"notify-on-session-start"') == 1
+               and _outw72b.count('"notify-snooze-hours"') == 1)
+    check("§72 freshness G5 surgical writer — freshness_config validates values (incl. notify-snooze-hours >= 0), upserts ONLY the freshness keys (other keys + comments preserved), and is idempotent",
           _val_ok72 and _surgical72 and _idem72, f"validate={_val_ok72} surgical={_surgical72} idempotent={_idem72}")
 
 # G6 — END-TO-END hook execution (bash-guarded; gate count stays constant): session-start.sh actually EMITS on a
@@ -4060,10 +4087,12 @@ if _bash72 and _SS72.exists():
         def _mkrepo72(name, stored_sha):
             d = _os72.path.join(_td72, name).replace("\\", "/")
             _os72.makedirs(d + "/.ai/docs"); _os72.makedirs(d + "/src")
-            with open(d + "/src/a.ts", "wb") as fh:                   # binary: bytes must match the stored sha
-                fh.write(b"export const A = 1;\n")                    # (text mode would CRLF-translate on Windows)
-            with open(d + "/.ai/docs/.file_hashes.json", "w", encoding="utf-8") as fh:
-                fh.write(_json72.dumps({"src/a.ts": stored_sha}))
+            with open(d + "/.ai/deepinit.config", "w", encoding="utf-8") as fh:
+                fh.write('{ "notify-cadence": "session" }')          # this gate tests the per-session dedup
+            with open(d + "/src/a.ts", "wb") as fh:                   # CAPABILITY (still supported), independent of
+                fh.write(b"export const A = 1;\n")                    # the new window DEFAULT (binary: bytes must match
+            with open(d + "/.ai/docs/.file_hashes.json", "w", encoding="utf-8") as fh:  # the stored sha; text mode
+                fh.write(_json72.dumps({"src/a.ts": stored_sha}))                       # would CRLF-translate on Windows)
             return d
         def _run72(repo, sid):
             env = dict(_os72.environ); env["CLAUDE_PROJECT_DIR"] = repo
@@ -4108,8 +4137,9 @@ try:
         _fh72.write("export const A = 1;\n")
     with open(_os72.path.join(_ed72, ".ai", "docs", ".file_hashes.json"), "w", encoding="utf-8") as _fh72:
         _fh72.write(_json72.dumps({"src/a.ts": "0" * 64}))   # stale
-    _ex1_72 = _ds72.explain(Path(_ed72))
-    _v1_72 = _ex1_72["would_nudge"] == "new-session-only" and _ex1_72["cadence"] == "session" and _ex1_72["stale"]
+    _ex1_72 = _ds72.explain(Path(_ed72))                     # no config → the new window DEFAULT
+    _v1_72 = (_ex1_72["would_nudge"] == "per-window" and _ex1_72["cadence"] == "window" and _ex1_72["stale"]
+              and "snooze_until" in _ex1_72 and _ex1_72["snooze_until"] is None)   # snooze fact reported, none set
     _os72.makedirs(_os72.path.join(_ed72, ".claude"))
     open(_os72.path.join(_ed72, ".claude", ".deepinit-no-nudge"), "w").close()
     _v2_72 = _ds72.explain(Path(_ed72))["would_nudge"] == "no" and _ds72.explain(Path(_ed72))["nudge_disabled_by"]
@@ -4120,7 +4150,7 @@ try:
     _sh72.rmtree(_ed72, ignore_errors=True); _sh72.rmtree(_fresh_ed72, ignore_errors=True)
 except Exception as _e8_72:
     _g8_72 = False
-check("§72 freshness G8 --explain — deepinit_status.explain() verdict mirrors the hook gates (stale→would-nudge once-per-session; .deepinit-no-nudge→silent; no-state→silent)",
+check("§72 freshness G8 --explain — deepinit_status.explain() verdict mirrors the hook gates (stale→would-nudge once-per-window default + reports the snooze_until fact; .deepinit-no-nudge→silent; no-state→silent)",
       _g8_72, "explain verdict matches the hook gates" if _g8_72 else "explain verdict wrong")
 
 # ── G9..G12 — the SECOND event (UserPromptSubmit) + the imperative first-action offer + the change summary ──
@@ -4151,7 +4181,9 @@ if _bash72 and _SS72.exists():
     try:
         _d10_72 = _os72.path.join(_td10_72, "r").replace("\\", "/")
         _os72.makedirs(_d10_72 + "/.ai/docs"); _os72.makedirs(_d10_72 + "/src")
-        with open(_d10_72 + "/src/a.ts", "wb") as _fh10:
+        with open(_d10_72 + "/.ai/deepinit.config", "w", encoding="utf-8") as _fh10:
+            _fh10.write('{ "notify-cadence": "always" }')                      # event-echo test: both calls must
+        with open(_d10_72 + "/src/a.ts", "wb") as _fh10:                       # emit, so disable the window dedup
             _fh10.write(b"export const A = 1;\n")
         with open(_d10_72 + "/.ai/docs/.file_hashes.json", "w", encoding="utf-8") as _fh10:
             _fh10.write(_json72.dumps({"src/a.ts": "0" * 64}))                 # stale
@@ -4200,6 +4232,81 @@ check("§72 freshness G11 change summary — change_summary() lists the actual c
 _g12_72 = "Your FIRST action in this turn, BEFORE you address the" in _ss72
 check("§72 freshness G12 imperative first-action — session-start.sh injects the imperative 'Your FIRST action … MUST be to call AskUserQuestion' offer (reliably surfaces before the user's first request), not a soft suggestion",
       _g12_72, "imperative first-action offer present" if _g12_72 else "imperative offer wording missing")
+
+# ── G13..G14 — the LESS-NAGGY behavior change (this session): the default cadence is now `window` (≈once/day
+# cross-session, so many short sessions in a day aren't each re-nudged), and a "Not now" records a back-off
+# (remember-declines) that silences the offer for ~a week instead of just the one prompt. ──
+
+# G13 — DEFAULT cadence is `window`: with NO config, a first new-session prompt EMITS (writes a wall-clock
+#       timestamp), and a SECOND, DIFFERENT new-session prompt inside the window stays SILENT — the cross-
+#       session back-off the old session-only default never gave. (e2e, bash-guarded; default-true skip.)
+_g13_ok72, _g13_why72 = True, "skipped (no bash on PATH — runs on CI/Linux/Git-Bash)"
+if _bash72 and _SS72.exists():
+    _td13_72 = _tmp72.mkdtemp(prefix="deepinit_win72_")
+    try:
+        _d13_72 = _os72.path.join(_td13_72, "r").replace("\\", "/")
+        _os72.makedirs(_d13_72 + "/.ai/docs"); _os72.makedirs(_d13_72 + "/src")
+        with open(_d13_72 + "/src/a.ts", "wb") as _fh13:
+            _fh13.write(b"export const A = 1;\n")
+        with open(_d13_72 + "/.ai/docs/.file_hashes.json", "w", encoding="utf-8") as _fh13:
+            _fh13.write(_json72.dumps({"src/a.ts": "0" * 64}))             # stale, NO config → default cadence
+        def _run13_72(sid):
+            env = dict(_os72.environ); env["CLAUDE_PROJECT_DIR"] = _d13_72
+            return _sub72.run([_bash72, str(_SS72).replace("\\", "/")],
+                              input=_json72.dumps({"session_id": sid, "hook_event_name": "SessionStart"}),
+                              env=env, capture_output=True, text=True).stdout
+        _w1_72 = _run13_72("win-AAA")          # first → emits + writes a wall-clock timestamp
+        _w2_72 = _run13_72("win-BBB")          # DIFFERENT session, inside the window → SILENT (the fix)
+        _emit_then_silent13 = ('"additionalContext"' in _w1_72) and (_w2_72.strip() == "")
+        _default_window13 = _ds72.explain(Path(_d13_72))["cadence"] == "window"   # no config → window default
+        _g13_ok72 = _emit_then_silent13 and _default_window13
+        _g13_why72 = f"emit_then_cross_session_silent={_emit_then_silent13} default_window={_default_window13}"
+    finally:
+        _sh72.rmtree(_td13_72, ignore_errors=True)
+check("§72 freshness G13 less-naggy default — the default cadence is now `window` (≈once/day): with no config a SECOND new-session prompt inside the window stays SILENT (so frequent short sessions aren't each re-nudged), and explain() confirms window is the default",
+      _g13_ok72, _g13_why72)
+
+# G14 — REMEMBER DECLINES: deepinit_status.py --snooze writes a future unix expiry to .ai/.deepinit-nudge-snooze;
+#       the hook then stays SILENT while it is live (so "Not now" backs off for ~a week, not just one prompt),
+#       and explain() reports the snooze_until fact (clock-free). The writer+explain run everywhere; the hook
+#       silence is bash-guarded (default-true skip).
+_g14_writer72 = _g14_explain72 = False
+_g14_hook72, _g14_decline72 = True, True
+_g14_hookwhy72 = "hook-silence/decline-clause skipped (no bash on PATH)"
+try:
+    _td14_72 = _tmp72.mkdtemp(prefix="deepinit_snz72_")
+    _os72.makedirs(_os72.path.join(_td14_72, ".ai", "docs")); _os72.makedirs(_os72.path.join(_td14_72, "src"))
+    with open(_os72.path.join(_td14_72, ".ai", "deepinit.config"), "w", encoding="utf-8") as _fh14:
+        _fh14.write('{ "notify-cadence": "always" }')                      # always → only the SNOOZE can silence it
+    with open(_os72.path.join(_td14_72, "src", "a.ts"), "wb") as _fh14:
+        _fh14.write(b"export const A = 1;\n")
+    with open(_os72.path.join(_td14_72, ".ai", "docs", ".file_hashes.json"), "w", encoding="utf-8") as _fh14:
+        _fh14.write(_json72.dumps({"src/a.ts": "0" * 64}))                 # stale
+    import time as _time72
+    def _run14_72(sid):
+        _env = dict(_os72.environ); _env["CLAUDE_PROJECT_DIR"] = _td14_72.replace("\\", "/")
+        return _sub72.run([_bash72, str(_SS72).replace("\\", "/")],
+                          input=_json72.dumps({"session_id": sid, "hook_event_name": "SessionStart"}),
+                          env=_env, capture_output=True, text=True).stdout
+    if _bash72 and _SS72.exists():                                         # BEFORE snoozing: nudge fires AND its
+        _pre14 = _run14_72("snz-pre")                                      # payload tells the agent how to back off
+        _g14_decline72 = ('"additionalContext"' in _pre14) and ("--snooze" in _pre14)   # the decline instruction
+    _exp14_72 = _ds72.snooze(Path(_td14_72))                               # --snooze writer → expiry file
+    _snzfile14 = _os72.path.join(_td14_72, ".ai", ".deepinit-nudge-snooze")
+    _g14_writer72 = (_os72.path.exists(_snzfile14)
+                     and _exp14_72 > _time72.time() + 167 * 3600           # ≈ default 168h in the future
+                     and open(_snzfile14, encoding="utf-8").read().strip() == str(_exp14_72))
+    _g14_explain72 = (_ds72.explain(Path(_td14_72)).get("snooze_until") == _exp14_72)   # explain reports the fact
+    if _bash72 and _SS72.exists():
+        _silent14 = _run14_72("snz-post").strip() == ""                   # snooze live → silent even under cadence=always
+        _g14_hook72 = _silent14
+        _g14_hookwhy72 = f"decline_clause_in_payload={_g14_decline72} hook_silent_under_snooze={_silent14}"
+    _sh72.rmtree(_td14_72, ignore_errors=True)
+except Exception as _e14_72:
+    _g14_writer72 = _g14_explain72 = False; _g14_hookwhy72 = f"raised: {_e14_72!r}"
+check("§72 freshness G14 remember-declines — deepinit_status.py --snooze writes a future unix expiry to .ai/.deepinit-nudge-snooze, the fired nudge tells the agent to run --snooze on 'Not now', the hook then stays SILENT while the snooze is live (even under cadence=always — so a decline backs off for ~a week, not just this prompt), and explain() reports the snooze_until fact",
+      _g14_writer72 and _g14_explain72 and _g14_hook72 and _g14_decline72,
+      f"writer={_g14_writer72} explain={_g14_explain72} {_g14_hookwhy72}")
 
 print("\n══ 73. Mutation-lock — torn-tree commit guard (PID lockfile producer + human-commit guard) (§73) ══")
 # The mutation meta-harness plants a known-bad edit then restores it; a commit that lands WHILE a mutation is

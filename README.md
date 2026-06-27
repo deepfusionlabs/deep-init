@@ -115,6 +115,7 @@ The trust-killer for a tool like this is the false positive, so detection biases
 
 Beyond that, the evidence is **INDICATIVE** and framed as comprehension/agreement — not "finds bugs in famous repos":
 
+- **Head-to-head vs `/init`.** On the *same* 9 repos (8 languages, small to large, some obscure), independent blind verifiers checked every claim in the lean `CLAUDE.md` *both* tools write: Claude Code's built-in `/init` grounded **0.6%** of its claims to a checkable `file:line`; DeepInit's quick `fast` mode, **77.6%** — same files, same front-door file, the difference is whether your agent gets a line it can open and trust. (INDICATIVE — mostly well-known OSS, fast mode, no wall-clock timing; it costs more too — see [Cost](#scope--boundaries) below.) → [`validation/matrix/`](validation/matrix/)
 - **It never re-flags a line a human already fixed.** Against an independent oracle of **22 real merged-bugfix pairs** (the metamorphic method — 4 languages, including 3 CVEs): recall **14/22 (64%, Wilson95 lower-bound 43%)** with **0/22 metamorphic false-positives.** Recall is reported-not-gated (small-n, real-repo); the make-or-break gate is the **0 metamorphic-FP.** → [`validation/`](validation/)
 - **The Mirror Test — does it actually understand your architecture?** We removed projects' own architecture docs, ran DeepInit on the code alone, and checked what it re-derived. Across **8 held-out repos**: faithfulness **98%**, **zero confidently-wrong claims**, coverage **66%** (strong on structure, weaker on deep invariants). The contamination answer: on 2 obscure repos a model is very unlikely to have memorized (one Go, one Rust) **faithfulness held at 100%** — so what it states about *unfamiliar* code is just as trustworthy; coverage varies with how deep one pass goes, not with trustworthiness. → [`validation/coverage/`](validation/coverage/)
 - **Real end-to-end runs** (the actual multi-component pipeline on excalidraw + kagent): faithfulness **100% on both**, **zero confidently-wrong facts**, ~130 grounded facts each. → [`validation/end-to-end/`](validation/end-to-end/)
@@ -128,7 +129,7 @@ Beyond that, the evidence is **INDICATIVE** and framed as comprehension/agreemen
 
 This isn't a weekend skill. **This is the harness — not the model.** A prompt hands you one ungrounded guess; the harness grounds every claim, measures its own false-alarm rate, and is regression-tested on every change.
 
-- **443 deterministic checks** (no model) across **99 oracle sections** that must stay all-PASS.
+- **446 deterministic checks** (no model) across **99 oracle sections** that must stay all-PASS.
 - A **mutation meta-harness** proves every one of those checks is load-bearing — not vacuous green.
 - The whole suite **stays green WITHOUT the held-out answer keys**, so the proof ships public while the keys stay private.
 - **CI runs it all on every change.**
@@ -145,7 +146,7 @@ make validate                                                # every gate, one c
 
 **Breadth:** a **16-repo / 13-language / 3-size matrix** ([`validation/matrix/`](validation/matrix/)) plus **15 cross-language field sweeps** (~1.12M LOC, [`validation/recall-discovery/`](validation/recall-discovery/)). **15 of 16 parse on the designed AST path** (only Crystal lacks a grammar → graceful grep fallback, which is exactly why kemal is our end-to-end degradation proof).
 
-**Real understanding beats "just ask an LLM."** Run three ways and scored against the AST as ground truth, DeepInit's full path grounds **98.9%** of its claims to a verified `file:line` (grep-fallback 100%); a naive LLM-only baseline grounds just **43.5%** (0% on one repo) and missed every grounded security-relevant finding. → [`validation/matrix/UNDERSTANDING-MATTERS.md`](validation/matrix/UNDERSTANDING-MATTERS.md)
+**Real understanding beats "just ask an LLM."** Run three ways and scored against the AST as ground truth, DeepInit's full path grounds **98.9%** of its claims to a verified `file:line` (grep-fallback 100%); a naive LLM-only baseline grounds just **43.5%** (0% on one repo) and missed every grounded security-relevant finding. (This is a *separate* measurement from the `/init` head-to-head above — DeepInit's *full* mode vs a raw-LLM baseline on 3 famous repos, not *fast* vs `/init` on 9 mixed repos; the two grounding numbers use different modes, repos, and baselines, so don't conflate or average them.) → [`validation/matrix/UNDERSTANDING-MATTERS.md`](validation/matrix/UNDERSTANDING-MATTERS.md)
 
 **We use it on our own code** — run over our own tooling, an independent internal reviewer's verdict was **WOULD-USE** (every "Critical to know" fact dual-grounded to a real `file:line`, all hard counts exact).
 
@@ -190,7 +191,7 @@ Plus a **class-conformance census overlay** — a non-detector that *enriches* a
 
 > **What this repo is:** DeepInit is a **Claude Code skill defined entirely in Markdown** — there is no application code. The "engine" is a Claude instance executing the instructions in [`skills/deep-init/`](skills/deep-init/). `skills/deep-init/SKILL.md` is the entry point; `skills/deep-init/references/*.md` are the stage specs, loaded on demand. Editing DeepInit means editing those instruction files.
 
-**Cost** is **INDICATIVE only**: DeepInit runs in your own Claude Code session — the cost is the token cost of one analysis pass (no subscription, no API key for the parser). A small repo is an inexpensive single pass; cost tracks component count more than raw lines. We have **no published dollar figure yet** while we finish benchmarking. → [`validation/matrix/COST-MODEL.md`](validation/matrix/COST-MODEL.md)
+**Cost** is **INDICATIVE only**: DeepInit runs in your own Claude Code session — the cost is the token cost of one analysis pass (no subscription, no API key for the parser). A small repo is an inexpensive single pass; cost tracks component count more than raw lines. The one metered head-to-head we've run (vs `/init`, above) measured **~$4.40 per run for DeepInit `fast` vs ~$0.89 for `/init`** on Claude Opus — ~46,000 vs ~5,700 output tokens (~8× the output for ~5× the cost, since DeepInit also writes the deep `.ai/docs/` tier; input is dominated by discounted prompt-cache reads, so cost isn't proportional to raw input). A published *per-size-tier* price still waits on a clean end-to-end accounting run. → [`validation/matrix/COST-MODEL.md`](validation/matrix/COST-MODEL.md)
 
 ---
 

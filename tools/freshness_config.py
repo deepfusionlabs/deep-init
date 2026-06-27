@@ -13,10 +13,10 @@ enums/number type before it is written, so a typo can't land an invalid value.
 Managed keys (and the schema rule each is checked against):
   notify-on-session-start / check-on-session-start / notify-on-commit / auto-update  → enum on|off
   notify-cadence                                                                     → enum session|window|always
-  notify-window-hours                                                                → number >= 0
+  notify-window-hours / notify-snooze-hours                                          → number >= 0
 
 CLI:
-  python freshness_config.py --root <repo> --set notify-cadence=window --set notify-window-hours=12 [--apply]
+  python freshness_config.py --root <repo> --set notify-cadence=window --set notify-snooze-hours=72 [--apply]
   (default = PREVIEW to stdout / no write; --apply writes <root>/.ai/deepinit.config). Exit 2 on a bad value.
 """
 from __future__ import annotations
@@ -34,7 +34,7 @@ _ENUM = {
     "auto-update": {"on", "off"},
     "notify-cadence": {"session", "window", "always"},
 }
-_NUMERIC = {"notify-window-hours"}
+_NUMERIC = {"notify-window-hours", "notify-snooze-hours"}
 MANAGED = set(_ENUM) | _NUMERIC
 SCHEMA_POINTER = "./deepinit.config.schema.json"
 
