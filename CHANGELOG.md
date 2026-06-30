@@ -4,6 +4,13 @@ All notable changes to DeepInit are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); this project uses **manual** `0.x`
 versioning (no release tooling derives this file).
 
+## [0.7.0] — 2026-06-30
+
+### Changed
+- _Summarize this release; replace this line._
+
+---
+
 ## [0.6.0] — 2026-06-27
 
 ### Changed
