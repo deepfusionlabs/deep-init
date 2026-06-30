@@ -24,27 +24,44 @@ Scanning the wrong files wastes tokens AND pollutes the structural graph (Graphi
 - **Honesty**: every exclusion is COUNTED and the totals (`{gitignored, vendored, generated, binary, oversize, out_of_scope}`) go into `discovery.md §8` (Structural Analysis Status) and the `extraction_ladder.skipped` field — a silent skip reads as "analyzed and clean" when it wasn't (global-rules R8). Data/config files Graphify *can* parse (e.g. a `*.json` fixture) are excluded from the **component/edge** skeleton even when kept for tech-stack detection.
 
 ## `structural-graph.json`
-Built from Graphify output (or a rough grep-import graph if Graphify is absent):
+Built from Graphify output (or a rough grep-import graph if Graphify is absent). **Schema v2**
+adds two cross-component edge classes beside the import skeleton — runtime **calls** and
+**inheritance** — each shaped exactly like `imports_from` (`{component: [symbols]}`). The
+import fields are **byte-identical to v1**; the new classes are additive (empty `{}` under the
+grep fallback), so every existing consumer keeps working:
 ```json
 {
-  "version": 1, "source": "graphify",
+  "version": 2, "source": "graphify",
   "components": {
     "auth": {
       "files": ["app/models/user.rb", "app/controllers/auth_controller.rb"],
       "exports": ["User", "authenticate!", "current_user"],
       "imports_from": {"shared": ["ApplicationRecord"]},
-      "imported_by": {"billing": ["current_user"], "reports": ["User"]}
+      "imported_by": {"billing": ["current_user"], "reports": ["User"]},
+      "calls_into": {"shared": ["log_event"]},
+      "called_by": {"billing": ["authenticate!"]},
+      "inherits_from": {"shared": ["ApplicationRecord"]},
+      "inherited_by": {}
     }
   }
 }
 ```
+**Edge-class mapping** (`tools/graphify_adapter.py` `build_structural_graph`): **import** =
+`context "import"` or relation `imports|imports_from|uses|depends_on`; **call** (NEW v2) =
+`context "call"` or relation `calls`; **inheritance** (NEW v2) = relation
+`inherits|extends|implements|mixes_in|includes`. `calls` is the single largest relation
+Graphify emits (≈93k edges across the validation corpus) and was **100% discarded before v2**;
+capturing it is what lets IF-8 tell a real runtime cycle from a compile-erased type-only one.
+Graphify's `--no-cluster` AST output carries **no framework-reflection / route / callback
+edges** (those are not a stock output of the pinned 0.8.39 invocation — verified across the
+corpus); DeepInit harvests the native AST relations only and never fabricates a reflection layer.
 Build via the adapter `tools/graphify_adapter.py` (the deterministic, tested reference implementation of this mapping — runnable as `python tools/graphify_adapter.py --graph <path>/graphify-out/graph.json --registry <registry.json> --out structural-graph.json`), or follow the same algorithm inline:
 - **Read `graph.json`** — `nodes[]` (`{id, label, source_file, source_location}`) + `links[]` (`{source, target, relation, context, …}`). The import edges are `links` with **`context == "import"`** (relations `imports` = symbol-level, `imports_from` = module-level). A `calls` relation marks a runtime use (a value, not an erased type) — useful for the IF-8 type-vs-value distinction below.
 - **Map each `source_file` to a component** (longest-prefix match against the registry; non-source/manifest files map to nothing and are excluded).
 - **Resolve each import edge:** the `target` either **is a node** (→ that node's `source_file` → its component: an *internal* edge) or **is not a node** (→ an *external* third-party package). A cross-component edge (src-comp ≠ tgt-comp) becomes `imports_from`/`imported_by` carrying the imported symbol; the imported-across-a-boundary symbol is added to the target's `exports` (its public surface). Intra-component edges are dropped.
 - **Output** the sorted, byte-stable `components{}` map (+ an `external_dependencies{}` roll-up).
 
-**Graphify's edge fidelity vs the grep fallback (measured, Phase-6 Track-0 A/B):** Graphify *resolves* an import to the **defining file** (e.g. it follows `@excalidraw/utils/shape` → `packages/utils/src/shape.ts`), which the grep fallback cannot — grep only string-matches the import line, so it cannot tell which component a symbol actually lives in. This makes the dependency-edge / IF-8 / IF-3a skeleton materially more accurate on the ~14 Graphify-parseable stacks. **Caveat (carry into IF-8):** Graphify's raw `--no-cluster` extraction does **not** tag `import type` vs value imports, so a naive whole-graph SCC over the adapter's edges over-reports cycles on TS/Java (compile-erased type-only imports inflate the SCC). The **type-vs-value suppression stays an IF-8 skill-layer responsibility** (`issues.md` IF-8 already specifies it) — use the `calls` relation as a positive runtime-use signal when distinguishing a real runtime cycle from a type-only one.
+**Graphify's edge fidelity vs the grep fallback (measured, Phase-6 Track-0 A/B):** Graphify *resolves* an import to the **defining file** (e.g. it follows `@excalidraw/utils/shape` → `packages/utils/src/shape.ts`), which the grep fallback cannot — grep only string-matches the import line, so it cannot tell which component a symbol actually lives in. This makes the dependency-edge / IF-8 / IF-3a skeleton materially more accurate on the ~14 Graphify-parseable stacks. **Caveat (carry into IF-8):** Graphify's raw `--no-cluster` extraction does **not** tag `import type` vs value imports, so a naive whole-graph SCC over the adapter's edges over-reports cycles on TS/Java (compile-erased type-only imports inflate the SCC). The **type-vs-value suppression stays an IF-8 skill-layer responsibility** (`issues.md` IF-8 already specifies it). The adapter now **captures** the `calls` relation into the v2 `calls_into`/`called_by` edge class (it was discarded before v2), and `graphify_adapter.classify_cycles()` tags each import-graph SCC `runtime_backed` iff a real `calls_into` edge links its members — so the positive runtime-use signal this note relied on finally reaches the detector: IF-8 keeps the runtime-backed cycles and downgrades/suppresses the type-only-suspect (import-only, no backing call) ones.
 
 If Graphify absent (or the stack has no Graphify grammar): skip, note "Structural graph: unavailable for these files (install Graphify / no grammar for <lang>) — using grep-inferred imports", and Extract uses grep-inferred imports (the ~80% approximation that cannot resolve a symbol to its defining file).
 
