@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "source": "graphify",
   "generated_by": "tools/graphify_adapter.py",
   "components": {
@@ -14,7 +14,15 @@
           "db.py"
         ]
       },
-      "imported_by": {}
+      "imported_by": {},
+      "calls_into": {
+        "core": [
+          "connect()"
+        ]
+      },
+      "called_by": {},
+      "inherits_from": {},
+      "inherited_by": {}
     },
     "core": {
       "files": [
@@ -31,7 +39,15 @@
           "connect()",
           "db.py"
         ]
-      }
+      },
+      "calls_into": {},
+      "called_by": {
+        "api": [
+          "connect()"
+        ]
+      },
+      "inherits_from": {},
+      "inherited_by": {}
     }
   },
   "external_dependencies": {

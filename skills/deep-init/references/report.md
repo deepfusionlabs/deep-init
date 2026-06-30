@@ -74,6 +74,12 @@ parser now handles those shapes, pinned by harness §43 G6).
   **Honest-degrades** to the "graph unavailable" state with no graph, and to a first-party
   inline-SVG render (with `data-node-id` click-navigation) when the lib can't initialise
   (headless / no canvas). Component-level only — symbol-level/whole-codebase stays out of scope.
+  **Provenance (freshness honesty):** the Map carries its own **`as_of` date** (the
+  `structural-graph.json` file mtime, distinct from the report's build time) + the **edge
+  classes** the analysis had (`imports`, and on the v2 Graphify path `+calls +inheritance`),
+  from `build_report._graph_provenance`. So a report regenerated today never *looks* current
+  while embedding a months-old map — and since `--update` now rebuilds the graph (update.md
+  Step 0b), the `as_of` tracks the code unless Graphify is absent (then it shows the true old date).
 - Cross-cutting: a **⌘K command palette**, instant client-side search, dark/light/auto
   theme (DFL navy + lime), a print stylesheet, keyboard shortcuts — all
   `prefers-reduced-motion`-aware.

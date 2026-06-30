@@ -2761,9 +2761,15 @@ check("§53 public-harness G1 runner — tools/public_harness.py exists and hide
 # G2 — §26 (the one section reading an internal-only key) degrades to internal-only via the DEEPINIT_PUBLIC_HARNESS
 #      env flag OR an absent key file — so the public harness needs no filesystem mutation (race-free).
 _g26_guard = ('DEEPINIT_PUBLIC_HARNESS' in _self53 and "_PUBLIC or not _keyf.exists()" in _self53
-              and "INTERNAL-ONLY (held-out key not shipped publicly" in _self53)
-check("§53 public-harness G2 §26-guard — the external-oracle gate degrades to INTERNAL-ONLY via the public-mode env flag or an absent key (no crash, no filesystem mutation)",
-      _g26_guard, "§26 has the public-mode + key-absence degrade path")
+              and "INTERNAL-ONLY (held-out key not shipped publicly" in _self53
+              # …and the internal-only DESIGN-CORPUS reads — §102/§105 read .ai/docs/decisions.md + the roadmap brain,
+              # both EXCLUDED from the public mirror — carry the same `_PUBLIC or not <file>.exists()` degrade, so a
+              # public checkout that ships neither inert-passes instead of crashing on a FileNotFoundError (the bug this
+              # gate now also guards): the design corpus and roadmap absences both have an INTERNAL-ONLY inert path.
+              and "internal-only design corpus (.ai/docs absent in a public checkout)" in _self53
+              and "internal-only roadmap brain (docs/deepinit-phase2-plan.md absent in a public checkout)" in _self53)
+check("§53 public-harness G2 internal-only-degrade — the held-out-key oracle (§26) AND the internal-only design-corpus reads (§102/§105 — decisions.md + the roadmap brain, both excluded from the public mirror) all degrade to INTERNAL-ONLY via the public-mode env flag or an absent file (no crash, no filesystem mutation)",
+      _g26_guard, "§26 + §102/§105 carry the public-mode + file-absence degrade path")
 # G3 — §34 (Mirror) already degrades when the reference key file is absent (the placeholder-hash path)
 _g34_guard = "fixture placeholder hash → key_held_out flag is the gate" in _self53
 check("§53 public-harness G3 §34-graceful — the Mirror coverage gate degrades when the reference-key file is absent (key_held_out flag remains the gate)",
@@ -5709,6 +5715,221 @@ check("§99 substrate G6 Q13-external-actor — extraction.md Q13 infers an out-
 _g7_99 = "file-IO/email/external-actor" in _EXT99
 check("§99 substrate G7 IP-type — the extraction.md Integration-Points type list adds the additive 'external-actor' value (an inferred out-of-repo writer is a first-class IP) without breaking the open list",
       _g7_99, f"ip_type_has_external_actor={_g7_99}")
+
+print("\n══ 100. Graphify v2 edge classes — calls + inheritance harvested (the ~93k-edge gap), import skeleton byte-identical ══")
+# Tier-1 Graphify-depth upgrade. The adapter dropped EVERY non-import edge — most importantly `calls` (the
+# single largest relation Graphify emits). v2 captures calls + inheritance into SEPARATE edge classes
+# (calls_into/called_by, inherits_from/inherited_by) WITHOUT touching the import skeleton (byte-identical to v1).
+import importlib.util as _ilu100
+try:
+    _spec100 = _ilu100.spec_from_file_location("graphify_adapter_t100", PKG / "tools" / "graphify_adapter.py")
+    _ga100 = _ilu100.module_from_spec(_spec100); _spec100.loader.exec_module(_ga100)
+    _FX100 = ROOT / "mini-graphify"
+    _g100 = json.loads((_FX100 / "graph.json").read_text(encoding="utf-8"))
+    _reg100 = json.loads((_FX100 / "registry.json").read_text(encoding="utf-8"))
+    _sg100 = _ga100.build_structural_graph(_g100, registry=_reg100)
+    _ok100 = True
+except Exception as _e100:
+    _ok100 = False; _sg100 = {}
+# G1 — every component carries the 4 new v2 edge-class keys, and the schema is stamped v2.
+def _g1_100():
+    if _sg100.get("version") != 2: return False
+    for c in _sg100.get("components", {}).values():
+        if not all(k in c for k in ("calls_into", "called_by", "inherits_from", "inherited_by")): return False
+    return True
+check("§100 v2 G1 edge-class keys — build_structural_graph stamps version 2 and every component carries calls_into/called_by/inherits_from/inherited_by",
+      _ok100 and _g1_100(), f"version={_sg100.get('version')}")
+# G2 — the previously-DISCARDED cross-component call (serve()->connect(), api->core) is now captured.
+def _g2_100():
+    api = _sg100["components"]["api"]; core = _sg100["components"]["core"]
+    return api["calls_into"] == {"core": ["connect()"]} and core["called_by"] == {"api": ["connect()"]}
+check("§100 v2 G2 calls captured — the api->core runtime call (serve()->connect()), dropped by v1, is recorded in calls_into/called_by",
+      _ok100 and _g2_100(), "api.calls_into.core=['connect()']")
+# G3 — import skeleton byte-stability: import-only input leaves all four NEW classes empty {} while imports_from is unchanged.
+def _g3_100():
+    imp_only = {"nodes": [{"id": "a", "label": "asym", "source_file": "x/a.py"},
+                          {"id": "b", "label": "bsym", "source_file": "y/b.py"}],
+                "links": [{"source": "a", "target": "b", "relation": "imports", "context": "import"}]}
+    cx = _ga100.build_structural_graph(imp_only, depth=1)["components"]["x"]
+    return (cx["imports_from"] == {"y": ["bsym"]} and cx["calls_into"] == {} and cx["called_by"] == {}
+            and cx["inherits_from"] == {} and cx["inherited_by"] == {})
+check("§100 v2 G3 import byte-stability — an import-only graph leaves all four NEW edge classes empty {} while imports_from is unchanged (the new classes are purely additive — no existing consumer can regress)",
+      _ok100 and _g3_100(), "import-only → new classes empty, imports intact")
+# G4 — RED/load-bearing: a calls-ONLY graph (no import edge) yields EMPTY imports_from but POPULATED calls_into —
+# proving calls are a genuinely separate, captured class (the Rails/Zeitwerk case: coupling visible only via calls).
+def _g4_100():
+    call_only = {"nodes": [{"id": "a", "label": "asym", "source_file": "x/a.py"},
+                           {"id": "b", "label": "go", "source_file": "y/b.py"}],
+                 "links": [{"source": "a", "target": "b", "relation": "calls", "context": "call"}]}
+    sg = _ga100.build_structural_graph(call_only, depth=1)
+    cx = sg["components"]["x"]; cy = sg["components"]["y"]
+    return cx["imports_from"] == {} and cx["calls_into"] == {"y": ["go"]} and cy["called_by"] == {"x": ["go"]}
+check("§100 v2 G4 calls are a separate class — a calls-only graph (no import edge) produces empty imports_from but calls_into={y:[go]} (the import-free coupling Zeitwerk/Rails leaves invisible to v1)",
+      _ok100 and _g4_100(), "calls-only → imports empty, calls_into populated")
+
+print("\n══ 101. IF-8 type-vs-value cycle classification — runtime-backed vs type-only-suspect (resolves detection.md:47) ══")
+# Tier-1 detector wiring. The `calls` signal detection.md's Layer-3 note asked for was DISCARDED by the adapter
+# (a spec<->impl contradiction). classify_cycles() now tags each import-SCC runtime_backed iff a real calls_into
+# edge links its members, so IF-8 downgrades compile-erased type-only import cycles instead of asserting them.
+_cc_exists = bool(_ok100 and hasattr(_ga100, "classify_cycles"))
+# G1 — classify_cycles exists; the clean DAG fixture classifies to no cycle (parity with detect_cycles).
+check("§101 IF-8 G1 classify_cycles present — graphify_adapter exposes classify_cycles(); the DAG mini-graphify fixture classifies to no cycle",
+      _cc_exists and _ga100.classify_cycles(_sg100) == [], "DAG → []")
+# G2 — load-bearing: a 2-cycle BACKED by a real call is runtime_backed=True; the SAME import cycle with the call
+# removed is runtime_backed=False (the type-only-suspect downgrade substrate).
+def _g2_101():
+    nodes = [{"id": "a", "label": "asym", "source_file": "A/a.py"}, {"id": "b", "label": "bsym", "source_file": "B/b.py"}]
+    base = [{"source": "a", "target": "b", "relation": "imports", "context": "import"},
+            {"source": "b", "target": "a", "relation": "imports", "context": "import"}]
+    backed = _ga100.build_structural_graph({"nodes": nodes, "links": base + [{"source": "a", "target": "b", "relation": "calls", "context": "call"}]}, depth=1)
+    typeonly = _ga100.build_structural_graph({"nodes": nodes, "links": base}, depth=1)
+    return (_ga100.classify_cycles(backed) == [{"members": ["A", "B"], "runtime_backed": True}]
+            and _ga100.classify_cycles(typeonly) == [{"members": ["A", "B"], "runtime_backed": False}])
+check("§101 IF-8 G2 runtime-vs-type-only — the SAME [A,B] import cycle is runtime_backed=True when a calls edge backs it, False when it rests on imports alone (the suppression substrate)",
+      _cc_exists and _g2_101(), "backed=True / type-only=False")
+# G3 — SPEC: detection.md states the adapter CAPTURES calls + names classify_cycles + documents schema v2 (the :47 contradiction is closed in prose, not just code).
+_DET101 = (PKG / "skills" / "deep-init" / "references" / "detection.md").read_text(encoding="utf-8")
+_g3_101 = ("classify_cycles" in _DET101 and "calls_into" in _DET101 and "captures" in _DET101.lower() and '"version": 2' in _DET101)
+check("§101 IF-8 G3 spec resolved — detection.md states the adapter captures `calls` into calls_into, names classify_cycles, and documents schema v2 (the :47 spec<->impl contradiction is closed)",
+      _g3_101, f"captures+classify+v2={_g3_101}")
+# G4 — SPEC: issues.md IF-8 consumes the new class (runtime_backed / type-only-suspect downgrade).
+_ISS101 = (PKG / "skills" / "deep-init" / "references" / "issues.md").read_text(encoding="utf-8")
+_g4_101 = ("classify_cycles" in _ISS101 and "runtime_backed" in _ISS101 and "type-only-suspect" in _ISS101)
+check("§101 IF-8 G4 issues.md wiring — the IF-8 spec consumes classify_cycles (runtime_backed) and downgrades type-only-suspect import cycles",
+      _g4_101, f"if8_consumes_calls={_g4_101}")
+
+print("\n══ 102. Refresh rebuilds the structural graph (Tier-2) — 0-token Detect-graph slice on --update, LLM analysis stays incremental ══")
+# The graph was FROZEN between full runs (the user's report: report fresh, graph months old). update.md Step 0b
+# now re-runs the deterministic structural-graph build on --update; ADR-035 amends ADR-024's "no new scanning".
+_UPD102 = (PKG / "skills" / "deep-init" / "references" / "update.md").read_text(encoding="utf-8")
+_g1_102 = ("Step 0b" in _UPD102 and "rebuild the structural graph" in _UPD102 and "0-token" in _UPD102 and "incremental" in _UPD102)
+check("§102 refresh-rebuild G1 update.md flow — the --update flow gains Step 0b that rebuilds structural-graph.json (the 0-token Detect slice) while LLM component analysis stays incremental",
+      _g1_102, f"step0b={_g1_102}")
+_l102 = _UPD102.lower()
+_g2_102 = ("graphify_adapter" in _UPD102 and "grep" in _l102 and "reuse the prior" in _l102 and "mark the map stale" in _l102 and "honest-degrade" in _l102)
+check("§102 refresh-rebuild G2 fallback honesty — Step 0b uses graphify+adapter with the grep fallback and, when neither can run, reuses the prior graph + marks the Map stale (never blocks, never silently stale)",
+      _g2_102, f"fallback+degrade={_g2_102}")
+_dec102f = PKG / ".ai" / "docs" / "decisions.md"
+if _PUBLIC or not _dec102f.exists():
+    # PUBLIC-HARNESS path (§53 contract): .ai/docs/decisions.md is the INTERNAL-only design corpus — excluded from the
+    # public mirror per PUBLICATION-BOUNDARY, so it is ABSENT in a public checkout. ADR-035 is logged INTERNALLY; the
+    # SHIPPED refresh-rebuild behavior is pinned by §102 G1/G2 (update.md) — this decision-log gate inert-passes (no crash).
+    check("§102 refresh-rebuild G3 decision logged — INTERNAL-ONLY (.ai/docs design corpus not shipped publicly; ADR-035 amending ADR-024 recorded internally)",
+          True, "inert — internal-only design corpus (.ai/docs absent in a public checkout)")
+else:
+    _DEC102 = _dec102f.read_text(encoding="utf-8")
+    _g3_102 = ("### ADR-035" in _DEC102 and "Amends ADR-024" in _DEC102 and "Step 0b" in _DEC102)
+    check("§102 refresh-rebuild G3 decision logged — decisions.md records ADR-035 amending ADR-024 (refresh re-runs the 0-token graph; no new LLM scanning on update)",
+          _g3_102, f"adr035_amends_024={_g3_102}")
+
+print("\n══ 103. Map provenance (Tier-3) — the graph is dated (as_of) + edge-class-scoped, so a fresh report can't hide a stale map ══")
+# build_report attaches honest provenance (as_of mtime, distinct from the report build time; which edge classes the
+# analysis had); the template renders it in the Insights preview + the interactive Map.
+import importlib.util as _ilu103
+try:
+    _spec103 = _ilu103.spec_from_file_location("build_report_t103", PKG / "tools" / "build_report.py")
+    _br103 = _ilu103.module_from_spec(_spec103); _spec103.loader.exec_module(_br103)
+    _ok103 = True
+except Exception as _e103:
+    _ok103 = False
+# G1 — _graph_provenance: dated + schema-stamped + names the edge classes present (imports+calls on a v2-with-calls graph).
+def _g1_103():
+    sg = {"version": 2, "components": {"a": {"imports_from": {"b": ["x"]}, "calls_into": {"b": ["f"]}, "inherits_from": {}},
+                                       "b": {"imports_from": {}, "calls_into": {}, "inherits_from": {}}}}
+    prov = _br103._graph_provenance(sg, PKG / "tools" / "build_report.py")
+    return (bool(re.match(r"^\d{4}-\d{2}-\d{2}$", prov.get("as_of") or "")) and prov.get("schema_version") == 2
+            and "imports" in prov["edge_classes"] and "calls" in prov["edge_classes"])
+check("§103 provenance G1 dated+scoped — _graph_provenance stamps an as_of DATE (graph file mtime, not the report build time), the schema version, and the edge classes present (imports+calls on a v2 graph)",
+      _ok103 and _g1_103(), "as_of YYYY-MM-DD + v2 + imports+calls")
+# G2 — honest scope: an import-only graph claims ONLY imports (never fabricates calls/inheritance it doesn't have).
+def _g2_103():
+    sg = {"version": 2, "components": {"a": {"imports_from": {"b": ["x"]}, "calls_into": {}, "inherits_from": {}}}}
+    return _br103._graph_provenance(sg, PKG / "tools" / "build_report.py")["edge_classes"] == ["imports"]
+check("§103 provenance G2 honest scope — an import-only graph reports edge_classes==['imports'] (no fabricated calls/inheritance claim)",
+      _ok103 and _g2_103(), "import-only → ['imports']")
+# G3 — build_graph integration + honest-degrade: a real v2 graph on disk → available + provenance(as_of, calls);
+# a missing graph → available False, no provenance, no crash.
+def _g3_103():
+    import tempfile as _tf103
+    def _comp(**k):
+        b = {"files": [], "exports": [], "imports_from": {}, "imported_by": {}, "calls_into": {}, "called_by": {}, "inherits_from": {}, "inherited_by": {}}
+        b.update(k); return b
+    sg = {"version": 2, "components": {"a": _comp(imports_from={"b": ["x"]}, calls_into={"b": ["f"]}),
+                                       "b": _comp(imported_by={"a": ["x"]}, called_by={"a": ["f"]}, exports=["x"])}}
+    with _tf103.TemporaryDirectory() as _td:
+        _cur = Path(_td) / ".ai" / "docs" / "current"; _cur.mkdir(parents=True)
+        (_cur / "structural-graph.json").write_text(json.dumps(sg), encoding="utf-8")
+        blk = _br103.build_graph(Path(_td))
+    deg = _br103.build_graph(PKG / "nonexistent-xyz-103")
+    return (bool(blk.get("available")) and isinstance(blk.get("provenance"), dict)
+            and bool(blk["provenance"].get("as_of")) and "calls" in blk["provenance"]["edge_classes"]
+            and deg.get("available") is False and "provenance" not in deg)
+check("§103 provenance G3 build_graph integration — a v2 structural-graph.json on disk yields available+provenance(as_of, calls); a missing graph honest-degrades to available=False with no provenance (no crash)",
+      _ok103 and _g3_103(), "present→provenance / absent→degrade")
+# G4 — the template RENDERS the provenance (preview + Map) and report.md documents the as_of/edge-class honesty.
+_TPL103 = (PKG / "skills" / "deep-init" / "assets" / "report-template.html").read_text(encoding="utf-8")
+_RPT103 = (PKG / "skills" / "deep-init" / "references" / "report.md").read_text(encoding="utf-8")
+_g4_103 = (_TPL103.count(".provenance") >= 2 and "Graph as of" in _TPL103 and "edge data:" in _TPL103
+           and "as_of" in _RPT103 and "Provenance" in _RPT103)
+check("§103 provenance G4 rendered+specced — report-template.html renders the provenance in BOTH the Insights preview and the Map (graph as-of + edge data), and report.md documents the Map as_of/edge-class honesty",
+      _g4_103, f"template+spec={_g4_103}")
+
+print("\n══ 104. Symbol-level DP-1 narrowing (Tier-4) — re-mark only the dependents of a CHANGED symbol, not the whole importer closure ══")
+# v2's per-symbol edge lists let --update narrow DP-1's dirty propagation: when interface_hash moves for a
+# specific symbol, only the components that actually use THAT symbol are re-marked (precision-only; full-closure
+# fallback when the edge is coarse; horizontal stays the safety net). symbol_dependents() is the substrate.
+_sd104 = bool(_ok100 and hasattr(_ga100, "symbol_dependents"))
+_SG104 = {"version": 2, "components": {
+    "A": {"imports_from": {}, "calls_into": {}, "inherits_from": {}},
+    "B": {"imports_from": {"A": ["sym1"]}, "calls_into": {}, "inherits_from": {}},          # imports sym1
+    "C": {"imports_from": {"A": ["sym2"]}, "calls_into": {}, "inherits_from": {}},          # imports sym2
+    "D": {"imports_from": {}, "calls_into": {"A": ["sym1"]}, "inherits_from": {}},          # CALLS sym1 (no import)
+    "E": {"imports_from": {}, "calls_into": {}, "inherits_from": {"A": ["Base"]}},          # INHERITS Base
+}}
+# G1 — symbol_dependents resolves the real dependents of a specific symbol (B imports sym1, D calls sym1).
+check("§104 DP-1 G1 symbol_dependents present — graphify_adapter.symbol_dependents() returns the components that reference a SPECIFIC symbol (sym1 → its import+call users)",
+      _sd104 and _ga100.symbol_dependents(_SG104, "A", "sym1") == ["B", "D"], "sym1 → [B,D]")
+# G2 — narrowing/precision: a DIFFERENT symbol re-marks a DIFFERENT, narrower set (sym2 → only C, not B/D/E).
+check("§104 DP-1 G2 narrowing — a change to sym2 re-marks ONLY its user (['C']), not the whole importer closure (the false-clean/needless-reanalysis fix)",
+      _sd104 and _ga100.symbol_dependents(_SG104, "A", "sym2") == ["C"], "sym2 → [C]")
+# G3 — cross-edge-class: a dependent via calls (D) or inheritance (E) is found, not just imports.
+check("§104 DP-1 G3 cross-class — symbol_dependents spans imports_from + calls_into + inherits_from (D via calls counts for sym1; Base → [E] via inheritance)",
+      _sd104 and ("D" in _ga100.symbol_dependents(_SG104, "A", "sym1")) and _ga100.symbol_dependents(_SG104, "A", "Base") == ["E"], "calls+inherit counted")
+# G4 — SPEC: update.md Step 2 documents the narrowing + the full-closure fallback; generation.md notes symbol-level DP-1.
+_UPD104 = (PKG / "skills" / "deep-init" / "references" / "update.md").read_text(encoding="utf-8")
+_GEN104 = (PKG / "skills" / "deep-init" / "references" / "generation.md").read_text(encoding="utf-8")
+_g4_104 = ("symbol_dependents" in _UPD104 and "Symbol-level narrowing" in _UPD104 and "imported_by` closure" in _UPD104
+           and "Symbol-level DP-1 propagation" in _GEN104)
+check("§104 DP-1 G4 spec — update.md Step 2 specs symbol-level narrowing with the full-closure fallback, and generation.md documents symbol-level DP-1 propagation over the v2 edge lists",
+      _g4_104, f"spec={_g4_104}")
+
+print("\n══ 105. Tier-5 enriched-reflection finding — measured DEFER recorded (harvest native edges only; never fabricate a reflection) ══")
+# The user's graph_enriched.json (uppercase CALLS/RENDERS/routes_to/callback_*) is NOT a stock output of
+# `graphify update --no-cluster` (0 uppercase relations across the whole corpus). The verified DEFER is recorded
+# so it isn't re-attempted blind — load-bearing in decisions.md (ADR-035) + the roadmap brain.
+_dec105f = PKG / ".ai" / "docs" / "decisions.md"
+_pln105f = PKG / "docs" / "deepinit-phase2-plan.md"
+if _PUBLIC or not _dec105f.exists() or not _pln105f.exists():
+    # PUBLIC-HARNESS path (§53 contract): BOTH the design-corpus decision log (.ai/docs/decisions.md) and the roadmap
+    # brain (docs/deepinit-phase2-plan.md) are INTERNAL-only planning artifacts — excluded from the public mirror, so
+    # ABSENT in a public checkout. The Tier-5 native-only stance is logged INTERNALLY; the SHIPPED behavior is pinned by
+    # §100 G3 (import byte-stability) + §103 (honest edge-class scope). These decision-log gates inert-pass (no crash).
+    check("§105 Tier-5 G1 decision recorded — INTERNAL-ONLY (.ai/docs design corpus not shipped publicly; ADR-035 Tier-5 DEFER recorded internally)",
+          True, "inert — internal-only design corpus (.ai/docs absent in a public checkout)")
+    check("§105 Tier-5 G2 roadmap recorded — INTERNAL-ONLY (the roadmap brain not shipped publicly; Tier-5 measured DEFER recorded internally)",
+          True, "inert — internal-only roadmap brain (docs/deepinit-phase2-plan.md absent in a public checkout)")
+else:
+    _DEC105 = _dec105f.read_text(encoding="utf-8")
+    _PLN105 = _pln105f.read_text(encoding="utf-8")
+    # G1 — decisions.md ADR-035 records the enriched-layer DEFER + the native-only stance (the verified finding).
+    _g1_105 = ("### ADR-035" in _DEC105 and "graph_enriched.json" in _DEC105
+               and "harvests the native AST relations only" in _DEC105 and "Tier-5 finding" in _DEC105)
+    check("§105 Tier-5 G1 decision recorded — ADR-035 records the enriched/Rails-reflection DEFER (no stock --no-cluster layer) and the native-only stance, so it can't be re-attempted blind",
+          _g1_105, f"adr035_records_defer={_g1_105}")
+    # G2 — the roadmap brain (phase2-plan) records the Graphify-depth upgrade + the Tier-5 measured DEFER.
+    _g2_105 = ("Tier 5 — enriched" in _PLN105 and "measured DEFER" in _PLN105 and "native" in _PLN105)
+    check("§105 Tier-5 G2 roadmap recorded — docs/deepinit-phase2-plan.md records the Graphify-depth upgrade with Tier-5 as a measured DEFER (harvest native edges only)",
+          _g2_105, f"roadmap_records={_g2_105}")
 
 p = sum(1 for ok,_,_ in results if ok); f = len(results)-p
 # Authoritative harness-owned figures → validation/_harness_summary.json (read by tools/build_stats.py).

@@ -192,17 +192,48 @@ def graph_from_structural(sg: dict, manifest: dict | None = None) -> dict:
     return {"available": True, "nodes": nodes, "edges": edges}
 
 
+def _graph_provenance(sg: dict, path: Path) -> dict:
+    """Honest provenance for the Map view (Tier-2/3 freshness fix).
+
+    Reports WHEN the structural graph was built (the file's mtime → an `as_of` DATE,
+    distinct from the report's own build time) and WHICH edge classes the analysis
+    actually had (imports always; calls / inheritance only on the v2 Graphify path).
+    This is what stops the report from *looking* freshly-built while embedding a months-
+    old map: the Map now carries its own honest date and scope. DATE only (no clock) so
+    it stays deterministic given the file. `refreshed_on_update=True` records that
+    `--update` now rebuilds the graph (it was frozen between full runs before)."""
+    import datetime as _dt
+    comps = (sg or {}).get("components", {}) or {}
+    classes = ["imports"]
+    if any((c.get("calls_into") or c.get("called_by")) for c in comps.values()):
+        classes.append("calls")
+    if any((c.get("inherits_from") or c.get("inherited_by")) for c in comps.values()):
+        classes.append("inheritance")
+    try:
+        as_of = _dt.datetime.fromtimestamp(path.stat().st_mtime, _dt.timezone.utc).strftime("%Y-%m-%d")
+    except Exception:
+        as_of = None
+    return {"as_of": as_of, "schema_version": (sg or {}).get("version"),
+            "edge_classes": classes, "refreshed_on_update": True}
+
+
 def build_graph(out_dir: Path, manifest: dict | None = None) -> dict:
-    """Find + read the existing structural-graph.json (no new emit) and shape it
-    for the Insights diagram + the navigable Map view. Tries the Detect output
-    path first, then fallbacks. `manifest` supplies per-component risk tints."""
+    """Find + read the existing structural-graph.json (build_report emits no graph) and
+    shape it for the Insights diagram + the navigable Map view. Tries the Detect output
+    path first, then fallbacks. `manifest` supplies per-component risk tints. When the
+    graph is present, attach honest `provenance` (as-of date + edge classes) so the Map
+    is dated/scoped rather than silently passing off a stale graph as current."""
     out_dir = Path(out_dir)
     for cand in (out_dir / ".ai" / "docs" / "current" / "structural-graph.json",
                  out_dir / ".ai" / "docs" / "structural-graph.json",
                  out_dir / "structural-graph.json"):
         if cand.exists():
             try:
-                return graph_from_structural(json.loads(cand.read_text(encoding="utf-8")), manifest)
+                sg = json.loads(cand.read_text(encoding="utf-8"))
+                block = graph_from_structural(sg, manifest)
+                if block.get("available"):
+                    block["provenance"] = _graph_provenance(sg, cand)
+                return block
             except Exception:
                 pass
     return {"available": False, "nodes": [], "edges": []}

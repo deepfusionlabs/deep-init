@@ -915,6 +915,10 @@ try{var _t=localStorage.getItem("deepinit-viewer-theme");if(_t){document.documen
       var tx=svgEl("text",{x:p.x+dx,y:p.y+dy,"text-anchor":anch,"font-size":"11"}); tx.style.fill="var(--fg-soft)"; tx.textContent=n.id; grp.appendChild(tx); svg.appendChild(grp); });
     var wrap=el("div","depgraphwrap"); wrap.appendChild(svg); card.appendChild(wrap);
     var cap=el("p","sub"); cap.style.marginTop=".55rem"; cap.textContent=N+" components · "+edges.length+" import edges"+(truncated?" (top "+MAX+" by file count shown)":"")+" · click a node to open its docs, or open the Map for the full interactive graph."; card.appendChild(cap);
+    var prov=(dash&&dash.graph&&dash.graph.provenance)||null;
+    if(prov){ var pc=el("p","sub"); pc.style.marginTop=".2rem"; pc.style.opacity=".85";
+      var cls=(prov.edge_classes||["imports"]);
+      pc.textContent="Graph as of "+(prov.as_of||"unknown date")+" · edge data: "+cls.join("+")+" · rebuilt on each refresh"+((cls.indexOf("calls")<0)?" (imports only — install Graphify for calls/inheritance)":"")+"."; card.appendChild(pc); }
     return card;
   }
   // ===================================================================
@@ -966,6 +970,9 @@ try{var _t=localStorage.getItem("deepinit-viewer-theme");if(_t){document.documen
     var sr=document.createElement("input"); sr.type="text"; sr.placeholder=T("map_search"); sr.setAttribute("aria-label",T("map_search")); bar.appendChild(sr);
     var rb=el("button","mbtn",T("map_reset")); rb.type="button"; bar.appendChild(rb);
     bar.appendChild(el("span","maphint",T("map_lead")));
+    var mprov=(dash.graph&&dash.graph.provenance)||null;
+    if(mprov){ var mp=el("span","maphint"); mp.style.opacity=".8";
+      mp.textContent="· graph as of "+(mprov.as_of||"?")+" · edge data: "+((mprov.edge_classes||["imports"]).join("+")); bar.appendChild(mp); }
     var canvas=el("div","mapcanvas");
     var tip=el("div","maptip");
     var legend=el("div","maplegend");
