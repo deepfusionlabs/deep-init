@@ -18,7 +18,7 @@
     "report": "npm run report:build && npm run report:smoke"
   },
   "devDependencies": {
-    "@commitlint/cli": "^21.0.2",
+    "@commitlint/cli": "^21.2.0",
     "@commitlint/config-conventional": "^21.0.2",
     "husky": "^9.1.7",
     "jsdom": "^29.1.1"
