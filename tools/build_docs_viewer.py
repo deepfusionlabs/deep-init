@@ -339,9 +339,13 @@ def parse_issues(md: str) -> dict:
     if sm:
         summary = " ".join(sm.group(1).split())
 
-    # verified issues — two shapes:
-    #   (a) the canonical "## 1. Verified issues" TABLE (kemal e2e)
-    #   (b) the "## Fires (raised)" block of "### ISS-NNN — family — title" (dogfood)
+    # verified issues — three shapes (all tolerant; the canonical emitted shape is pinned in
+    # generation.md "Issue outputs" + issues.md §4.1):
+    #   (a) the canonical "## 1. Verified issues" TABLE (kemal e2e);
+    #   (b) per-issue "### ISS-<id> — <head>" blocks (H3) ANYWHERE in the body — under "## Fires
+    #       (raised)", "## Component: <name>", or a lifecycle heading (the natural per-component
+    #       grouping DeepInit emits);
+    #   (c) TOP-LEVEL "## ISS-<id> — <title>" blocks (H2) with family/claim/severity bullets.
     verified: list[dict] = []
     vm = re.search(r"##\s+1\.\s+Verified issues(.*?)(?=^##\s|\Z)", body, re.M | re.DOTALL)
     if vm:
@@ -356,25 +360,35 @@ def parse_issues(md: str) -> dict:
                 "claim": cells[2] if len(cells) > 2 else "", "cites": _cites(ln),
                 "severity": cells[4] if len(cells) > 4 else "", "body_md": "",
             })
-    fires_sec = re.search(r"##\s+Fires\b.*?$(.*?)(?=^##\s|\Z)", body, re.M | re.DOTALL)
-    if fires_sec:
-        for m in re.finditer(r"^###\s+(ISS-[\w:]+)\s*—\s*(.*?)$(.*?)(?=^###\s|\Z)",
-                             fires_sec.group(1), re.M | re.DOTALL):
-            iid, head, block = m.group(1), m.group(2).strip(), m.group(3)
-            family = head.split("—")[0].strip() if "—" in head else ""
-            claim = ""
-            cm = re.search(r"-\s+\*\*claim:\*\*\s*(.*?)(?:\n-\s+\*\*|\Z)", block, re.DOTALL)
-            if cm:
-                claim = " ".join(cm.group(1).split())
-            sev = ""
-            sm2 = re.search(r"-\s+\*\*severity:\*\*\s*(\w+)", block)
-            if sm2:
-                sev = sm2.group(1)
-            verified.append({
-                "id": iid, "family": family, "claim": claim or head,
-                "cites": _cites(block), "severity": sev,
-                "body_md": f"### {iid} — {head}\n{block.strip()}",
-            })
+    # (b) "### ISS-<id> — <head>" blocks, matched ANYWHERE in the body (dogfood 0.7.0 fix). These were
+    #     previously matched ONLY inside a "## Fires …" section, so the equally-natural grouping
+    #     "### ISS- under ## Component: <name>" (or under a lifecycle heading) parsed as ZERO verified
+    #     issues — the report then silently showed "0 issues" while the manifest's issues.counts.open
+    #     said otherwise (the exact trust-eroding silent-wrong-output a user hit). Bounded at the next
+    #     H3 OR H2 so a block never swallows a sibling section; deduped by id against the (a)/(c) arms.
+    _seen_iss = {v["id"] for v in verified}
+    for m in re.finditer(r"^###\s+(ISS-[\w:.\-]+)\s+[—-]\s+(.*?)$(.*?)(?=^###\s|^##\s|\Z)",
+                         body, re.M | re.DOTALL):
+        iid, head, block = m.group(1), m.group(2).strip(), m.group(3)
+        if iid in _seen_iss:
+            continue
+        _seen_iss.add(iid)
+        family = _bullet_field(block, "family") or (head.split("—")[0].strip() if "—" in head else "")
+        claim = ""
+        cm = re.search(r"-\s+\*\*claim:\*\*\s*(.*?)(?:\n-\s+\*\*|\Z)", block, re.DOTALL)
+        if cm:
+            claim = " ".join(cm.group(1).split())
+        sev = ""
+        sm2 = re.search(r"-\s+\*\*severity:\*\*\s*(\w+)", block)
+        if sm2:
+            sev = sm2.group(1)
+        if "cosmetic" in family.lower():
+            sev = sev or "cosmetic"
+        verified.append({
+            "id": iid, "family": family, "claim": claim or head,
+            "cites": _cites(block), "severity": sev,
+            "body_md": f"### {iid} — {head}\n{block.strip()}",
+        })
     # (c) DeepInit's OWN emitted ledger shape: TOP-LEVEL "## ISS-NNN — title" blocks with
     #     "- **family/claim/severity:**" bullets. The "ISS-" anchor keeps this from swallowing
     #     "## 1. Verified issues" / "## 2. Named suppressions" / "## Lifecycle …" / "## IF-5 …".
@@ -382,6 +396,9 @@ def parse_issues(md: str) -> dict:
     for m in re.finditer(r"^##\s+(ISS-[\w:.\-]+)\s+[—-]\s+(.*?)\s*$(.*?)(?=^##\s|\Z)",
                          body, re.M | re.DOTALL):
         iid, title, block = m.group(1), m.group(2).strip(), m.group(3)
+        if iid in _seen_iss:
+            continue
+        _seen_iss.add(iid)
         fam = _bullet_field(block, "family")
         claim = _bullet_field(block, "claim") or title
         sev = _bullet_field(block, "severity")

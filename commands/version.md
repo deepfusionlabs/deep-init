@@ -6,7 +6,7 @@ Report the running DeepInit version — fast, no analysis. Do exactly this, then
 
 1. State the **loaded** version verbatim. This line ships inside the plugin markdown that is actually loaded in your session, so it is the source of truth for "what is running right now":
 
-   **DeepInit v0.7.0** <!-- deepinit:loaded-version -->
+   **DeepInit v0.7.1** <!-- deepinit:loaded-version -->
 
 2. Read the **on-disk** version (best-effort — skip gracefully if a path isn't present):
    - a local clone of this repo → `.claude-plugin/plugin.json` (the `"version"` field)

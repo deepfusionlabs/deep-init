@@ -5931,6 +5931,113 @@ else:
     check("§105 Tier-5 G2 roadmap recorded — docs/deepinit-phase2-plan.md records the Graphify-depth upgrade with Tier-5 as a measured DEFER (harvest native edges only)",
           _g2_105, f"roadmap_records={_g2_105}")
 
+print("\n══ 106. Dogfood 0.7.0 hardening — ledger-shape robustness · manifest-counts path · emit↔parse guard · severity taxonomy · staging→publish boundary ══")
+# Surfaced by a real /deep-init:deep-init 0.7.0 dogfood on another repo (2026-07-01): the report showed
+# "0 verified issues" when the ledger used an unrecognized-but-reasonable shape, AND build_dashboard read
+# the manifest's issue counts from the wrong path (flat issues.* vs the schema's issues.counts.*), so a
+# real open-count silently never reached the report. Each gate is RED-before-GREEN + a killing mutation.
+import importlib.util as _ilu106
+if str(PKG / "tools") not in sys.path:
+    sys.path.insert(0, str(PKG / "tools"))
+try:
+    _spec106a = _ilu106.spec_from_file_location("build_docs_viewer", PKG / "tools" / "build_docs_viewer.py")
+    _bdv106 = _ilu106.module_from_spec(_spec106a); _spec106a.loader.exec_module(_bdv106)
+    _spec106b = _ilu106.spec_from_file_location("build_report", PKG / "tools" / "build_report.py")
+    _br106 = _ilu106.module_from_spec(_spec106b); _spec106b.loader.exec_module(_br106)
+    _ok106 = True
+except Exception as _e106:
+    _ok106 = False; _e106s = str(_e106)
+if not _ok106:
+    check("§106 dogfood-hardening — tool import", False, f"import failed: {_e106s}")
+else:
+    # G1 — ledger-shape robustness: a per-component "### ISS- under ## Component:" grouping (the shape a
+    # user hit that parsed as ZERO) now parses to the real verified issues. RED on the pre-fix parser
+    # (### ISS- was matched ONLY inside a "## Fires …" section).
+    _g1_md = ("# Issue Ledger\n\n## Component: report\n"
+              "### ISS-report:001 — IF-6 — divergent parser\n"
+              "- **family:** IF-6\n- **claim:** a second parser for the same artifact\n- **severity:** Low\n\n"
+              "## Component: skill\n### ISS-skill:002 — IF-4 — stale ADR\n"
+              "- **family:** IF-4\n- **claim:** code contradicts ADR-007\n- **severity:** Medium\n")
+    _g1_v = _bdv106.parse_issues(_g1_md)["verified"]
+    _g1_ok = (len(_g1_v) == 2 and {v["id"] for v in _g1_v} == {"ISS-report:001", "ISS-skill:002"}
+              and all(v.get("family") and v.get("claim") and v.get("severity") for v in _g1_v))
+    check("§106 G1 ledger-shape robustness — parse_issues reads '### ISS- under ## Component:' groupings "
+          "(H3 blocks ANYWHERE in the body, not only inside a '## Fires …' section) — the natural shape that "
+          "previously parsed as ZERO verified issues (the silent '0 issues' a user hit)",
+          _g1_ok, f"parsed={len(_g1_v)} ids={sorted(v['id'] for v in _g1_v)}")
+
+    # G2 — manifest-counts PATH: the authoritative counts live under issues.counts.* (schema), NOT flat.
+    # _manifest_issue_counts reads the nested path (tolerant of a legacy flat shape); build_dashboard uses
+    # it, so open/resolved/by_severity from a schema-conformant manifest reach the report. RED on the
+    # pre-fix code (read flat issues.open → None → silently fell back to the parsed ledger).
+    _m2 = {"issues": {"counts": {"open": 3, "resolved": 11, "by_severity": {"High": 2, "Low": 0}}}}
+    _c2 = _br106._manifest_issue_counts(_m2)
+    _d2 = _br106.build_dashboard({"issues": {"verified": []}}, _m2)
+    _g2_ok = (_c2["open"] == 3 and _c2["resolved"] == 11 and _c2["by_severity"] == {"High": 2, "Low": 0}
+              and _d2["open"] == 3 and _d2["resolved"] == 11 and _d2["severity"] == {"high": 2}
+              and _br106._manifest_issue_counts({"issues": {"open": 5}})["open"] == 5)  # legacy flat back-compat
+    check("§106 G2 manifest-counts path — build_dashboard reads the AUTHORITATIVE issues.counts.{open,resolved,"
+          "by_severity} (schema), tolerant of a legacy flat issues.* shape; a schema-conformant manifest's own "
+          "counts reach the report (open=3/resolved=11/high:2) instead of being silently ignored (flat read → None)",
+          _g2_ok, f"counts_open={_c2['open']} dash_open={_d2['open']} dash_resolved={_d2['resolved']} dash_sev={_d2['severity']}")
+
+    # G3 — emit↔parse consistency guard: warn (never crash) when the manifest says N>0 open but the parser
+    # surfaced 0 verified — the exact silent-wrong-output. Silent when consistent / when 0 open.
+    _g3_warn = _br106.issue_consistency_warnings({"issues": {"counts": {"open": 2}}}, [])
+    _g3_silent1 = _br106.issue_consistency_warnings({"issues": {"counts": {"open": 2}}}, [{"id": "ISS-1"}])
+    _g3_silent2 = _br106.issue_consistency_warnings({"issues": {"counts": {"open": 0}}}, [])
+    _g3_ok = (len(_g3_warn) == 1 and "OPEN" in _g3_warn[0] and not _g3_silent1 and not _g3_silent2)
+    check("§106 G3 emit↔parse guard — issue_consistency_warnings warns loudly when manifest open>0 but the "
+          "ledger parser surfaced 0 verified (the silent-'0 issues' failure), and is silent when consistent or "
+          "when 0 open (R8: warn, never fail the build)",
+          _g3_ok, f"warn={len(_g3_warn)} silent_when_consistent={not _g3_silent1 and not _g3_silent2}")
+
+    # G4 — severity taxonomy: info/note are SEVERITY-level words → the canonical lowest 'low', DISTINCT from
+    # the 'cosmetic' KIND (trivial/nit). RED on the pre-fix alias (info→cosmetic mislabeled it as cosmetic).
+    _g4_ok = (_br106._norm_sev("info") == "low" and _br106._norm_sev("note") == "low"
+              and _br106._norm_sev("informational") == "low"
+              and _br106._norm_sev("trivial") == "cosmetic" and _br106._norm_sev("nit") == "cosmetic"
+              and _br106._norm_sev("cosmetic") == "cosmetic" and _br106._norm_sev("Low") == "low")
+    check("§106 G4 severity taxonomy — info/note/informational normalize to 'low' (a severity level; SARIF's "
+          "lowest is note), DISTINCT from 'cosmetic' (the stylistic kind: trivial/nit) — so an informational "
+          "finding is no longer mislabeled cosmetic in the donut/summary",
+          _g4_ok, f"info={_br106._norm_sev('info')} note={_br106._norm_sev('note')} nit={_br106._norm_sev('nit')}")
+
+    # G5 — SPEC: the canonical ledger markdown shape is pinned verbatim in generation.md + issues.md, so any
+    # emit/regeneration produces a shape the parser reads. RED if the pinned shape is removed/softened.
+    _gen106 = (PKG / "skills" / "deep-init" / "references" / "generation.md").read_text(encoding="utf-8")
+    _iss106 = (PKG / "skills" / "deep-init" / "references" / "issues.md").read_text(encoding="utf-8")
+    _g5_ok = ("Canonical ledger markdown shape" in _gen106
+              and "### ISS-<comp>:<nnn> — <family>" in _gen106
+              and "- **family:**" in _gen106 and "- **severity:**" in _gen106
+              and "issue_consistency_warnings" in _gen106
+              and "Emitted markdown SHAPE" in _iss106 and "parse_issues" in _iss106)
+    check("§106 G5 canonical-shape spec — generation.md 'Issue outputs' + issues.md §4.1 pin the EXACT emitted "
+          "ledger shape (## Component:/### ISS- headings + family/claim/severity bullets) the parser reads, so a "
+          "regeneration can't silently emit an unparseable ledger",
+          _g5_ok, f"gen_pins={('Canonical ledger markdown shape' in _gen106)} iss_pins={('Emitted markdown SHAPE' in _iss106)}")
+
+    # G6 — staging→publish boundary (Issue 2): generation.md documents that finalize moves published docs to
+    # flat + no published DOC tier lingers under current/; AND no published fixture tree strands a doc tier
+    # (components/decisions/issues/horizontals) inside a `.ai/docs/current/` (the split-brain a user hit).
+    _g6_spec = ("Staging→publish invariant (Emit-completeness): NO published DOC tier lingers under" in _gen106
+                and "moves every published doc artifact up one level" in _gen106)
+    _DOC_TIER = ("components", "decisions.md", "issues.md", "domain-model.md", "technical-dependencies.md",
+                 "data-layer.md", "functional-workflows.md", "cross-references.md", "shared-state-conflicts.md")
+    _leaked106 = []
+    for _pub in (PKG / ".ai" / "docs",
+                 PKG / "validation" / "end-to-end" / "kemal" / ".ai" / "docs",
+                 PKG / "validation" / "dogfooding" / "oss-kit" / ".ai" / "docs"):
+        _cur = _pub / "current"
+        if _cur.is_dir() and any((_cur / d).exists() for d in _DOC_TIER):
+            _leaked106.append(str(_cur.relative_to(PKG)))
+    _g6_ok = _g6_spec and not _leaked106
+    check("§106 G6 staging→publish boundary — generation.md makes finalize MOVE published docs to flat .ai/docs/ "
+          "and leave NO published DOC tier under .ai/docs/current/ (Emit-completeness), and no published tree "
+          "strands a components/decisions/issues/horizontal doc inside current/ (the split-brain a user hit; the "
+          "transient structural-graph.json/checkpoint the report+status keystone read is deliberately allowed)",
+          _g6_ok, f"spec={_g6_spec} leaked_doc_tiers={_leaked106}")
+
 p = sum(1 for ok,_,_ in results if ok); f = len(results)-p
 # Authoritative harness-owned figures → validation/_harness_summary.json (read by tools/build_stats.py).
 # Separation of duties: the aggregator READS these (the harness owns the §26 oracle recall + its own counts);

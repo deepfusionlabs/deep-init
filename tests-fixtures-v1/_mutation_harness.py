@@ -618,6 +618,32 @@ MUTATIONS = [
      r"^###\s+(ADR-\d+)\s+[—-]\s+", r"^###\s+(ADR-\d+):\s+",
      "ISS-010 §43 G6 dogfood-adr-arm — requiring a colon instead of the em-dash misses the '### ADR-N —' "
      "shape DeepInit emits (the canonical ADR parse regresses to empty); §43 G6 must catch it", "§43"),
+    # ── 2026-07-01 dogfood 0.7.0 hardening (§106): ledger-shape robustness · manifest-counts path ·
+    #    emit↔parse guard · severity taxonomy · staging→publish boundary ──
+    (PKG / "tools" / "build_docs_viewer.py",
+     r"^###\s+(ISS-", r"^####\s+(ISS-",
+     "§106 G1 ledger-shape — requiring #### instead of ### for the per-issue arm stops '### ISS- under "
+     "## Component:' groupings parsing (the silent-0-issues shape a user hit); §106 G1 must catch it", "§106"),
+    (PKG / "tools" / "build_report.py",
+     'counts = mi.get("counts")', 'counts = mi.get("counts_absent")',
+     "§106 G2 manifest-counts — reading the wrong manifest key (issues.counts_absent) makes the authoritative "
+     "open/resolved/by_severity unreadable, so the schema-conformant counts never reach the report; §106 G2 must catch it", "§106"),
+    (PKG / "tools" / "build_report.py",
+     "open_n > 0 and not verified", "open_n > 0 and verified",
+     "§106 G3 emit↔parse guard — inverting the guard condition (warn only when verified is NON-empty) makes the "
+     "open>0-but-0-parsed silent-wrong-output go unwarned; §106 G3 must catch it", "§106"),
+    (PKG / "tools" / "build_report.py",
+     '"info": "low"', '"info": "cosmetic"',
+     "§106 G4 severity taxonomy — reverting info→cosmetic re-labels an informational finding as merely cosmetic "
+     "(the mislabel a user hit); §106 G4 must catch it", "§106"),
+    (PKG / "skills" / "deep-init" / "references" / "generation.md",
+     "Canonical ledger markdown shape", "Some ledger notes",
+     "§106 G5 canonical-shape spec — removing the pinned canonical ledger markdown shape from generation.md lets a "
+     "regeneration emit an unparseable ledger again; §106 G5 must catch it", "§106"),
+    (PKG / "skills" / "deep-init" / "references" / "generation.md",
+     "NO published DOC tier lingers under", "some published DOC tier may linger under",
+     "§106 G6 staging→publish boundary — softening the 'no published DOC tier lingers under current/' invariant "
+     "re-opens the split-brain; §106 G6 must catch it", "§106"),
 ]
 
 

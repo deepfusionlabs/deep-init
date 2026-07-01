@@ -42,6 +42,8 @@ ISS-{comp}:{nnn}                # or ISS-{nnn} for cross-component (R5)
   sarif_rule_id: deepinit/IF-1 …              # SARIF mapping (CD-E1)
   cross_model_agreement: (unset)               # reserved for AgentAlliance — SAME field name + honesty framing as verification.md (D2-019); never invent a parallel field
 ```
+**Emitted markdown SHAPE (the ledger the report parser reads).** The `.ai/docs/issues.md` ledger renders each record above as a per-issue markdown block, in EITHER a per-component `### ISS-<comp>:<nnn> — <family> — <title>` (H3) grouping under a `## Component: <name>` / `## Fires (raised)` / lifecycle heading, OR a top-level `## ISS-<comp>:<nnn> — <title>` (H2) block — with `- **family:** / - **claim:** / - **provenance:** / - **severity:** / - **certainty:** / - **lifecycle:**` bullets. The **exact heading + bullet-key shape is load-bearing** and pinned verbatim in `generation.md` "Issue outputs" (`family`/`claim`/`severity` are the keys `tools/build_docs_viewer.py :: parse_issues` reads); a divergent shape parses as **zero** verified issues (the emit↔parse consistency guard in `build_report.py` warns when the parsed count disagrees with `issues.counts.open`). Do NOT invent a new heading/bullet layout for the ledger.
+
 **Severity** is ODC-style behaviour-impact (a Core-entity unenforced write is High/Critical; cosmetic ≈ Low), **never** a borrowed vendor severity. **Raise only Core/Supporting**; Peripheral findings are listed in the deep tier only, never ranked up. **priority** ranks both the top-risk zones and every IF-1…IF-4 issue by the priority of its location (IF-5); mirror `filter.md`'s lean ranking, not a churn-only sort.
 
 ## Baseline match key + normalization — the shared primitive (§4.2 / §4.4)

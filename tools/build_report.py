@@ -35,15 +35,54 @@ from pathlib import Path
 import build_docs_viewer as bdv  # reuse the tolerant parsers + escaped-embed render
 
 SEV_KEYS = {"critical", "high", "medium", "low", "cosmetic"}
+# Free-form severity words normalize into the report's five fixed tiers (the donut/rank slots). The
+# canonical enum is Critical|High|Medium|Low (issues.md §4.1); `cosmetic` is the report's below-Low
+# tier for the stylistic KIND (`trivial`/`nit`). `info`/`note` are SEVERITY-LEVEL words (SARIF's lowest
+# level is `note`) → they map to the canonical lowest severity `low`, NOT `cosmetic` — collapsing
+# `info`→`cosmetic` mislabeled an informational finding as merely cosmetic (dogfood 0.7.0). Pinned by §106.
 SEV_ALIASES = {
     "crit": "critical", "hi": "high", "med": "medium", "lo": "low",
-    "info": "cosmetic", "trivial": "cosmetic", "nit": "cosmetic",
+    "info": "low", "note": "low", "informational": "low",
+    "trivial": "cosmetic", "nit": "cosmetic",
 }
 
 
 def _norm_sev(s: str) -> str:
     s = (s or "").strip().lower()
     return s if s in SEV_KEYS else SEV_ALIASES.get(s, s)
+
+
+def _manifest_issue_counts(manifest: dict) -> dict:
+    """The manifest's AUTHORITATIVE issue counts, tolerant of BOTH the schema shape
+    (`issues.counts.<k>` — generation.md manifest) AND a legacy flat `issues.<k>` manifest.
+    Returns open/resolved/regressed/by_severity (value None when truly absent). This exists because
+    build_dashboard used to read the flat `issues.open`/`issues.by_severity` path, which returns None
+    on every real (schema-conformant) manifest — so the manifest's own counts silently never reached
+    the report and it fell back to the parsed ledger (dogfood 0.7.0). Pinned by harness §106."""
+    mi = manifest.get("issues") or {}
+    counts = mi.get("counts")
+    if not isinstance(counts, dict):
+        counts = {}
+    out: dict = {}
+    for k in ("open", "resolved", "regressed", "by_severity"):
+        v = counts.get(k)
+        out[k] = mi.get(k) if v is None else v
+    return out
+
+
+def issue_consistency_warnings(manifest: dict, verified: list) -> list:
+    """Loud-not-silent emit↔parse guard (dogfood 0.7.0). The Insights issue LIST is produced by the
+    tolerant ledger parser (build_docs_viewer.parse_issues); the KPI open-count is authoritative from
+    the manifest. If the manifest reports OPEN issues but the parser surfaced NONE, .ai/docs/issues.md
+    is in a shape the parser does not recognize and the report would silently show "0 issues" while the
+    manifest says otherwise — the trust-eroding drift a user hit. Surface it loudly (stderr) rather than
+    fail silently (R8: warn, never crash the build). Returns human-readable warnings ([] when consistent)."""
+    open_n = _manifest_issue_counts(manifest).get("open")
+    if isinstance(open_n, int) and open_n > 0 and not verified:
+        return [f"emit↔parse drift: manifest reports {open_n} OPEN issue(s) but the ledger parser "
+                f"surfaced 0 verified — .ai/docs/issues.md is likely in a shape the report does not "
+                f"recognize. See generation.md 'Issue outputs' for the canonical ISS- ledger shape."]
+    return []
 
 
 def build_timing_panel(manifest: dict) -> dict:
@@ -86,23 +125,29 @@ def build_dashboard(model: dict, manifest: dict) -> dict:
     issues = model.get("issues", {}) or {}
     verified = issues.get("verified", []) or []
 
+    # The manifest's AUTHORITATIVE counts live under `issues.counts.*` (generation.md manifest schema);
+    # read those (tolerant of a legacy flat `issues.*` shape), NOT the flat path this used to read — which
+    # returned None on every real manifest and silently fell back to the parsed ledger, so the manifest's
+    # own open/resolved/by_severity never reached the report (dogfood 0.7.0).
+    counts = _manifest_issue_counts(manifest)
+
     sev: dict[str, int] = {}
-    mi_by = ((manifest.get("issues") or {}).get("by_severity")) or {}
-    if mi_by:
-        for k, v in mi_by.items():
+    mi_by = counts.get("by_severity") or {}
+    for k, v in mi_by.items():
+        iv = int(v or 0)
+        if iv:                                    # skip zero buckets — show only severities that exist
             nk = _norm_sev(k)
-            sev[nk] = sev.get(nk, 0) + int(v or 0)
-    else:
+            sev[nk] = sev.get(nk, 0) + iv
+    if not sev:                                   # no authoritative nonzero severity → derive from the ledger
         for v in verified:
             nk = _norm_sev(v.get("severity"))
             if nk:
                 sev[nk] = sev.get(nk, 0) + 1
 
-    mi = manifest.get("issues") or {}
-    open_n = mi.get("open")
+    open_n = counts.get("open")
     if open_n is None:
         open_n = len(verified)
-    resolved = mi.get("resolved") or 0
+    resolved = counts.get("resolved") or 0
 
     # risk metrics — only available if the skill persisted them to the manifest
     comps_meta = manifest.get("components") or {}
@@ -291,6 +336,11 @@ def main(argv=None) -> int:
         return 2
 
     model = build_report_model(out_dir)
+    # Loud-not-silent emit↔parse guard: warn (never fail) if the manifest says there ARE open issues
+    # but the ledger parser surfaced none — so the "0 issues" case can't hide a real open count.
+    for _w in issue_consistency_warnings(model.get("manifest") or {},
+                                         (model.get("issues") or {}).get("verified") or []):
+        print(f"WARNING: {_w}", file=sys.stderr)
     if args.json:
         print(json.dumps(model, ensure_ascii=False, indent=2))
         return 0

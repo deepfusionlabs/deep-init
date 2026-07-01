@@ -57,6 +57,17 @@ ok(!!doc.querySelector(".dtable"), "decisions table renders");
 ok(!!doc.querySelector('a[href="#map"]'), "Insights links to the interactive Map view");
 ok(Array.prototype.some.call(doc.querySelectorAll(".card2 h3"), (h) => /Component dependency graph/.test(h.textContent)), "component graph card renders (honest-degrade or populated)");
 
+console.log("emit↔parse consistency (dogfood 0.7.0 — no silent zero):");
+{
+  const _isl = JSON.parse(doc.getElementById("deepinit-data").textContent);
+  const _open = (_isl.dashboard || {}).open || 0;
+  const _verifiedN = ((_isl.issues || {}).verified || []).length;
+  // A report claiming N>0 open issues while surfacing ZERO issue rows is the trust-breaking silent-wrong
+  // output a user hit (an unrecognized ledger shape). build_report also warns at build time; this is the
+  // rendered-artifact tripwire (holds trivially when open=0).
+  ok(!(_open > 0 && _verifiedN === 0), "open>0 must render ≥1 issue row (open=" + _open + ", verified=" + _verifiedN + ")");
+}
+
 console.log("component page (markdown-it path):");
 const data = JSON.parse(doc.getElementById("deepinit-data").textContent);
 const comp = (data.components[0] || {}).anchor;
