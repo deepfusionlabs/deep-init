@@ -4,6 +4,24 @@ All notable changes to DeepInit are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); this project uses **manual** `0.x`
 versioning (no release tooling derives this file).
 
+## [0.7.2] — 2026-07-26
+
+### Security
+- **fast-uri 3.1.2 → 3.1.4** — patches GHSA-v2hh-gcrm-f6hx (host confusion via a literal
+  backslash authority delimiter) and GHSA-4c8g-83qw-93j6 (host confusion via failed IDN
+  canonicalization). Reached transitively via `@commitlint/cli` → `ajv`.
+- **js-yaml 4.2.0 → 4.3.0** — patches GHSA-52cp-r559-cp3m (quadratic CPU consumption from
+  YAML merge-key chains). Reached transitively via `@commitlint/cli` → `cosmiconfig`.
+
+Both are development-only dependencies of the commit tooling. Neither is executed by the
+installed plugin, so this release changes no analysis or generation behavior.
+
+### Fixed
+- `package-lock.json` recorded a stale `0.20.0` self-version inherited from the upstream
+  lineage; it now tracks this repository's own release version.
+
+---
+
 ## [0.7.1] — 2026-07-01
 
 ### Changed
