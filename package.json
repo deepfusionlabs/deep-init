@@ -21,6 +21,6 @@
     "@commitlint/cli": "^21.0.2",
     "@commitlint/config-conventional": "^21.0.2",
     "husky": "^9.1.7",
-    "jsdom": "^29.1.1"
+    "jsdom": "^30.0.1"
   }
 }
