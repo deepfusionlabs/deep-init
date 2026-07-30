@@ -155,7 +155,7 @@
   "generated_by": "tools/build_stats.py",
   "harness": {
     "available": true,
-    "mutation_count": 166,
+    "mutation_count": 178,
     "oracle": {
       "metamorphic_fp": 0,
       "per_family": {
@@ -171,9 +171,9 @@
       "recall_pct": 0.6364,
       "wilson95_lb": 0.4295
     },
-    "pass": 446,
-    "sections": 99,
-    "total": 446
+    "pass": 473,
+    "sections": 106,
+    "total": 473
   },
   "init_head_to_head": {
     "available": false

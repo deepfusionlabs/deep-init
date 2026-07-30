@@ -658,6 +658,23 @@ def _env():
     e = dict(os.environ); e["PYTHONUTF8"] = "1"; return e
 
 
+# Paths the PUBLIC mirror deliberately excludes, so a public clone cannot contain them. Kept as an
+# explicit allow-list rather than "skip any missing file" on purpose: a missing file is normally a
+# REAL staleness alarm (the fixture moved and the meta-harness was not updated with it), and blanket
+# skipping would swallow exactly that. Only paths we KNOW are unpublishable are exempt, and only in
+# keyless mode. Mirrors publication.mirror.exclude in .oss-kit/config.json.
+_INTERNAL_ONLY_PREFIXES = (".ai/",)
+
+
+def _is_internal_only(fp: Path) -> bool:
+    """True when fp lives under a path the public mirror excludes (never present in a public clone)."""
+    try:
+        rel = fp.resolve().relative_to(PKG).as_posix()
+    except ValueError:
+        return False
+    return rel.startswith(_INTERNAL_ONLY_PREFIXES)
+
+
 def main() -> int:
     # Optional SUBSET selection (a full run is one harness pass per mutation — slow; chunking keeps each
     # invocation fast/foreground). No args ⇒ run ALL (the default contract is unchanged). Coverage stats +
@@ -693,6 +710,13 @@ def main() -> int:
     _keyless = bool(os.environ.get("DEEPINIT_PUBLIC_HARNESS")) or not (ROOT / "_external" / "_external_keys.json").exists()
     if _keyless:
         _selected = [m for m in _selected if m[4] != "§26"]
+        # Same reasoning, second cause: the generated context layer (.ai/) is EXCLUDED from the public
+        # mirror, so a mutation targeting it can never run in a public clone. It reported STALE and held
+        # the public mutation gate red forever — §105's mutation targets .ai/docs/decisions.md — even
+        # though the gates themselves were already made public-tolerant. Skip those in keyless mode only:
+        # internally the file is present and the mutation kills as before, and a file that disappears for
+        # any OTHER reason still reports STALE, which is the alarm this guard must not swallow.
+        _selected = [m for m in _selected if m[0].exists() or not _is_internal_only(m[0])]
     _subset = len(_selected) != len(MUTATIONS)
 
     # Hold the torn-tree commit lock for the WHOLE run (a planted mutation must never be committable).

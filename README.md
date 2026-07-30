@@ -129,7 +129,7 @@ Beyond that, the evidence is **INDICATIVE** and framed as comprehension/agreemen
 
 This isn't a weekend skill. **This is the harness — not the model.** A prompt hands you one ungrounded guess; the harness grounds every claim, measures its own false-alarm rate, and is regression-tested on every change.
 
-- **446 deterministic checks** (no model) across **99 oracle sections** that must stay all-PASS.
+- **473 deterministic checks** (no model) across **106 oracle sections** that must stay all-PASS.
 - A **mutation meta-harness** proves every one of those checks is load-bearing — not vacuous green.
 - The whole suite **stays green WITHOUT the held-out answer keys**, so the proof ships public while the keys stay private.
 - **CI runs it all on every change.**
